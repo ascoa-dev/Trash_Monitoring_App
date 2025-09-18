@@ -5,13 +5,13 @@ import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 
 class SocialButton extends StatelessWidget {
   final Widget icon;
-  final String label;
+  final String? label; // optional
   final Color color;
   final VoidCallback onPressed;
 
   const SocialButton({
     required this.icon,
-    required this.label,
+    this.label,
     required this.color,
     required this.onPressed,
     super.key,
@@ -25,30 +25,51 @@ class SocialButton extends StatelessWidget {
         width: double.infinity,
         height: AppDimensions.buttonHeight,
         decoration: BoxDecoration(
-          color: AppColors.white,
-          border: Border.all(color: AppColors.accent, width: 3),
+          color: AppColors.background,
+          border: Border.all(
+            color: AppColors.accentGreen,
+            width: AppDimensions.socialOutlinedBorderWidth,
+          ),
           borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           boxShadow: const [
             BoxShadow(
               color: Colors.black26,
-              blurRadius: 4,
-              offset: Offset(0, 4),
+              blurRadius: AppDimensions.boxShadowBlurRadius,
+              offset: Offset(
+                AppDimensions.boxShadowOffsetX,
+                AppDimensions.boxShadowOffsetY,
+              ),
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: AppDimensions.socialIconContainerSize,
-              height: AppDimensions.socialIconContainerSize,
-              child: icon,
-            ),
-            SizedBox(width: AppDimensions.socialContentSpacing),
-            Text(label, style: AppTextStyles.buttonSocialText),
-          ],
-        ),
+        child:
+            (label == null || label!.isEmpty)
+                ? Center(
+                  child: SizedBox(
+                    width: AppDimensions.socialIconContainerSize,
+                    height: AppDimensions.socialIconContainerSize,
+                    child: icon,
+                  ),
+                )
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: AppDimensions.socialIconContainerSize,
+                      height: AppDimensions.socialIconContainerSize,
+                      child: icon,
+                    ),
+                    SizedBox(width: AppDimensions.socialContentSpacing),
+                    Flexible(
+                      child: Text(
+                        label!,
+                        style: AppTextStyles.buttonSocialText,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
       ),
     );
   }

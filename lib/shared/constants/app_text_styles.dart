@@ -5,90 +5,102 @@ class AppTextStyles {
   // Font Families
   static const String inter = 'Inter';
   static const String roboto = 'Roboto';
+  static const String rubik = 'Rubik';
 
   // Heading Styles
   static const TextStyle heading1 = TextStyle(
-    fontFamily: inter,
-    fontWeight: FontWeight.w700,
-    fontSize: 28,
-    color: AppColors.textPrimary, // Black text for white background
+    fontFamily: rubik,
+    fontWeight: FontWeight.w800,
+    fontSize: 57,
+    color: AppColors.textDark, // Primary heading color (dark slate)
+  );
+
+  static const TextStyle heading2 = TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w600,
+    fontSize: 32,
+    color: AppColors.textDark, // Primary heading color (dark slate)
+    letterSpacing: 0.1,
   );
 
   // Label Styles
   static const TextStyle label = TextStyle(
-    fontFamily: roboto,
+    fontFamily: rubik,
     fontSize: 16,
-    color: AppColors.textSecondary, // Dark gray for labels
+    color: AppColors.textAccent, // Label / input label color
   );
 
   // Body Styles
   static const TextStyle body = TextStyle(
-    fontFamily: inter,
+    fontFamily: rubik,
     fontWeight: FontWeight.w400,
     fontSize: 14, // Updated to match Figma
-    color: AppColors.textBlack, // White text for "Forgot password?"
+    color: AppColors.textDark, // Primary body text color
   );
 
   static const TextStyle bodySecondary = TextStyle(
-    fontFamily: inter,
+    fontFamily: rubik,
     fontWeight: FontWeight.w400,
     fontSize: 14,
-    color: AppColors.textBlack70, // White text with 70% opacity
+    color: AppColors.textDark, // Secondary body text color
+    letterSpacing: 0.1,
   );
 
   // Button Styles
   static const TextStyle buttonLink = TextStyle(
-    fontFamily: inter,
-    fontWeight: FontWeight.w400, // Updated to match Figma
+    fontFamily: rubik,
+    fontWeight: FontWeight.w800, // Updated to match Figma
     fontSize: 14,
-    color: AppColors.textBlack,
+    color: AppColors.textDark,
     decoration: TextDecoration.underline,
     decorationThickness: 1.0,
-    decorationColor: AppColors.textBlack,
+    decorationColor: AppColors.textDark,
+    letterSpacing: 0.4,
   );
 
   // Divider Text
   static const TextStyle dividerText = TextStyle(
-    fontFamily: inter,
+    fontFamily: rubik,
     fontWeight: FontWeight.w500,
     fontSize: 16,
-    color: AppColors.textSecondary, // Dark text for white background
+    color: AppColors.textAccent, // Divider text color (e.g., "OR")
   );
 
   // Terms Text Styles
   static const TextStyle termsBase = TextStyle(
-    fontFamily: roboto,
+    fontFamily: rubik,
     fontWeight: FontWeight.w400,
     fontSize: 14,
-    color: AppColors.textSecondary, // Dark gray for terms text
+    color: AppColors.textDark, // Terms and legal text color
     height: 1.6, // 160% line height
   );
 
   static const TextStyle termsLink = TextStyle(
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w800,
     decoration: TextDecoration.underline,
-    decorationColor: AppColors.textSecondary,
+    decorationColor: AppColors.textDark,
   );
 
   // Error Text
   static const TextStyle errorText = TextStyle(
-    fontFamily: roboto,
+    fontFamily: rubik,
     fontWeight: FontWeight.w400,
     fontSize: 12,
-    color: AppColors.error, // Red color for error messages
+    color: AppColors.error, // Error color for inline validation messages
   );
 
   // Primary Button Text
   static const TextStyle buttonPrimaryText = TextStyle(
-    fontFamily: inter,
-    fontWeight: FontWeight.w600,
+    fontFamily: rubik,
+    fontWeight: FontWeight.w900,
     fontSize: 16,
-    color: AppColors.white,
+    color: AppColors.pureWhite,
+    letterSpacing: 0.2,
   );
 
   // Social Button Text
   static const TextStyle buttonSocialText = TextStyle(
-    fontFamily: roboto,
+    fontFamily: rubik,
     fontWeight: FontWeight.w700,
     fontSize: 16,
     color: AppColors.buttonText,
@@ -96,7 +108,7 @@ class AppTextStyles {
 
   // Input hint text style
   static const TextStyle inputHint = TextStyle(
-    fontFamily: roboto,
+    fontFamily: rubik,
     fontSize: 16,
     color: AppColors.textHint,
   );

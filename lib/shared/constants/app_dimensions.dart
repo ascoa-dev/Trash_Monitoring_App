@@ -4,6 +4,13 @@ class AppDimensions {
   static const double verticalPadding = 16.0;
   static const double smallSpacing = 8.0;
   static const double dividerPadding = 12.0;
+  // Field & chip spacing
+  static const double fieldVerticalSpacing =
+      12.0; // spacing between stacked fields
+  static const double chipHorizontalPadding =
+      4.0; // small chip padding for floating labels
+  static const double floatingLabelOffset =
+      8.0; // vertical offset for floating label
   static const double socialButtonSpacing = 16.0;
   static const double bottomSpacing = 56.0;
 
@@ -12,6 +19,8 @@ class AppDimensions {
 
   // Divider
   static const double dividerThickness = 1.0;
+  // Short divider side width factor (relative to screen width, ~76px @ 440)
+  static const double authDividerSideWidthFactor = 0.173;
 
   // Screen Height Multipliers
   static const double titleTopSpacing = 0.16;
@@ -21,15 +30,24 @@ class AppDimensions {
   static const double buttonForgotSpacing = 0.002;
   static const double sectionSpacing = 0.02;
   static const double paragraphSpacing = 0.04;
+  static const double forgotPasswordIconSize = 0.2;
+  static const double halfInputSpacing = 0.003;
+  // Forgot Password background image heights (relative to screen height)
+  static const double forgotBgTopHeight = 0.235; // ~225px @ 956px ref
+  static const double forgotBgBottomHeight = 0.306; // ~293px @ 956px ref
 
   // Component Heights
-  static const double buttonHeight = 55.0;
+  static const double buttonHeight = 48.0;
+  static const double buttonHorizontalPadding = 24.0;
+  static const double buttonVerticalPadding = 12.0;
 
   // Component Shapes
   static const double borderRadius = 10.0;
+  static const double smallRadius =
+      4.0; // small corner radius (e.g., input chips)
 
   // Input Field constants
-  static const double inputFieldHeight = 55.0;
+  static const double inputFieldHeight = 56.0;
   static const double inputHorizontalPadding = 16.0;
   // CustomInputField spacing
   static const double inputErrorSpacing = 4.0;
@@ -37,9 +55,77 @@ class AppDimensions {
   static const double boxShadowBlurRadius = 4.0;
   static const double boxShadowOffsetX = 0.0;
   static const double boxShadowOffsetY = 4.0;
+  // Standard border widths
+  static const double inputBorderWidth = 1.5;
+  static const double socialOutlinedBorderWidth = 1.5;
+  // Larger blur for prominent elements
+  static const double prominentBoxShadowBlur = 8.0;
   // Social button layout
   static const double socialIconContainerSize = 32.0;
   static const double socialContentSpacing = 18.0;
+  // Small utility spacings and controls
+  static const double tinySpacing = 10.0;
+  static const double checkboxSize = 24.0;
+  static const double checkboxCornerRadius = 5.0;
+  // Status dot (used in password checklist)
+  static const double statusDotSize = 14.0;
+  static const double statusDotBorderWidth = 2.0;
+  static const double statusIconSize = 10.0;
+  static const double checklistItemSpacing = 2.0;
+  // Auth header reference sizes (base measurements, scaled in widget)
+  static const double authHeaderBaseWidth = 295.0;
+  static const double authHeaderBaseHeight = 127.0;
+  static const double authHeaderLogoWidth = 187.0;
+  static const double authHeaderLogoHeight = 80.0;
+  // Auth header precise offsets (base values from Figma - scaled by widget)
+  static const double authHeaderTitleWidthOffset =
+      18.0; // title width = baseWidth - offset
+  static const double authHeaderLogoLeft = 108.0;
+  static const double authHeaderLogoTop = 47.0;
+  static const double authHeaderByLeft = 125.0;
+  static const double authHeaderByTop = 53.0;
+  // Auth header typography base sizes (font size / line height in px)
+  static const double authHeaderTitleFontSizeBase = 57.0;
+  static const double authHeaderTitleLineHeightBase = 64.0;
+  static const double authHeaderByFontSizeBase = 22.0;
+  static const double authHeaderByLineHeightBase = 30.0;
+
+  // Auth / Login screen spacing multipliers (relative to screen height)
+  static const double authHeaderTopSpacing =
+      0.24; // large top gap before header
+  static const double authScreenSpacerSmall = 0.025; // small vertical gaps
+  static const double authScreenSpacerMedium = 0.03; // medium vertical gaps
+  static const double authScreenLargeSpacer = 0.08; // larger vertical gaps
+  static const double authScreenXLargeSpacer =
+      0.10; // extra-large vertical gaps (used sparingly)
+  // Dialog / overlay dimensions
+  static const double dialogWidth = 320.0;
+  static const double dialogHeight = 300.0;
+  static const double dialogRadius = 28.0;
+  static const double dialogHorizontalPadding = 24.0;
+  static const double dialogTopPadding = 24.0;
+  static const double dialogBottomPadding = 20.0;
+  // Dialog typography
+  static const double dialogTitleFontSize = 28.0;
+  static const double dialogTitleLineHeight = 40.0;
+  static const double dialogBodyFontSize = 16.0;
+  static const double dialogBodyLineHeight = 22.0;
+  static const double dialogTitleLetterSpacing = 0.1;
+  static const double dialogBodyLetterSpacing = 0.1;
+  static const double dialogButtonLetterSpacing = 0.1;
+  // Dialog hero
+  static const double dialogHeroSize = 80.0;
+  // Dialog image defaults (for non-square assets)
+  static const double dialogImageWidth = 134.0;
+  static const double dialogImageHeight = 94.0;
+  // Dialog decorative background (internal, fixed styling)
+  static const double dialogDecorativeBgHeight = 224.0; // ~223.5px from Figma
+  static const double dialogDecorativeBgOpacity = 0.27; // subtle overlay
+  // Input border widths
+  static const double inputBorderWidthFocused = 2.4;
+  static const double inputBorderWidthError = 2.8;
+  // Common icon sizes
+  static const double iconBackSize = 40.0;
 
   // Prevent instantiation
   AppDimensions._();

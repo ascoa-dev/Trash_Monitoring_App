@@ -1,20 +1,40 @@
-# ascoa_app
+# ASCOA Trash Monitoring App
 
-A new Flutter project.
+Flutter app using GetX, Firebase Auth, and a shared design system.
+
+## 🚀 Highlights
+
+- Modular architecture with shared widgets and centralized tokens
+- Auth flows with improved UX (floating labels, live password checklist)
+- Forgot Password uses an overlay dialog (no separate confirmation screen)
+- Shared `FormBinding` injects `FormControllers` and `ValidationController`
+- Consistent spacing/colors/strings via `AppDimensions`, `AppColors`, `AppStrings`
 
 ## 📂 Project Structure
 
-See the [Structure.md](Structure.md) file for a detailed overview of the project architecture and folder organization.
+See [Structure.md](Structure.md) for a detailed overview of architecture and folder organization.
 
-## Getting Started
+Key docs:
 
-This project is a starting point for a Flutter application.
+- [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) — setup, architecture, and best practices
+- [SHARED_COMPONENTS_GUIDE.md](SHARED_COMPONENTS_GUIDE.md) — shared tokens and widgets
+- [Forgot Password feature](lib/modules/auth/forgot_password.md) — flow and `AppDialog` usage
 
-A few resources to get you started if this is your first Flutter project:
+## 🔑 Authentication Notes
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Login/Signup reuse shared `FormControllers` and `ValidationController` via `FormBinding`.
+- Navigation hygiene: only carry valid emails between auth screens; clear password when switching Login ↔ Signup.
+- Signup: PasswordStrengthChecklist remains visible during typing, even when valid.
+- Signup: Terms checkbox shows an inline error and error border if not accepted on submit.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Obsolete (removed): `SignupBinding`, `SignupFormController` (replaced by `FormBinding`).
+
+## 🧪 Run locally
+
+```pwsh
+flutter pub get
+flutter analyze
+flutter run -d windows
+```
+
+Initial route is determined at runtime: signed-in users go to Home; otherwise Login.

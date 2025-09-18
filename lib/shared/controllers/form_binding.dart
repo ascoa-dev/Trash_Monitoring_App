@@ -5,7 +5,11 @@ import 'validation_controller.dart';
 class FormBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<FormControllers>(() => FormControllers());
-    Get.lazyPut<ValidationController>(() => ValidationController());
+    if (!Get.isRegistered<FormControllers>()) {
+      Get.put<FormControllers>(FormControllers(), permanent: true);
+    }
+    if (!Get.isRegistered<ValidationController>()) {
+      Get.put<ValidationController>(ValidationController(), permanent: true);
+    }
   }
 }

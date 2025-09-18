@@ -40,6 +40,7 @@ dependencies:
   google_sign_in: ^6.2.1
   font_awesome_flutter: ^10.10.0
   flutter_facebook_auth: ^6.0.4
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,14 @@ flutter:
     - assets/Google/android_light_rd_na@2x.png
     - assets/Facebook/Facebook_Logo_Primary.png
     - assets/Facebook/Facebook_Logo_Secondary.png
+    - assets/ASCOA/ASCOA_LOGO.png
+    - assets/ASCOA/Login_Bottom.png
+    - assets/ASCOA/Login_Top.png
+    - assets/ASCOA/ForgotPasswordIcon.png
+    - assets/ASCOA/Forgot_Password_confirm_Icon.png
+    - assets/ASCOA/Forgot_Password_Screen_Bottom.png
+    - assets/ASCOA/Forgot_Password_Screen_Top.png
+    - assets/ASCOA/Signup_Screen_Top.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/routes/app_routes.dart';
-import 'modules/auth/views/login_screen.dart';
+import 'modules/auth/views/login_screen_v2.dart';
 import 'modules/auth/views/signup_screen.dart';
 import 'app/controllers/auth_controller.dart';
 import 'shared/controllers/form_binding.dart';
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: AppRoutes.login,
-          page: () => const LoginScreen(),
+          page: () => const LoginScreenV2(),
           bindings: [FormBinding()],
         ),
         GetPage(
@@ -49,14 +49,6 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: AppRoutes.forgotPassword,
           page: () => ForgotPasswordScreen(),
-          bindings: [FormBinding()],
-        ),
-        GetPage(
-          name: AppRoutes.forgotPasswordConfirmation,
-          page: () {
-            final email = Get.arguments?['email'] ?? '';
-            return ForgotPasswordConfirmationScreen(email: email);
-          },
           bindings: [FormBinding()],
         ),
         // Add more GetPages for other routes

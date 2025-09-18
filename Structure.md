@@ -18,12 +18,13 @@ lib/
 │       └── posts.dart
 │
 ├── modules/                 # Feature-based modules
-│   ├── auth/                # Login/Signup
+│   ├── auth/                # Login/Signup/Forgot Password
 │   │   ├── views/           # Screens
-│   │   │   ├── login_screen.dart
-│   │   │   └── signup_screen.dart
+│   │   │   ├── login_screen_v2.dart
+│   │   │   ├── signup_screen.dart
+│   │   │   └── forgot_password_screen.dart
 │   │   ├── widgets/         # Widgets used inside auth
-│   │   └── auth_binding.dart
+│   │   └── (bindings are centralized in shared/controllers/form_binding.dart)
 │   │
 │   ├── home/                # Home/dashboard
 │   │   └── views/
@@ -52,7 +53,31 @@ lib/
     ├── constants/           # Colors, strings, sizes
     ├── utils/               # Validators, formatters, helpers
     └── themes/              # Light/dark theme, text styles
+
 ```
+
+### Shared Controllers and Bindings
+
+Auth screens reuse the same form and validation state via a shared binding:
+
+```dart
+// shared/controllers/form_binding.dart
+class FormBinding extends Bindings {
+  @override
+  void dependencies() {
+    if (!Get.isRegistered<FormControllers>()) {
+      Get.put<FormControllers>(FormControllers(), permanent: true);
+    }
+    if (!Get.isRegistered<ValidationController>()) {
+      Get.put<ValidationController>(ValidationController(), permanent: true);
+    }
+  }
+}
+```
+
+Used in routes for Login, Signup, and Forgot Password.
+
+````
 
 ## 📂 Folder Guide
 
@@ -110,40 +135,20 @@ Bindings in GetX are a clean way to manage dependency injection. Instead of crea
   <summary>📌 Example (click to expand)</summary>
 
 ```dart
-// auth_binding.dart
-class AuthBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut<AuthController>(() => AuthController());
-  }
-}
-
-// main.dart
-GetMaterialApp(
-  initialRoute: '/login',
-  getPages: [
-    GetPage(
-      name: '/login',
-      page: () => LoginScreen(),
-      binding: AuthBinding(), // (2) Injects AuthController automatically
-    ),
-  ],
-);
-// login_screen.dart
-class LoginScreen extends StatelessWidget {
-  final controller = Get.find<AuthController>();
-  // This won’t be needed because we already injected it in (2)
-  // With Bindings, we inject AuthController once in AuthBinding and can fetch it anywhere it’s needed.
-  // Without Bindings, we would have to manually create or put the controller in every screen that uses it,
-  // which can lead to repetitive code and potential memory leaks.
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(controller.title),
-      ),
-    );
-  }
-}
-```
+// main.dart (excerpt)
+GetPage(
+  name: AppRoutes.login,
+  page: () => const LoginScreenV2(),
+  bindings: [FormBinding()],
+),
+GetPage(
+  name: AppRoutes.signup,
+  page: () => const SignupScreen(),
+  bindings: [FormBinding()],
+),
+GetPage(
+  name: AppRoutes.forgotPassword,
+  page: () => ForgotPasswordScreen(),
+  bindings: [FormBinding()],
+),
+````

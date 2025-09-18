@@ -15,10 +15,7 @@ Allows users to request a password reset link via email. Integrates with **AuthC
   - Input: Email
   - Features: Real-time email validation, loading state, bilingual labels/messages
   - Action: Sends password reset request via `AuthController`
-
-- **ForgotPasswordConfirmationScreen**
-  - Displays the email address where the reset link was sent
-  - Shows confirmation message in English or French
+  - Success: Shows an in-place overlay dialog (AppDialog) with confirmation and a button back to Login
 
 ### Controllers
 
@@ -38,16 +35,22 @@ Allows users to request a password reset link via email. Integrates with **AuthC
 
 ---
 
-### Full Flow
+### Full Flow (with overlay)
 
 ```dart
 // Navigate to Forgot Password screen
 Get.toNamed(AppRoutes.forgotPassword);
 
-// Navigate to Confirmation screen with email argument
-Get.toNamed(
-  AppRoutes.forgotPasswordConfirmation,
-  arguments: {'email': 'user@example.com'},
+// On success, show overlay
+showDialog(
+  context: context,
+  builder: (_) => AppDialog(
+    title: 'Forgot Password',
+    body: 'We have sent an email to\nuser@example.com with instructions\nto reset your password.',
+    hero: Icon(Icons.mark_email_read, size: 40, color: Colors.white),
+    primaryActionLabel: 'Back to Login',
+    onPrimaryAction: () { Get.offAllNamed(AppRoutes.login); },
+  ),
 );
 ```
 
@@ -58,21 +61,11 @@ final AuthController authController = Get.find<AuthController>();
 final result = await authController.forgotPassword('user@example.com');
 
 if(result == 'success'){
-  Get.toNamed(
-    AppRoutes.forgotPasswordConfirmation,
-    arguments: {'email': 'user@example.com'},
-  );
+  // trigger overlay dialog in the screen's UI layer
 }
 ```
 
-### Confirmation Screen Only
-
-```dart
-Get.toNamed(
-  AppRoutes.forgotPasswordConfirmation,
-  arguments: {'email': 'user@example.com'},
-);
-```
+Confirmation screen was removed in favor of the overlay dialog.
 
 ---
 
@@ -84,3 +77,77 @@ Get.toNamed(
 - Error handling via snackbars
 - Modern UI matching app color scheme
 - Footer includes Terms & Privacy Policy
+
+---
+
+## Recent refactor summary (conversation log)
+
+- Replaced the separate ForgotPasswordConfirmation screen with an overlay `AppDialog` to keep users in context.
+- Fixed a `TextEditingController` lifecycle crash by registering `FormControllers` and `ValidationController` as permanent singletons via bindings.
+- Centralized dialog and image dimensions in `AppDimensions`.
+- Converted the Forgot Password screen to a `Stack` layout and added decorative top/bottom background images.
+
+## Assets (already in `pubspec.yaml`)
+
+- `assets/ASCOA/Forgot_Password_confirm_Icon.png` — dialog hero image
+- `assets/ASCOA/Forgot_Password_Screen_Top.png` — top background image
+- `assets/ASCOA/Forgot_Password_Screen_Bottom.png` — bottom background image
+
+## AppDialog usage examples
+
+Icon-based (decorated):
+
+```dart
+AppDialog(
+  title: AppStrings.forgotDialogTitle,
+  body: AppStrings.forgotDialogBody,
+  icon: Icons.mark_email_read,
+  primaryActionLabel: AppStrings.forgotDialogButton,
+  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
+);
+```
+
+Image asset (plain):
+
+```dart
+AppDialog(
+  title: AppStrings.forgotDialogTitle,
+  body: AppStrings.forgotDialogBody,
+  imageAsset: 'assets/ASCOA/Forgot_Password_confirm_Icon.png',
+  decoratedHero: false,
+  imageWidth: AppDimensions.dialogImageWidth,
+  imageHeight: AppDimensions.dialogImageHeight,
+  primaryActionLabel: AppStrings.forgotDialogButton,
+  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
+);
+```
+
+Note: The decorative background in `AppDialog` is internal and non-configurable. Callers only provide `title`, optional `body`, and the hero (`icon` or `imageAsset`). Example:
+
+```dart
+AppDialog(
+  title: AppStrings.forgotDialogTitle,
+  body: AppStrings.forgotDialogBody,
+  imageAsset: 'assets/ASCOA/Forgot_Password_confirm_Icon.png',
+  decoratedHero: false,
+  imageWidth: AppDimensions.dialogImageWidth,
+  imageHeight: AppDimensions.dialogImageHeight,
+  primaryActionLabel: AppStrings.forgotDialogButton,
+  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
+);
+```
+
+## Migration notes for teammates
+
+- When updating copy, edit `lib/shared/constants/app_strings.dart` (EN/FR variants).
+- If you need the decorated circular hero with gradient/shadow, pass `icon` or set `decoratedHero: true`.
+- For full-background images, prefer the `Stack`+`Positioned` approach used in `forgot_password_screen.dart` so content scrolls above imagery.
+
+## How to test locally
+
+Run the analyzer and app, then navigate: Login → Forgot Password → submit a valid email, and confirm the overlay appears.
+
+```powershell
+flutter analyze
+flutter run -d windows
+```
