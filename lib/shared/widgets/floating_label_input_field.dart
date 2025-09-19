@@ -14,6 +14,7 @@ class FloatingLabelInputField extends StatefulWidget {
   final String? supportText; // error or helper
   final bool isError;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<bool>? onFocusChange;
 
   const FloatingLabelInputField({
     super.key,
@@ -24,6 +25,7 @@ class FloatingLabelInputField extends StatefulWidget {
     this.supportText,
     this.isError = false,
     this.onChanged,
+    this.onFocusChange,
   });
 
   @override
@@ -49,7 +51,12 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
     super.initState();
     _focusNode = FocusNode();
     _focusNode.addListener(() {
-      if (mounted) setState(() => _hasFocus = _focusNode.hasFocus);
+      if (mounted) {
+        setState(() => _hasFocus = _focusNode.hasFocus);
+        if (widget.onFocusChange != null) {
+          widget.onFocusChange!(_focusNode.hasFocus);
+        }
+      }
     });
   }
 

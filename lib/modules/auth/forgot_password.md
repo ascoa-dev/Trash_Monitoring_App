@@ -80,68 +80,23 @@ Confirmation screen was removed in favor of the overlay dialog.
 
 ---
 
-## Recent refactor summary (conversation log)
+## Recent Changes
 
-- Replaced the separate ForgotPasswordConfirmation screen with an overlay `AppDialog` to keep users in context.
-- Fixed a `TextEditingController` lifecycle crash by registering `FormControllers` and `ValidationController` as permanent singletons via bindings.
-- Centralized dialog and image dimensions in `AppDimensions`.
-- Converted the Forgot Password screen to a `Stack` layout and added decorative top/bottom background images.
-
-## Assets (already in `pubspec.yaml`)
-
-- `assets/ASCOA/Forgot_Password_confirm_Icon.png` — dialog hero image
-- `assets/ASCOA/Forgot_Password_Screen_Top.png` — top background image
-- `assets/ASCOA/Forgot_Password_Screen_Bottom.png` — bottom background image
-
-## AppDialog usage examples
-
-Icon-based (decorated):
-
-```dart
-AppDialog(
-  title: AppStrings.forgotDialogTitle,
-  body: AppStrings.forgotDialogBody,
-  icon: Icons.mark_email_read,
-  primaryActionLabel: AppStrings.forgotDialogButton,
-  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
-);
-```
-
-Image asset (plain):
-
-```dart
-AppDialog(
-  title: AppStrings.forgotDialogTitle,
-  body: AppStrings.forgotDialogBody,
-  imageAsset: 'assets/ASCOA/Forgot_Password_confirm_Icon.png',
-  decoratedHero: false,
-  imageWidth: AppDimensions.dialogImageWidth,
-  imageHeight: AppDimensions.dialogImageHeight,
-  primaryActionLabel: AppStrings.forgotDialogButton,
-  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
-);
-```
-
-Note: The decorative background in `AppDialog` is internal and non-configurable. Callers only provide `title`, optional `body`, and the hero (`icon` or `imageAsset`). Example:
-
-```dart
-AppDialog(
-  title: AppStrings.forgotDialogTitle,
-  body: AppStrings.forgotDialogBody,
-  imageAsset: 'assets/ASCOA/Forgot_Password_confirm_Icon.png',
-  decoratedHero: false,
-  imageWidth: AppDimensions.dialogImageWidth,
-  imageHeight: AppDimensions.dialogImageHeight,
-  primaryActionLabel: AppStrings.forgotDialogButton,
-  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
-);
-```
+- Replaced confirmation screen with `AppDialog` for in-place overlay confirmation.
+- Added bilingual support for labels and messages.
+- Updated `AuthController` with `forgotPassword` method.
+- Improved navigation hygiene: Clears email errors and resets validation state on transitions.
 
 ## Migration notes for teammates
 
 - When updating copy, edit `lib/shared/constants/app_strings.dart` (EN/FR variants).
 - If you need the decorated circular hero with gradient/shadow, pass `icon` or set `decoratedHero: true`.
 - For full-background images, prefer the `Stack`+`Positioned` approach used in `forgot_password_screen.dart` so content scrolls above imagery.
+
+## Usage Notes
+
+- Ensure `FormBinding` is registered in `main.dart` to provide shared controllers.
+- Use `ValidationController` for real-time email validation and error handling.
 
 ## How to test locally
 

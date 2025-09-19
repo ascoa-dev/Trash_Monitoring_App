@@ -109,9 +109,23 @@ class SignupScreen extends StatelessWidget {
                           onChanged: (val) {
                             validationController.updatePasswordRules(val);
                             validationController.validateStrongPassword(val);
-                            // Keep checklist visible during focus/typing
-                            validationController.showPasswordChecklist.value =
-                                true;
+                            // Visibility is driven by focus; no-op here
+                          },
+                          onFocusChange: (focused) {
+                            if (focused) {
+                              validationController.showPasswordChecklist.value =
+                                  true;
+                            } else {
+                              // Hide only if text is empty to avoid flicker during quick nav
+                              if (validationController
+                                  .passwordText
+                                  .value
+                                  .isEmpty) {
+                                validationController
+                                    .showPasswordChecklist
+                                    .value = false;
+                              }
+                            }
                           },
                         ),
                         if (validationController.showPasswordChecklist.value)
@@ -352,6 +366,8 @@ class SignupScreen extends StatelessWidget {
                           }
                           // Never carry password between login/signup
                           form.passwordController.clear();
+                          // Clear password validation state to avoid leakage into Login
+                          validation.clearPasswordValidation();
                           Get.offNamed(AppRoutes.login);
                         },
                         child: const Text(

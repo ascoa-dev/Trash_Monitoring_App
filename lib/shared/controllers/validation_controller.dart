@@ -83,6 +83,18 @@ class ValidationController extends GetxController {
     showPasswordChecklist.value = false;
   }
 
+  // Reset only password-related validation state (do not touch email/terms)
+  void clearPasswordValidation() {
+    passwordError.value = null;
+    passwordText.value = '';
+    hasMinLength.value = false;
+    hasUppercase.value = false;
+    hasLowercase.value = false;
+    hasNumber.value = false;
+    hasSpecial.value = false;
+    showPasswordChecklist.value = false;
+  }
+
   bool get isFormValid {
     return emailError.value == null && passwordError.value == null;
   }

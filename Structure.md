@@ -127,6 +127,19 @@ Holds everything that can be reused across multiple modules.
 
 ---
 
+### Updated Modules
+
+#### Auth Module
+- `forgot_password_screen.dart` - Handles Forgot Password flow with overlay dialog.
+- Shared bindings: `FormBinding` for controllers.
+
+#### Shared Components
+- `app_dialog.dart` - Overlay dialog for confirmations.
+- `validation_controller.dart` - Centralized validation logic.
+- `form_binding.dart` - Shared bindings for form state management.
+
+---
+
 ### 🔗 Bindings in GetX
 
 Bindings in GetX are a clean way to manage dependency injection. Instead of creating controllers or services directly inside your UI files, you declare them once in a Binding. When a route loads, GetX automatically initializes the required dependencies and disposes of them when the route is removed. This keeps your code organized, avoids repeating initialization logic everywhere, and makes it easier to scale when controllers need new dependencies.
@@ -151,4 +164,4 @@ GetPage(
   page: () => ForgotPasswordScreen(),
   bindings: [FormBinding()],
 ),
-````
+```

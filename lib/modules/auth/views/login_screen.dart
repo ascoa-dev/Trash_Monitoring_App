@@ -235,6 +235,8 @@ class LoginScreen extends StatelessWidget {
                           form.emailController.clear();
                         }
                         form.passwordController.clear();
+                        // Prevent password error/checklist state from leaking into Signup
+                        validation.clearPasswordValidation();
                         Get.offNamed(AppRoutes.signup);
                       },
                       child: const Text(

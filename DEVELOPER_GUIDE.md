@@ -84,6 +84,16 @@ Centralized tokens to replace hard-coded values:
 4. **Design System** - Consistent UI across the app
 5. **Form Validation** - Centralized validation logic
 
+## Recent Updates
+
+### Forgot Password Feature
+- Added `ForgotPasswordScreen` with real-time email validation and bilingual support.
+- Integrated `AppDialog` for in-place overlay confirmation.
+- Removed obsolete confirmation screen.
+- Updated `AuthController` with `forgotPassword` method for handling reset requests.
+- Navigation hygiene: Clears email errors and resets password validation state on screen transitions.
+- Breaking Change: Removed `SignupBinding` and `SignupFormController`.
+
 ## Quick Reference
 
 **Adding New Features:**
