@@ -56,7 +56,7 @@ lib/
 
 ```
 
-### Shared Controllers and Bindings
+## Shared Controllers and Bindings
 
 Auth screens reuse the same form and validation state via a shared binding:
 
@@ -76,8 +76,6 @@ class FormBinding extends Bindings {
 ```
 
 Used in routes for Login, Signup, and Forgot Password.
-
-````
 
 ## 📂 Folder Guide
 
@@ -130,10 +128,12 @@ Holds everything that can be reused across multiple modules.
 ### Updated Modules
 
 #### Auth Module
+
 - `forgot_password_screen.dart` - Handles Forgot Password flow with overlay dialog.
 - Shared bindings: `FormBinding` for controllers.
 
 #### Shared Components
+
 - `app_dialog.dart` - Overlay dialog for confirmations.
 - `validation_controller.dart` - Centralized validation logic.
 - `form_binding.dart` - Shared bindings for form state management.
