@@ -5,11 +5,12 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 
 class AuthController extends GetxController {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final FirebaseAuth _auth;
   Rxn<User> firebaseUser = Rxn<User>();
 
   @override
   void onInit() {
+    _auth = FirebaseAuth.instance;
     firebaseUser.bindStream(_auth.authStateChanges());
     super.onInit();
   }
