@@ -26,7 +26,8 @@ class _TestAssetBundle extends CachingAssetBundle {
     FutureOr<T> Function(ByteData) parser,
   ) async {
     if (key == 'AssetManifest.bin') {
-      final data = const StandardMessageCodec().encodeMessage(<String, Object?>{})!;
+      final data =
+          const StandardMessageCodec().encodeMessage(<String, Object?>{})!;
       return parser(data);
     }
     return super.loadStructuredBinaryData(key, parser);
@@ -35,7 +36,9 @@ class _TestAssetBundle extends CachingAssetBundle {
   @override
   Future<ByteData> load(String key) async {
     if (key == 'AssetManifest.bin') {
-      final ByteData? data = const StandardMessageCodec().encodeMessage(<String, Object?>{});
+      final ByteData? data = const StandardMessageCodec().encodeMessage(
+        <String, Object?>{},
+      );
       return data ?? ByteData(0);
     }
     if (key == 'AssetManifest.json') {
@@ -180,10 +183,7 @@ void main() {
       );
 
       // Enter invalid email
-      await tester.enterText(
-        find.byType(FloatingLabelInputField),
-        'invalid',
-      );
+      await tester.enterText(find.byType(FloatingLabelInputField), 'invalid');
       await tester.pump();
 
       expect(validation.emailError.value, isNotNull);
@@ -206,10 +206,7 @@ void main() {
         validation: validation,
       );
 
-      await tester.enterText(
-        find.byType(FloatingLabelInputField),
-        'invalid',
-      );
+      await tester.enterText(find.byType(FloatingLabelInputField), 'invalid');
       await tester.pump();
 
       await tester.tap(find.byType(PrimaryButton));
@@ -218,44 +215,49 @@ void main() {
       expect(auth.calls, 0);
     });
 
-    testWidgets('shows loading label then success dialog and navigates to login', (tester) async {
-      // Delay completion to observe loading state
-      auth.completer = Completer<String>();
+    testWidgets(
+      'shows loading label then success dialog and navigates to login',
+      (tester) async {
+        // Delay completion to observe loading state
+        auth.completer = Completer<String>();
 
-      await _pumpForgotScreen(
-        tester,
-        auth: auth,
-        form: form,
-        validation: validation,
-      );
+        await _pumpForgotScreen(
+          tester,
+          auth: auth,
+          form: form,
+          validation: validation,
+        );
 
-      await tester.enterText(
-        find.byType(FloatingLabelInputField),
-        'valid@example.com',
-      );
-      await tester.pump();
+        await tester.enterText(
+          find.byType(FloatingLabelInputField),
+          'valid@example.com',
+        );
+        await tester.pump();
 
-      await tester.tap(find.byType(PrimaryButton));
-      await tester.pump();
+        await tester.tap(find.byType(PrimaryButton));
+        await tester.pump();
 
-      // Loading label
-      expect(find.text(AppStrings.sendingResetLink), findsOneWidget);
+        // Loading label
+        expect(find.text(AppStrings.sendingResetLink), findsOneWidget);
 
-      // Complete with success
-      auth.completer!.complete('success');
-      await tester.pumpAndSettle();
+        // Complete with success
+        auth.completer!.complete('success');
+        await tester.pumpAndSettle();
 
-      // Confirmation dialog appears
-      expect(find.text(AppStrings.forgotDialogTitle), findsOneWidget);
+        // Confirmation dialog appears
+        expect(find.text(AppStrings.forgotDialogTitle), findsOneWidget);
 
-      // Tap dialog primary action -> navigates to login
-      await tester.tap(find.text(AppStrings.forgotDialogButton));
-      await tester.pumpAndSettle();
+        // Tap dialog primary action -> navigates to login
+        await tester.tap(find.text(AppStrings.forgotDialogButton));
+        await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, AppRoutes.login);
-    });
+        expect(Get.currentRoute, AppRoutes.login);
+      },
+    );
 
-    testWidgets('shows API error snackbars for known error codes', (tester) async {
+    testWidgets('shows API error snackbars for known error codes', (
+      tester,
+    ) async {
       await _pumpForgotScreen(
         tester,
         auth: auth,
@@ -277,23 +279,23 @@ void main() {
         await tester.pump(const Duration(milliseconds: 200));
       }
 
-  await submitWith('user-not-found');
-  expect(Get.isSnackbarOpen, isTrue);
-  Get.closeAllSnackbars();
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pumpAndSettle();
+      await submitWith('user-not-found');
+      expect(Get.isSnackbarOpen, isTrue);
+      Get.closeAllSnackbars();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
-  await submitWith('invalid-email');
-  expect(Get.isSnackbarOpen, isTrue);
-  Get.closeAllSnackbars();
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pumpAndSettle();
+      await submitWith('invalid-email');
+      expect(Get.isSnackbarOpen, isTrue);
+      Get.closeAllSnackbars();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
-  await submitWith('too-many-requests');
-  expect(Get.isSnackbarOpen, isTrue);
-  Get.closeAllSnackbars();
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pumpAndSettle();
+      await submitWith('too-many-requests');
+      expect(Get.isSnackbarOpen, isTrue);
+      Get.closeAllSnackbars();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
       await submitWith('error');
       expect(Get.isSnackbarOpen, isTrue);
@@ -305,7 +307,9 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('French locale surfaces translated title and dialog button', (tester) async {
+    testWidgets('French locale surfaces translated title and dialog button', (
+      tester,
+    ) async {
       await _pumpForgotScreen(
         tester,
         locale: const Locale('fr'),
