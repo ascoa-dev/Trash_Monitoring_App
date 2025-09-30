@@ -86,7 +86,7 @@ Confirmation screen was removed in favor of the overlay dialog.
 - Added bilingual support for labels and messages.
 - Updated `AuthController` with `forgotPassword` method.
 - Improved navigation hygiene: Clears email errors and resets validation state on transitions.
-AuthController now integrates with Cloud Firestore: after sign-in/signup it loads or creates a `users` document. The app uses a `UserModel` (see `lib/app/models/user.dart`) to represent user profile data. If `isProfileComplete` is false the user is routed to `AppRoutes.completeProfile` to fill profile details.
+  AuthController now integrates with Cloud Firestore: after sign-in/signup it loads or creates a `users` document. The app uses a `UserModel` (see `lib/app/models/user.dart`) to represent user profile data. If `isProfileComplete` is false the user is routed to `AppRoutes.completeProfile` to fill profile details.
 
 ## Notes for Developers
 

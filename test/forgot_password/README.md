@@ -15,9 +15,8 @@ This folder contains a comprehensive widget test suite for the Forgot Password s
 ## Key testing techniques
 
 - Firebase isolation: `TestAuthController` extends `AuthController` but overrides `onInit` to avoid binding to Firebase. It exposes a controllable `completer` and `result` to simulate outcomes without hitting the network.
-Note: `AuthController` in the app now loads/creates a Firestore `users` document after sign-in/signup and may navigate to `AppRoutes.completeProfile` when the profile is incomplete. Tests in this folder intentionally use a lightweight `TestAuthController` to avoid Firestore and Firebase network calls. If you add tests that need to simulate Firestore-backed behavior, extend `TestAuthController` to expose the expected `UserModel` behavior or mock `FirebaseFirestore.instance`.
+  Note: `AuthController` in the app now loads/creates a Firestore `users` document after sign-in/signup and may navigate to `AppRoutes.completeProfile` when the profile is incomplete. Tests in this folder intentionally use a lightweight `TestAuthController` to avoid Firestore and Firebase network calls. If you add tests that need to simulate Firestore-backed behavior, extend `TestAuthController` to expose the expected `UserModel` behavior or mock `FirebaseFirestore.instance`.
 
-  
 - Snackbar stability: GetX snackbars start animations and timers. Tests explicitly call `Get.closeAllSnackbars()` and drain with extra `pump`/`pumpAndSettle` to prevent ticker/timer leaks during teardown.
 
 ## Files of interest
