@@ -86,6 +86,15 @@ Confirmation screen was removed in favor of the overlay dialog.
 - Added bilingual support for labels and messages.
 - Updated `AuthController` with `forgotPassword` method.
 - Improved navigation hygiene: Clears email errors and resets validation state on transitions.
+AuthController now integrates with Cloud Firestore: after sign-in/signup it loads or creates a `users` document. The app uses a `UserModel` (see `lib/app/models/user.dart`) to represent user profile data. If `isProfileComplete` is false the user is routed to `AppRoutes.completeProfile` to fill profile details.
+
+## Notes for Developers
+
+User model: new `UserModel` contains fields such as `uid`, `email`, `firstName`, `lastName`, `phoneNumber`, `city`, `isProfileComplete`, `createdAt`, and `signUpMethod`. Keep `toMap()` and `fromMap()` in sync with Firestore document fields.
+
+Routing: The new `AppRoutes.completeProfile` route must be handled by your navigation setup (screens/route definitions) and should provide UI to collect required profile information. Auth flows now call `_handleUserPostLogin` which may `Get.offAllNamed(AppRoutes.completeProfile)` for incomplete profiles.
+
+Testing: Because the `AuthController` now reads/writes Firestore documents, unit/widget tests should continue to use `TestAuthController` (or mock `FirebaseFirestore.instance`) to avoid network calls. Update test helpers if you need to simulate Firestore-backed profile states (e.g., `isProfileComplete: true/false`).
 
 ## Migration notes for teammates
 

@@ -35,6 +35,7 @@ Screens:
 
 Controllers and bindings:
 - Global `AuthController` (permanent)
+- AuthController now interacts with Cloud Firestore to load/create a `users` document after sign-in/signup. See `lib/app/models/user.dart` for the `UserModel` structure.
 - Shared `FormBinding` injects `FormControllers` and `ValidationController`
 - Obsolete: `SignupBinding` and `SignupFormController` removed
 
@@ -93,6 +94,7 @@ Centralized tokens to replace hard-coded values:
 - Updated `AuthController` with `forgotPassword` method for handling reset requests.
 - Navigation hygiene: Clears email errors and resets password validation state on screen transitions.
 - Breaking Change: Removed `SignupBinding` and `SignupFormController`.
+ - New behavior: After successful authentication, the app will check the Firestore `users` document. If `isProfileComplete` is false the user will be routed to `AppRoutes.completeProfile` to complete profile information. This adds a required setup step for new users.
 
 ## Quick Reference
 

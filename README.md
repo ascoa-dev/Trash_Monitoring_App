@@ -20,6 +20,8 @@ Key docs:
 - [SHARED_COMPONENTS_GUIDE.md](SHARED_COMPONENTS_GUIDE.md) — shared tokens and widgets
 - [Forgot Password feature](lib/modules/auth/forgot_password.md) — flow and `AppDialog` usage
 
+Note: The `AuthController` now loads/creates a user document in Cloud Firestore on sign-in/signup and uses a `UserModel` to represent profile data. New route `AppRoutes.completeProfile` is used when a user's profile is incomplete.
+
 ## 🔑 Authentication Notes
 
 - Login/Signup reuse shared `FormControllers` and `ValidationController` via `FormBinding`.

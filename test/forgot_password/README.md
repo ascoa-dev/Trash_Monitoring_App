@@ -14,9 +14,10 @@ This folder contains a comprehensive widget test suite for the Forgot Password s
 
 ## Key testing techniques
 
-- Asset mocking: A minimal `_TestAssetBundle` provides `AssetManifest.bin/json`, `FontManifest.json`, and returns a 1x1 PNG for all `*.png` requests so `Image.asset` calls don't fail in tests.
 - Firebase isolation: `TestAuthController` extends `AuthController` but overrides `onInit` to avoid binding to Firebase. It exposes a controllable `completer` and `result` to simulate outcomes without hitting the network.
-- Pump helper: `_pumpForgotScreen` wires GetX DI (`AuthController`, `FormControllers`, `ValidationController`), sets locale if provided, and wraps the screen in `GetMaterialApp` with a dummy login route.
+Note: `AuthController` in the app now loads/creates a Firestore `users` document after sign-in/signup and may navigate to `AppRoutes.completeProfile` when the profile is incomplete. Tests in this folder intentionally use a lightweight `TestAuthController` to avoid Firestore and Firebase network calls. If you add tests that need to simulate Firestore-backed behavior, extend `TestAuthController` to expose the expected `UserModel` behavior or mock `FirebaseFirestore.instance`.
+
+  
 - Snackbar stability: GetX snackbars start animations and timers. Tests explicitly call `Get.closeAllSnackbars()` and drain with extra `pump`/`pumpAndSettle` to prevent ticker/timer leaks during teardown.
 
 ## Files of interest
