@@ -17,6 +17,10 @@ class AppColors {
   ); // pure white (use for icons/text on colored backgrounds)
   static const Color white70 = Colors.white70; // Flutter-provided 70% white
 
+  // Profile-specific colors
+  static const Color profileAvatarBackground = Color(0xFFFCF1AA);
+  static const Color profileAvatarAccent = Color(0xFFFBB825);
+
   // Legacy / backward-compatible aliases
   // Existing code may reference older names; keep these as aliases so
   // changes are non-breaking. New code should use the canonical names above.
@@ -36,6 +40,7 @@ class AppColors {
   static const Color textHint = Color(0xFF9F9F9F); // hint / placeholder
   static const Color textWhite = pureWhite; // white for text/icons
   static const Color textWhite70 = Color(0xB3FFFFFF); // white @ ~70% alpha
+  static const Color textDark65 = Color(0xA618333D); // ~65% alpha dark text
   // Button opacity variants (kept as explicit hex values chosen by design)
   static const Color buttonGreen70 = Color(
     0xB3228B22,
@@ -63,8 +68,26 @@ class AppColors {
     0xFF3A383F,
   ); // Default button text color
 
+  // Misc / one-off accents
+  static const Color emailVerification = Color(
+    0xFF448AFF,
+  ); // matches Colors.blueAccent
+
+  // Utility colors used in multiple widgets
+  static const Color transparent = Color(0x00000000); // fully transparent
+  // Shadow color matching Flutter's Colors.black26
+  static const Color shadow = Color(0x42000000);
+  static const Color shadowLight = Color(0x26000000);
+  static const Color shadowMedium = Color(0x4D000000);
+
   // Error Colors
   static const Color error = Color(0xFFFBB825); // Error / validation red
+
+  // Dialog background used by AppDialog (kept as design-provided hex)
+  static const Color dialogBackground = Color(0xFFC7E0B0);
+
+  static const Color navBarSelectedBackground = Color(0xFFC7E0B0);
+  static const Color profileCardBackground = navBarSelectedBackground;
 
   // Prevent instantiation
   AppColors._();

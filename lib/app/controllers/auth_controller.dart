@@ -4,11 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthController extends GetxController {
   late final FirebaseAuth _auth;
   Rxn<User> firebaseUser = Rxn<User>();
+  RxBool isCompletingProfile = false.obs;
 
   @override
   void onInit() {
@@ -18,6 +20,27 @@ class AuthController extends GetxController {
   }
 
   Future<void> _handleUserPostLogin(User user, String signUpMethod) async {
+    if (!user.emailVerified && signUpMethod == 'email') {
+      debugPrint('Email not verified: ${user.email}');
+      try {
+        await user.sendEmailVerification();
+        Get.snackbar(
+          'Email Sent',
+          'A verification link has been sent to ${user.email}',
+        );
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to send verification email: $e');
+      }
+      Get.offAllNamed(AppRoutes.emailVerification);
+      return;
+    }
+    await handleUserPostVerification(user, signUpMethod);
+  }
+
+  Future<void> handleUserPostVerification(
+    User user,
+    String signUpMethod,
+  ) async {
     try {
       final userDoc =
           await FirebaseFirestore.instance
@@ -70,6 +93,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> login(String email, String password) async {
+    isLoadingLogin.value = true;
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       final user = _auth.currentUser;
@@ -90,6 +114,8 @@ class AuthController extends GetxController {
       Get.snackbar('Login Failed', message);
     } catch (e) {
       Get.snackbar('Login Failed', e.toString());
+    } finally {
+      isLoadingLogin.value = false;
     }
   }
 
@@ -238,6 +264,73 @@ class AuthController extends GetxController {
 
   /// Loading state for forgot password
   RxBool isLoadingForgotPassword = false.obs;
+  RxBool isLoadingLogin = false.obs;
+
+  Future<bool> completeProfile({
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    required String countryCode,
+    required String city,
+  }) async {
+    final user = _auth.currentUser;
+    final isFrench = Get.locale?.languageCode == 'fr';
+    if (user == null) {
+      Get.snackbar(
+        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
+        isFrench
+            ? 'Vous devez être connecté pour continuer.'
+            : 'You must be signed in to continue.',
+      );
+      Get.offAllNamed(AppRoutes.login);
+      return false;
+    }
+
+    isCompletingProfile.value = true;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phoneNumber,
+        'countryCode': countryCode,
+        'city': city,
+        'isProfileComplete': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      Get.snackbar(
+        isFrench
+            ? AppStrings.completeProfileTitleFrench
+            : AppStrings.completeProfileTitle,
+        isFrench
+            ? AppStrings.completeProfileSuccessFrench
+            : AppStrings.completeProfileSuccess,
+      );
+      Get.offAllNamed(AppRoutes.home);
+      return true;
+    } on FirebaseException catch (e) {
+      debugPrint('completeProfile FirebaseException: ${e.message}');
+      Get.snackbar(
+        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
+        isFrench
+            ? AppStrings.completeProfileErrorFrench
+            : AppStrings.completeProfileError,
+      );
+      return false;
+    } catch (e) {
+      debugPrint('completeProfile error: $e');
+      Get.snackbar(
+        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
+        isFrench
+            ? AppStrings.completeProfileErrorFrench
+            : AppStrings.completeProfileError,
+      );
+      return false;
+    } finally {
+      isCompletingProfile.value = false;
+    }
+  }
 
   /// Send password reset email
   /// Returns a string status for UI dialog handling
@@ -261,6 +354,82 @@ class AuthController extends GetxController {
       return 'error';
     } finally {
       isLoadingForgotPassword.value = false;
+    }
+  }
+
+  Future<String> getName() async {
+    final user = _auth.currentUser;
+    if (user == null) return '';
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      final data = doc.data();
+      if (data == null) return '';
+      final firstName = data['firstName'] ?? '';
+      final lastName = data['lastName'] ?? '';
+      return '$firstName $lastName';
+    } catch (e) {
+      debugPrint('Error fetching user name: $e');
+      return '';
+    }
+  }
+
+  Future<String> getFirstName() async {
+    final user = _auth.currentUser;
+    if (user == null) return '';
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      final data = doc.data();
+      if (data == null) return '';
+      return data['firstName'] ?? '';
+    } catch (e) {
+      debugPrint('Error fetching user first name: $e');
+      return '';
+    }
+  }
+
+  Future<String> getLastName() async {
+    final user = _auth.currentUser;
+    if (user == null) return '';
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      final data = doc.data();
+      if (data == null) return '';
+      final lastName = data['lastName'] ?? '';
+      return lastName;
+    } catch (e) {
+      debugPrint('Error fetching user last name: $e');
+      return '';
+    }
+  }
+
+  Future<String> getCity() async {
+    final user = _auth.currentUser;
+    if (user == null) return '';
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      final data = doc.data();
+      if (data == null) return '';
+      final city = data['city'] ?? '';
+      return city;
+    } catch (e) {
+      debugPrint('Error fetching user city: $e');
+      return '';
     }
   }
 

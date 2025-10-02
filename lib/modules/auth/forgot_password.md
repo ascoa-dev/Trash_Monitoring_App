@@ -47,7 +47,7 @@ showDialog(
   builder: (_) => AppDialog(
     title: 'Forgot Password',
     body: 'We have sent an email to\nuser@example.com with instructions\nto reset your password.',
-    hero: Icon(Icons.mark_email_read, size: 40, color: Colors.white),
+  hero: Icon(Icons.mark_email_read, size: 40, color: AppColors.pureWhite),
     primaryActionLabel: 'Back to Login',
     onPrimaryAction: () { Get.offAllNamed(AppRoutes.login); },
   ),
@@ -115,3 +115,7 @@ Run the analyzer and app, then navigate: Login → Forgot Password → submit a 
 flutter analyze
 flutter run -d windows
 ```
+
+### Localization
+
+- The Forgot Password feature now uses `AppStrings` for all error messages and labels, ensuring bilingual support.

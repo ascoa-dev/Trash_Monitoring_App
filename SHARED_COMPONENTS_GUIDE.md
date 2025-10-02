@@ -19,6 +19,8 @@ Container(color: AppColors.primary)  // Background color (off-white)
 - `AppColors.white` - Historical alias to background (kept for compatibility)
 - `AppColors.google` - Google blue (0xFF4285F4)
 - `AppColors.facebook` - Facebook blue (0xFF4267B2)
+- `AppColors.profileAvatarBackground` - Soft yellow circle behind avatar placeholder (0xFFFCF1AA)
+- `AppColors.profileAvatarAccent` - Accent golden highlight used for avatar glyph (0xFFFBB825)
 - `AppColors.error` - Error/validation color (0xFFFBB825)
 
 ### Text Styles (`app_text_styles.dart`)
@@ -196,6 +198,31 @@ SocialButton(
 
 These components were added to support recent UI/validation improvements. Use them to keep auth screens consistent.
 
+### ProfileActionTile (`modules/profile/widgets/profile_action_tile.dart`)
+
+The `ProfileActionTile` was updated to accept an optional `leading` widget alongside the existing `icon` parameter. This enables using asset images (PNGs) for leading visuals without changing the tile's sizing or spacing. Use `leading` when you need to render `Image.asset(...)`, otherwise continue to use `icon` for Material icons.
+
+Example:
+
+```dart
+ProfileActionTile(
+  leading: Image.asset('assets/ASCOA/Profile_Page_Icons/contact.png',
+    width: AppDimensions.profileCardIconSize,
+    height: AppDimensions.profileCardIconSize,
+    fit: BoxFit.contain,
+  ),
+  title: AppStrings.profileContactTitle,
+  subtitle: AppStrings.profileContactSubtitle,
+)
+```
+
+Assets available under `assets/ASCOA/Profile_Page_Icons/` (declared in `pubspec.yaml`):
+
+- `contact.png`
+- `faq.png`
+- `policy.png`
+- `signout.png`
+
 #### AuthHeader (`shared/widgets/auth_header.dart`)
 
 ```dart
@@ -218,23 +245,65 @@ Related module docs:
 Migration notes: Replace local `_LogoGroup` or duplicated header widgets with
 `AuthHeader`. Use `AppDimensions` auth header base constants to compute `scale`.
 
+### Recent sizing tokens and widget updates
+
+We recently added several `AppDimensions` tokens to centralize sizes used across the auth flows. Prefer these tokens instead of raw numbers when creating or updating UI:
+
+- Avatar & profile sizes: `AppDimensions.avatarDiameter`, `avatarIconSize`, `avatarEditButtonSize`, `avatarEditIconSize`
+- Input and typography sizes: `AppDimensions.inputFontSize`, `floatingLabelFontSize`, `supportTextFontSize`, `heading2FontSize`, `subtitleFontSize`, `linkFontSize`
+- Small control sizes: `AppDimensions.flagEmojiSize`, `selectorIconSize`, `selectorSmallGap`
+- Dialog/actions/checklist: `AppDimensions.dialogActionFontSize`, `checklistFontSize`
+
+Widget changes to be aware of:
+
+- `FloatingLabelInputField` now derives its input/hint/floating-label/support font sizes from `AppDimensions` (use `topSpacing` to adjust vertical spacing between stacked fields).
+- `CountryCodeSelectorField` uses `AppDimensions.flagEmojiSize` and `selectorIconSize` to ensure consistent flag and chevron sizing.
+- `AppDialog` action text now uses `AppDimensions.dialogActionFontSize` to standardize button text across dialogs.
+
+If you add new widgets that need specific, consistent sizing, add a new semantic token to `app_dimensions.dart` rather than using raw numbers.
+
 #### FloatingLabelInputField (`shared/widgets/floating_label_input_field.dart`)
 
 ```dart
 FloatingLabelInputField(
   controller: formControllers.emailController,
   label: AppStrings.emailLabel,
-  hintText: AppStrings.emailHint,
-  isError: validationController.emailError != null,
+  hint: AppStrings.emailHint,
+  supportText: validationController.emailError.value,
+  isError: validationController.emailError.value != null,
   onChanged: validationController.validateEmail,
+  keyboardType: TextInputType.emailAddress,
+  textInputAction: TextInputAction.next,
 )
 ```
 
-Use for: Inputs that require a floating label animation (email, password). It preserves accessibility and supports `supportText` and `isError` props. Border thickness increases on focus; error increases further per `AppDimensions.inputBorderWidthError`.
+Use for: Inputs that require a floating label animation (email, password, profile fields). It preserves accessibility and supports reactive error text through `supportText`. Border thickness increases on focus; error increases further per `AppDimensions.inputBorderWidthError`.
 
-Migration notes: `FloatingLabelInputField` wraps `CustomInputField` styling but provides the floating-label UX; prefer it for new auth forms.
+Key options:
+
+- `topSpacing` — adjust spacing when composed inside rows (e.g., alongside `CountryCodeSelectorField`).
+- `keyboardType`, `textCapitalization`, `textInputAction`, `inputFormatters` — tune keyboard/layout behavior per field.
+- `onSubmitted`/`onEditingComplete` — hook into IME actions.
+
+Migration notes: `FloatingLabelInputField` wraps `CustomInputField` styling but provides the floating-label UX; prefer it for new auth forms. Use new spacing/keyboard hooks to avoid ad-hoc wrappers.
 
 Visual feedback: Input fields now increase their border thickness when focused and increase further when showing a validation error. Use `isError`/`errorText` to trigger the error state; focus is detected automatically.
+
+#### CountryCodeSelectorField (`shared/widgets/country_code_selector_field.dart`)
+
+```dart
+CountryCodeSelectorField(
+  selectedCountry: selectedCountry,
+  onChanged: (country) => setState(() => selectedCountry = country),
+  label: AppStrings.countryCodeLabel,
+  supportText: validationController.phoneNumberError.value,
+  isError: validationController.phoneNumberError.value != null,
+)
+```
+
+Use for: Dial code + flag selection with floating label styling. Internally wraps the `country_picker` modal (full international list, with Cameroon favorited by default when using `_defaultCountry()` from the complete profile screen).
+
+Key options: `topSpacing` to align with adjacent fields, `enabled` to disable interactions when the form is submitting.
 
 #### PasswordStrengthChecklist (`shared/widgets/password_strength_checklist.dart`)
 
@@ -592,6 +661,13 @@ Text(AppStrings.loginTitle) // "Login into Account"
 - `AppStrings.privacyPolicyLink` - "Privacy Policy"
 - `AppStrings.termsPeriod` - "."
 
+#### **Forgot Password Text**
+
+- `AppStrings.forgotPasswordTitle` - "Reset Password"
+- `AppStrings.forgotPasswordInstructions` - "Enter your email to receive password reset instructions."
+- `AppStrings.forgotPasswordSuccessMessage` - "Password reset link sent! Check your email."
+- `AppStrings.forgotPasswordErrorMessage` - "Error sending password reset email."
+
 #### **Development Messages** (For navigation placeholders)
 
 - `AppStrings.forgotPasswordNav` - "Navigate to Forgot Password screen"
@@ -912,9 +988,9 @@ Container(
 
 // ❌ Avoid - Hard-coded values
 Container(
-  padding: EdgeInsets.all(24),
+  padding: EdgeInsets.all(AppDimensions.screenPadding),
   color: Color(0xFF5B92E5),
-  child: Text('Hello', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+  child: Text('Hello', style: TextStyle(fontSize: AppDimensions.heading2FontSize, fontWeight: FontWeight.bold)),
 )
 ```
 

@@ -6,6 +6,7 @@ class AppStrings {
   static const String passwordLabel = "Password";
   static const String passwordHint = "Enter Password";
   static const String loginButton = "LOG IN";
+  static const String loggingIn = "LOGGING IN...";
   static const String forgotPassword = "Forgot Password?";
   static const String dividerOr = "OR";
   static const String otherSignUpOptions = "Other Sign Up Options";
@@ -35,6 +36,48 @@ class AppStrings {
   // Signup Screen
   static const String signupTitle = "Create Account";
 
+  // Complete Profile Screen
+  static const String completeProfileTitle = "Create Profile";
+  static const String completeProfileTitleFrench = "Créer le profil";
+  static const String completeProfileSubtitle =
+      "Please fill the information to get started";
+  static const String completeProfileSubtitleFrench =
+      "Veuillez remplir ces informations pour commencer";
+  static const String firstNameLabel = "First Name*";
+  static const String firstNameLabelFrench = "Prénom*";
+  static const String firstNameHint = "e.g. Awa";
+  static const String lastNameLabel = "Last Name*";
+  static const String lastNameLabelFrench = "Nom*";
+  static const String lastNameHint = "e.g. Nguema";
+  static const String phoneNumberLabel = "Phone Number*";
+  static const String phoneNumberLabelFrench = "Numéro de téléphone*";
+  static const String phoneNumberHint = "6 70 00 00 00";
+  static const String cityLabel = "Select your City*";
+  static const String cityLabelFrench = "Ville*";
+  static const String cityHint = "e.g. Yaoundé";
+  static const String countryCodeLabel = "Country*";
+  static const String countryCodeLabelFrench = "Pays*";
+  static const String countrySearchLabel = "Search";
+  static const String countrySearchLabelFrench = "Rechercher";
+  static const String editPhotoLabel = "Edit Photo";
+  static const String editPhotoLabelFrench = "Modifier la photo";
+  static const String completeProfileButton = "CREATE PROFILE";
+  static const String completeProfileButtonFrench = "Créer le profil";
+  static const String completeProfileSaving = "CREATING...";
+  static const String completeProfileSavingFrench = "Création...";
+  static const String completeProfileSuccess =
+      "Profile completed! Welcome to ASCOA.";
+  static const String completeProfileSuccessFrench =
+      "Profil complété ! Bienvenue sur ASCOA.";
+  static const String completeProfileError =
+      "We couldn’t save your profile. Please try again.";
+  static const String completeProfileErrorFrench =
+      "Impossible d’enregistrer votre profil. Veuillez réessayer.";
+  static const String editPhotoComingSoon =
+      "Profile photo upload is coming soon.";
+  static const String editPhotoComingSoonFrench =
+      "Le téléversement de la photo de profil arrive bientôt.";
+
   // Forgot Password Screen
   static const String forgotPasswordTitle = "Forgot Password";
   static const String forgotPasswordTitleFrench = "Mot de passe oublié";
@@ -56,6 +99,100 @@ class AppStrings {
       "Si un compte est associé à cet e‑mail,\nun lien de réinitialisation du mot de passe vous a été envoyé.";
   static const String forgotDialogButton = "Back to Login";
   static const String forgotDialogButtonFrench = "Retour à la connexion";
+
+  // Generic/Error messages
+  static const String errorTitle = "Error";
+  static const String errorTitleFrench = "Erreur";
+
+  // Home / Generic UI
+  static const String homeTitle = "Home";
+  static const String newsTitle = "News";
+  static const String profileTitle = "Profile";
+  static const String statsTitle = "Stats";
+  static const String addTitle = "Add";
+  static const String logout = "Logout";
+  static const String addReportPlaceholder =
+      "This is a placeholder for the Add Report flow. Replace with the actual form when ready.";
+  static const String profileManagementTitle = "Profile Management";
+  static const String profileNamePlaceholder = "[Name] [Last Name]";
+  static const String profileEditTitle = "Edit Profile";
+  static const String profileEditSubtitle =
+      "Change your personal information here";
+  static const String profileChangePasswordTitle = "Change Password";
+  static const String profileChangePasswordSubtitle =
+      "Change your password here";
+  static const String profilePolicyTitle = "Policy";
+  static const String profilePolicySubtitle = "Review terms and privacy policy";
+  static const String profileFaqTitle = "FAQ";
+  static const String profileFaqSubtitle = "Check the most asked questions";
+  static const String profileSupportSection = "SUPPORT";
+  static const String profileContactTitle = "Contact Us";
+  static const String profileContactSubtitle = "Contact Us for support";
+  static const String profileSignOut = "Sign Out";
+
+  // Email verification
+  static const String emailVerificationTitle = "Verify Your Email";
+  // Template expects one placeholder '%s' for the user email
+  static const String emailVerificationBodyTemplate =
+      "We have sent a verification link to %s. Please check your email and click on the verification link to continue.";
+  static const String emailVerificationCheckAgain =
+      "I have verified, check again";
+  static const String emailVerificationResend = "Resend";
+  static const String emailVerificationResending = "Resending...";
+  static const String emailVerifiedSuccessTitle = "Success";
+  static const String emailVerifiedSuccessBody = "Email verified successfully!";
+  static const String emailVerificationSentTitle = "Verification Sent";
+  static const String emailVerificationSentBody =
+      "A verification email was sent to %s.";
+  static const String emailVerificationSpamNote =
+      "Please make sure to check your spam/junk folder if you do not see the email in your inbox.";
+
+  // Forgot Password - error messages
+  static const String forgotUserNotFound =
+      "No user found with this email address.";
+  static const String forgotUserNotFoundFrench =
+      "Aucun utilisateur trouvé avec cette adresse email.";
+  static const String forgotInvalidEmail = "Invalid email address.";
+  static const String forgotInvalidEmailFrench = "Adresse email invalide.";
+  static const String forgotTooManyRequests =
+      "Too many attempts. Try again later.";
+  static const String forgotTooManyRequestsFrench =
+      "Trop de tentatives. Réessayez plus tard.";
+  static const String forgotGenericError =
+      "An error occurred. Try again later.";
+  static const String forgotGenericErrorFrench =
+      "Une erreur est survenue. Réessayez plus tard.";
+
+  // Validation messages (used by Validators)
+  static const String validationEmailRequired = 'Email is required';
+  static const String validationEmailInvalid =
+      'Please enter a valid email address';
+  static const String validationPasswordRequired = 'Password is required';
+  static const String validationPasswordTooShort =
+      'Password must be at least %d characters long';
+  static const String validationPasswordStrength =
+      'Password must contain at least:\n• One uppercase letter\n• One lowercase letter\n• One number\n• One special character';
+  static const String validationConfirmPasswordRequired =
+      'Please confirm your password';
+  static const String validationPasswordsMismatch = 'Passwords do not match';
+  static const String validationRequiredField = '%s is required';
+  static const String validationPhoneInvalid =
+      'Please enter a valid phone number';
+
+  // Terms acceptance
+  static const String termsMustAccept =
+      'You must accept the terms and conditions to proceed.';
+
+  // Password strength checklist labels
+  static const String passwordRuleMinLength = 'At least 8 characters';
+  static const String passwordRuleUppercase = 'Uppercase letter';
+  static const String passwordRuleLowercase = 'Lowercase letter';
+  static const String passwordRuleNumber = 'Number';
+  static const String passwordRuleSpecial = 'Special character (@, !, %, etc.)';
+
+  // Auth header texts
+  static const String authHeaderTitle = 'Clean Earth';
+  static const String authHeaderBy = 'by';
 
   AppStrings._();
 }

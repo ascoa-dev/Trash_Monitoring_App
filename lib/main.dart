@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/routes/app_routes.dart';
@@ -8,8 +9,10 @@ import 'shared/controllers/form_binding.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'modules/home/views/home_screen.dart';
+import 'modules/main/views/main_screen.dart';
 import 'modules/auth/views/forgot_password_screen.dart';
+import 'modules/auth/views/complete_profile_screen.dart';
+import 'modules/auth/views/email_verification_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,40 +25,103 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<String> _getInitialRoute() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return AppRoutes.login;
+
+    if (!user.emailVerified) {
+      try {
+        await user.sendEmailVerification();
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to send verification email: $e');
+      }
+      return AppRoutes.emailVerification;
+    }
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      final userData = doc.data();
+
+      if (userData == null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': user.email,
+          'firstName': '',
+          'lastName': '',
+          'phoneNumber': '',
+          'city': '',
+          'isProfileComplete': false,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'signUpMethod': 'email',
+        });
+        return AppRoutes.completeProfile;
+      }
+
+      if (userData['isProfileComplete'] == true) {
+        return AppRoutes.home;
+      } else {
+        return AppRoutes.completeProfile;
+      }
+    } catch (e) {
+      debugPrint('Error fetching user data: $e');
+      return AppRoutes.login;
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final initialRoute =
-        FirebaseAuth.instance.currentUser == null
-            ? AppRoutes.login
-            : AppRoutes.home;
+    return FutureBuilder<String>(
+      future: _getInitialRoute(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(child: Image.asset('assets/ASCOA/ASCOA_LOGO.png')),
+            ),
+          );
+        }
+        return GetMaterialApp(
+          title: 'Trash Monitoring App',
+          initialRoute: snapshot.data!,
+          getPages: [
+            GetPage(
+              name: AppRoutes.login,
+              page: () => const LoginScreenV2(),
+              bindings: [FormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.signup,
+              page: () => const SignupScreen(),
+              bindings: [FormBinding()],
+            ),
+            GetPage(name: AppRoutes.home, page: () => const MainScreen()),
 
-    return GetMaterialApp(
-      title: 'Trash Monitoring App',
-      initialRoute: initialRoute,
-      getPages: [
-        GetPage(
-          name: AppRoutes.login,
-          page: () => const LoginScreenV2(),
-          bindings: [FormBinding()],
-        ),
-        GetPage(
-          name: AppRoutes.signup,
-          page: () => const SignupScreen(),
-          bindings: [FormBinding()],
-        ),
-        GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
-
-        GetPage(
-          name: AppRoutes.forgotPassword,
-          page: () => ForgotPasswordScreen(),
-          bindings: [FormBinding()],
-        ),
-        // Add more GetPages for other routes
-      ],
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+            GetPage(
+              name: AppRoutes.forgotPassword,
+              page: () => ForgotPasswordScreen(),
+              bindings: [FormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.completeProfile,
+              page: () => CompleteProfileScreen(),
+              bindings: [FormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.emailVerification,
+              page: () => EmailVerificationScreen(),
+            ),
+            // Add more GetPages for other routes
+          ],
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          ),
+        );
+      },
     );
   }
 }

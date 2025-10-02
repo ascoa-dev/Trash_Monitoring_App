@@ -117,37 +117,37 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               case 'user-not-found':
                 _showErrorSnackbar(
                   isFrench
-                      ? 'Aucun utilisateur trouvé avec cette adresse email.'
-                      : 'No user found with this email address.',
+                      ? AppStrings.forgotUserNotFoundFrench
+                      : AppStrings.forgotUserNotFound,
                 );
                 break;
               case 'invalid-email':
                 _showErrorSnackbar(
                   isFrench
-                      ? 'Adresse email invalide.'
-                      : 'Invalid email address.',
+                      ? AppStrings.forgotInvalidEmailFrench
+                      : AppStrings.forgotInvalidEmail,
                 );
                 break;
               case 'too-many-requests':
                 _showErrorSnackbar(
                   isFrench
-                      ? 'Trop de tentatives. Réessayez plus tard.'
-                      : 'Too many attempts. Try again later.',
+                      ? AppStrings.forgotTooManyRequestsFrench
+                      : AppStrings.forgotTooManyRequests,
                 );
                 break;
               default:
                 _showErrorSnackbar(
                   isFrench
-                      ? 'Une erreur est survenue. Réessayez plus tard.'
-                      : 'An error occurred. Try again later.',
+                      ? AppStrings.forgotGenericErrorFrench
+                      : AppStrings.forgotGenericError,
                 );
             }
           })
           .catchError((error) {
             _showErrorSnackbar(
               isFrench
-                  ? 'Une erreur est survenue. Réessayez plus tard.'
-                  : 'An error occurred. Try again later.',
+                  ? AppStrings.forgotGenericErrorFrench
+                  : AppStrings.forgotGenericError,
             );
           });
     }
@@ -155,7 +155,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void _showErrorSnackbar(String message) {
     Get.snackbar(
-      'Error',
+      Get.locale?.languageCode == 'fr'
+          ? AppStrings.errorTitleFrench
+          : AppStrings.errorTitle,
       message,
       backgroundColor: AppColors.error,
       colorText: AppColors.pureWhite,
@@ -165,149 +167,150 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final isFrench = Get.locale?.languageCode == 'fr';
 
     return Scaffold(
-      body: Container(
-        width: size.width,
-        height: size.height,
-        color: AppColors.background,
-        child: Stack(
-          children: [
-            // Top background image
-            Positioned(
-              left: 0,
-              right: 0,
-              top: 0,
-              height: size.height * AppDimensions.forgotBgTopHeight,
-              child: Image.asset(
-                'assets/ASCOA/Forgot_Password_Screen_Top.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            // Bottom background image
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: size.height * AppDimensions.forgotBgBottomHeight,
-              child: Image.asset(
-                'assets/ASCOA/Forgot_Password_Screen_Bottom.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            // Content
-            SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppDimensions.screenPadding,
-                  vertical: AppDimensions.verticalPadding,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final double viewportHeight = constraints.maxHeight;
+          final double viewportWidth = constraints.maxWidth;
+
+          return Container(
+            width: viewportWidth,
+            height: viewportHeight,
+            color: AppColors.background,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  height: viewportHeight * AppDimensions.forgotBgTopHeight,
+                  child: Image.asset(
+                    'assets/ASCOA/Forgot_Password_Screen_Top.png',
+                    width: viewportWidth,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Back Button - Styled like login screen
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        onPressed: () {
-                          final form = Get.find<FormControllers>();
-                          final validation = Get.find<ValidationController>();
-                          final currentEmail = form.emailController.text;
-                          validation.clearEmailError();
-                          if (!validation.isEmailValid(currentEmail)) {
-                            form.emailController.clear();
-                          }
-                          Get.back();
-                        },
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color:
-                              AppColors
-                                  .buttonGreen, // Green color matching login
-                          size: AppDimensions.iconBackSize,
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: viewportHeight * AppDimensions.forgotBgBottomHeight,
+                  child: Image.asset(
+                    'assets/ASCOA/Forgot_Password_Screen_Bottom.png',
+                    width: viewportWidth,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.bottomCenter,
+                  ),
+                ),
+                SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.screenPadding,
+                      vertical: AppDimensions.verticalPadding,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            onPressed: () {
+                              final form = Get.find<FormControllers>();
+                              final validation =
+                                  Get.find<ValidationController>();
+                              final currentEmail = form.emailController.text;
+                              validation.clearEmailError();
+                              if (!validation.isEmailValid(currentEmail)) {
+                                form.emailController.clear();
+                              }
+                              Get.back();
+                            },
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: AppColors.buttonGreen,
+                              size: AppDimensions.iconBackSize,
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
                         ),
-                        padding: EdgeInsets.zero,
-                      ),
+                        SizedBox(
+                          height:
+                              viewportHeight * AppDimensions.titleTopSpacing,
+                        ),
+                        Image.asset(
+                          'assets/ASCOA/ForgotPasswordIcon.png',
+                          height:
+                              viewportHeight *
+                              AppDimensions.forgotPasswordIconSize,
+                        ),
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.inputSpacing,
+                        ),
+                        Text(
+                          isFrench
+                              ? AppStrings.forgotPasswordTitleFrench
+                              : AppStrings.forgotPasswordTitle,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.heading2,
+                        ),
+                        SizedBox(
+                          height:
+                              viewportHeight * AppDimensions.halfInputSpacing,
+                        ),
+                        Text(
+                          isFrench
+                              ? AppStrings.forgotPasswordTextFrench
+                              : AppStrings.forgotPasswordText,
+                          style: AppTextStyles.bodySecondary,
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height:
+                              viewportHeight * AppDimensions.halfInputSpacing,
+                        ),
+                        Obx(
+                          () => FloatingLabelInputField(
+                            label: AppStrings.emailLabel,
+                            controller: formControllers.emailController,
+                            hint: AppStrings.emailHint,
+                            obscure: false,
+                            supportText: validationController.emailError.value,
+                            isError:
+                                validationController.emailError.value != null,
+                            onChanged: validationController.validateEmail,
+                          ),
+                        ),
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.buttonSpacing,
+                        ),
+                        Obx(
+                          () => PrimaryButton(
+                            label:
+                                controller.isLoadingForgotPassword.value
+                                    ? (isFrench
+                                        ? AppStrings.sendingResetLinkFrench
+                                        : AppStrings.sendingResetLink)
+                                    : (isFrench
+                                        ? AppStrings.sendResetLinkFrench
+                                        : AppStrings.sendResetLink),
+                            onPressed:
+                                controller.isLoadingForgotPassword.value
+                                    ? () {}
+                                    : _handleForgotPassword,
+                          ),
+                        ),
+                      ],
                     ),
-
-                    SizedBox(
-                      height: size.height * AppDimensions.titleTopSpacing,
-                    ),
-
-                    //Icon
-                    Image.asset(
-                      'assets/ASCOA/ForgotPasswordIcon.png',
-                      height:
-                          size.height * AppDimensions.forgotPasswordIconSize,
-                    ),
-
-                    SizedBox(height: size.height * AppDimensions.inputSpacing),
-                    // Title - Same style as login
-                    Text(
-                      isFrench
-                          ? AppStrings.forgotPasswordTitleFrench
-                          : AppStrings.forgotPasswordTitle,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.heading2, // Same as login screen
-                    ),
-
-                    SizedBox(
-                      height: size.height * AppDimensions.halfInputSpacing,
-                    ),
-
-                    // Subtitle
-                    Text(
-                      isFrench
-                          ? AppStrings.forgotPasswordTextFrench
-                          : AppStrings.forgotPasswordText,
-                      style:
-                          AppTextStyles.bodySecondary, // Same as login screen
-                      textAlign: TextAlign.center,
-                    ),
-
-                    SizedBox(
-                      height: size.height * AppDimensions.halfInputSpacing,
-                    ),
-                    // Email Input Field - EXACTLY like login screen using CustomInputField
-                    Obx(
-                      () => FloatingLabelInputField(
-                        label: AppStrings.emailLabel,
-                        controller: formControllers.emailController,
-                        hint: AppStrings.emailHint,
-                        obscure: false,
-                        supportText: validationController.emailError.value,
-                        isError: validationController.emailError.value != null,
-                        onChanged: validationController.validateEmail,
-                      ),
-                    ),
-
-                    SizedBox(height: size.height * AppDimensions.buttonSpacing),
-
-                    // Send Reset Link Button - Using PrimaryButton like login
-                    Obx(
-                      () => PrimaryButton(
-                        label:
-                            controller.isLoadingForgotPassword.value
-                                ? (isFrench
-                                    ? AppStrings.sendingResetLinkFrench
-                                    : AppStrings.sendingResetLink)
-                                : (isFrench
-                                    ? AppStrings.sendResetLinkFrench
-                                    : AppStrings.sendResetLink),
-                        onPressed:
-                            controller.isLoadingForgotPassword.value
-                                ? () {} // Empty function instead of null
-                                : _handleForgotPassword,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

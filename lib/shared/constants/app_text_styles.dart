@@ -23,6 +23,54 @@ class AppTextStyles {
     letterSpacing: 0.1,
   );
 
+  static const TextStyle profileHeading = TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w700,
+    fontSize: 28,
+    color: AppColors.textDark,
+    letterSpacing: 0.1,
+  );
+
+  static const TextStyle profileName = TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w700,
+    fontSize: 22,
+    color: AppColors.textDark,
+    letterSpacing: 0.1,
+  );
+
+  static const TextStyle profileCaption = TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w800,
+    fontSize: 13,
+    color: AppColors.textDark,
+    letterSpacing: 0.1,
+  );
+
+  static const TextStyle profileActionTitle = TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    color: AppColors.textDark,
+    letterSpacing: 0.1,
+  );
+
+  static const TextStyle profileActionSubtitle = TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: AppColors.textDark65,
+    letterSpacing: 0.1,
+  );
+
+  static const TextStyle profileSignOutText = TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    color: AppColors.textWhite,
+    letterSpacing: 0.1,
+  );
+
   // Label Styles
   static const TextStyle label = TextStyle(
     fontFamily: rubik,

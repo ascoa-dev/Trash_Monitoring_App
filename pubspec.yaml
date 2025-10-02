@@ -42,6 +42,7 @@ dependencies:
   flutter_facebook_auth: ^6.0.4
   flutter_svg: ^2.0.10+1
   cloud_firestore: ^6.0.2
+  country_picker: ^2.0.22
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +80,19 @@ flutter:
     - assets/ASCOA/Forgot_Password_Screen_Bottom.png
     - assets/ASCOA/Forgot_Password_Screen_Top.png
     - assets/ASCOA/Signup_Screen_Top.png
+    - assets/ASCOA/profileplaceholder.png
+    - assets/ASCOA/Complete_Profile_Top.png
+    - assets/ASCOA/Profile_Screen_Bottom.png
+    - assets/ASCOA/Edit_Profile_Screen_Bottom.png
+    - assets/ASCOA/Nav_bar_icons/home.png
+    - assets/ASCOA/Nav_bar_icons/news.png
+    - assets/ASCOA/Nav_bar_icons/profile.png
+    - assets/ASCOA/Nav_bar_icons/stats.png
+    - assets/ASCOA/Nav_bar_icons/add.png
+    - assets/ASCOA/Profile_Page_Icons/contact.png
+    - assets/ASCOA/Profile_Page_Icons/faq.png
+    - assets/ASCOA/Profile_Page_Icons/policy.png
+    - assets/ASCOA/Profile_Page_Icons/signout.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

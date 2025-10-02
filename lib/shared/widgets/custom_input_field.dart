@@ -78,7 +78,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
             borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
             boxShadow: const [
               BoxShadow(
-                color: Colors.black26,
+                color: AppColors.shadow,
                 blurRadius: AppDimensions.boxShadowBlurRadius,
                 offset: Offset(
                   AppDimensions.boxShadowOffsetX,

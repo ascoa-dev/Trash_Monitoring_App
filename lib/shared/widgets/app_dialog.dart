@@ -72,7 +72,7 @@ class AppDialog extends StatelessWidget {
                     ? Icon(
                       icon,
                       size: effectiveIconSize,
-                      color: iconColor ?? Colors.white,
+                      color: iconColor ?? AppColors.pureWhite,
                     )
                     : Image.asset(
                       imageAsset!,
@@ -102,13 +102,13 @@ class AppDialog extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: size.width),
           child: Container(
             width: size.width,
             decoration: BoxDecoration(
-              color: const Color(0xFFC7E0B0),
+              color: AppColors.dialogBackground,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(AppDimensions.dialogRadius),
                 topRight: Radius.circular(AppDimensions.dialogRadius),
@@ -207,9 +207,9 @@ class AppDialog extends StatelessWidget {
                                 primaryActionLabel,
                                 style: AppTextStyles.body.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 14,
+                                  fontSize: AppDimensions.dialogActionFontSize,
                                   height: 20 / 14,
-                                  color: Colors.white,
+                                  color: AppColors.pureWhite,
                                   letterSpacing:
                                       AppDimensions.dialogButtonLetterSpacing,
                                 ),

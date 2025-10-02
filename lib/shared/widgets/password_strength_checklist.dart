@@ -4,6 +4,7 @@ import 'package:ascoa_app/shared/controllers/validation_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/constants/app_strings.dart';
 
 class PasswordStrengthChecklist extends StatelessWidget {
   final EdgeInsetsGeometry padding;
@@ -17,11 +18,11 @@ class PasswordStrengthChecklist extends StatelessWidget {
     final validation = Get.find<ValidationController>();
     return Obx(() {
       final items = [
-        _Rule('At least 8 characters', validation.hasMinLength.value),
-        _Rule('Uppercase letter', validation.hasUppercase.value),
-        _Rule('Lowercase letter', validation.hasLowercase.value),
-        _Rule('Number', validation.hasNumber.value),
-        _Rule('Special character (@, !, %, etc.)', validation.hasSpecial.value),
+        _Rule(AppStrings.passwordRuleMinLength, validation.hasMinLength.value),
+        _Rule(AppStrings.passwordRuleUppercase, validation.hasUppercase.value),
+        _Rule(AppStrings.passwordRuleLowercase, validation.hasLowercase.value),
+        _Rule(AppStrings.passwordRuleNumber, validation.hasNumber.value),
+        _Rule(AppStrings.passwordRuleSpecial, validation.hasSpecial.value),
       ];
       return Padding(
         padding: padding,
@@ -57,7 +58,7 @@ class _RuleRow extends StatelessWidget {
             height: AppDimensions.statusDotSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: rule.met ? AppColors.accentGreen : Colors.transparent,
+              color: rule.met ? AppColors.accentGreen : AppColors.transparent,
               border: Border.all(
                 color: color,
                 width: AppDimensions.statusDotBorderWidth,
@@ -68,7 +69,7 @@ class _RuleRow extends StatelessWidget {
                     ? const Icon(
                       Icons.check,
                       size: AppDimensions.statusIconSize,
-                      color: Colors.white,
+                      color: AppColors.pureWhite,
                     )
                     : null,
           ),
@@ -78,7 +79,7 @@ class _RuleRow extends StatelessWidget {
               rule.label,
               style: AppTextStyles.bodySecondary.copyWith(
                 color: color,
-                fontSize: 12,
+                fontSize: AppDimensions.checklistFontSize,
               ),
             ),
           ),

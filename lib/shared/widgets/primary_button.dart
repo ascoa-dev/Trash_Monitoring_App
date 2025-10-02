@@ -8,12 +8,16 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback onPressed;
   final double? fixedWidth;
   final double? fixedHeight;
+  final Color? backgroundColor;
+  final TextStyle? labelStyle;
 
   const PrimaryButton({
     required this.label,
     required this.onPressed,
     this.fixedWidth,
     this.fixedHeight,
+    this.backgroundColor,
+    this.labelStyle,
     super.key,
   });
 
@@ -24,7 +28,7 @@ class PrimaryButton extends StatelessWidget {
       height: fixedHeight ?? AppDimensions.buttonHeight,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.buttonGreen,
+          backgroundColor: backgroundColor ?? AppColors.buttonGreen,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
@@ -34,7 +38,10 @@ class PrimaryButton extends StatelessWidget {
           ),
         ),
         onPressed: onPressed,
-        child: Text(label, style: AppTextStyles.buttonPrimaryText),
+        child: Text(
+          label,
+          style: labelStyle ?? AppTextStyles.buttonPrimaryText,
+        ),
       ),
     );
   }

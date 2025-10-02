@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 
 class AuthHeader extends StatelessWidget {
@@ -27,7 +28,7 @@ class AuthHeader extends StatelessWidget {
                     AppDimensions.authHeaderTitleWidthOffset) *
                 scale,
             child: Text(
-              'Clean Earth',
+              AppStrings.authHeaderTitle,
               maxLines: 1,
               overflow: TextOverflow.visible,
               style: AppTextStyles.heading1.copyWith(
@@ -59,7 +60,7 @@ class AuthHeader extends StatelessWidget {
             left: AppDimensions.authHeaderByLeft * scale,
             top: AppDimensions.authHeaderByTop * scale,
             child: Text(
-              'by',
+              AppStrings.authHeaderBy,
               style: AppTextStyles.heading1.copyWith(
                 fontSize: AppDimensions.authHeaderByFontSizeBase * scale,
                 fontWeight: FontWeight.w500,

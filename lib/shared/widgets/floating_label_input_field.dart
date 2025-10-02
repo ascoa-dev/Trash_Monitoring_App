@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
@@ -15,6 +16,13 @@ class FloatingLabelInputField extends StatefulWidget {
   final bool isError;
   final ValueChanged<String>? onChanged;
   final ValueChanged<bool>? onFocusChange;
+  final TextInputType keyboardType;
+  final TextCapitalization textCapitalization;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onEditingComplete;
+  final double topSpacing;
 
   const FloatingLabelInputField({
     super.key,
@@ -26,6 +34,13 @@ class FloatingLabelInputField extends StatefulWidget {
     this.isError = false,
     this.onChanged,
     this.onFocusChange,
+    this.keyboardType = TextInputType.text,
+    this.textCapitalization = TextCapitalization.none,
+    this.inputFormatters,
+    this.textInputAction,
+    this.onSubmitted,
+    this.onEditingComplete,
+    this.topSpacing = AppDimensions.fieldVerticalSpacing,
   });
 
   @override
@@ -90,8 +105,8 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(
-        top: AppDimensions.fieldVerticalSpacing,
+      padding: EdgeInsets.only(
+        top: widget.topSpacing,
       ), // spacing between stacked fields
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,16 +145,22 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                     focusNode: _focusNode,
                     obscureText: widget.obscure,
                     onChanged: widget.onChanged,
+                    keyboardType: widget.keyboardType,
+                    textCapitalization: widget.textCapitalization,
+                    inputFormatters: widget.inputFormatters,
+                    textInputAction: widget.textInputAction,
+                    onSubmitted: widget.onSubmitted,
+                    onEditingComplete: widget.onEditingComplete,
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.textPrimary,
-                      fontSize: 16,
-                      height: 22 / 16,
+                      fontSize: AppDimensions.inputFontSize,
+                      height: 22 / AppDimensions.inputFontSize,
                       letterSpacing: 0.1,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
                       hintStyle: AppTextStyles.inputHint.copyWith(
-                        fontSize: 16,
+                        fontSize: AppDimensions.inputFontSize,
                         letterSpacing: 0.1,
                       ),
                       border: InputBorder.none,
@@ -163,8 +184,8 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                   child: Text(
                     widget.label,
                     style: AppTextStyles.body.copyWith(
-                      fontSize: 13,
-                      height: 16 / 13,
+                      fontSize: AppDimensions.floatingLabelFontSize,
+                      height: 16 / AppDimensions.floatingLabelFontSize,
                       color: AppColors.textAccent,
                       letterSpacing: 0.1,
                       fontWeight: FontWeight.w400,
@@ -183,8 +204,8 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
               child: Text(
                 widget.supportText!,
                 style: AppTextStyles.bodySecondary.copyWith(
-                  fontSize: 13,
-                  height: 16 / 13,
+                  fontSize: AppDimensions.supportTextFontSize,
+                  height: 16 / AppDimensions.supportTextFontSize,
                   color:
                       widget.isError ? AppColors.error : AppColors.textAccent,
                   letterSpacing: 0.1,

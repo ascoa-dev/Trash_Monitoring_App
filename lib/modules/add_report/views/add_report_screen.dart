@@ -1,0 +1,39 @@
+import 'package:flutter/material.dart';
+import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+
+class AddReportScreen extends StatelessWidget {
+  const AddReportScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(AppStrings.addTitle, style: AppTextStyles.heading2),
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: AppColors.textDark),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(AppDimensions.screenPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: const [
+            Text(
+              AppStrings.addReportPlaceholder,
+              style: AppTextStyles.body,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
