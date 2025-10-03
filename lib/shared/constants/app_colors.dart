@@ -58,7 +58,7 @@ class AppColors {
 
   // Divider Colors
   static const Color divider = Color(
-    0xFFE0E0E0,
+    0xFF357187,
   ); // Light gray divider (subtle line color)
 
   // Social Login Colors

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
@@ -34,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
                       viewportHeight *
                       AppDimensions.profileTopBackgroundHeightFactor,
                   child: Image.asset(
-                    'assets/ASCOA/Signup_Screen_Top.png',
+                    AppImages.signupTop,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
@@ -52,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                         Matrix4.identity()..scaleByDouble(1.0, 1.0, 1.0, 1.0),
                     alignment: Alignment.bottomCenter,
                     child: Image.asset(
-                      'assets/ASCOA/Profile_Screen_Bottom.png',
+                      AppImages.profileScreenBottom,
                       width: viewportWidth,
                       fit: BoxFit.cover,
                       alignment: Alignment.bottomCenter,
@@ -89,7 +90,7 @@ class ProfileScreen extends StatelessWidget {
                               height: AppDimensions.profileAvatarSize,
                               child: ClipOval(
                                 child: Image.asset(
-                                  'assets/ASCOA/profileplaceholder.png',
+                                  AppImages.profilePlaceholder,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -127,10 +128,11 @@ class ProfileScreen extends StatelessWidget {
                             const SizedBox(
                               height: AppDimensions.profileSectionSpacing,
                             ),
-                            const ProfileActionTile(
+                            ProfileActionTile(
                               icon: Icons.edit_outlined,
                               title: AppStrings.profileEditTitle,
                               subtitle: AppStrings.profileEditSubtitle,
+                              onTap: () => Get.toNamed(AppRoutes.editProfile),
                             ),
                             const SizedBox(
                               height: AppDimensions.profileCardSpacing,
@@ -146,7 +148,9 @@ class ProfileScreen extends StatelessWidget {
                                   AppDimensions.profileSectionSupportSpacing,
                             ),
                             const SizedBox(
-                              width: AppDimensions.profileCardWidth - 9.0,
+                              width:
+                                  AppDimensions.profileCardWidth -
+                                  AppDimensions.profileCardTextWidthOffset,
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -160,7 +164,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             ProfileActionTile(
                               leading: Image.asset(
-                                'assets/ASCOA/Profile_Page_Icons/policy.png',
+                                AppImages.policy,
                                 width: AppDimensions.profileCardIconSize,
                                 height: AppDimensions.profileCardIconSize,
                                 fit: BoxFit.contain,
@@ -173,7 +177,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             ProfileActionTile(
                               leading: Image.asset(
-                                'assets/ASCOA/Profile_Page_Icons/faq.png',
+                                AppImages.faq,
                                 width: AppDimensions.profileCardIconSize,
                                 height: AppDimensions.profileCardIconSize,
                                 fit: BoxFit.contain,
@@ -186,7 +190,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             ProfileActionTile(
                               leading: Image.asset(
-                                'assets/ASCOA/Profile_Page_Icons/contact.png',
+                                AppImages.contact,
                                 width: AppDimensions.profileCardIconSize,
                                 height: AppDimensions.profileCardIconSize,
                                 fit: BoxFit.contain,
@@ -250,7 +254,7 @@ class _ProfileSignOutButton extends StatelessWidget {
                   height: AppDimensions.profileCardIconSize,
                   child: Center(
                     child: Image.asset(
-                      'assets/ASCOA/Profile_Page_Icons/signout.png',
+                      AppImages.signout,
                       width: AppDimensions.profileCardIconSize,
                       height: AppDimensions.profileCardIconSize,
                       fit: BoxFit.contain,

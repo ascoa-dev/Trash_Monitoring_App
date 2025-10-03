@@ -15,6 +15,7 @@ import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/widgets/social_button.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/widgets/auth_header.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
@@ -51,7 +52,7 @@ class SignupScreen extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Image.asset(
-                    'assets/ASCOA/Signup_Screen_Top.png',
+                    AppImages.signupTop,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
@@ -271,7 +272,7 @@ class SignupScreen extends StatelessWidget {
                           height: viewportHeight * AppDimensions.sectionSpacing,
                         ),
                         PrimaryButton(
-                          label: AppStrings.signupTitle,
+                          label: AppStrings.signupButton,
                           onPressed: () {
                             validationController.validateEmail(
                               formControllers.emailController.text,
@@ -336,7 +337,7 @@ class SignupScreen extends StatelessWidget {
                             Expanded(
                               child: SocialButton(
                                 icon: Image.asset(
-                                  'assets/Google/android_neutral_rd_na@2x.png',
+                                  AppImages.googleNeutral2x,
                                   width: AppDimensions.socialIconSize,
                                   height: AppDimensions.socialIconSize,
                                 ),
@@ -350,7 +351,7 @@ class SignupScreen extends StatelessWidget {
                             Expanded(
                               child: SocialButton(
                                 icon: Image.asset(
-                                  'assets/Facebook/Facebook_Logo_Primary.png',
+                                  AppImages.facebookPrimary,
                                   width: AppDimensions.socialIconSize,
                                   height: AppDimensions.socialIconSize,
                                 ),

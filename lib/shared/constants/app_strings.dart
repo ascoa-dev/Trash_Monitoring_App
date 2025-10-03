@@ -1,9 +1,9 @@
 class AppStrings {
   // Login Screen
   static const String loginTitle = "Login into Account";
-  static const String emailLabel = "Email";
+  static const String emailLabel = "Email *";
   static const String emailHint = "example@gmail.com";
-  static const String passwordLabel = "Password";
+  static const String passwordLabel = "Password *";
   static const String passwordHint = "Enter Password";
   static const String loginButton = "LOG IN";
   static const String loggingIn = "LOGGING IN...";
@@ -35,6 +35,7 @@ class AppStrings {
 
   // Signup Screen
   static const String signupTitle = "Create Account";
+  static const String signupButton = "CREATE ACCOUNT";
 
   // Complete Profile Screen
   static const String completeProfileTitle = "Create Profile";
@@ -77,6 +78,27 @@ class AppStrings {
       "Profile photo upload is coming soon.";
   static const String editPhotoComingSoonFrench =
       "Le téléversement de la photo de profil arrive bientôt.";
+
+  // Edit Profile Screen
+  static const String editProfileTitle = "Edit Profile";
+  static const String editProfileTitleFrench = "Modifier le profil";
+  static const String editProfileSubtitle =
+      "Edit the fields below and save your changes";
+  static const String editProfileSubtitleFrench =
+      "Modifiez les champs ci-dessous et enregistrez vos changements";
+  static const String editProfileSaveButton = "SAVE CHANGES";
+  static const String editProfileSaveButtonFrench = "ENREGISTRER";
+  static const String editProfileSaving = "SAVING...";
+  static const String editProfileSavingFrench = "Enregistrement...";
+  static const String editProfileCancel = "Cancel";
+  static const String editProfileCancelFrench = "Annuler";
+  static const String editProfileSuccess = "Profile updated successfully!";
+  static const String editProfileSuccessFrench =
+      "Profil mis à jour avec succès !";
+  static const String editProfileError =
+      "Failed to update profile. Please try again.";
+  static const String editProfileErrorFrench =
+      "Échec de la mise à jour du profil. Veuillez réessayer.";
 
   // Forgot Password Screen
   static const String forgotPasswordTitle = "Forgot Password";

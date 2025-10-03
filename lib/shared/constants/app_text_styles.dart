@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_typography.dart';
 
 class AppTextStyles {
   // Font Families
@@ -20,7 +21,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     fontSize: 32,
     color: AppColors.textDark, // Primary heading color (dark slate)
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   static const TextStyle profileHeading = TextStyle(
@@ -28,7 +29,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     fontSize: 28,
     color: AppColors.textDark,
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   static const TextStyle profileName = TextStyle(
@@ -36,7 +37,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     fontSize: 22,
     color: AppColors.textDark,
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   static const TextStyle profileCaption = TextStyle(
@@ -44,15 +45,15 @@ class AppTextStyles {
     fontWeight: FontWeight.w800,
     fontSize: 13,
     color: AppColors.textDark,
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   static const TextStyle profileActionTitle = TextStyle(
     fontFamily: rubik,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w400,
     fontSize: 16,
     color: AppColors.textDark,
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   static const TextStyle profileActionSubtitle = TextStyle(
@@ -60,7 +61,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     fontSize: 14,
     color: AppColors.textDark65,
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   static const TextStyle profileSignOutText = TextStyle(
@@ -68,7 +69,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     fontSize: 16,
     color: AppColors.textWhite,
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   // Label Styles
@@ -91,7 +92,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     fontSize: 14,
     color: AppColors.textDark, // Secondary body text color
-    letterSpacing: 0.1,
+    letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   // Button Styles
@@ -103,7 +104,7 @@ class AppTextStyles {
     decoration: TextDecoration.underline,
     decorationThickness: 1.0,
     decorationColor: AppColors.textDark,
-    letterSpacing: 0.4,
+    letterSpacing: AppTypography.letterSpacingButton,
   );
 
   // Divider Text
@@ -111,7 +112,7 @@ class AppTextStyles {
     fontFamily: rubik,
     fontWeight: FontWeight.w500,
     fontSize: 16,
-    color: AppColors.textAccent, // Divider text color (e.g., "OR")
+    color: AppColors.textDark, // Divider text color (e.g., "OR")
   );
 
   // Terms Text Styles
@@ -120,7 +121,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     fontSize: 14,
     color: AppColors.textDark, // Terms and legal text color
-    height: 1.6, // 160% line height
+    height: AppTypography.lineHeightLong, // 160% line height
   );
 
   static const TextStyle termsLink = TextStyle(
@@ -143,7 +144,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w900,
     fontSize: 16,
     color: AppColors.pureWhite,
-    letterSpacing: 0.2,
+    letterSpacing: AppTypography.letterSpacingButtonPrimary,
   );
 
   // Social Button Text

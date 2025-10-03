@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '677557829420',
     projectId: 'trash-monitoring-app-88131',
     storageBucket: 'trash-monitoring-app-88131.firebasestorage.app',
+    androidClientId: '677557829420-qockvs645gge6adhhsdoeea0irv2a2th.apps.googleusercontent.com',
     iosClientId: '677557829420-e6svsfhpt6g91ai2c3opeone1hg36hug.apps.googleusercontent.com',
     iosBundleId: 'com.example.ascoaApp',
   );
@@ -74,6 +75,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '677557829420',
     projectId: 'trash-monitoring-app-88131',
     storageBucket: 'trash-monitoring-app-88131.firebasestorage.app',
+    androidClientId: '677557829420-qockvs645gge6adhhsdoeea0irv2a2th.apps.googleusercontent.com',
     iosClientId: '677557829420-e6svsfhpt6g91ai2c3opeone1hg36hug.apps.googleusercontent.com',
     iosBundleId: 'com.example.ascoaApp',
   );

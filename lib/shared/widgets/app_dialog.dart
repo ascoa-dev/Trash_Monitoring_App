@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 class AppDialog extends StatelessWidget {
   final String title;
@@ -133,7 +135,7 @@ class AppDialog extends StatelessWidget {
                         alignment: Alignment.center,
                         transform: Matrix4.rotationZ(3.1415926535897932),
                         child: Image.asset(
-                          'assets/ASCOA/Forgot_Password_Screen_Top.png',
+                          AppImages.forgotPasswordTop,
                           width: size.width,
                           height: AppDimensions.dialogDecorativeBgHeight,
                           fit: BoxFit.cover,
@@ -165,8 +167,7 @@ class AppDialog extends StatelessWidget {
                                   AppDimensions.dialogTitleLineHeight /
                                   AppDimensions.dialogTitleFontSize,
                               color: AppColors.textDark,
-                              letterSpacing:
-                                  AppDimensions.dialogTitleLetterSpacing,
+                              letterSpacing: AppTypography.letterSpacingSmall,
                             ),
                           ),
                           if (effectiveHero != null) ...[
@@ -187,8 +188,7 @@ class AppDialog extends StatelessWidget {
                                     AppDimensions.dialogBodyLineHeight /
                                     AppDimensions.dialogBodyFontSize,
                                 color: AppColors.textDark,
-                                letterSpacing:
-                                    AppDimensions.dialogBodyLetterSpacing,
+                                letterSpacing: AppTypography.letterSpacingSmall,
                               ),
                             ),
                           ],
@@ -211,7 +211,7 @@ class AppDialog extends StatelessWidget {
                                   height: 20 / 14,
                                   color: AppColors.pureWhite,
                                   letterSpacing:
-                                      AppDimensions.dialogButtonLetterSpacing,
+                                      AppTypography.letterSpacingSmall,
                                 ),
                               ),
                             ),

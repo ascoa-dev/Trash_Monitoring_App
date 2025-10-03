@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 class CustomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -15,23 +16,23 @@ class CustomNavBar extends StatelessWidget {
 
   static const List<_NavItemData> _items = [
     _NavItemData(
-      assetPath: 'assets/ASCOA/Nav_bar_icons/home.png',
+      assetPath: AppImages.navHome,
       semanticLabel: AppStrings.homeTitle,
     ),
     _NavItemData(
-      assetPath: 'assets/ASCOA/Nav_bar_icons/stats.png',
+      assetPath: AppImages.navStats,
       semanticLabel: AppStrings.statsTitle,
     ),
     _NavItemData(
-      assetPath: 'assets/ASCOA/Nav_bar_icons/add.png',
+      assetPath: AppImages.navAdd,
       semanticLabel: AppStrings.addTitle,
     ),
     _NavItemData(
-      assetPath: 'assets/ASCOA/Nav_bar_icons/news.png',
+      assetPath: AppImages.navNews,
       semanticLabel: AppStrings.newsTitle,
     ),
     _NavItemData(
-      assetPath: 'assets/ASCOA/Nav_bar_icons/profile.png',
+      assetPath: AppImages.navProfile,
       semanticLabel: AppStrings.profileTitle,
     ),
   ];

@@ -18,7 +18,7 @@ class AppDimensions {
   static const double socialIconSize = 24.0;
 
   // Divider
-  static const double dividerThickness = 1.0;
+  static const double dividerThickness = 1.5;
   // Short divider side width factor (relative to screen width, ~76px @ 440)
   static const double authDividerSideWidthFactor = 0.173;
 
@@ -107,6 +107,8 @@ class AppDimensions {
   static const double profileCardSpacing = 8.0;
   static const double profileCardMinHeight = 72.0;
   static const double profileCardWidth = 360.0;
+  // Small width offset used when aligning text within profile card containers
+  static const double profileCardTextWidthOffset = 9.0;
   static const double profileCardPaddingHorizontal = 16.0;
   static const double profileCardPaddingVertical = 0.0;
   static const double profileCardIconSize = 24.0;
@@ -145,6 +147,11 @@ class AppDimensions {
   static const double authScreenLargeSpacer = 0.08; // larger vertical gaps
   static const double authScreenXLargeSpacer =
       0.10; // extra-large vertical gaps (used sparingly)
+  // Additional auth spacing multipliers used by some auth screens
+  static const double authSmallSpacerFactor = 0.02;
+  static const double authXSmallSpacerFactor = 0.01;
+  // Common bottom sheet height factor (relative to screen height)
+  static const double bottomSheetHeightFactor = 0.75;
   // Dialog / overlay dimensions
   static const double dialogWidth = 320.0;
   static const double dialogHeight = 300.0;
@@ -199,6 +206,11 @@ class AppDimensions {
   static const double inputBorderWidthError = 2.8;
   // Common icon sizes
   static const double iconBackSize = 40.0;
+
+  static const double editProfileSpacing = 4.0;
+  static const double editProfileInputSpacing = 20.0;
+  static const double editProfileInputSpacingTwo = 36.0;
+  static const double editProfileHeightFactor = 0.12;
 
   // Prevent instantiation
   AppDimensions._();

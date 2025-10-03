@@ -12,6 +12,7 @@ import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -185,7 +186,7 @@ class LoginScreen extends StatelessWidget {
                 // Google Button
                 SocialButton(
                   icon: Image.asset(
-                    'assets/Google/android_neutral_rd_na@2x.png',
+                    AppImages.googleNeutral2x,
                     width: AppDimensions.socialIconSize,
                     height: AppDimensions.socialIconSize,
                     fit: BoxFit.contain,
@@ -200,7 +201,7 @@ class LoginScreen extends StatelessWidget {
                 // Facebook Button
                 SocialButton(
                   icon: Image.asset(
-                    'assets/Facebook/Facebook_Logo_Primary.png',
+                    AppImages.facebookPrimary,
                     width: AppDimensions.socialIconSize,
                     height: AppDimensions.socialIconSize,
                     fit: BoxFit.contain,

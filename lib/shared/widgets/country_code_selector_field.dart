@@ -2,6 +2,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
@@ -38,11 +39,13 @@ class CountryCodeSelectorField extends StatelessWidget {
       favorite: const ['CM'],
       onSelect: onChanged,
       countryListTheme: CountryListThemeData(
-        bottomSheetHeight: MediaQuery.of(context).size.height * 0.75,
+        bottomSheetHeight:
+            MediaQuery.of(context).size.height *
+            AppDimensions.bottomSheetHeightFactor,
         textStyle: AppTextStyles.body.copyWith(
           color: AppColors.textDark,
           fontSize: AppDimensions.inputFontSize,
-          letterSpacing: 0.1,
+          letterSpacing: AppTypography.letterSpacingSmall,
         ),
         inputDecoration: InputDecoration(
           labelText:
@@ -103,7 +106,7 @@ class CountryCodeSelectorField extends StatelessWidget {
                         style: AppTextStyles.body.copyWith(
                           fontSize: AppDimensions.inputFontSize,
                           height: 22 / AppDimensions.inputFontSize,
-                          letterSpacing: 0.1,
+                          letterSpacing: AppTypography.letterSpacingSmall,
                         ),
                       ),
                       const Spacer(),
@@ -132,7 +135,7 @@ class CountryCodeSelectorField extends StatelessWidget {
                       fontSize: AppDimensions.floatingLabelFontSize,
                       height: 16 / AppDimensions.floatingLabelFontSize,
                       color: AppColors.textAccent,
-                      letterSpacing: 0.1,
+                      letterSpacing: AppTypography.letterSpacingSmall,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -152,7 +155,7 @@ class CountryCodeSelectorField extends StatelessWidget {
                   fontSize: AppDimensions.supportTextFontSize,
                   height: 16 / AppDimensions.supportTextFontSize,
                   color: isError ? AppColors.error : AppColors.textAccent,
-                  letterSpacing: 0.1,
+                  letterSpacing: AppTypography.letterSpacingSmall,
                 ),
               ),
             ),

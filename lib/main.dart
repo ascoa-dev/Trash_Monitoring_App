@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'app/routes/app_routes.dart';
 import 'modules/auth/views/login_screen_v2.dart';
 import 'modules/auth/views/signup_screen.dart';
@@ -13,11 +14,15 @@ import 'modules/main/views/main_screen.dart';
 import 'modules/auth/views/forgot_password_screen.dart';
 import 'modules/auth/views/complete_profile_screen.dart';
 import 'modules/auth/views/email_verification_screen.dart';
+import 'modules/profile/views/edit_profile_screen.dart';
+import 'modules/profile/bindings/edit_profile_binding.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Register AuthController globally and permanently
+  await GoogleSignIn.instance.initialize();
   Get.put(AuthController(), permanent: true);
   runApp(const MyApp());
 }
@@ -80,9 +85,7 @@ class MyApp extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return MaterialApp(
-            home: Scaffold(
-              body: Center(child: Image.asset('assets/ASCOA/ASCOA_LOGO.png')),
-            ),
+            home: Scaffold(body: Center(child: Image.asset(AppImages.logo))),
           );
         }
         return GetMaterialApp(
@@ -110,6 +113,11 @@ class MyApp extends StatelessWidget {
               name: AppRoutes.completeProfile,
               page: () => CompleteProfileScreen(),
               bindings: [FormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.editProfile,
+              page: () => const EditProfileScreen(),
+              bindings: [FormBinding(), EditProfileBinding()],
             ),
             GetPage(
               name: AppRoutes.emailVerification,

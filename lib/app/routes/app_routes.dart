@@ -4,6 +4,7 @@ abstract class AppRoutes {
   static const home = '/home';
   static const forgotPassword = '/forgot-password';
   static const completeProfile = '/complete-profile';
+  static const editProfile = '/edit-profile';
   static const emailVerification = '/email-verification';
   // Add more routes as needed
 }

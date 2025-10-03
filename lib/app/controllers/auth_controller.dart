@@ -11,6 +11,7 @@ class AuthController extends GetxController {
   late final FirebaseAuth _auth;
   Rxn<User> firebaseUser = Rxn<User>();
   RxBool isCompletingProfile = false.obs;
+  RxBool isUpdatingProfile = false.obs;
 
   @override
   void onInit() {
@@ -59,7 +60,10 @@ class AuthController extends GetxController {
           return;
         }
         if (userData['isProfileComplete'] == true) {
-          Get.snackbar('Login Successful', 'Welcome back!');
+          Get.snackbar(
+            'Login Successful',
+            'Welcome back ${userData['firstName']} ${userData['lastName']}!',
+          );
           Get.offAllNamed(AppRoutes.home);
         } else {
           Get.snackbar(
@@ -121,19 +125,22 @@ class AuthController extends GetxController {
 
   Future<void> loginWithGoogle() async {
     try {
-      final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        Get.snackbar('Login Failed', 'Google sign-in was cancelled.');
-        return;
-      }
+      // Use the package singleton and its authenticate flow. `authenticate`
+      // returns a GoogleSignInAccount (or throws) and the account's
+      // `authentication` getter is synchronous (returns a
+      // GoogleSignInAuthentication), so do NOT `await` it.
+      final googleUser = await GoogleSignIn.instance.authenticate();
 
-      final googleAuth = await googleUser.authentication;
-      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        throw Exception('Failed to get authentication tokens.');
+      // `authenticate` returns a signed-in account or throws. The
+      // GoogleSignInAuthentication exposed here contains an idToken (the
+      // package version used does not expose an accessToken), so use idToken
+      // when creating the Firebase credential.
+      final googleAuth = googleUser.authentication; // synchronous getter
+      if (googleAuth.idToken == null) {
+        throw Exception('Failed to get ID token from Google sign-in.');
       }
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -175,18 +182,20 @@ class AuthController extends GetxController {
         );
         return;
       }
+      // Official example: create credential directly from tokenString
+      if (result.status == LoginStatus.success) {
+        final OAuthCredential credential = FacebookAuthProvider.credential(
+          result.accessToken!.tokenString,
+        );
 
-      final OAuthCredential facebookAuthCredential =
-          FacebookAuthProvider.credential(result.accessToken!.token);
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        debugPrint('Facebook sign-in successful1221');
 
-      await _auth.signInWithCredential(facebookAuthCredential);
-      final user = _auth.currentUser;
-      if (user == null) {
-        throw Exception('No user found after Facebook sign-in.');
+        final user = _auth.currentUser;
+        if (user != null) {
+          await _handleUserPostLogin(user, 'facebook');
+        }
       }
-
-      // FIXED: Now calls _handleUserPostLogin for consistency
-      await _handleUserPostLogin(user, 'facebook');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
         Get.snackbar(
@@ -212,7 +221,7 @@ class AuthController extends GetxController {
   Future<void> _signOutAll() async {
     try {
       await _auth.signOut();
-      await GoogleSignIn().signOut();
+      await GoogleSignIn.instance.signOut();
       await FacebookAuth.instance.logOut();
     } catch (e) {
       debugPrint(
@@ -329,6 +338,89 @@ class AuthController extends GetxController {
       return false;
     } finally {
       isCompletingProfile.value = false;
+    }
+  }
+
+  Future<Map<String, dynamic>?> fetchCurrentUserProfile() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      return null;
+    }
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      return doc.data();
+    } catch (e) {
+      debugPrint('fetchCurrentUserProfile error: $e');
+      return null;
+    }
+  }
+
+  Future<bool> updateProfile({
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    required String countryCode,
+    required String city,
+  }) async {
+    final user = _auth.currentUser;
+    final isFrench = Get.locale?.languageCode == 'fr';
+    if (user == null) {
+      Get.snackbar(
+        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
+        isFrench
+            ? 'Vous devez être connecté pour continuer.'
+            : 'You must be signed in to continue.',
+      );
+      Get.offAllNamed(AppRoutes.login);
+      return false;
+    }
+
+    isUpdatingProfile.value = true;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phoneNumber,
+        'countryCode': countryCode,
+        'city': city,
+        'isProfileComplete': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      Get.snackbar(
+        isFrench
+            ? AppStrings.editProfileTitleFrench
+            : AppStrings.editProfileTitle,
+        isFrench
+            ? AppStrings.editProfileSuccessFrench
+            : AppStrings.editProfileSuccess,
+      );
+      return true;
+    } on FirebaseException catch (e) {
+      debugPrint('updateProfile FirebaseException: ${e.message}');
+      Get.snackbar(
+        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
+        isFrench
+            ? AppStrings.editProfileErrorFrench
+            : AppStrings.editProfileError,
+      );
+      return false;
+    } catch (e) {
+      debugPrint('updateProfile error: $e');
+      Get.snackbar(
+        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
+        isFrench
+            ? AppStrings.editProfileErrorFrench
+            : AppStrings.editProfileError,
+      );
+      return false;
+    } finally {
+      isUpdatingProfile.value = false;
     }
   }
 

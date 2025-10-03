@@ -14,6 +14,7 @@ import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 /// New experimental Login Screen matching Figma absolute layout
 /// while remaining responsive and using shared components.
@@ -51,7 +52,7 @@ class LoginScreenV2 extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Image.asset(
-                    'assets/ASCOA/Login_Top.png',
+                    AppImages.loginTop,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
@@ -62,7 +63,7 @@ class LoginScreenV2 extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Image.asset(
-                    'assets/ASCOA/Login_Bottom.png',
+                    AppImages.loginBottom,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.bottomCenter,
@@ -202,7 +203,7 @@ class LoginScreenV2 extends StatelessWidget {
                                 Expanded(
                                   child: SocialButton(
                                     icon: Image.asset(
-                                      'assets/Google/android_neutral_rd_na@2x.png',
+                                      AppImages.googleNeutral2x,
                                       width: AppDimensions.socialIconSize,
                                       height: AppDimensions.socialIconSize,
                                     ),
@@ -217,7 +218,7 @@ class LoginScreenV2 extends StatelessWidget {
                                 Expanded(
                                   child: SocialButton(
                                     icon: Image.asset(
-                                      'assets/Facebook/Facebook_Logo_Primary.png',
+                                      AppImages.facebookPrimary,
                                       width: AppDimensions.socialIconSize,
                                       height: AppDimensions.socialIconSize,
                                     ),

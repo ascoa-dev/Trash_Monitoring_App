@@ -106,6 +106,27 @@ class ValidationController extends GetxController {
     }
   }
 
+  void validatePhoneNumberFull(String value) {
+    final trimmed = value.trim();
+    final requiredResult = Validators.validateRequired(
+      trimmed,
+      AppStrings.phoneNumberLabel,
+    );
+    if (requiredResult != null) {
+      phoneNumberError.value = requiredResult;
+      return;
+    }
+
+    final normalized = trimmed.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+    final candidate = normalized.startsWith('+') ? normalized : '+$normalized';
+
+    if (!phoneRegex.hasMatch(candidate)) {
+      phoneNumberError.value = AppStrings.validationPhoneInvalid;
+    } else {
+      phoneNumberError.value = null;
+    }
+  }
+
   void updatePasswordRules(String password) {
     passwordText.value = password;
     hasMinLength.value = password.length >= 8;

@@ -21,6 +21,35 @@ class _MainScreenState extends State<MainScreen> {
   // issues where some widgets might not be available at reload time.
 
   @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    if (args is Map) {
+      final initialTab = args['initialTab'];
+      if (initialTab is int) {
+        final safeIndex =
+            initialTab < 0 ? 0 : (initialTab > 4 ? 4 : initialTab);
+        _selectedIndex = safeIndex;
+      } else if (initialTab is String) {
+        switch (initialTab.toLowerCase()) {
+          case 'profile':
+            _selectedIndex = 4;
+            break;
+          case 'news':
+            _selectedIndex = 3;
+            break;
+          case 'stats':
+            _selectedIndex = 1;
+            break;
+          case 'home':
+            _selectedIndex = 0;
+            break;
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final List<Widget> pages = const [
       HomeScreen(),

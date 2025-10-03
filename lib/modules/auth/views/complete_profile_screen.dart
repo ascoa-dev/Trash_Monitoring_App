@@ -3,6 +3,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/controllers/form_controllers.dart';
 import 'package:ascoa_app/shared/controllers/validation_controller.dart';
 import 'package:ascoa_app/shared/widgets/country_code_selector_field.dart';
@@ -12,6 +13,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   const CompleteProfileScreen({super.key});
@@ -112,7 +114,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               height: AppDimensions.avatarDiameter,
               child: ClipOval(
                 child: Image.asset(
-                  'assets/ASCOA/profileplaceholder.png',
+                  AppImages.profilePlaceholder,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -212,7 +214,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   left: 0,
                   right: 0,
                   child: Image.asset(
-                    'assets/ASCOA/Complete_Profile_Top.png',
+                    AppImages.completeProfileTop,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
@@ -223,7 +225,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   right: 0,
                   bottom: -viewPadding.bottom,
                   child: Image.asset(
-                    'assets/ASCOA/Forgot_Password_Screen_Bottom.png',
+                    AppImages.forgotPasswordBottom,
                     width: viewportWidth,
                     height:
                         viewportHeight *
@@ -244,14 +246,18 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(height: viewportHeight * 0.02),
+                            SizedBox(
+                              height:
+                                  viewportHeight *
+                                  AppDimensions.authSmallSpacerFactor,
+                            ),
                             Text(
                               title,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.heading2.copyWith(
                                 fontSize: AppDimensions.heading2FontSize,
                                 fontWeight: FontWeight.w500,
-                                letterSpacing: 0.1,
+                                letterSpacing: AppTypography.letterSpacingSmall,
                                 color: AppColors.pureWhite,
                               ),
                             ),
@@ -266,9 +272,17 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                                 color: AppColors.pureWhite,
                               ),
                             ),
-                            SizedBox(height: viewportHeight * 0.02),
+                            SizedBox(
+                              height:
+                                  viewportHeight *
+                                  AppDimensions.authSmallSpacerFactor,
+                            ),
                             _buildAvatarSection(isFrench),
-                            SizedBox(height: viewportHeight * 0.01),
+                            SizedBox(
+                              height:
+                                  viewportHeight *
+                                  AppDimensions.authXSmallSpacerFactor,
+                            ),
                             Obx(
                               () => FloatingLabelInputField(
                                 controller: formControllers.firstNameController,

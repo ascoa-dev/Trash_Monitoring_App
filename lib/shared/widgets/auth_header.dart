@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 class AuthHeader extends StatelessWidget {
   final double scale;
@@ -49,7 +51,8 @@ class AuthHeader extends StatelessWidget {
               width: AppDimensions.authHeaderLogoWidth * scale,
               height: AppDimensions.authHeaderLogoHeight * scale,
               child: Image.asset(
-                'assets/ASCOA/ASCOA_LOGO.png',
+                // use centralized asset constant
+                AppImages.logo,
                 fit: BoxFit.contain,
               ),
             ),
@@ -67,7 +70,7 @@ class AuthHeader extends StatelessWidget {
                 height:
                     AppDimensions.authHeaderByLineHeightBase /
                     (AppDimensions.authHeaderByFontSizeBase * scale),
-                letterSpacing: 0.1,
+                letterSpacing: AppTypography.letterSpacingSmall,
               ),
             ),
           ),

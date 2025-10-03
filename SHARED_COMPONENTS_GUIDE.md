@@ -2,6 +2,31 @@
 
 Quick reference for reusable components, constants, and utilities in the ASCOA app.
 
+Shared folder index
+
+This guide documents the contents of `lib/shared/`. At a glance the folder contains:
+
+- `constants/` — shared design tokens and strings. Key files: `app_colors.dart`, `app_dimensions.dart`, `app_images.dart`, `app_strings.dart`, `app_text_styles.dart`, `app_typography.dart`.
+- `controllers/` — small shared controllers used across screens (form controllers, validation, etc.).
+- `widgets/` — small reusable widgets used across features (see the Widgets section below for specifics).
+- `utils/` — helper utilities (parsers, formatters) used by shared widgets and controllers.
+
+What changed recently / guidance
+
+- AppImages: image asset paths were centralized into `lib/shared/constants/app_images.dart`. When adding or using an image, add a constant to `AppImages` and reference `AppImages.<name>` from widgets instead of writing raw `'assets/...'` strings.
+- AppTypography: small, reusable typography tokens (letter spacing & line-height) were added in `app_typography.dart`. Prefer `AppTypography.letterSpacingSmall` instead of literal `0.1` values.
+- AppDimensions: several auth spacing multipliers and small helpers were added (for example `authSmallSpacerFactor`, `authXSmallSpacerFactor`, `bottomSheetHeightFactor`, and `profileCardTextWidthOffset`) to replace magic viewport multipliers and numeric offsets.
+- AppTextStyles now references `AppTypography` tokens and many widgets were updated to use these shared tokens.
+
+Constants responsibilities (quick map)
+
+- `app_colors.dart` — canonical color palette and legacy aliases. Use `AppColors` for any color used in UI.
+- `app_dimensions.dart` — spacing, sizes, responsive multipliers, and component-specific constants (avatar sizes, nav bar, dialog sizes).
+- `app_images.dart` — centralized image asset paths (add new constants here when adding assets to `pubspec.yaml`).
+- `app_strings.dart` — app strings and localized labels used across screens.
+- `app_text_styles.dart` — cohesive TextStyle definitions used across screens; prefer using and copying these rather than inlining TextStyle literal objects.
+- `app_typography.dart` — small letter-spacing / line-height tokens used by `AppTextStyles` and widgets.
+
 ## Constants (shared/constants/)
 
 ### Colors (`app_colors.dart`)
@@ -40,6 +65,18 @@ Text('Welcome', style: AppTextStyles.heading1)
 - `AppTextStyles.dividerText` - Small text used in dividers ("OR")
 - `AppTextStyles.termsBase` / `termsLink` - Styles for terms text and links
 - `AppTextStyles.errorText` - Small red error text used for inline validation messages
+
+#### Typography tokens (`app_typography.dart`)
+
+Small, reusable typography tokens keep letter-spacing and line-height consistent across components. Examples:
+
+```dart
+import 'package:ascoa_app/shared/constants/app_typography.dart';
+
+Text('Label', style: AppTextStyles.body.copyWith(letterSpacing: AppTypography.letterSpacingSmall))
+```
+
+Prefer `AppTypography.letterSpacingSmall` over literal `0.1` values.
 
 ### Spacing (`app_dimensions.dart`)
 
@@ -148,6 +185,55 @@ CustomInputField(
 
 **Use for:** Email, password, and text inputs
 
+Widgets index (lib/shared/widgets)
+
+- `app_dialog.dart` — Reusable dialog used across auth flows and confirmations. Uses `AppDimensions.dialog*` sizes and `AppColors.dialogBackground`.
+- `auth_header.dart` — Top-of-screen auth header with logo, title and subtitle; scales based on `AppDimensions` base values.
+- `country_code_selector_field.dart` — Country picker input used alongside phone inputs; uses `AppDimensions.bottomSheetHeightFactor` for the picker.
+- `custom_input_field.dart` — Lower-level input widget used by `FloatingLabelInputField` and other places.
+- `floating_label_input_field.dart` — Main input used in forms with floating label, hint and support text.
+- `nav_bar.dart` — Bottom navigation bar; uses `AppImages` for icons and `AppDimensions` for sizing.
+- `password_strength_checklist.dart` — Small helper widget that renders password requirement checklist and colors using `AppColors`.
+- `primary_button.dart` — Standard full-width button used across screens; uses `AppDimensions.buttonHeight` and `AppColors.buttonGreen`.
+- `social_button.dart` — Social login button with icon slot (now using `AppImages` for logos where applicable).
+
+## Controllers (lib/shared/controllers)
+
+These controllers are small, reusable Getx controllers registered via bindings and used across screens. Key controllers:
+
+- `FormControllers` (`form_controllers.dart`)
+
+  - Holds `TextEditingController` instances used across auth/profile forms:
+    - `emailController`, `passwordController`, `firstNameController`, `lastNameController`, `phoneNumberController`, `cityController`.
+  - Helpful methods:
+    - `resetAuthFields()` — clears email/password controllers.
+    - `resetProfileFields()` — clears first/last/phone/city controllers (used after profile save).
+
+- `ValidationController` (`validation_controller.dart`)
+  - Reactive validation state (Rx<String?>) for `emailError`, `passwordError`, `firstNameError`, `lastNameError`, `phoneNumberError`, `cityError` and `termsError`.
+  - Password rule observables: `hasMinLength`, `hasUppercase`, `hasLowercase`, `hasNumber`, `hasSpecial`, `showPasswordChecklist`.
+  - Key methods:
+    - `validateEmail(String)` — sets `emailError` using shared `Validators`.
+    - `validateFirstName(String)`, `validateLastName(String)`, `validateCity(String)` — basic required + regex checks.
+    - `validatePhoneNumber(String dialCode, String number)` — validates combined dial code + number; used by phone inputs.
+    - `validatePhoneNumberFull(String)` — validates a full E.164-style value.
+    - `updatePasswordRules(String)` and `handlePasswordFocus(bool)` — control password checklist state.
+    - `clearValidation()`, `clearPasswordValidation()`, `clearProfileValidation()` — convenience clearers for UI flows.
+
+These controllers are commonly obtained via `Get.find<FormControllers>()` or `Get.find<ValidationController>()` inside widgets.
+
+## Utils (lib/shared/utils)
+
+Small helper utilities used by controllers and widgets.
+
+- `validators.dart` — central validators for email, required fields, and strong password rules. `ValidationController` delegates to these functions.
+- `auth_form_utils.dart` — small helpers used by auth forms (formatting and parsing helper functions). Check these before duplicating parsing logic in screens.
+
+Usage tips
+
+- Use `FormControllers` instead of creating local `TextEditingController` instances when working with flows that cross widgets or persist across routes.
+- Prefer `ValidationController` for form validation to keep UI reactive and DRY; it centralizes messages and regex patterns.
+
 ### PrimaryButton
 
 ```dart
@@ -206,7 +292,7 @@ Example:
 
 ```dart
 ProfileActionTile(
-  leading: Image.asset('assets/ASCOA/Profile_Page_Icons/contact.png',
+  leading: Image.asset(AppImages.contact,
     width: AppDimensions.profileCardIconSize,
     height: AppDimensions.profileCardIconSize,
     fit: BoxFit.contain,
@@ -222,6 +308,16 @@ Assets available under `assets/ASCOA/Profile_Page_Icons/` (declared in `pubspec.
 - `faq.png`
 - `policy.png`
 - `signout.png`
+
+Image assets guidance
+
+Image asset paths are centralized in `lib/shared/constants/app_images.dart` as `AppImages` constants. When adding or using images in widgets prefer referencing `AppImages.<name>` so paths remain discoverable and consistent across the app. Example:
+
+```dart
+import 'package:ascoa_app/shared/constants/app_images.dart';
+
+Image.asset(AppImages.policy)
+```
 
 #### AuthHeader (`shared/widgets/auth_header.dart`)
 

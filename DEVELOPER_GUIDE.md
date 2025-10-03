@@ -101,8 +101,15 @@ Centralized tokens to replace hard-coded values:
 ### Tokenization sweep (strings/colors/validators)
 
 - A recent maintenance pass replaced several hard-coded UI strings and some literal color values with shared tokens to improve consistency and enable easier localization. Key highlights:
+
   - `lib/shared/constants/app_strings.dart`: new keys added for email verification, validation messages, auth header texts, dialog labels, and password-rule texts.
   - `lib/shared/constants/app_colors.dart`: new color tokens added where small isolated hard-coded color literals existed (e.g., dialog background token).
+
+  Notes on recent tokenization
+
+  - `lib/shared/constants/app_images.dart` - Central place for image asset paths. When adding new images, add a constant here and reference `AppImages.<name>` from widgets. Avoid inline `'assets/...'` strings in widgets.
+  - `lib/shared/constants/app_typography.dart` - Small typography tokens like `letterSpacingSmall` and `lineHeightLong`. Use these for consistent letter-spacing instead of literal values like `0.1`.
+  - `lib/shared/constants/app_dimensions.dart` - New auth spacer factors (for auth screens) and other small helpers such as `authSmallSpacerFactor` and `authXSmallSpacerFactor` to replace magic viewport multipliers.
   - `lib/shared/utils/validators.dart`: validator functions now use `AppStrings` keys for all returned messages.
   - UI files updated to consume tokens: `email_verification_screen.dart`, `forgot_password_screen.dart`, `complete_profile_screen.dart`, `signup_screen.dart`, `login_screen.dart`, `home_screen.dart`, `app_dialog.dart`, `auth_header.dart`, and several shared widgets.
 
@@ -117,6 +124,12 @@ Notes for reviewers: check `lib/shared/constants/app_strings.dart` and `lib/shar
 
 - Removed hardcoded strings in `forgot_password_screen.dart`.
 - Added constants in `app_strings.dart` for bilingual support in the Forgot Password feature.
+
+## Very recent maintenance
+
+- AppImages: A new `lib/shared/constants/app_images.dart` centralizes image asset paths used across auth/profile screens. When adding new assets, declare them here and reference the constant instead of hard-coded asset strings.
+- AppTypography: A new `lib/shared/constants/app_typography.dart` centralizes small typography tokens (e.g., `letterSpacingSmall`) to keep spacing consistent across `AppTextStyles` and widgets.
+- Edit Profile phone parsing: `EditProfileController` strips stored international dial codes from phone values when loading user profiles. Save now returns to the Profile tab on success; `MainScreen` reads `Get.arguments['initialTab']` to support the fallback navigation.
 
 ### Complete Profile Flow
 

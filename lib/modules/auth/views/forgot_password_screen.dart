@@ -22,6 +22,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -75,7 +76,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ? AppStrings.forgotDialogBodyFrench
                   : AppStrings.forgotDialogBody,
           decoratedHero: false,
-          imageAsset: 'assets/ASCOA/Forgot_Password_confirm_Icon.png',
+          imageAsset: AppImages.forgotConfirmIcon,
           imageWidth: AppDimensions.dialogImageWidth,
           imageHeight: AppDimensions.dialogImageHeight,
           primaryActionLabel:
@@ -188,7 +189,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   top: 0,
                   height: viewportHeight * AppDimensions.forgotBgTopHeight,
                   child: Image.asset(
-                    'assets/ASCOA/Forgot_Password_Screen_Top.png',
+                    AppImages.forgotPasswordTop,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
@@ -200,7 +201,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   bottom: 0,
                   height: viewportHeight * AppDimensions.forgotBgBottomHeight,
                   child: Image.asset(
-                    'assets/ASCOA/Forgot_Password_Screen_Bottom.png',
+                    AppImages.forgotPasswordBottom,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.bottomCenter,
@@ -242,14 +243,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               viewportHeight * AppDimensions.titleTopSpacing,
                         ),
                         Image.asset(
-                          'assets/ASCOA/ForgotPasswordIcon.png',
+                          AppImages.forgotPasswordIcon,
                           height:
                               viewportHeight *
                               AppDimensions.forgotPasswordIconSize,
                         ),
-                        SizedBox(
-                          height: viewportHeight * AppDimensions.inputSpacing,
-                        ),
+                        // SizedBox(
+                        //   height: viewportHeight * AppDimensions.inputSpacing,
+                        // ),
                         Text(
                           isFrench
                               ? AppStrings.forgotPasswordTitleFrench

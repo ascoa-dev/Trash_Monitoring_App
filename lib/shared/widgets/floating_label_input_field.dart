@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 
@@ -155,13 +156,13 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                       color: AppColors.textPrimary,
                       fontSize: AppDimensions.inputFontSize,
                       height: 22 / AppDimensions.inputFontSize,
-                      letterSpacing: 0.1,
+                      letterSpacing: AppTypography.letterSpacingSmall,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
                       hintStyle: AppTextStyles.inputHint.copyWith(
                         fontSize: AppDimensions.inputFontSize,
-                        letterSpacing: 0.1,
+                        letterSpacing: AppTypography.letterSpacingSmall,
                       ),
                       border: InputBorder.none,
                       isCollapsed: true,
@@ -187,7 +188,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                       fontSize: AppDimensions.floatingLabelFontSize,
                       height: 16 / AppDimensions.floatingLabelFontSize,
                       color: AppColors.textAccent,
-                      letterSpacing: 0.1,
+                      letterSpacing: AppTypography.letterSpacingSmall,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -208,7 +209,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                   height: 16 / AppDimensions.supportTextFontSize,
                   color:
                       widget.isError ? AppColors.error : AppColors.textAccent,
-                  letterSpacing: 0.1,
+                  letterSpacing: AppTypography.letterSpacingSmall,
                 ),
               ),
             ),
