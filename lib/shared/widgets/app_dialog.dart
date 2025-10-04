@@ -126,9 +126,9 @@ class AppDialog extends StatelessWidget {
                   // Internal decorative background (fixed values):
                   // Use Forgot Password top image flipped at the bottom to match design.
                   Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
+                    left: AppDimensions.zero,
+                    right: AppDimensions.zero,
+                    bottom: AppDimensions.zero,
                     child: Opacity(
                       opacity: AppDimensions.dialogDecorativeBgOpacity,
                       child: Transform(

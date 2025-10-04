@@ -77,9 +77,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                 clipBehavior: Clip.none,
                 children: [
                   Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0,
+                    left: AppDimensions.zero,
+                    right: AppDimensions.zero,
+                    top: AppDimensions.zero,
                     height:
                         viewportHeight *
                         AppDimensions.profileTopBackgroundHeightFactor,
@@ -91,9 +91,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                     ),
                   ),
                   Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
+                    left: AppDimensions.zero,
+                    right: AppDimensions.zero,
+                    bottom: AppDimensions.zero,
                     height:
                         viewportHeight * AppDimensions.editProfileHeightFactor,
                     child: Image.asset(
@@ -111,7 +111,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                       ),
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 440),
+                          constraints: const BoxConstraints(
+                            maxWidth: AppDimensions.profileContentMaxWidth,
+                          ),
                           child: Obx(() {
                             final availableHeight = viewportHeight;
                             final fallbackHeight =
@@ -330,7 +332,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                                   controller
                                                       .updateSelectedCountry,
                                               label: countryLabel,
-                                              topSpacing: 0,
+                                              topSpacing: AppDimensions.zero,
                                             ),
                                           ),
                                           const SizedBox(
@@ -363,7 +365,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                               keyboardType: TextInputType.phone,
                                               textInputAction:
                                                   TextInputAction.next,
-                                              topSpacing: 0,
+                                              topSpacing: AppDimensions.zero,
                                             ),
                                           ),
                                         ],

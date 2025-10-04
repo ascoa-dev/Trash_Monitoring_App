@@ -78,6 +78,38 @@ Text('Label', style: AppTextStyles.body.copyWith(letterSpacing: AppTypography.le
 
 Prefer `AppTypography.letterSpacingSmall` over literal `0.1` values.
 
+### Images (`app_images.dart`)
+
+```dart
+import 'package:ascoa_app/shared/constants/app_images.dart';
+
+Image.asset(AppImages.profilePlaceholder)
+```
+
+- `AppImages` centralizes every image declared in `pubspec.yaml` so widgets never hard-code `'assets/...'` strings. This catches typos at compile time and makes asset discovery easier during refactors.
+- Constants are grouped by comment blocks to mirror the folder structure (`ASCOA/`, `ASCOA/Profile_Page_Icons/`, `ASCOA/Nav_bar_icons/`, `Google/`, etc.). Keep related assets together when adding new constants.
+
+Common categories currently exposed:
+
+- **Brand & hero artwork:** `logo`, `loginTop`, `signupTop`, `forgotPasswordTop`, `loginBottom`, `completeProfileTop`, `profileScreenBottom`, etc. These map to large PNG hero illustrations reused in auth/profile flows.
+- **Profile & settings icons:** `policy`, `faq`, `contact`, `signout` under `Profile_Page_Icons/`. Used by `ProfileActionTile` and `ProfileSignOutButton`.
+- **Navigation icons:** `navHome`, `navStats`, `navAdd`, `navNews`, `navProfile` consumed by the shared bottom navigation bar.
+- **3rd-party logos:** `googleNeutral2x`, `facebookPrimary` for social buttons.
+- **Forgot password assets:** `forgotConfirmIcon`, `forgotPasswordBottom`, `forgotPasswordIcon` powering the forgot-password screen and confirmation dialog.
+
+Adding a new asset checklist:
+
+1. Drop the optimized PNG/SVG into the appropriate folder under `assets/` (create a subfolder if grouping is needed).
+2. Declare the asset path in `pubspec.yaml` alongside the existing entries so Flutter bundles it.
+3. Add a new `static const` to `AppImages` that points at the exact asset path. Follow the lowerCamelCase naming already in the file and add a short comment grouping if needed.
+4. Reference the new constant from widgets (`Image.asset(AppImages.myNewIcon)`, `const AssetImage(AppImages.myNewBackground)`) instead of hard-coded strings.
+
+Usage notes:
+
+- Prefer `const AssetImage(AppImages.logo)` when assigning to `DecorationImage`, `CircleAvatar`, or other widgets that accept an `ImageProvider`.
+- If you need responsive sizing, combine `AppImages` with `AppDimensions` tokens so layout adjustments stay centralized.
+- When removing an asset, delete it from `pubspec.yaml`, remove the constant from `AppImages`, and run `flutter pub get` to ensure the cache is updated before running tests.
+
 ### Spacing (`app_dimensions.dart`)
 
 ```dart
@@ -151,6 +183,12 @@ Padding(padding: EdgeInsets.all(AppDimensions.screenPadding))
 - `AppDimensions.dialogBodyFontSize`/`dialogBodyLineHeight` - 16 / 22
 - `AppDimensions.dialogHeroSize` - 80.0
 
+Recent additions for profile/change-password flows:
+
+- `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, and `changePasswordHalfInputSpacing` — control hero spacing, illustration height, and field rhythm on the change password screen.
+- `AppDimensions.profileSignOutHeight`, `profileSignOutHorizontalPadding`, and `profileSignOutIconGap` — size the dedicated sign-out CTA so it lines up with `ProfileActionTile` cards.
+- `AppDimensions.editProfileHeightFactor` and `changePasswordInputSpacing` — shared background/field spacing reused between edit profile and change password layouts.
+
 #### Dividers
 
 - `AppDimensions.dividerThickness` - 1.0
@@ -168,6 +206,12 @@ Text(AppStrings.loginTitle)  // "Login into Account"
 - `AppStrings.loginTitle` - "Login into Account"
 - `AppStrings.emailLabel` - "Email"
 - `AppStrings.continueWithGoogle` - "Continue with Google"
+
+Recent additions:
+
+- Change password copy: titles, subtitles, snackbar strings (success, wrong current password, provider mismatch) and the "new password must differ" validation message—available in English and French.
+- Email verification copy: resend, cancel, spam-note, and success messages backing the refreshed verification screen.
+- Profile utilities: `profileSignOut`, `profileChangePasswordTitle`, and related subtitles for the new profile actions.
 
 ## Widgets (shared/widgets/)
 
@@ -196,6 +240,7 @@ Widgets index (lib/shared/widgets)
 - `password_strength_checklist.dart` — Small helper widget that renders password requirement checklist and colors using `AppColors`.
 - `primary_button.dart` — Standard full-width button used across screens; uses `AppDimensions.buttonHeight` and `AppColors.buttonGreen`.
 - `social_button.dart` — Social login button with icon slot (now using `AppImages` for logos where applicable).
+- `profile_signout_button.dart` (modules/profile/widgets) — Branded logout CTA sized with profile tokens; supply an `onPressed` that triggers `AuthController.logout()` or similar.
 
 ## Controllers (lib/shared/controllers)
 
@@ -349,12 +394,15 @@ We recently added several `AppDimensions` tokens to centralize sizes used across
 - Input and typography sizes: `AppDimensions.inputFontSize`, `floatingLabelFontSize`, `supportTextFontSize`, `heading2FontSize`, `subtitleFontSize`, `linkFontSize`
 - Small control sizes: `AppDimensions.flagEmojiSize`, `selectorIconSize`, `selectorSmallGap`
 - Dialog/actions/checklist: `AppDimensions.dialogActionFontSize`, `checklistFontSize`
+- Change-password layout: `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, `changePasswordHalfInputSpacing`, and `changePasswordInputSpacing`
+- Profile logout CTA: `AppDimensions.profileSignOutHeight`, `profileSignOutHorizontalPadding`, `profileSignOutIconGap`
 
 Widget changes to be aware of:
 
 - `FloatingLabelInputField` now derives its input/hint/floating-label/support font sizes from `AppDimensions` (use `topSpacing` to adjust vertical spacing between stacked fields).
 - `CountryCodeSelectorField` uses `AppDimensions.flagEmojiSize` and `selectorIconSize` to ensure consistent flag and chevron sizing.
 - `AppDialog` action text now uses `AppDimensions.dialogActionFontSize` to standardize button text across dialogs.
+- `ProfileSignOutButton` wraps the logout CTA layout used on the profile screen; reuse it (and its dimensions) when adding additional profile actions that need the same look.
 
 If you add new widgets that need specific, consistent sizing, add a new semantic token to `app_dimensions.dart` rather than using raw numbers.
 

@@ -6,6 +6,7 @@ import 'package:ascoa_app/modules/profile/views/profile_screen.dart';
 import 'package:ascoa_app/modules/stats/views/stats_screen.dart';
 import 'package:ascoa_app/modules/add_report/views/add_report_screen.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/widgets/nav_bar.dart';
 
 class MainScreen extends StatefulWidget {
@@ -71,9 +72,9 @@ class _MainScreenState extends State<MainScreen> {
             child: IndexedStack(index: safeIndex, children: pages),
           ),
           Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
+            left: AppDimensions.zero,
+            right: AppDimensions.zero,
+            bottom: AppDimensions.zero,
             child: CustomNavBar(
               currentIndex: _selectedIndex,
               onTap: (index) {

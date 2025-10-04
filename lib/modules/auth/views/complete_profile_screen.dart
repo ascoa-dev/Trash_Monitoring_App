@@ -210,9 +210,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               children: [
                 Container(color: AppColors.background),
                 Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
+                  top: AppDimensions.zero,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
                   child: Image.asset(
                     AppImages.completeProfileTop,
                     width: viewportWidth,
@@ -221,8 +221,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   ),
                 ),
                 Positioned(
-                  left: 0,
-                  right: 0,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
                   bottom: -viewPadding.bottom,
                   child: Image.asset(
                     AppImages.forgotPasswordBottom,
@@ -341,7 +341,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                                             );
                                       },
                                       label: countryLabel,
-                                      topSpacing: 0,
+                                      topSpacing: AppDimensions.zero,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -376,7 +376,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                                           ),
                                         ],
                                         textInputAction: TextInputAction.next,
-                                        topSpacing: 0,
+                                        topSpacing: AppDimensions.zero,
                                       ),
                                     ),
                                   ),

@@ -48,9 +48,9 @@ class SignupScreen extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
+                  top: AppDimensions.zero,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
                   child: Image.asset(
                     AppImages.signupTop,
                     width: viewportWidth,

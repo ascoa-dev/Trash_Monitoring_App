@@ -88,6 +88,25 @@ Centralized tokens to replace hard-coded values:
 
 ## Recent Updates
 
+### Change Password Flow (Profile Module)
+
+- Added `ChangePasswordScreen`, `ChangePasswordController`, `ChangePasswordBinding`, and `ChangePasswordStatus` enum under `lib/modules/profile/`.
+- Screen mirrors signup validation: strong password checklist powered by `ValidationController`, confirm-password mismatch handling, and a guard that blocks reusing the current password.
+- Controller orchestrates bilingual snackbars for success, wrong current password, validation errors, and generic failures. It delegates to `AuthController.changePassword`, which reauthenticates, enforces provider/recency checks, and updates the password.
+- Profile screen now links to the new route (`AppRoutes.changePassword`) and includes a branded `ProfileSignOutButton` for consistent logout styling.
+
+### Email Verification + Login Hardening
+
+- `EmailVerificationScreen` polls Firebase every five seconds, lets users resend the verification email, and provides a cancel/try-again path that clears shared form controllers and signs out safely before returning to Login.
+- `AuthController.login` surfaces clearer copy for `invalid-credential` responses, and `AuthController.changePassword` now treats both `wrong-password` and `invalid-credential` as “wrong current password” so the UI shows the custom snackbar instead of the generic Firebase error.
+- Forgot Password initialization sanitizes carried-over email state (clears invalid addresses, resets validation errors) before showing the screen.
+
+### Shared Tokens & Widgets
+
+- `AppStrings` gained change-password and email-verification copy (English/French). Reference these keys instead of duplicating strings in UI layers.
+- `AppDimensions` gained change-password layout tokens (`changePasswordTopSpacing`, `changePasswordIconSize`, `profileSignOutHeight`, etc.) to align new screens with the design system.
+- New `ProfileSignOutButton` widget (modules/profile/widgets) encapsulates the logout CTA layout used on the profile screen; reuse it for future profile-related sign-out flows.
+
 ### Forgot Password Feature
 
 - Added `ForgotPasswordScreen` with real-time email validation and bilingual support.

@@ -6,6 +6,7 @@ Flutter app using GetX, Firebase Auth, and a shared design system.
 
 - Modular architecture with shared widgets and centralized tokens
 - Auth flows with improved UX (floating labels, live password checklist)
+- **Profile module now includes a dedicated Change Password flow** with strong password validation, bilingual copy, and success/error snackbars aligned with the signup UX.
 - Forgot Password uses an overlay dialog (no separate confirmation screen)
 - Shared `FormBinding` injects `FormControllers` and `ValidationController`
 - Consistent spacing/colors/strings via `AppDimensions`, `AppColors`, `AppStrings`
@@ -43,15 +44,11 @@ Initial route is determined at runtime: signed-in users go to Home; otherwise Lo
 
 ## Recent changes
 
-- Tokenization sweep: replaced many hard-coded UI strings and some color literals with shared tokens. New/updated constants live in `lib/shared/constants/app_strings.dart` and `lib/shared/constants/app_colors.dart`.
-- New: `AppImages` centralizes image asset constants at `lib/shared/constants/app_images.dart`. Add new assets there instead of inline `assets/...` strings.
-- New: `AppImages` centralizes image asset constants at `lib/shared/constants/app_images.dart`. Add new assets there instead of inline `assets/...` strings.
-- New: `AppTypography` provides small shared typography tokens (letter-spacing, line-heights) used across `AppTextStyles`. Prefer `AppTypography.letterSpacingSmall` instead of literal `0.1` values.
-- New: `AppTypography` centralizes small typography tokens (e.g., letter spacing) used across `AppTextStyles` and widgets.
-- Edit Profile: phone parsing now strips stored international dial codes when loading profiles; successful Save navigates back to the Profile tab.
-- Profile UI updates: the profile screen support icons were replaced with PNG assets under `assets/ASCOA/Profile_Page_Icons/` (policy.png, faq.png, contact.png, signout.png). The shared `ProfileActionTile` now accepts either an `IconData` or a custom `leading` widget so images can be used without changing layout sizing.
-- Validators centralized: `lib/shared/utils/validators.dart` now returns messages from `AppStrings` so validation copy is centralized and bilingual-ready.
-- Files updated: notable edits include `email_verification_screen.dart`, `forgot_password_screen.dart`, `complete_profile_screen.dart`, `home_screen.dart`, `app_dialog.dart`, `auth_header.dart`, `password_strength_checklist.dart`, and shared widget token usage.
-- Verification: ran focused forgot-password tests (all passed) and a quick `flutter analyze` (1 info lint unrelated to tokenization).
+- **Change Password feature:** Added `ChangePasswordScreen`, controller, binding, and `ChangePasswordStatus` model. The screen mirrors signup validation (strong password checklist, mismatch handling, new-vs-current guard) and surfaces localized snackbars for success, wrong current password, and generic failures.
+- **Profile updates:** Profile screen now links to Change Password and uses a new `ProfileSignOutButton` widget that keeps sizing consistent with the profile cards while calling `AuthController.logout()`.
+- **Email verification improvements:** `EmailVerificationScreen` polls verification status, exposes resend/cancel actions, and clears shared form state when a user backs out.
+- **Auth controller enhancements:** Login surfaces friendlier copy for `invalid-credential`, and `changePassword` now handles recent-login/provider edge cases with localized strings and snackbar feedback. Forgot Password sanitizes carried-over email state before validation.
+- **Design tokens:** `AppStrings` and `AppDimensions` gained change-password copy, email-verification strings, and spacing tokens (e.g., `changePasswordTopSpacing`, `profileSignOutHeight`). Use these instead of hard-coded values when extending the flows.
+- Verification: `flutter analyze`
 
-- Tooling cleanup: `tool/country_parser_probe.dart` was unused and has been removed from the repository. If you relied on that script, restore it from history or recreate it under `tool/`.
+Older refactors (tokenization sweep, image constants, typography tokens, validator centralization) remain in effect; see commit history for details.

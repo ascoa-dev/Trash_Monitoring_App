@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:ascoa_app/shared/controllers/form_controllers.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
@@ -113,6 +115,39 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ? AppStrings.emailVerificationResending
                     : AppStrings.emailVerificationResend,
               ),
+            ),
+            const SizedBox(height: AppDimensions.smallSpacing * 2),
+            OutlinedButton(
+              onPressed: () async {
+                // Clear any form state and sign the user out, then navigate to login
+                try {
+                  // Clear shared form controllers if available
+                  if (Get.isRegistered<FormControllers>()) {
+                    final form = Get.find<FormControllers>();
+                    form.resetAuthFields();
+                    form.resetProfileFields();
+                  }
+
+                  // Sign out via AuthController if available
+                  if (Get.isRegistered<AuthController>()) {
+                    final auth = Get.find<AuthController>();
+                    await auth.logout();
+                  } else {
+                    // Fallback: sign out of Firebase directly
+                    await FirebaseAuth.instance.signOut();
+                  }
+
+                  // Navigate back to login screen (fallback)
+                  Get.offAllNamed(AppRoutes.login);
+                } catch (e) {
+                  Get.snackbar(
+                    AppStrings.errorTitle,
+                    'Failed to cancel and sign out: $e',
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                }
+              },
+              child: const Text(AppStrings.forgotDialogButton),
             ),
             const SizedBox(height: AppDimensions.smallSpacing * 2),
             TextButton(

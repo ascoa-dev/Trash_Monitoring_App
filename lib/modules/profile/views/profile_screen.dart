@@ -8,6 +8,7 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/modules/profile/widgets/profile_action_tile.dart';
+import 'package:ascoa_app/modules/profile/widgets/profile_signout_button.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -28,9 +29,9 @@ class ProfileScreen extends StatelessWidget {
             child: Stack(
               children: [
                 Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
+                  top: AppDimensions.zero,
                   height:
                       viewportHeight *
                       AppDimensions.profileTopBackgroundHeightFactor,
@@ -42,15 +43,20 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
+                  bottom: AppDimensions.zero,
                   height:
                       viewportHeight *
                       AppDimensions.profileBottomBackgroundHeightFactor,
                   child: Transform(
                     transform:
-                        Matrix4.identity()..scaleByDouble(1.0, 1.0, 1.0, 1.0),
+                        Matrix4.identity()..scaleByDouble(
+                          AppDimensions.one,
+                          AppDimensions.zero,
+                          AppDimensions.zero,
+                          AppDimensions.zero,
+                        ),
                     alignment: Alignment.bottomCenter,
                     child: Image.asset(
                       AppImages.profileScreenBottom,
@@ -137,11 +143,13 @@ class ProfileScreen extends StatelessWidget {
                             const SizedBox(
                               height: AppDimensions.profileCardSpacing,
                             ),
-                            const ProfileActionTile(
+                            ProfileActionTile(
                               icon: Icons.lock_outline,
                               title: AppStrings.profileChangePasswordTitle,
                               subtitle:
                                   AppStrings.profileChangePasswordSubtitle,
+                              onTap:
+                                  () => Get.toNamed(AppRoutes.changePassword),
                             ),
                             const SizedBox(
                               height:
@@ -202,7 +210,7 @@ class ProfileScreen extends StatelessWidget {
                               height:
                                   AppDimensions.profileSectionSignoutSpacing,
                             ),
-                            _ProfileSignOutButton(
+                            ProfileSignOutButton(
                               onPressed: () async {
                                 await authController.logout();
                                 Get.offAllNamed(AppRoutes.login);
@@ -221,55 +229,6 @@ class ProfileScreen extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _ProfileSignOutButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const _ProfileSignOutButton({required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: AppDimensions.profileCardWidth,
-      child: Material(
-        color: AppColors.accentGreen,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-          onTap: onPressed,
-          child: Container(
-            height: AppDimensions.profileSignOutHeight,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.profileSignOutHorizontalPadding,
-            ),
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: AppDimensions.profileCardIconSize,
-                  height: AppDimensions.profileCardIconSize,
-                  child: Center(
-                    child: Image.asset(
-                      AppImages.signout,
-                      width: AppDimensions.profileCardIconSize,
-                      height: AppDimensions.profileCardIconSize,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppDimensions.profileSignOutIconGap),
-                const Text(
-                  AppStrings.profileSignOut,
-                  style: AppTextStyles.profileSignOutText,
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

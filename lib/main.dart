@@ -17,6 +17,8 @@ import 'modules/auth/views/email_verification_screen.dart';
 import 'modules/profile/views/edit_profile_screen.dart';
 import 'modules/profile/bindings/edit_profile_binding.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'modules/profile/views/change_password_screen.dart';
+import 'modules/profile/bindings/change_password_binding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,6 +120,11 @@ class MyApp extends StatelessWidget {
               name: AppRoutes.editProfile,
               page: () => const EditProfileScreen(),
               bindings: [FormBinding(), EditProfileBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.changePassword,
+              page: () => const ChangePasswordScreen(),
+              bindings: [FormBinding(), ChangePasswordBinding()],
             ),
             GetPage(
               name: AppRoutes.emailVerification,

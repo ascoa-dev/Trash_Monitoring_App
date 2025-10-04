@@ -23,8 +23,8 @@ class AuthHeader extends StatelessWidget {
         children: [
           // Clean Earth main heading
           Positioned(
-            left: 0,
-            top: 0,
+            left: AppDimensions.zero,
+            top: AppDimensions.zero,
             width:
                 (AppDimensions.authHeaderBaseWidth -
                     AppDimensions.authHeaderTitleWidthOffset) *

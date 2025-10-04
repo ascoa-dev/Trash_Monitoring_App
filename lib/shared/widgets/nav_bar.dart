@@ -60,13 +60,19 @@ class CustomNavBar extends StatelessWidget {
             boxShadow: const [
               BoxShadow(
                 color: AppColors.shadowLight,
-                offset: Offset(0, AppDimensions.navBarShadowOffsetYLarge),
+                offset: Offset(
+                  AppDimensions.zero,
+                  AppDimensions.navBarShadowOffsetYLarge,
+                ),
                 blurRadius: AppDimensions.navBarShadowBlurLarge,
                 spreadRadius: AppDimensions.navBarShadowSpreadLarge,
               ),
               BoxShadow(
                 color: AppColors.shadowMedium,
-                offset: Offset(0, AppDimensions.navBarShadowOffsetYSmall),
+                offset: Offset(
+                  AppDimensions.zero,
+                  AppDimensions.navBarShadowOffsetYSmall,
+                ),
                 blurRadius: AppDimensions.navBarShadowBlurSmall,
               ),
             ],

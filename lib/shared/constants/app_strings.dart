@@ -44,20 +44,20 @@ class AppStrings {
       "Please fill the information to get started";
   static const String completeProfileSubtitleFrench =
       "Veuillez remplir ces informations pour commencer";
-  static const String firstNameLabel = "First Name*";
-  static const String firstNameLabelFrench = "Prénom*";
+  static const String firstNameLabel = "First Name *";
+  static const String firstNameLabelFrench = "Prénom *";
   static const String firstNameHint = "e.g. Awa";
-  static const String lastNameLabel = "Last Name*";
-  static const String lastNameLabelFrench = "Nom*";
+  static const String lastNameLabel = "Last Name *";
+  static const String lastNameLabelFrench = "Nom *";
   static const String lastNameHint = "e.g. Nguema";
-  static const String phoneNumberLabel = "Phone Number*";
+  static const String phoneNumberLabel = "Phone Number *";
   static const String phoneNumberLabelFrench = "Numéro de téléphone*";
   static const String phoneNumberHint = "6 70 00 00 00";
-  static const String cityLabel = "Select your City*";
-  static const String cityLabelFrench = "Ville*";
+  static const String cityLabel = "Select your City *";
+  static const String cityLabelFrench = "Ville *";
   static const String cityHint = "e.g. Yaoundé";
-  static const String countryCodeLabel = "Country*";
-  static const String countryCodeLabelFrench = "Pays*";
+  static const String countryCodeLabel = "Country *";
+  static const String countryCodeLabelFrench = "Pays *";
   static const String countrySearchLabel = "Search";
   static const String countrySearchLabelFrench = "Rechercher";
   static const String editPhotoLabel = "Edit Photo";
@@ -99,6 +99,50 @@ class AppStrings {
       "Failed to update profile. Please try again.";
   static const String editProfileErrorFrench =
       "Échec de la mise à jour du profil. Veuillez réessayer.";
+
+  // Change Password Screen
+  static const String changePasswordTitle = "Change Password";
+  static const String changePasswordTitleFrench = "Changer le mot de passe";
+  static const String changePasswordSubtitle =
+      "Please enter your current password and new one.";
+  static const String changePasswordSubtitleFrench =
+      "Saisissez votre mot de passe actuel et définissez-en un nouveau.";
+  static const String currentPasswordLabel = "Current Password *";
+  static const String currentPasswordLabelFrench = "Mot de passe actuel *";
+  static const String newPasswordLabel = "New Password *";
+  static const String newPasswordLabelFrench = "Nouveau mot de passe *";
+  static const String confirmPasswordLabel = "Confirm New Password *";
+  static const String confirmPasswordLabelFrench =
+      "Confirmez le nouveau mot de passe *";
+  static const String changePasswordButton = "CHANGE PASSWORD";
+  static const String changePasswordButtonFrench = "Changer le mot de passe";
+  static const String changePasswordSaving = "CHANGING...";
+  static const String changePasswordSavingFrench = "Changement...";
+  static const String changePasswordCancel = "Cancel";
+  static const String changePasswordCancelFrench = "Annuler";
+  static const String changePasswordSuccess = "Password updated successfully.";
+  static const String changePasswordSuccessFrench =
+      "Mot de passe mis à jour avec succès.";
+  static const String changePasswordGenericError =
+      "We couldn’t update the password. Please try again.";
+  static const String changePasswordGenericErrorFrench =
+      "Impossible de mettre à jour le mot de passe. Veuillez réessayer.";
+  static const String changePasswordWrongCurrent =
+      "The current password you entered is incorrect.";
+  static const String changePasswordWrongCurrentFrench =
+      "Le mot de passe actuel saisi est incorrect.";
+  static const String changePasswordRecentLoginRequired =
+      "Please log in again before changing your password.";
+  static const String changePasswordRecentLoginRequiredFrench =
+      "Veuillez vous reconnecter avant de changer votre mot de passe.";
+  static const String changePasswordProviderUnsupported =
+      "This account was created with a social provider. Change your password on that provider instead.";
+  static const String changePasswordProviderUnsupportedFrench =
+      "Ce compte a été créé avec un fournisseur externe. Modifiez votre mot de passe sur ce fournisseur.";
+  static const String changePasswordSameAsCurrent =
+      "Your new password must be different from your current password.";
+  static const String changePasswordSameAsCurrentFrench =
+      "Votre nouveau mot de passe doit être différent de votre mot de passe actuel.";
 
   // Forgot Password Screen
   static const String forgotPasswordTitle = "Forgot Password";

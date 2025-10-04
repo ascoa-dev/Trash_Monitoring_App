@@ -1,4 +1,6 @@
 class AppDimensions {
+  static const double zero = 0.0;
+  static const double one = 1.0;
   // Padding & Margins
   static const double screenPadding = 24.0;
   static const double verticalPadding = 16.0;
@@ -211,6 +213,12 @@ class AppDimensions {
   static const double editProfileInputSpacing = 20.0;
   static const double editProfileInputSpacingTwo = 36.0;
   static const double editProfileHeightFactor = 0.12;
+
+  static const double changePasswordSpacing = 4.0;
+  static const double changePasswordTopSpacing = 0.04;
+  static const double changePasswordIconSize = 0.175;
+  static const double changePasswordHalfInputSpacing = 0.01;
+  static const double changePasswordInputSpacing = 20.0;
 
   // Prevent instantiation
   AppDimensions._();

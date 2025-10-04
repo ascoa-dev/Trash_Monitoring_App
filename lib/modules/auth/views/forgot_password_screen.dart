@@ -184,9 +184,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               clipBehavior: Clip.none,
               children: [
                 Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
+                  top: AppDimensions.zero,
                   height: viewportHeight * AppDimensions.forgotBgTopHeight,
                   child: Image.asset(
                     AppImages.forgotPasswordTop,
@@ -196,9 +196,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
                 Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
+                  bottom: AppDimensions.zero,
                   height: viewportHeight * AppDimensions.forgotBgBottomHeight,
                   child: Image.asset(
                     AppImages.forgotPasswordBottom,

@@ -6,6 +6,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ascoa_app/modules/profile/models/change_password_status.dart';
 
 class AuthController extends GetxController {
   late final FirebaseAuth _auth;
@@ -32,7 +33,7 @@ class AuthController extends GetxController {
       } catch (e) {
         Get.snackbar('Error', 'Failed to send verification email: $e');
       }
-      Get.offAllNamed(AppRoutes.emailVerification);
+      Get.toNamed(AppRoutes.emailVerification);
       return;
     }
     await handleUserPostVerification(user, signUpMethod);
@@ -421,6 +422,148 @@ class AuthController extends GetxController {
       return false;
     } finally {
       isUpdatingProfile.value = false;
+    }
+  }
+
+  Future<ChangePasswordStatus> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final user = _auth.currentUser;
+    final isFrench = Get.locale?.languageCode == 'fr';
+    final errorTitle =
+        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle;
+    final successTitle =
+        isFrench
+            ? AppStrings.changePasswordTitleFrench
+            : AppStrings.changePasswordTitle;
+    final successMessage =
+        isFrench
+            ? AppStrings.changePasswordSuccessFrench
+            : AppStrings.changePasswordSuccess;
+
+    if (user == null || user.email == null) {
+      Get.snackbar(
+        errorTitle,
+        isFrench
+            ? AppStrings.changePasswordGenericErrorFrench
+            : AppStrings.changePasswordGenericError,
+        snackPosition: SnackPosition.TOP,
+      );
+      return ChangePasswordStatus.error;
+    }
+
+    final hasPasswordProvider = user.providerData.any(
+      (info) => info.providerId == EmailAuthProvider.PROVIDER_ID,
+    );
+    if (!hasPasswordProvider) {
+      Get.snackbar(
+        errorTitle,
+        isFrench
+            ? AppStrings.changePasswordProviderUnsupportedFrench
+            : AppStrings.changePasswordProviderUnsupported,
+        snackPosition: SnackPosition.TOP,
+      );
+      return ChangePasswordStatus.providerMismatch;
+    }
+
+    try {
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        return ChangePasswordStatus.wrongPassword;
+      }
+      if (e.code == 'requires-recent-login') {
+        Get.snackbar(
+          errorTitle,
+          isFrench
+              ? AppStrings.changePasswordRecentLoginRequiredFrench
+              : AppStrings.changePasswordRecentLoginRequired,
+          snackPosition: SnackPosition.TOP,
+        );
+        return ChangePasswordStatus.requiresRecentLogin;
+      }
+      Get.snackbar(
+        errorTitle,
+        isFrench
+            ? AppStrings.changePasswordGenericErrorFrench
+            : AppStrings.changePasswordGenericError,
+        snackPosition: SnackPosition.TOP,
+      );
+      return ChangePasswordStatus.error;
+    } catch (e) {
+      debugPrint('changePassword reauth error: $e');
+      Get.snackbar(
+        errorTitle,
+        isFrench
+            ? AppStrings.changePasswordGenericErrorFrench
+            : AppStrings.changePasswordGenericError,
+        snackPosition: SnackPosition.TOP,
+      );
+      return ChangePasswordStatus.error;
+    }
+
+    try {
+      await user.updatePassword(newPassword);
+      await user.reload();
+      Get.snackbar(
+        successTitle,
+        successMessage,
+        snackPosition: SnackPosition.TOP,
+      );
+      return ChangePasswordStatus.success;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        Get.snackbar(
+          errorTitle,
+          isFrench
+              ? AppStrings.changePasswordRecentLoginRequiredFrench
+              : AppStrings.changePasswordRecentLoginRequired,
+          snackPosition: SnackPosition.TOP,
+        );
+        return ChangePasswordStatus.requiresRecentLogin;
+      }
+      if (e.code == 'weak-password') {
+        Get.snackbar(
+          errorTitle,
+          AppStrings.validationPasswordStrength,
+          snackPosition: SnackPosition.TOP,
+        );
+        return ChangePasswordStatus.error;
+      }
+      if (e.code == 'provider-already-linked') {
+        Get.snackbar(
+          errorTitle,
+          isFrench
+              ? AppStrings.changePasswordProviderUnsupportedFrench
+              : AppStrings.changePasswordProviderUnsupported,
+          snackPosition: SnackPosition.TOP,
+        );
+        return ChangePasswordStatus.providerMismatch;
+      }
+      debugPrint('changePassword update error: ${e.code} ${e.message}');
+      Get.snackbar(
+        errorTitle,
+        isFrench
+            ? AppStrings.changePasswordGenericErrorFrench
+            : AppStrings.changePasswordGenericError,
+        snackPosition: SnackPosition.TOP,
+      );
+      return ChangePasswordStatus.error;
+    } catch (e) {
+      debugPrint('changePassword unexpected error: $e');
+      Get.snackbar(
+        errorTitle,
+        isFrench
+            ? AppStrings.changePasswordGenericErrorFrench
+            : AppStrings.changePasswordGenericError,
+        snackPosition: SnackPosition.TOP,
+      );
+      return ChangePasswordStatus.error;
     }
   }
 

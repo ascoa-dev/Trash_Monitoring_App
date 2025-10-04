@@ -18,12 +18,13 @@ lib/
 │       └── posts.dart
 │
 ├── modules/                 # Feature-based modules
-│   ├── auth/                # Login/Signup/Forgot Password
+│   ├── auth/                # Login/Signup/Forgot Password/Verification
 │   │   ├── views/           # Screens
 │   │   │   ├── login_screen_v2.dart
 │   │   │   ├── signup_screen.dart
 │   │   │   ├── forgot_password_screen.dart
-│   │   │   └── complete_profile_screen.dart
+│   │   │   ├── complete_profile_screen.dart
+│   │   │   └── email_verification_screen.dart
 │   │   ├── widgets/         # Widgets used inside auth
 │   │   └── (bindings are centralized in shared/controllers/form_binding.dart)
 │   │
@@ -31,9 +32,22 @@ lib/
 │   │   └── views/
 │   │       └── home_screen.dart
 │   │
-│   ├── profile/             # User profile
-│   │   └── views/
-│   │       └── profile_screen.dart
+│   ├── profile/             # User profile management
+│   │   ├── bindings/
+│   │   │   ├── edit_profile_binding.dart
+│   │   │   └── change_password_binding.dart
+│   │   ├── controllers/
+│   │   │   ├── edit_profile_controller.dart
+│   │   │   └── change_password_controller.dart
+│   │   ├── models/
+│   │   │   └── change_password_status.dart
+│   │   ├── views/
+│   │   │   ├── profile_screen.dart
+│   │   │   ├── edit_profile_screen.dart
+│   │   │   └── change_password_screen.dart
+│   │   └── widgets/
+│   │       ├── profile_action_tile.dart
+│   │       └── profile_signout_button.dart
 │   │
 │   ├── posts/               # Posts/feed
 │   │   ├── views/
@@ -131,8 +145,16 @@ Holds everything that can be reused across multiple modules.
 #### Auth Module
 
 - `forgot_password_screen.dart` - Handles Forgot Password flow with overlay dialog.
+- `email_verification_screen.dart` - Polls verification status, exposes resend/cancel actions, and routes verified users through `AuthController.handleUserPostVerification`.
 - `complete_profile_screen.dart` - Collects first/last name, phone, and city with country selector.
 - Shared bindings: `FormBinding` for controllers.
+
+#### Profile Module
+
+- `profile_screen.dart` now surfaces Change Password and sign-out actions via card-style tiles.
+- `change_password_screen.dart` mirrors signup password validation with snackbar feedback; paired with `ChangePasswordController`, `ChangePasswordBinding`, and `ChangePasswordStatus` model.
+- `profile_signout_button.dart` provides a reusable CTA with consistent spacing/branding for logout actions.
+- `edit_profile_screen.dart` reuses shared validation/controllers and now aligns background/spacing with the change password flow.
 
 #### Shared Components
 
