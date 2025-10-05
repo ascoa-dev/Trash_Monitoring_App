@@ -7,10 +7,12 @@ import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ascoa_app/modules/profile/models/change_password_status.dart';
+import 'package:ascoa_app/app/models/user.dart';
 
 class AuthController extends GetxController {
   late final FirebaseAuth _auth;
   Rxn<User> firebaseUser = Rxn<User>();
+  Rxn<UserModel> currentUserModel = Rxn<UserModel>();
   RxBool isCompletingProfile = false.obs;
   RxBool isUpdatingProfile = false.obs;
 
@@ -52,6 +54,11 @@ class AuthController extends GetxController {
 
       if (userDoc.exists && userDoc.data() != null) {
         final userData = userDoc.data()!;
+        // populate typed model
+        currentUserModel.value = UserModel.fromMap(
+          userData,
+          uidFromDoc: user.uid,
+        );
         if (userData['signUpMethod'] != signUpMethod) {
           Get.snackbar(
             'Login Failed',
@@ -75,16 +82,25 @@ class AuthController extends GetxController {
         }
       } else {
         // New user - create document
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        final newDoc = {
           'email': user.email,
           'firstName': '',
           'lastName': '',
           'phoneNumber': '',
           'city': '',
+          'countryCode': '',
           'isProfileComplete': false,
           'createdAt': FieldValue.serverTimestamp(), // Good practice
           'signUpMethod': signUpMethod,
-        });
+        };
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set(newDoc);
+        currentUserModel.value = UserModel.fromMap(
+          newDoc,
+          uidFromDoc: user.uid,
+        );
         Get.snackbar('Welcome!', 'Please complete your profile information.');
         Get.offAllNamed(AppRoutes.completeProfile);
       }
@@ -276,7 +292,7 @@ class AuthController extends GetxController {
   RxBool isLoadingForgotPassword = false.obs;
   RxBool isLoadingLogin = false.obs;
 
-  Future<bool> completeProfile({
+  Future<UserModel?> completeProfile({
     required String firstName,
     required String lastName,
     required String phoneNumber,
@@ -293,13 +309,13 @@ class AuthController extends GetxController {
             : 'You must be signed in to continue.',
       );
       Get.offAllNamed(AppRoutes.login);
-      return false;
+      return null;
     }
 
     isCompletingProfile.value = true;
 
     try {
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      final updated = {
         'firstName': firstName,
         'lastName': lastName,
         'phoneNumber': phoneNumber,
@@ -307,7 +323,24 @@ class AuthController extends GetxController {
         'city': city,
         'isProfileComplete': true,
         'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      };
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set(updated, SetOptions(merge: true));
+
+      // populate current model
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      if (doc.data() != null) {
+        currentUserModel.value = UserModel.fromMap(
+          doc.data()!,
+          uidFromDoc: user.uid,
+        );
+      }
 
       Get.snackbar(
         isFrench
@@ -318,7 +351,7 @@ class AuthController extends GetxController {
             : AppStrings.completeProfileSuccess,
       );
       Get.offAllNamed(AppRoutes.home);
-      return true;
+      return currentUserModel.value;
     } on FirebaseException catch (e) {
       debugPrint('completeProfile FirebaseException: ${e.message}');
       Get.snackbar(
@@ -327,7 +360,7 @@ class AuthController extends GetxController {
             ? AppStrings.completeProfileErrorFrench
             : AppStrings.completeProfileError,
       );
-      return false;
+      return null;
     } catch (e) {
       debugPrint('completeProfile error: $e');
       Get.snackbar(
@@ -336,7 +369,7 @@ class AuthController extends GetxController {
             ? AppStrings.completeProfileErrorFrench
             : AppStrings.completeProfileError,
       );
-      return false;
+      return null;
     } finally {
       isCompletingProfile.value = false;
     }
@@ -353,6 +386,12 @@ class AuthController extends GetxController {
               .collection('users')
               .doc(user.uid)
               .get();
+      if (doc.data() != null) {
+        currentUserModel.value = UserModel.fromMap(
+          doc.data()!,
+          uidFromDoc: user.uid,
+        );
+      }
       return doc.data();
     } catch (e) {
       debugPrint('fetchCurrentUserProfile error: $e');
@@ -360,7 +399,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> updateProfile({
+  Future<UserModel?> updateProfile({
     required String firstName,
     required String lastName,
     required String phoneNumber,
@@ -377,13 +416,13 @@ class AuthController extends GetxController {
             : 'You must be signed in to continue.',
       );
       Get.offAllNamed(AppRoutes.login);
-      return false;
+      return null;
     }
 
     isUpdatingProfile.value = true;
 
     try {
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      final updated = {
         'firstName': firstName,
         'lastName': lastName,
         'phoneNumber': phoneNumber,
@@ -391,7 +430,23 @@ class AuthController extends GetxController {
         'city': city,
         'isProfileComplete': true,
         'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      };
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set(updated, SetOptions(merge: true));
+
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      if (doc.data() != null) {
+        currentUserModel.value = UserModel.fromMap(
+          doc.data()!,
+          uidFromDoc: user.uid,
+        );
+      }
 
       Get.snackbar(
         isFrench
@@ -401,7 +456,7 @@ class AuthController extends GetxController {
             ? AppStrings.editProfileSuccessFrench
             : AppStrings.editProfileSuccess,
       );
-      return true;
+      return currentUserModel.value;
     } on FirebaseException catch (e) {
       debugPrint('updateProfile FirebaseException: ${e.message}');
       Get.snackbar(
@@ -410,7 +465,7 @@ class AuthController extends GetxController {
             ? AppStrings.editProfileErrorFrench
             : AppStrings.editProfileError,
       );
-      return false;
+      return null;
     } catch (e) {
       debugPrint('updateProfile error: $e');
       Get.snackbar(
@@ -419,7 +474,7 @@ class AuthController extends GetxController {
             ? AppStrings.editProfileErrorFrench
             : AppStrings.editProfileError,
       );
-      return false;
+      return null;
     } finally {
       isUpdatingProfile.value = false;
     }

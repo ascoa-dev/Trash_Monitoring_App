@@ -3,6 +3,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class CustomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -42,38 +43,50 @@ class CustomNavBar extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.only(
-          left: AppDimensions.navBarHorizontalPadding,
-          right: AppDimensions.navBarHorizontalPadding,
-          bottom: AppDimensions.navBarBottomOffset,
+        padding: EdgeInsets.only(
+          left: SizeUtils.w(context, AppDimensions.navBarHorizontalPadding),
+          right: SizeUtils.w(context, AppDimensions.navBarHorizontalPadding),
+          bottom: SizeUtils.h(context, AppDimensions.navBarBottomOffset),
         ),
         child: Container(
-          height: AppDimensions.navBarHeight,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.navBarInnerHorizontalPadding,
+          height: SizeUtils.h(context, AppDimensions.navBarHeight),
+          padding: EdgeInsets.symmetric(
+            horizontal: SizeUtils.w(
+              context,
+              AppDimensions.navBarInnerHorizontalPadding,
+            ),
           ),
           decoration: BoxDecoration(
             color: AppColors.background,
             borderRadius: BorderRadius.circular(
-              AppDimensions.navBarBorderRadius,
+              SizeUtils.r(context, AppDimensions.navBarBorderRadius),
             ),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.shadowLight,
                 offset: Offset(
                   AppDimensions.zero,
-                  AppDimensions.navBarShadowOffsetYLarge,
+                  SizeUtils.h(context, AppDimensions.navBarShadowOffsetYLarge),
                 ),
-                blurRadius: AppDimensions.navBarShadowBlurLarge,
-                spreadRadius: AppDimensions.navBarShadowSpreadLarge,
+                blurRadius: SizeUtils.r(
+                  context,
+                  AppDimensions.navBarShadowBlurLarge,
+                ),
+                spreadRadius: SizeUtils.r(
+                  context,
+                  AppDimensions.navBarShadowSpreadLarge,
+                ),
               ),
               BoxShadow(
                 color: AppColors.shadowMedium,
                 offset: Offset(
                   AppDimensions.zero,
-                  AppDimensions.navBarShadowOffsetYSmall,
+                  SizeUtils.h(context, AppDimensions.navBarShadowOffsetYSmall),
                 ),
-                blurRadius: AppDimensions.navBarShadowBlurSmall,
+                blurRadius: SizeUtils.r(
+                  context,
+                  AppDimensions.navBarShadowBlurSmall,
+                ),
               ),
             ],
           ),
@@ -113,25 +126,31 @@ class _NavBarButton extends StatelessWidget {
     final double targetWidth;
     final double targetHeight;
     if (isCenter) {
-      targetWidth = AppDimensions.navBarCenterButtonWidth;
-      targetHeight = AppDimensions.navBarCenterButtonHeight;
+      targetWidth = SizeUtils.w(context, AppDimensions.navBarCenterButtonWidth);
+      targetHeight = SizeUtils.h(
+        context,
+        AppDimensions.navBarCenterButtonHeight,
+      );
     } else {
       final double size =
           isSelected
-              ? AppDimensions.navBarActiveIconContainerSize
-              : AppDimensions.navBarIconContainerSize;
+              ? SizeUtils.r(
+                context,
+                AppDimensions.navBarActiveIconContainerSize,
+              )
+              : SizeUtils.r(context, AppDimensions.navBarIconContainerSize);
       targetWidth = size;
       targetHeight = size;
     }
 
     final double iconWidth =
         isCenter
-            ? AppDimensions.navBarCenterButtonWidth
-            : AppDimensions.navBarIconSize;
+            ? SizeUtils.w(context, AppDimensions.navBarCenterButtonWidth)
+            : SizeUtils.r(context, AppDimensions.navBarIconSize);
     final double iconHeight =
         isCenter
-            ? AppDimensions.navBarCenterButtonHeight
-            : AppDimensions.navBarIconSize;
+            ? SizeUtils.h(context, AppDimensions.navBarCenterButtonHeight)
+            : SizeUtils.r(context, AppDimensions.navBarIconSize);
 
     final Color backgroundColor =
         isCenter
@@ -143,7 +162,9 @@ class _NavBarButton extends StatelessWidget {
     final BorderRadius borderRadius =
         isCenter
             ? BorderRadius.zero
-            : BorderRadius.circular(AppDimensions.navBarIconContainerSize / 2);
+            : BorderRadius.circular(
+              SizeUtils.r(context, AppDimensions.navBarIconContainerSize) / 2,
+            );
 
     return Expanded(
       child: Semantics(

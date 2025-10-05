@@ -85,7 +85,7 @@ class AppStrings {
   static const String editProfileSubtitle =
       "Edit the fields below and save your changes";
   static const String editProfileSubtitleFrench =
-      "Modifiez les champs ci-dessous et enregistrez vos changements";
+      "Modifiez les champs ci-dessous et enregistrez.";
   static const String editProfileSaveButton = "SAVE CHANGES";
   static const String editProfileSaveButtonFrench = "ENREGISTRER";
   static const String editProfileSaving = "SAVING...";

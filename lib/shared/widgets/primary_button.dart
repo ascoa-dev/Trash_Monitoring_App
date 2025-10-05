@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String label;
@@ -23,19 +24,20 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaledHeight =
+        fixedHeight ?? SizeUtils.h(context, AppDimensions.buttonHeight);
     return SizedBox(
       width: fixedWidth ?? double.infinity,
-      height: fixedHeight ?? AppDimensions.buttonHeight,
+      height: scaledHeight,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor ?? AppColors.buttonGreen,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+            borderRadius: BorderRadius.circular(
+              SizeUtils.r(context, AppDimensions.borderRadius),
+            ),
           ),
-          minimumSize: Size(
-            fixedWidth ?? double.infinity,
-            fixedHeight ?? AppDimensions.buttonHeight,
-          ),
+          minimumSize: Size(fixedWidth ?? double.infinity, scaledHeight),
         ),
         onPressed: onPressed,
         child: Text(

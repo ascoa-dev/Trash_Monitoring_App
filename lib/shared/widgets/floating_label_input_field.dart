@@ -4,6 +4,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 /// FloatingLabelInputField replicates the Figma absolute label effect:
 /// A bordered container with a small label chip overlapping the top border
@@ -89,17 +90,21 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
     // If controller is disposed, return a basic container to prevent crashes
     if (!_isControllerValid) {
       return Padding(
-        padding: const EdgeInsets.only(top: AppDimensions.fieldVerticalSpacing),
+        padding: EdgeInsets.only(
+          top: SizeUtils.h(context, AppDimensions.fieldVerticalSpacing),
+        ),
         child: Container(
           width: double.infinity,
-          height: AppDimensions.inputFieldHeight,
+          height: SizeUtils.h(context, AppDimensions.inputFieldHeight),
           decoration: BoxDecoration(
             color: AppColors.background,
             border: Border.all(
               color: AppColors.accentGreen,
-              width: AppDimensions.inputBorderWidth,
+              width: SizeUtils.w(context, AppDimensions.inputBorderWidth),
             ),
-            borderRadius: BorderRadius.circular(AppDimensions.smallRadius),
+            borderRadius: BorderRadius.circular(
+              SizeUtils.r(context, AppDimensions.smallRadius),
+            ),
           ),
         ),
       );
@@ -107,7 +112,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
 
     return Padding(
       padding: EdgeInsets.only(
-        top: widget.topSpacing,
+        top: SizeUtils.h(context, widget.topSpacing),
       ), // spacing between stacked fields
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +122,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
             children: [
               Container(
                 width: double.infinity,
-                height: AppDimensions.inputFieldHeight,
+                height: SizeUtils.h(context, AppDimensions.inputFieldHeight),
                 decoration: BoxDecoration(
                   color: AppColors.background,
                   border: Border.all(
@@ -127,19 +132,31 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                             : AppColors.accentGreen,
                     width:
                         widget.isError
-                            ? AppDimensions.inputBorderWidthError
+                            ? SizeUtils.w(
+                              context,
+                              AppDimensions.inputBorderWidthError,
+                            )
                             : (_hasFocus
-                                ? AppDimensions.inputBorderWidthFocused
-                                : AppDimensions.inputBorderWidth),
+                                ? SizeUtils.w(
+                                  context,
+                                  AppDimensions.inputBorderWidthFocused,
+                                )
+                                : SizeUtils.w(
+                                  context,
+                                  AppDimensions.inputBorderWidth,
+                                )),
                   ),
                   borderRadius: BorderRadius.circular(
-                    AppDimensions.smallRadius,
+                    SizeUtils.w(context, AppDimensions.smallRadius),
                   ),
                 ),
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.inputHorizontalPadding,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeUtils.w(
+                      context,
+                      AppDimensions.inputHorizontalPadding,
+                    ),
                   ),
                   child: TextField(
                     controller: widget.controller,
@@ -154,14 +171,22 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                     onEditingComplete: widget.onEditingComplete,
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.textPrimary,
-                      fontSize: AppDimensions.inputFontSize,
-                      height: 22 / AppDimensions.inputFontSize,
+                      fontSize: SizeUtils.h(
+                        context,
+                        AppDimensions.inputFontSize,
+                      ),
+                      height:
+                          SizeUtils.h(context, 22) /
+                          SizeUtils.h(context, AppDimensions.inputFontSize),
                       letterSpacing: AppTypography.letterSpacingSmall,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
                       hintStyle: AppTextStyles.inputHint.copyWith(
-                        fontSize: AppDimensions.inputFontSize,
+                        fontSize: SizeUtils.h(
+                          context,
+                          AppDimensions.inputFontSize,
+                        ),
                         letterSpacing: AppTypography.letterSpacingSmall,
                       ),
                       border: InputBorder.none,
@@ -174,19 +199,33 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
               // Floating label chip
               Positioned(
                 left:
-                    AppDimensions.inputHorizontalPadding -
-                    AppDimensions.chipHorizontalPadding, // overlap effect
-                top: -AppDimensions.floatingLabelOffset,
+                    SizeUtils.w(context, AppDimensions.inputHorizontalPadding) -
+                    SizeUtils.w(
+                      context,
+                      AppDimensions.chipHorizontalPadding,
+                    ), // overlap effect
+                top: -SizeUtils.h(context, AppDimensions.floatingLabelOffset),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.chipHorizontalPadding,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeUtils.w(
+                      context,
+                      AppDimensions.chipHorizontalPadding,
+                    ),
                   ),
                   color: AppColors.background,
                   child: Text(
                     widget.label,
                     style: AppTextStyles.body.copyWith(
-                      fontSize: AppDimensions.floatingLabelFontSize,
-                      height: 16 / AppDimensions.floatingLabelFontSize,
+                      fontSize: SizeUtils.h(
+                        context,
+                        AppDimensions.floatingLabelFontSize,
+                      ),
+                      height:
+                          SizeUtils.h(context, 16) /
+                          SizeUtils.h(
+                            context,
+                            AppDimensions.floatingLabelFontSize,
+                          ),
                       color: AppColors.textAccent,
                       letterSpacing: AppTypography.letterSpacingSmall,
                       fontWeight: FontWeight.w400,
@@ -197,16 +236,26 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
             ],
           ),
           if (widget.supportText != null) ...[
-            const SizedBox(height: AppDimensions.inputErrorSpacing),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.inputErrorSpacing),
+            ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.inputHorizontalPadding,
+              padding: EdgeInsets.symmetric(
+                horizontal: SizeUtils.w(
+                  context,
+                  AppDimensions.inputHorizontalPadding,
+                ),
               ),
               child: Text(
                 widget.supportText!,
                 style: AppTextStyles.bodySecondary.copyWith(
-                  fontSize: AppDimensions.supportTextFontSize,
-                  height: 16 / AppDimensions.supportTextFontSize,
+                  fontSize: SizeUtils.h(
+                    context,
+                    AppDimensions.supportTextFontSize,
+                  ),
+                  height:
+                      SizeUtils.h(context, 16) /
+                      SizeUtils.h(context, AppDimensions.supportTextFontSize),
                   color:
                       widget.isError ? AppColors.error : AppColors.textAccent,
                   letterSpacing: AppTypography.letterSpacingSmall,

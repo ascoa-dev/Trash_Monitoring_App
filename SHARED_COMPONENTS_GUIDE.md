@@ -397,7 +397,64 @@ We recently added several `AppDimensions` tokens to centralize sizes used across
 - Change-password layout: `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, `changePasswordHalfInputSpacing`, and `changePasswordInputSpacing`
 - Profile logout CTA: `AppDimensions.profileSignOutHeight`, `profileSignOutHorizontalPadding`, `profileSignOutIconGap`
 
+
 Widget changes to be aware of:
+
+## Recent code changes (detailed)
+
+The following is an exhaustive summary of code-level changes made under `lib/` since the last commit. These notes are written for teammates who will rely on the repo docs when reviewing or integrating features.
+
+### General pattern applied
+
+Many shared widgets were updated to use the `SizeUtils` helpers (from `lib/shared/utils/size_utils.dart`) instead of using raw `AppDimensions` literals directly in widget build code. This keeps sizing responsive while preserving the original `AppDimensions` tokens as the design source of truth. The mapping used is conservative:
+
+- `SizeUtils.h(context, px)` — vertical sizes and font sizes
+- `SizeUtils.w(context, px)` — horizontal sizes, paddings, and offsets
+- `SizeUtils.r(context, px)` — radii and icon/container sizes
+
+### Files updated to use `SizeUtils` wrappers (high-level summary)
+
+- `lib/shared/widgets/app_dialog.dart` — typography sizes, spacing, button heights, box shadows and offsets wrapped with `SizeUtils`.
+- `lib/shared/widgets/auth_header.dart` — auth header base width/height, logo offsets, and typography base sizes scaled via `SizeUtils`.
+- `lib/shared/widgets/country_code_selector_field.dart` — many paddings, heights, font sizes and icon sizes converted to `SizeUtils`.
+- `lib/shared/widgets/custom_input_field.dart` — input field height, borders, radii, shadow radii and offsets, paddings converted.
+- `lib/shared/widgets/floating_label_input_field.dart` — padding, field heights, font sizes, paddings, chip offsets, and error spacing converted.
+- `lib/shared/widgets/nav_bar.dart` — nav sizing, paddings, shadow offsets and blur radii converted.
+- `lib/shared/widgets/password_strength_checklist.dart` — checklist dot size, spacing and font sizes converted.
+- `lib/shared/widgets/primary_button.dart` — button height now scaled and border radius scaled with `SizeUtils`.
+- `lib/shared/widgets/social_button.dart` — social button height, border width, shadow radii/offsets, icon container sizes and spacings converted.
+
+### Why this matters
+
+These changes keep the existing `AppDimensions` tokens untouched as the single source of truth, but make runtime layouts responsive by applying `SizeUtils` at render-time. If you're adding a new widget that uses `AppDimensions` directly, follow the conservative mapping above and use `SizeUtils` wrappers in build-time code.
+
+### Other functional changes (profile / auth flows)
+
+- `lib/modules/auth/views/login_screen_v2.dart`
+  - Fixed the unintended always-scroll behavior: `SingleChildScrollView` now uses `AlwaysScrollableScrollPhysics()` when keyboard is visible and `NeverScrollableScrollPhysics()` otherwise. This prevents the page from scrolling when the keyboard is not shown.
+  - Screen continues to compute a `scale` factor for the `AuthHeader` from reference width and passes it to the header.
+
+- `lib/modules/profile/views/change_password_screen.dart` and `lib/modules/profile/views/edit_profile_screen.dart`
+  - Small layout token adjustments and use of `SizeUtils` in a number of places. These screens were updated to use the new `AppDimensions` tokens added for change-password and edit-profile flows.
+
+### Token updates
+
+- `lib/shared/constants/app_dimensions.dart`
+  - Added `forgotTitleTopSpacing` (0.12) to support a more compact layout for some forgot-password variants.
+  - Adjusted profile spacing tokens (e.g. `profileSectionSpacing` changed to 14.0 and `profileCardMinHeight` changed to 68.0) to better match Figma refinements.
+
+### Files you should review when changing layout or copy
+
+- `lib/shared/constants/app_dimensions.dart` — authoritative sizing tokens. If you change values here, verify in multiple screens and run `flutter analyze`.
+- `lib/shared/utils/size_utils.dart` — scaling helpers used across updated widgets. Do not change the function semantics without reviewing all callers.
+- Any widget that previously used raw `AppDimensions` values in `build()` — consider whether it should be wrapped with `SizeUtils` like the files listed above.
+
+If you need a full per-file diff for review, run:
+
+```powershell
+git --no-pager diff -- lib
+```
+
 
 - `FloatingLabelInputField` now derives its input/hint/floating-label/support font sizes from `AppDimensions` (use `topSpacing` to adjust vertical spacing between stacked fields).
 - `CountryCodeSelectorField` uses `AppDimensions.flagEmojiSize` and `selectorIconSize` to ensure consistent flag and chevron sizing.

@@ -5,6 +5,7 @@ import 'package:ascoa_app/shared/controllers/form_controllers.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -86,16 +87,23 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(AppDimensions.screenPadding),
+        padding: EdgeInsets.all(
+          SizeUtils.w(context, AppDimensions.screenPadding),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.email_outlined,
-              size: AppDimensions.emailVerificationIconSize,
+              size: SizeUtils.r(
+                context,
+                AppDimensions.emailVerificationIconSize,
+              ),
               color: AppColors.emailVerification,
             ),
-            const SizedBox(height: AppDimensions.smallSpacing * 2),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.smallSpacing * 2),
+            ),
             Text(
               AppStrings.emailVerificationBodyTemplate.replaceFirst(
                 '%s',
@@ -104,9 +112,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: AppDimensions.smallSpacing * 4),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.smallSpacing * 4),
+            ),
             const CircularProgressIndicator(),
-            const SizedBox(height: AppDimensions.smallSpacing * 4),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.smallSpacing * 4),
+            ),
             ElevatedButton.icon(
               onPressed: isResending ? null : _resendEmail,
               icon: const Icon(Icons.refresh),
@@ -116,7 +128,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     : AppStrings.emailVerificationResend,
               ),
             ),
-            const SizedBox(height: AppDimensions.smallSpacing * 2),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.smallSpacing * 2),
+            ),
             OutlinedButton(
               onPressed: () async {
                 // Clear any form state and sign the user out, then navigate to login
@@ -149,12 +163,16 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               },
               child: const Text(AppStrings.forgotDialogButton),
             ),
-            const SizedBox(height: AppDimensions.smallSpacing * 2),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.smallSpacing * 2),
+            ),
             TextButton(
               onPressed: _checkVerification,
               child: const Text(AppStrings.emailVerificationCheckAgain),
             ),
-            const SizedBox(height: AppDimensions.smallSpacing * 2),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.smallSpacing * 2),
+            ),
             Text(
               AppStrings.emailVerificationSpamNote,
               style: Theme.of(context).textTheme.bodySmall,

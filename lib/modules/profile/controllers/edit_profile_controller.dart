@@ -48,13 +48,19 @@ class EditProfileController extends GetxController {
     try {
       final user = FirebaseAuth.instance.currentUser;
       final profileData = await _authController.fetchCurrentUserProfile();
+      final userModel = _authController.currentUserModel.value;
 
-      email.value = user?.email ?? profileData?['email'] as String?;
+      email.value =
+          user?.email ?? profileData?['email'] as String? ?? userModel?.email;
 
       _formControllers.firstNameController.text =
-          profileData?['firstName']?.toString().trim() ?? '';
+          userModel?.firstName ??
+          profileData?['firstName']?.toString().trim() ??
+          '';
       _formControllers.lastNameController.text =
-          profileData?['lastName']?.toString().trim() ?? '';
+          userModel?.lastName ??
+          profileData?['lastName']?.toString().trim() ??
+          '';
       final countryCodeStored = profileData?['countryCode']?.toString();
       Country? storedCountry;
       if (countryCodeStored != null && countryCodeStored.trim().isNotEmpty) {
@@ -63,7 +69,10 @@ class EditProfileController extends GetxController {
         );
       }
 
-      final phoneRaw = profileData?['phoneNumber']?.toString().trim() ?? '';
+      final phoneRaw =
+          userModel?.phoneNumber ??
+          profileData?['phoneNumber']?.toString().trim() ??
+          '';
       if (phoneRaw.isNotEmpty) {
         final parsed = _parsePhoneNumber(phoneRaw, storedCountry);
         _selectedCountry.value = storedCountry ?? parsed.country;
@@ -73,7 +82,7 @@ class EditProfileController extends GetxController {
         _formControllers.phoneNumberController.clear();
       }
       _formControllers.cityController.text =
-          profileData?['city']?.toString().trim() ?? '';
+          userModel?.city ?? profileData?['city']?.toString().trim() ?? '';
     } catch (e) {
       debugPrint('EditProfileController load error: $e');
     } finally {
@@ -174,13 +183,15 @@ class EditProfileController extends GetxController {
       return false;
     }
 
-    return _authController.updateProfile(
+    final updatedModel = await _authController.updateProfile(
       firstName: firstName,
       lastName: lastName,
       phoneNumber: '+${_selectedCountry.value.phoneCode} $phone',
       countryCode: _selectedCountry.value.countryCode,
       city: city,
     );
+
+    return updatedModel != null;
   }
 }
 

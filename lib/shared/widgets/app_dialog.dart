@@ -4,6 +4,7 @@ import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class AppDialog extends StatelessWidget {
   final String title;
@@ -41,7 +42,8 @@ class AppDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double effectiveHeroSize = heroSize ?? AppDimensions.dialogHeroSize;
+    final double effectiveHeroSize =
+        heroSize ?? SizeUtils.r(context, AppDimensions.dialogHeroSize);
     final double effectiveIconSize = iconSize ?? (effectiveHeroSize * 0.5);
 
     Widget? effectiveHero = hero;
@@ -60,10 +62,13 @@ class AppDialog extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: AppColors.buttonGreen40,
-                blurRadius: AppDimensions.prominentBoxShadowBlur,
-                offset: const Offset(
-                  AppDimensions.boxShadowOffsetX,
-                  AppDimensions.boxShadowOffsetY,
+                blurRadius: SizeUtils.r(
+                  context,
+                  AppDimensions.prominentBoxShadowBlur,
+                ),
+                offset: Offset(
+                  SizeUtils.w(context, AppDimensions.boxShadowOffsetX),
+                  SizeUtils.h(context, AppDimensions.boxShadowOffsetY),
                 ),
               ),
             ],
@@ -112,14 +117,22 @@ class AppDialog extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.dialogBackground,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppDimensions.dialogRadius),
-                topRight: Radius.circular(AppDimensions.dialogRadius),
+                topLeft: Radius.circular(
+                  SizeUtils.r(context, AppDimensions.dialogRadius),
+                ),
+                topRight: Radius.circular(
+                  SizeUtils.r(context, AppDimensions.dialogRadius),
+                ),
               ),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppDimensions.dialogRadius),
-                topRight: Radius.circular(AppDimensions.dialogRadius),
+                topLeft: Radius.circular(
+                  SizeUtils.r(context, AppDimensions.dialogRadius),
+                ),
+                topRight: Radius.circular(
+                  SizeUtils.r(context, AppDimensions.dialogRadius),
+                ),
               ),
               child: Stack(
                 children: [
@@ -137,7 +150,10 @@ class AppDialog extends StatelessWidget {
                         child: Image.asset(
                           AppImages.forgotPasswordTop,
                           width: size.width,
-                          height: AppDimensions.dialogDecorativeBgHeight,
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.dialogDecorativeBgHeight,
+                          ),
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
                         ),
@@ -147,11 +163,17 @@ class AppDialog extends StatelessWidget {
                   SafeArea(
                     top: false,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppDimensions.dialogHorizontalPadding,
-                        AppDimensions.dialogTopPadding,
-                        AppDimensions.dialogHorizontalPadding,
-                        AppDimensions.dialogBottomPadding,
+                      padding: EdgeInsets.fromLTRB(
+                        SizeUtils.w(
+                          context,
+                          AppDimensions.dialogHorizontalPadding,
+                        ),
+                        SizeUtils.h(context, AppDimensions.dialogTopPadding),
+                        SizeUtils.w(
+                          context,
+                          AppDimensions.dialogHorizontalPadding,
+                        ),
+                        SizeUtils.h(context, AppDimensions.dialogBottomPadding),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -162,44 +184,82 @@ class AppDialog extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: AppTextStyles.heading2.copyWith(
                               fontWeight: FontWeight.w500,
-                              fontSize: AppDimensions.dialogTitleFontSize,
+                              fontSize: SizeUtils.h(
+                                context,
+                                AppDimensions.dialogTitleFontSize,
+                              ),
                               height:
-                                  AppDimensions.dialogTitleLineHeight /
-                                  AppDimensions.dialogTitleFontSize,
+                                  SizeUtils.h(
+                                    context,
+                                    AppDimensions.dialogTitleLineHeight,
+                                  ) /
+                                  SizeUtils.h(
+                                    context,
+                                    AppDimensions.dialogTitleFontSize,
+                                  ),
                               color: AppColors.textDark,
                               letterSpacing: AppTypography.letterSpacingSmall,
                             ),
                           ),
                           if (effectiveHero != null) ...[
-                            SizedBox(height: AppDimensions.smallSpacing * 2),
+                            SizedBox(
+                              height: SizeUtils.h(
+                                context,
+                                AppDimensions.smallSpacing * 2,
+                              ),
+                            ),
                             Align(
                               alignment: Alignment.center,
                               child: effectiveHero,
                             ),
                           ],
                           if (body != null && body!.isNotEmpty) ...[
-                            SizedBox(height: AppDimensions.smallSpacing * 2),
+                            SizedBox(
+                              height: SizeUtils.h(
+                                context,
+                                AppDimensions.smallSpacing * 2,
+                              ),
+                            ),
                             Text(
                               body!,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.body.copyWith(
-                                fontSize: AppDimensions.dialogBodyFontSize,
+                                fontSize: SizeUtils.h(
+                                  context,
+                                  AppDimensions.dialogBodyFontSize,
+                                ),
                                 height:
-                                    AppDimensions.dialogBodyLineHeight /
-                                    AppDimensions.dialogBodyFontSize,
+                                    SizeUtils.h(
+                                      context,
+                                      AppDimensions.dialogBodyLineHeight,
+                                    ) /
+                                    SizeUtils.h(
+                                      context,
+                                      AppDimensions.dialogBodyFontSize,
+                                    ),
                                 color: AppColors.textDark,
                                 letterSpacing: AppTypography.letterSpacingSmall,
                               ),
                             ),
                           ],
-                          SizedBox(height: AppDimensions.smallSpacing * 3),
                           SizedBox(
-                            height: AppDimensions.buttonHeight,
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.smallSpacing * 3,
+                            ),
+                          ),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.buttonHeight,
+                            ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.buttonGreen,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
+                                  borderRadius: BorderRadius.circular(
+                                    SizeUtils.r(context, 6),
+                                  ),
                                 ),
                               ),
                               onPressed: onPrimaryAction,
@@ -207,7 +267,10 @@ class AppDialog extends StatelessWidget {
                                 primaryActionLabel,
                                 style: AppTextStyles.body.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: AppDimensions.dialogActionFontSize,
+                                  fontSize: SizeUtils.h(
+                                    context,
+                                    AppDimensions.dialogActionFontSize,
+                                  ),
                                   height: 20 / 14,
                                   color: AppColors.pureWhite,
                                   letterSpacing:

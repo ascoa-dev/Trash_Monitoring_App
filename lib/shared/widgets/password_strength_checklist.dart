@@ -5,6 +5,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class PasswordStrengthChecklist extends StatelessWidget {
   final EdgeInsetsGeometry padding;
@@ -48,38 +49,40 @@ class _RuleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = rule.met ? AppColors.accentGreen : AppColors.error;
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.checklistItemSpacing),
+      padding: EdgeInsets.only(
+        bottom: SizeUtils.h(context, AppDimensions.checklistItemSpacing),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: AppDimensions.statusDotSize,
-            height: AppDimensions.statusDotSize,
+            width: SizeUtils.r(context, AppDimensions.statusDotSize),
+            height: SizeUtils.r(context, AppDimensions.statusDotSize),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: rule.met ? AppColors.accentGreen : AppColors.transparent,
               border: Border.all(
                 color: color,
-                width: AppDimensions.statusDotBorderWidth,
+                width: SizeUtils.w(context, AppDimensions.statusDotBorderWidth),
               ),
             ),
             child:
                 rule.met
-                    ? const Icon(
+                    ? Icon(
                       Icons.check,
-                      size: AppDimensions.statusIconSize,
+                      size: SizeUtils.r(context, AppDimensions.statusIconSize),
                       color: AppColors.pureWhite,
                     )
                     : null,
           ),
-          const SizedBox(width: AppDimensions.smallSpacing),
+          SizedBox(width: SizeUtils.w(context, AppDimensions.smallSpacing)),
           Flexible(
             child: Text(
               rule.label,
               style: AppTextStyles.bodySecondary.copyWith(
                 color: color,
-                fontSize: AppDimensions.checklistFontSize,
+                fontSize: SizeUtils.h(context, AppDimensions.checklistFontSize),
               ),
             ),
           ),

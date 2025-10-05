@@ -6,6 +6,7 @@ import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 /// A floating-label country selector that matches the styling of
 /// [FloatingLabelInputField] while leveraging the `country_picker` package
@@ -44,7 +45,7 @@ class CountryCodeSelectorField extends StatelessWidget {
             AppDimensions.bottomSheetHeightFactor,
         textStyle: AppTextStyles.body.copyWith(
           color: AppColors.textDark,
-          fontSize: AppDimensions.inputFontSize,
+          fontSize: SizeUtils.h(context, AppDimensions.inputFontSize),
           letterSpacing: AppTypography.letterSpacingSmall,
         ),
         inputDecoration: InputDecoration(
@@ -64,7 +65,7 @@ class CountryCodeSelectorField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: topSpacing),
+      padding: EdgeInsets.only(top: SizeUtils.h(context, topSpacing)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,22 +76,31 @@ class CountryCodeSelectorField extends StatelessWidget {
                 onTap: () => _openCountryPicker(context),
                 child: Container(
                   width: double.infinity,
-                  height: AppDimensions.inputFieldHeight,
+                  height: SizeUtils.h(context, AppDimensions.inputFieldHeight),
                   decoration: BoxDecoration(
                     color: enabled ? AppColors.background : AppColors.white70,
                     border: Border.all(
                       color: isError ? AppColors.error : AppColors.accentGreen,
                       width:
                           isError
-                              ? AppDimensions.inputBorderWidthError
-                              : AppDimensions.inputBorderWidth,
+                              ? SizeUtils.w(
+                                context,
+                                AppDimensions.inputBorderWidthError,
+                              )
+                              : SizeUtils.w(
+                                context,
+                                AppDimensions.inputBorderWidth,
+                              ),
                     ),
                     borderRadius: BorderRadius.circular(
-                      AppDimensions.smallRadius,
+                      SizeUtils.r(context, AppDimensions.smallRadius),
                     ),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.inputHorizontalPadding,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeUtils.w(
+                      context,
+                      AppDimensions.inputHorizontalPadding,
+                    ),
                   ),
                   alignment: Alignment.centerLeft,
                   child: Row(
@@ -98,14 +108,29 @@ class CountryCodeSelectorField extends StatelessWidget {
                     children: [
                       Text(
                         selectedCountry.flagEmoji,
-                        style: TextStyle(fontSize: AppDimensions.flagEmojiSize),
+                        style: TextStyle(
+                          fontSize: SizeUtils.r(
+                            context,
+                            AppDimensions.flagEmojiSize,
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: AppDimensions.selectorSmallGap),
+                      SizedBox(
+                        width: SizeUtils.w(
+                          context,
+                          AppDimensions.selectorSmallGap,
+                        ),
+                      ),
                       Text(
                         '+${selectedCountry.phoneCode}',
                         style: AppTextStyles.body.copyWith(
-                          fontSize: AppDimensions.inputFontSize,
-                          height: 22 / AppDimensions.inputFontSize,
+                          fontSize: SizeUtils.h(
+                            context,
+                            AppDimensions.inputFontSize,
+                          ),
+                          height:
+                              SizeUtils.h(context, 22) /
+                              SizeUtils.h(context, AppDimensions.inputFontSize),
                           letterSpacing: AppTypography.letterSpacingSmall,
                         ),
                       ),
@@ -113,7 +138,10 @@ class CountryCodeSelectorField extends StatelessWidget {
                       Icon(
                         Icons.keyboard_arrow_down,
                         color: AppColors.textAccent,
-                        size: AppDimensions.selectorIconSize,
+                        size: SizeUtils.r(
+                          context,
+                          AppDimensions.selectorIconSize,
+                        ),
                       ),
                     ],
                   ),
@@ -121,19 +149,30 @@ class CountryCodeSelectorField extends StatelessWidget {
               ),
               Positioned(
                 left:
-                    AppDimensions.inputHorizontalPadding -
-                    AppDimensions.chipHorizontalPadding,
-                top: -AppDimensions.floatingLabelOffset,
+                    SizeUtils.w(context, AppDimensions.inputHorizontalPadding) -
+                    SizeUtils.w(context, AppDimensions.chipHorizontalPadding),
+                top: -SizeUtils.h(context, AppDimensions.floatingLabelOffset),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.chipHorizontalPadding,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeUtils.w(
+                      context,
+                      AppDimensions.chipHorizontalPadding,
+                    ),
                   ),
                   color: AppColors.background,
                   child: Text(
                     label,
                     style: AppTextStyles.body.copyWith(
-                      fontSize: AppDimensions.floatingLabelFontSize,
-                      height: 16 / AppDimensions.floatingLabelFontSize,
+                      fontSize: SizeUtils.h(
+                        context,
+                        AppDimensions.floatingLabelFontSize,
+                      ),
+                      height:
+                          SizeUtils.h(context, 16) /
+                          SizeUtils.h(
+                            context,
+                            AppDimensions.floatingLabelFontSize,
+                          ),
                       color: AppColors.textAccent,
                       letterSpacing: AppTypography.letterSpacingSmall,
                       fontWeight: FontWeight.w400,
@@ -144,16 +183,26 @@ class CountryCodeSelectorField extends StatelessWidget {
             ],
           ),
           if (supportText != null) ...[
-            const SizedBox(height: AppDimensions.inputErrorSpacing),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.inputErrorSpacing),
+            ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.inputHorizontalPadding,
+              padding: EdgeInsets.symmetric(
+                horizontal: SizeUtils.w(
+                  context,
+                  AppDimensions.inputHorizontalPadding,
+                ),
               ),
               child: Text(
                 supportText!,
                 style: AppTextStyles.bodySecondary.copyWith(
-                  fontSize: AppDimensions.supportTextFontSize,
-                  height: 16 / AppDimensions.supportTextFontSize,
+                  fontSize: SizeUtils.h(
+                    context,
+                    AppDimensions.supportTextFontSize,
+                  ),
+                  height:
+                      SizeUtils.h(context, 16) /
+                      SizeUtils.h(context, AppDimensions.supportTextFontSize),
                   color: isError ? AppColors.error : AppColors.textAccent,
                   letterSpacing: AppTypography.letterSpacingSmall,
                 ),

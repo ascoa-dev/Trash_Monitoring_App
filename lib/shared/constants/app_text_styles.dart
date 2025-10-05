@@ -59,7 +59,7 @@ class AppTextStyles {
   static const TextStyle profileActionSubtitle = TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: 14,
+    fontSize: 12,
     color: AppColors.textDark65,
     letterSpacing: AppTypography.letterSpacingSmall,
   );

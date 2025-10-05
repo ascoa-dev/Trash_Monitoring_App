@@ -66,27 +66,31 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       extendBody: true,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: IndexedStack(index: safeIndex, children: pages),
-          ),
-          Positioned(
-            left: AppDimensions.zero,
-            right: AppDimensions.zero,
-            bottom: AppDimensions.zero,
-            child: CustomNavBar(
-              currentIndex: _selectedIndex,
-              onTap: (index) {
-                if (index == 2) {
-                  _openAddReport();
-                  return;
-                }
-                setState(() => _selectedIndex = index);
-              },
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: IndexedStack(index: safeIndex, children: pages),
             ),
-          ),
-        ],
+            Positioned(
+              left: AppDimensions.zero,
+              right: AppDimensions.zero,
+              bottom: AppDimensions.zero,
+              child: CustomNavBar(
+                currentIndex: _selectedIndex,
+                onTap: (index) {
+                  if (index == 2) {
+                    _openAddReport();
+                    return;
+                  }
+                  setState(() => _selectedIndex = index);
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

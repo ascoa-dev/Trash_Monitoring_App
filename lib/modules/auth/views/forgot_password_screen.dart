@@ -23,6 +23,7 @@ import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -77,8 +78,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   : AppStrings.forgotDialogBody,
           decoratedHero: false,
           imageAsset: AppImages.forgotConfirmIcon,
-          imageWidth: AppDimensions.dialogImageWidth,
-          imageHeight: AppDimensions.dialogImageHeight,
+          imageWidth: SizeUtils.w(context, AppDimensions.dialogImageWidth),
+          imageHeight: SizeUtils.h(context, AppDimensions.dialogImageHeight),
           primaryActionLabel:
               isFrench
                   ? AppStrings.forgotDialogButtonFrench
@@ -168,13 +169,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
     final isFrench = Get.locale?.languageCode == 'fr';
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final double viewportHeight = constraints.maxHeight;
           final double viewportWidth = constraints.maxWidth;
+          final double keyboardHeight =
+              MediaQuery.of(context).viewInsets.bottom;
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (keyboardHeight == 0 && scrollController.hasClients) {
+              scrollController.jumpTo(0);
+            }
+          });
 
           return Container(
             width: viewportWidth,
@@ -209,9 +220,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 SafeArea(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.screenPadding,
-                      vertical: AppDimensions.verticalPadding,
+                    controller: scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left: SizeUtils.w(context, AppDimensions.screenPadding),
+                      right: SizeUtils.w(context, AppDimensions.screenPadding),
+                      top: SizeUtils.h(context, AppDimensions.verticalPadding),
+                      bottom:
+                          keyboardHeight > 0
+                              ? keyboardHeight
+                              : SizeUtils.h(
+                                context,
+                                AppDimensions.verticalPadding,
+                              ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -230,17 +251,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               }
                               Get.back();
                             },
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.arrow_back,
                               color: AppColors.buttonGreen,
-                              size: AppDimensions.iconBackSize,
+                              size: SizeUtils.r(
+                                context,
+                                AppDimensions.iconBackSize,
+                              ),
                             ),
                             padding: EdgeInsets.zero,
                           ),
                         ),
                         SizedBox(
                           height:
-                              viewportHeight * AppDimensions.titleTopSpacing,
+                              viewportHeight *
+                              AppDimensions.forgotTitleTopSpacing,
                         ),
                         Image.asset(
                           AppImages.forgotPasswordIcon,
@@ -302,6 +327,53 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 controller.isLoadingForgotPassword.value
                                     ? () {}
                                     : _handleForgotPassword,
+                          ),
+                        ),
+                        SizedBox(
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.smallSpacing,
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.buttonHeight,
+                          ),
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                color: AppColors.buttonGreen,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  SizeUtils.r(
+                                    context,
+                                    AppDimensions.borderRadius,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              final form = Get.find<FormControllers>();
+                              final validation =
+                                  Get.find<ValidationController>();
+                              final currentEmail = form.emailController.text;
+                              validation.clearEmailError();
+                              if (!validation.isEmailValid(currentEmail)) {
+                                form.emailController.clear();
+                              }
+                              Get.offAllNamed(AppRoutes.login);
+                            },
+                            child: Text(
+                              isFrench
+                                  ? AppStrings.editProfileCancelFrench
+                                  : AppStrings.editProfileCancel,
+                              style: AppTextStyles.buttonPrimaryText.copyWith(
+                                color: AppColors.textDark,
+                              ),
+                            ),
                           ),
                         ),
                       ],

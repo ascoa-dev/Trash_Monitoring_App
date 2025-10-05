@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   const CompleteProfileScreen({super.key});
@@ -85,7 +86,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       return;
     }
 
-    final success = await authController.completeProfile(
+    final result = await authController.completeProfile(
       firstName: firstName,
       lastName: lastName,
       phoneNumber: '+${_selectedCountry.phoneCode} $phone',
@@ -93,7 +94,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       city: city,
     );
 
-    if (success) {
+    if (result != null) {
       formControllers.resetProfileFields();
       validationController.clearProfileValidation();
       setState(() {
@@ -110,8 +111,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           alignment: Alignment.center,
           children: [
             SizedBox(
-              width: AppDimensions.avatarDiameter,
-              height: AppDimensions.avatarDiameter,
+              width: SizeUtils.r(context, AppDimensions.avatarDiameter),
+              height: SizeUtils.r(context, AppDimensions.avatarDiameter),
               child: ClipOval(
                 child: Image.asset(
                   AppImages.profilePlaceholder,
@@ -120,29 +121,38 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               ),
             ),
             Positioned(
-              bottom: AppDimensions.avatarEditOffsetBottom,
-              right: AppDimensions.avatarEditOffsetRight,
+              bottom: SizeUtils.h(
+                context,
+                AppDimensions.avatarEditOffsetBottom,
+              ),
+              right: SizeUtils.w(context, AppDimensions.avatarEditOffsetRight),
               child: Container(
-                width: AppDimensions.avatarEditButtonSize,
-                height: AppDimensions.avatarEditButtonSize,
+                width: SizeUtils.r(context, AppDimensions.avatarEditButtonSize),
+                height: SizeUtils.r(
+                  context,
+                  AppDimensions.avatarEditButtonSize,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.pureWhite,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: AppColors.textDark,
-                    width: AppDimensions.avatarEditBorderWidth,
+                    width: SizeUtils.r(
+                      context,
+                      AppDimensions.avatarEditBorderWidth,
+                    ),
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.edit,
-                  size: AppDimensions.avatarEditIconSize,
+                  size: SizeUtils.r(context, AppDimensions.avatarEditIconSize),
                   color: AppColors.textDark,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppDimensions.smallSpacing),
+        SizedBox(height: SizeUtils.h(context, AppDimensions.smallSpacing)),
         GestureDetector(
           onTap: _handleEditPhoto,
           child: Text(
@@ -150,7 +160,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 ? AppStrings.editPhotoLabelFrench
                 : AppStrings.editPhotoLabel,
             style: AppTextStyles.body.copyWith(
-              fontSize: AppDimensions.linkFontSize,
+              fontSize: SizeUtils.h(context, AppDimensions.linkFontSize),
               fontWeight: FontWeight.w500,
               color: AppColors.textDark,
               decoration: TextDecoration.underline,
@@ -164,6 +174,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
     final isFrench = Get.locale?.languageCode == 'fr';
     final title =
         isFrench
@@ -196,233 +207,277 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             ? AppStrings.completeProfileSavingFrench
             : AppStrings.completeProfileSaving;
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            final double viewportHeight = constraints.maxHeight;
-            final double viewportWidth = constraints.maxWidth;
-            final EdgeInsets viewPadding = MediaQuery.of(context).padding;
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      resizeToAvoidBottomInset: false,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final double viewportHeight = constraints.maxHeight;
+          final double viewportWidth = constraints.maxWidth;
+          final EdgeInsets viewPadding = MediaQuery.of(context).padding;
+          final double keyboardHeight =
+              MediaQuery.of(context).viewInsets.bottom;
 
-            return Stack(
-              children: [
-                Container(color: AppColors.background),
-                Positioned(
-                  top: AppDimensions.zero,
-                  left: AppDimensions.zero,
-                  right: AppDimensions.zero,
-                  child: Image.asset(
-                    AppImages.completeProfileTop,
-                    width: viewportWidth,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                  ),
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (keyboardHeight == 0 && scrollController.hasClients) {
+              scrollController.jumpTo(0);
+            }
+          });
+
+          return Stack(
+            children: [
+              Container(color: AppColors.background),
+              Positioned(
+                top: AppDimensions.zero,
+                left: AppDimensions.zero,
+                right: AppDimensions.zero,
+                child: Image.asset(
+                  AppImages.completeProfileTop,
+                  width: viewportWidth,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
                 ),
-                Positioned(
-                  left: AppDimensions.zero,
-                  right: AppDimensions.zero,
-                  bottom: -viewPadding.bottom,
-                  child: Image.asset(
-                    AppImages.forgotPasswordBottom,
-                    width: viewportWidth,
-                    height:
-                        viewportHeight *
-                        AppDimensions.completeProfileBottomHeight,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.bottomCenter,
-                  ),
+              ),
+              Positioned(
+                left: AppDimensions.zero,
+                right: AppDimensions.zero,
+                bottom: -viewPadding.bottom,
+                child: Image.asset(
+                  AppImages.forgotPasswordBottom,
+                  width: viewportWidth,
+                  height:
+                      viewportHeight *
+                      AppDimensions.completeProfileBottomHeight,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.bottomCenter,
                 ),
-                SafeArea(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.screenPadding,
-                      vertical: AppDimensions.verticalPadding,
-                    ),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 440),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
+              ),
+              SafeArea(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    left: SizeUtils.w(context, AppDimensions.screenPadding),
+                    right: SizeUtils.w(context, AppDimensions.screenPadding),
+                    top: SizeUtils.h(context, AppDimensions.verticalPadding),
+                    bottom:
+                        keyboardHeight > 0
+                            ? keyboardHeight
+                            : SizeUtils.h(
+                              context,
+                              AppDimensions.verticalPadding,
+                            ),
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 440),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height:
+                                viewportHeight *
+                                AppDimensions.authSmallSpacerFactor,
+                          ),
+                          Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.heading2.copyWith(
+                              fontSize: SizeUtils.h(
+                                context,
+                                AppDimensions.heading2FontSize,
+                              ),
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: AppTypography.letterSpacingSmall,
+                              color: AppColors.pureWhite,
+                            ),
+                          ),
+                          SizedBox(height: SizeUtils.h(context, 8)),
+                          Text(
+                            subtitle,
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.body.copyWith(
+                              fontSize: SizeUtils.h(
+                                context,
+                                AppDimensions.subtitleFontSize,
+                              ),
                               height:
-                                  viewportHeight *
-                                  AppDimensions.authSmallSpacerFactor,
+                                  SizeUtils.h(context, 22) /
+                                  SizeUtils.h(
+                                    context,
+                                    AppDimensions.subtitleFontSize,
+                                  ),
+                              letterSpacing: 0.1,
+                              color: AppColors.pureWhite,
                             ),
-                            Text(
-                              title,
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.heading2.copyWith(
-                                fontSize: AppDimensions.heading2FontSize,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: AppTypography.letterSpacingSmall,
-                                color: AppColors.pureWhite,
+                          ),
+                          SizedBox(
+                            height:
+                                viewportHeight *
+                                AppDimensions.authSmallSpacerFactor,
+                          ),
+                          _buildAvatarSection(isFrench),
+                          SizedBox(
+                            height:
+                                viewportHeight *
+                                AppDimensions.authXSmallSpacerFactor,
+                          ),
+                          Obx(
+                            () => FloatingLabelInputField(
+                              controller: formControllers.firstNameController,
+                              label: firstNameLabel,
+                              hint: AppStrings.firstNameHint,
+                              supportText:
+                                  validationController.firstNameError.value,
+                              isError:
+                                  validationController.firstNameError.value !=
+                                  null,
+                              onChanged: validationController.validateFirstName,
+                              textCapitalization: TextCapitalization.words,
+                              textInputAction: TextInputAction.next,
+                            ),
+                          ),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.screenPadding,
+                            ),
+                          ),
+                          Obx(
+                            () => FloatingLabelInputField(
+                              controller: formControllers.lastNameController,
+                              label: lastNameLabel,
+                              hint: AppStrings.lastNameHint,
+                              supportText:
+                                  validationController.lastNameError.value,
+                              isError:
+                                  validationController.lastNameError.value !=
+                                  null,
+                              onChanged: validationController.validateLastName,
+                              textCapitalization: TextCapitalization.words,
+                              textInputAction: TextInputAction.next,
+                            ),
+                          ),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.screenPadding,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: SizeUtils.h(
+                                context,
+                                AppDimensions.fieldVerticalSpacing,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              subtitle,
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.body.copyWith(
-                                fontSize: AppDimensions.subtitleFontSize,
-                                height: 22 / AppDimensions.subtitleFontSize,
-                                letterSpacing: 0.1,
-                                color: AppColors.pureWhite,
-                              ),
-                            ),
-                            SizedBox(
-                              height:
-                                  viewportHeight *
-                                  AppDimensions.authSmallSpacerFactor,
-                            ),
-                            _buildAvatarSection(isFrench),
-                            SizedBox(
-                              height:
-                                  viewportHeight *
-                                  AppDimensions.authXSmallSpacerFactor,
-                            ),
-                            Obx(
-                              () => FloatingLabelInputField(
-                                controller: formControllers.firstNameController,
-                                label: firstNameLabel,
-                                hint: AppStrings.firstNameHint,
-                                supportText:
-                                    validationController.firstNameError.value,
-                                isError:
-                                    validationController.firstNameError.value !=
-                                    null,
-                                onChanged:
-                                    validationController.validateFirstName,
-                                textCapitalization: TextCapitalization.words,
-                                textInputAction: TextInputAction.next,
-                              ),
-                            ),
-                            SizedBox(height: AppDimensions.screenPadding),
-                            Obx(
-                              () => FloatingLabelInputField(
-                                controller: formControllers.lastNameController,
-                                label: lastNameLabel,
-                                hint: AppStrings.lastNameHint,
-                                supportText:
-                                    validationController.lastNameError.value,
-                                isError:
-                                    validationController.lastNameError.value !=
-                                    null,
-                                onChanged:
-                                    validationController.validateLastName,
-                                textCapitalization: TextCapitalization.words,
-                                textInputAction: TextInputAction.next,
-                              ),
-                            ),
-                            SizedBox(height: AppDimensions.screenPadding),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: AppDimensions.fieldVerticalSpacing,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    flex: 5,
-                                    child: CountryCodeSelectorField(
-                                      selectedCountry: _selectedCountry,
-                                      onChanged: (country) {
-                                        setState(() {
-                                          _selectedCountry = country;
-                                        });
-                                        validationController
-                                            .validatePhoneNumber(
-                                              '+${country.phoneCode}',
-                                              formControllers
-                                                  .phoneNumberController
-                                                  .text,
-                                            );
-                                      },
-                                      label: countryLabel,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 5,
+                                  child: CountryCodeSelectorField(
+                                    selectedCountry: _selectedCountry,
+                                    onChanged: (country) {
+                                      setState(() {
+                                        _selectedCountry = country;
+                                      });
+                                      validationController.validatePhoneNumber(
+                                        '+${country.phoneCode}',
+                                        formControllers
+                                            .phoneNumberController
+                                            .text,
+                                      );
+                                    },
+                                    label: countryLabel,
+                                    topSpacing: AppDimensions.zero,
+                                  ),
+                                ),
+                                SizedBox(width: SizeUtils.w(context, 8)),
+                                Expanded(
+                                  flex: 7,
+                                  child: Obx(
+                                    () => FloatingLabelInputField(
+                                      controller:
+                                          formControllers.phoneNumberController,
+                                      label: phoneLabel,
+                                      hint: AppStrings.phoneNumberHint,
+                                      supportText:
+                                          validationController
+                                              .phoneNumberError
+                                              .value,
+                                      isError:
+                                          validationController
+                                              .phoneNumberError
+                                              .value !=
+                                          null,
+                                      onChanged:
+                                          (value) => validationController
+                                              .validatePhoneNumber(
+                                                '+${_selectedCountry.phoneCode}',
+                                                value,
+                                              ),
+                                      keyboardType: TextInputType.phone,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9 ]'),
+                                        ),
+                                      ],
+                                      textInputAction: TextInputAction.next,
                                       topSpacing: AppDimensions.zero,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    flex: 7,
-                                    child: Obx(
-                                      () => FloatingLabelInputField(
-                                        controller:
-                                            formControllers
-                                                .phoneNumberController,
-                                        label: phoneLabel,
-                                        hint: AppStrings.phoneNumberHint,
-                                        supportText:
-                                            validationController
-                                                .phoneNumberError
-                                                .value,
-                                        isError:
-                                            validationController
-                                                .phoneNumberError
-                                                .value !=
-                                            null,
-                                        onChanged:
-                                            (value) => validationController
-                                                .validatePhoneNumber(
-                                                  '+${_selectedCountry.phoneCode}',
-                                                  value,
-                                                ),
-                                        keyboardType: TextInputType.phone,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.allow(
-                                            RegExp(r'[0-9 ]'),
-                                          ),
-                                        ],
-                                        textInputAction: TextInputAction.next,
-                                        topSpacing: AppDimensions.zero,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: AppDimensions.screenPadding),
-                            Obx(
-                              () => FloatingLabelInputField(
-                                controller: formControllers.cityController,
-                                label: cityLabel,
-                                hint: AppStrings.cityHint,
-                                supportText:
-                                    validationController.cityError.value,
-                                isError:
-                                    validationController.cityError.value !=
-                                    null,
-                                onChanged: validationController.validateCity,
-                                textCapitalization: TextCapitalization.words,
-                                textInputAction: TextInputAction.done,
-                              ),
+                          ),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.screenPadding,
                             ),
-                            SizedBox(height: AppDimensions.screenPadding),
-                            Obx(() {
-                              final isSaving =
-                                  authController.isCompletingProfile.value;
-                              return PrimaryButton(
-                                label: isSaving ? savingLabel : buttonLabel,
-                                onPressed: () {
-                                  if (!isSaving) {
-                                    _submitProfile();
-                                  }
-                                },
-                              );
-                            }),
-                            const SizedBox(height: 40),
-                          ],
-                        ),
+                          ),
+                          Obx(
+                            () => FloatingLabelInputField(
+                              controller: formControllers.cityController,
+                              label: cityLabel,
+                              hint: AppStrings.cityHint,
+                              supportText: validationController.cityError.value,
+                              isError:
+                                  validationController.cityError.value != null,
+                              onChanged: validationController.validateCity,
+                              textCapitalization: TextCapitalization.words,
+                              textInputAction: TextInputAction.done,
+                            ),
+                          ),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.screenPadding,
+                            ),
+                          ),
+                          Obx(() {
+                            final isSaving =
+                                authController.isCompletingProfile.value;
+                            return PrimaryButton(
+                              label: isSaving ? savingLabel : buttonLabel,
+                              onPressed: () {
+                                if (!isSaving) {
+                                  _submitProfile();
+                                }
+                              },
+                            );
+                          }),
+                          SizedBox(height: SizeUtils.h(context, 40)),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

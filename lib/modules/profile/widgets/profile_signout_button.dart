@@ -4,6 +4,7 @@ import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class ProfileSignOutButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -13,34 +14,58 @@ class ProfileSignOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: AppDimensions.profileCardWidth,
+      width: SizeUtils.w(context, AppDimensions.profileCardWidth),
       child: Material(
         color: AppColors.accentGreen,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+        borderRadius: BorderRadius.circular(
+          SizeUtils.r(context, AppDimensions.borderRadius),
+        ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+          borderRadius: BorderRadius.circular(
+            SizeUtils.r(context, AppDimensions.borderRadius),
+          ),
           onTap: onPressed,
           child: Container(
-            height: AppDimensions.profileSignOutHeight,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.profileSignOutHorizontalPadding,
+            height: SizeUtils.h(context, AppDimensions.profileSignOutHeight),
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeUtils.w(
+                context,
+                AppDimensions.profileSignOutHorizontalPadding,
+              ),
             ),
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
                 SizedBox(
-                  width: AppDimensions.profileCardIconSize,
-                  height: AppDimensions.profileCardIconSize,
+                  width: SizeUtils.r(
+                    context,
+                    AppDimensions.profileCardIconSize,
+                  ),
+                  height: SizeUtils.r(
+                    context,
+                    AppDimensions.profileCardIconSize,
+                  ),
                   child: Center(
                     child: Image.asset(
                       AppImages.signout,
-                      width: AppDimensions.profileCardIconSize,
-                      height: AppDimensions.profileCardIconSize,
+                      width: SizeUtils.r(
+                        context,
+                        AppDimensions.profileCardIconSize,
+                      ),
+                      height: SizeUtils.r(
+                        context,
+                        AppDimensions.profileCardIconSize,
+                      ),
                       fit: BoxFit.contain,
                     ),
                   ),
                 ),
-                const SizedBox(width: AppDimensions.profileSignOutIconGap),
+                SizedBox(
+                  width: SizeUtils.w(
+                    context,
+                    AppDimensions.profileSignOutIconGap,
+                  ),
+                ),
                 const Text(
                   AppStrings.profileSignOut,
                   style: AppTextStyles.profileSignOutText,

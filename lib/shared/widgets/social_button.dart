@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class SocialButton extends StatelessWidget {
   final Widget icon;
@@ -23,21 +24,29 @@ class SocialButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: double.infinity,
-        height: AppDimensions.buttonHeight,
+        height: SizeUtils.h(context, AppDimensions.buttonHeight),
         decoration: BoxDecoration(
           color: AppColors.background,
           border: Border.all(
             color: AppColors.accentGreen,
-            width: AppDimensions.socialOutlinedBorderWidth,
+            width: SizeUtils.w(
+              context,
+              AppDimensions.socialOutlinedBorderWidth,
+            ),
           ),
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-          boxShadow: const [
+          borderRadius: BorderRadius.circular(
+            SizeUtils.r(context, AppDimensions.borderRadius),
+          ),
+          boxShadow: [
             BoxShadow(
               color: AppColors.shadow,
-              blurRadius: AppDimensions.boxShadowBlurRadius,
+              blurRadius: SizeUtils.r(
+                context,
+                AppDimensions.boxShadowBlurRadius,
+              ),
               offset: Offset(
-                AppDimensions.boxShadowOffsetX,
-                AppDimensions.boxShadowOffsetY,
+                SizeUtils.w(context, AppDimensions.boxShadowOffsetX),
+                SizeUtils.h(context, AppDimensions.boxShadowOffsetY),
               ),
             ),
           ],
@@ -46,8 +55,14 @@ class SocialButton extends StatelessWidget {
             (label == null || label!.isEmpty)
                 ? Center(
                   child: SizedBox(
-                    width: AppDimensions.socialIconContainerSize,
-                    height: AppDimensions.socialIconContainerSize,
+                    width: SizeUtils.r(
+                      context,
+                      AppDimensions.socialIconContainerSize,
+                    ),
+                    height: SizeUtils.r(
+                      context,
+                      AppDimensions.socialIconContainerSize,
+                    ),
                     child: icon,
                   ),
                 )
@@ -56,11 +71,22 @@ class SocialButton extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: AppDimensions.socialIconContainerSize,
-                      height: AppDimensions.socialIconContainerSize,
+                      width: SizeUtils.r(
+                        context,
+                        AppDimensions.socialIconContainerSize,
+                      ),
+                      height: SizeUtils.r(
+                        context,
+                        AppDimensions.socialIconContainerSize,
+                      ),
                       child: icon,
                     ),
-                    SizedBox(width: AppDimensions.socialContentSpacing),
+                    SizedBox(
+                      width: SizeUtils.w(
+                        context,
+                        AppDimensions.socialContentSpacing,
+                      ),
+                    ),
                     Flexible(
                       child: Text(
                         label!,

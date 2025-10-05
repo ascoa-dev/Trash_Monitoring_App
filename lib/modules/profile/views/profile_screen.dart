@@ -9,6 +9,8 @@ import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/modules/profile/widgets/profile_action_tile.dart';
 import 'package:ascoa_app/modules/profile/widgets/profile_signout_button.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'dart:math' as math;
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -49,51 +51,70 @@ class ProfileScreen extends StatelessWidget {
                   height:
                       viewportHeight *
                       AppDimensions.profileBottomBackgroundHeightFactor,
-                  child: Transform(
-                    transform:
-                        Matrix4.identity()..scaleByDouble(
-                          AppDimensions.one,
-                          AppDimensions.zero,
-                          AppDimensions.zero,
-                          AppDimensions.zero,
-                        ),
+                  child: Image.asset(
+                    AppImages.profileScreenBottom,
+                    width: viewportWidth,
+                    fit: BoxFit.cover,
                     alignment: Alignment.bottomCenter,
-                    child: Image.asset(
-                      AppImages.profileScreenBottom,
-                      width: viewportWidth,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.bottomCenter,
-                    ),
                   ),
                 ),
                 SafeArea(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.screenPadding,
-                      vertical: AppDimensions.verticalPadding,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: SizeUtils.w(
+                        context,
+                        AppDimensions.screenPadding,
+                      ),
+                      vertical: SizeUtils.h(
+                        context,
+                        AppDimensions.verticalPadding,
+                      ),
                     ),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          maxWidth: AppDimensions.profileContentMaxWidth,
+                        constraints: BoxConstraints(
+                          maxWidth: SizeUtils.w(
+                            context,
+                            AppDimensions.profileContentMaxWidth,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(
-                              height: AppDimensions.profileHeaderTopGap,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileHeaderTopGap,
+                                ),
+                                AppDimensions.profileHeaderTopGap,
+                              ),
                             ),
-                            const Text(
+                            Text(
                               AppStrings.profileManagementTitle,
-                              style: AppTextStyles.profileHeading,
+                              style: AppTextStyles.profileHeading.copyWith(
+                                fontSize: SizeUtils.h(context, 28),
+                              ),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileNameTopGap,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileNameTopGap,
+                                ),
+                                AppDimensions.profileNameTopGap,
+                              ),
                             ),
                             SizedBox(
-                              width: AppDimensions.profileAvatarSize,
-                              height: AppDimensions.profileAvatarSize,
+                              width: SizeUtils.r(
+                                context,
+                                AppDimensions.profileAvatarSize,
+                              ),
+                              height: SizeUtils.r(
+                                context,
+                                AppDimensions.profileAvatarSize,
+                              ),
                               child: ClipOval(
                                 child: Image.asset(
                                   AppImages.profilePlaceholder,
@@ -101,8 +122,14 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileNameTopGap,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileNameTopGap,
+                                ),
+                                AppDimensions.profileNameTopGap,
+                              ),
                             ),
                             FutureBuilder<String>(
                               future: authController.getName(),
@@ -125,14 +152,22 @@ class ProfileScreen extends StatelessWidget {
                                     snapshot.data?.isNotEmpty == true
                                         ? snapshot.data!
                                         : AppStrings.profileNamePlaceholder,
-                                    style: AppTextStyles.profileName,
+                                    style: AppTextStyles.profileName.copyWith(
+                                      fontSize: SizeUtils.h(context, 22),
+                                    ),
                                     textAlign: TextAlign.center,
                                   );
                                 }
                               },
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileSectionSpacing,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileSectionSpacing,
+                                ),
+                                AppDimensions.profileSectionSpacing,
+                              ),
                             ),
                             ProfileActionTile(
                               icon: Icons.edit_outlined,
@@ -140,8 +175,14 @@ class ProfileScreen extends StatelessWidget {
                               subtitle: AppStrings.profileEditSubtitle,
                               onTap: () => Get.toNamed(AppRoutes.editProfile),
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileCardSpacing,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
                             ),
                             ProfileActionTile(
                               icon: Icons.lock_outline,
@@ -151,14 +192,25 @@ class ProfileScreen extends StatelessWidget {
                               onTap:
                                   () => Get.toNamed(AppRoutes.changePassword),
                             ),
-                            const SizedBox(
-                              height:
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
                                   AppDimensions.profileSectionSupportSpacing,
+                                ),
+                                AppDimensions.profileSectionSupportSpacing,
+                              ),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               width:
-                                  AppDimensions.profileCardWidth -
-                                  AppDimensions.profileCardTextWidthOffset,
+                                  SizeUtils.w(
+                                    context,
+                                    AppDimensions.profileCardWidth,
+                                  ) -
+                                  SizeUtils.w(
+                                    context,
+                                    AppDimensions.profileCardTextWidthOffset,
+                                  ),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -167,48 +219,89 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileCaptionSpacing,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileCaptionSpacing,
+                                ),
+                                AppDimensions.profileCaptionSpacing,
+                              ),
                             ),
                             ProfileActionTile(
                               leading: Image.asset(
                                 AppImages.policy,
-                                width: AppDimensions.profileCardIconSize,
-                                height: AppDimensions.profileCardIconSize,
+                                width: SizeUtils.r(
+                                  context,
+                                  AppDimensions.profileCardIconSize,
+                                ),
+                                height: SizeUtils.r(
+                                  context,
+                                  AppDimensions.profileCardIconSize,
+                                ),
                                 fit: BoxFit.contain,
                               ),
                               title: AppStrings.profilePolicyTitle,
                               subtitle: AppStrings.profilePolicySubtitle,
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileCardSpacing,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
                             ),
                             ProfileActionTile(
                               leading: Image.asset(
                                 AppImages.faq,
-                                width: AppDimensions.profileCardIconSize,
-                                height: AppDimensions.profileCardIconSize,
+                                width: SizeUtils.r(
+                                  context,
+                                  AppDimensions.profileCardIconSize,
+                                ),
+                                height: SizeUtils.r(
+                                  context,
+                                  AppDimensions.profileCardIconSize,
+                                ),
                                 fit: BoxFit.contain,
                               ),
                               title: AppStrings.profileFaqTitle,
                               subtitle: AppStrings.profileFaqSubtitle,
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileCardSpacing,
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
                             ),
                             ProfileActionTile(
                               leading: Image.asset(
                                 AppImages.contact,
-                                width: AppDimensions.profileCardIconSize,
-                                height: AppDimensions.profileCardIconSize,
+                                width: SizeUtils.r(
+                                  context,
+                                  AppDimensions.profileCardIconSize,
+                                ),
+                                height: SizeUtils.r(
+                                  context,
+                                  AppDimensions.profileCardIconSize,
+                                ),
                                 fit: BoxFit.contain,
                               ),
                               title: AppStrings.profileContactTitle,
                               subtitle: AppStrings.profileContactSubtitle,
                             ),
-                            const SizedBox(
-                              height:
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
                                   AppDimensions.profileSectionSignoutSpacing,
+                                ),
+                                AppDimensions.profileSectionSignoutSpacing,
+                              ),
                             ),
                             ProfileSignOutButton(
                               onPressed: () async {
@@ -216,8 +309,11 @@ class ProfileScreen extends StatelessWidget {
                                 Get.offAllNamed(AppRoutes.login);
                               },
                             ),
-                            const SizedBox(
-                              height: AppDimensions.profileHeaderTopGap,
+                            SizedBox(
+                              height: SizeUtils.h(
+                                context,
+                                AppDimensions.smallSpacing,
+                              ),
                             ),
                           ],
                         ),

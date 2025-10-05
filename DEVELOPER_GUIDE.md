@@ -117,6 +117,12 @@ Centralized tokens to replace hard-coded values:
 - Breaking Change: Removed `SignupBinding` and `SignupFormController`.
 - New behavior: After successful authentication, the app will check the Firestore `users` document. If `isProfileComplete` is false the user will be routed to `AppRoutes.completeProfile` to complete profile information. This adds a required setup step for new users.
 
+### Recent lib/ changes (notes for reviewers)
+
+- Several shared widgets were converted to use `SizeUtils` wrappers around existing `AppDimensions` tokens so layouts scale across devices. See `SHARED_COMPONENTS_GUIDE.md` for detailed per-widget notes and the conservative mapping of `.h`, `.w`, and `.r`.
+- Small token changes in `lib/shared/constants/app_dimensions.dart` (added `forgotTitleTopSpacing`, adjusted `profileSectionSpacing` and `profileCardMinHeight`). Review these when changing profile or forgot-password layouts.
+- `login_screen_v2.dart` had a UX fix: the main scrollable now disables scrolling when the keyboard is hidden to prevent accidental scrolling.
+
 ### Tokenization sweep (strings/colors/validators)
 
 - A recent maintenance pass replaced several hard-coded UI strings and some literal color values with shared tokens to improve consistency and enable easier localization. Key highlights:

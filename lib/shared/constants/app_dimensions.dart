@@ -26,6 +26,7 @@ class AppDimensions {
 
   // Screen Height Multipliers
   static const double titleTopSpacing = 0.16;
+  static const double forgotTitleTopSpacing = 0.12;
   static const double titleBottomSpacing = 0.02;
   static const double inputSpacing = 0.01;
   static const double buttonSpacing = 0.03;
@@ -103,11 +104,11 @@ class AppDimensions {
   static const double profileAvatarIconSize = 46.0;
   static const double profileHeaderTopGap = 56.0;
   static const double profileNameTopGap = 4.0;
-  static const double profileSectionSpacing = 20.0;
+  static const double profileSectionSpacing = 14.0;
   static const double profileSectionSupportSpacing = 16.0;
   static const double profileSectionSignoutSpacing = 40.0;
   static const double profileCardSpacing = 8.0;
-  static const double profileCardMinHeight = 72.0;
+  static const double profileCardMinHeight = 68.0;
   static const double profileCardWidth = 360.0;
   // Small width offset used when aligning text within profile card containers
   static const double profileCardTextWidthOffset = 9.0;

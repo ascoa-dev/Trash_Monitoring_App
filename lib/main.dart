@@ -17,6 +17,7 @@ import 'modules/auth/views/email_verification_screen.dart';
 import 'modules/profile/views/edit_profile_screen.dart';
 import 'modules/profile/bindings/edit_profile_binding.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'modules/profile/views/change_password_screen.dart';
 import 'modules/profile/bindings/change_password_binding.dart';
 
@@ -46,20 +47,23 @@ class MyApp extends StatelessWidget {
       return AppRoutes.emailVerification;
     }
     try {
-      final doc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-      final userData = doc.data();
+      // Prefer using the typed UserModel from AuthController when available
+      final authController = Get.find<AuthController>();
+      // Ensure we have a current model loaded (fetch if necessary)
+      if (authController.currentUserModel.value == null) {
+        await authController.fetchCurrentUserProfile();
+      }
 
-      if (userData == null) {
+      final userModel = authController.currentUserModel.value;
+      if (userModel == null) {
+        // If still null, create a minimal document and force profile completion
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'email': user.email,
           'firstName': '',
           'lastName': '',
           'phoneNumber': '',
           'city': '',
+          'countryCode': '',
           'isProfileComplete': false,
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
@@ -68,11 +72,9 @@ class MyApp extends StatelessWidget {
         return AppRoutes.completeProfile;
       }
 
-      if (userData['isProfileComplete'] == true) {
-        return AppRoutes.home;
-      } else {
-        return AppRoutes.completeProfile;
-      }
+      return userModel.isProfileComplete
+          ? AppRoutes.home
+          : AppRoutes.completeProfile;
     } catch (e) {
       debugPrint('Error fetching user data: $e');
       return AppRoutes.login;
@@ -87,11 +89,27 @@ class MyApp extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return MaterialApp(
-            home: Scaffold(body: Center(child: Image.asset(AppImages.logo))),
+            //change background colour to primary color
+            home: Scaffold(
+              body: Center(child: Image.asset(AppImages.logo)),
+              backgroundColor: AppColors.primary,
+            ),
           );
         }
         return GetMaterialApp(
           title: 'Trash Monitoring App',
+          // Clamp global text scale to 1.0 for visual consistency across devices
+          // (optional: remove if you want to respect system font scaling)
+          builder: (context, child) {
+            final mq = MediaQuery.of(context);
+            return MediaQuery(
+              data: mq.copyWith(
+                // Replace deprecated textScaleFactor with textScaler
+                textScaler: const TextScaler.linear(1.0),
+              ),
+              child: child!,
+            );
+          },
           initialRoute: snapshot.data!,
           getPages: [
             GetPage(

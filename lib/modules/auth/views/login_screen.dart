@@ -13,6 +13,7 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -34,9 +35,9 @@ class LoginScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.screenPadding,
-              vertical: AppDimensions.verticalPadding,
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeUtils.w(context, AppDimensions.screenPadding),
+              vertical: SizeUtils.h(context, AppDimensions.verticalPadding),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,7 +63,9 @@ class LoginScreen extends StatelessWidget {
                     style: AppTextStyles.label,
                   ),
                 ),
-                const SizedBox(height: AppDimensions.smallSpacing),
+                SizedBox(
+                  height: SizeUtils.h(context, AppDimensions.smallSpacing),
+                ),
 
                 // Email Input
                 Obx(
@@ -85,7 +88,9 @@ class LoginScreen extends StatelessWidget {
                     style: AppTextStyles.label,
                   ),
                 ),
-                const SizedBox(height: AppDimensions.smallSpacing),
+                SizedBox(
+                  height: SizeUtils.h(context, AppDimensions.smallSpacing),
+                ),
 
                 // Password Input
                 Obx(
@@ -153,29 +158,38 @@ class LoginScreen extends StatelessWidget {
                 // OR Divider
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Divider(
                         color:
                             AppColors
                                 .divider, // Light gray for white background
-                        thickness: AppDimensions.dividerThickness,
+                        thickness: SizeUtils.h(
+                          context,
+                          AppDimensions.dividerThickness,
+                        ),
                       ),
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: AppDimensions.dividerPadding,
+                        horizontal: SizeUtils.w(
+                          context,
+                          AppDimensions.dividerPadding,
+                        ),
                       ),
-                      child: Text(
+                      child: const Text(
                         AppStrings.dividerOr,
                         style: AppTextStyles.dividerText,
                       ),
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Divider(
                         color:
                             AppColors
                                 .divider, // Light gray for white background
-                        thickness: AppDimensions.dividerThickness,
+                        thickness: SizeUtils.h(
+                          context,
+                          AppDimensions.dividerThickness,
+                        ),
                       ),
                     ),
                   ],
@@ -187,8 +201,8 @@ class LoginScreen extends StatelessWidget {
                 SocialButton(
                   icon: Image.asset(
                     AppImages.googleNeutral2x,
-                    width: AppDimensions.socialIconSize,
-                    height: AppDimensions.socialIconSize,
+                    width: SizeUtils.r(context, AppDimensions.socialIconSize),
+                    height: SizeUtils.r(context, AppDimensions.socialIconSize),
                     fit: BoxFit.contain,
                   ),
                   label: AppStrings.continueWithGoogle,
@@ -196,14 +210,19 @@ class LoginScreen extends StatelessWidget {
                   onPressed: () => controller.loginWithGoogle(),
                 ),
 
-                const SizedBox(height: AppDimensions.socialButtonSpacing),
+                SizedBox(
+                  height: SizeUtils.h(
+                    context,
+                    AppDimensions.socialButtonSpacing,
+                  ),
+                ),
 
                 // Facebook Button
                 SocialButton(
                   icon: Image.asset(
                     AppImages.facebookPrimary,
-                    width: AppDimensions.socialIconSize,
-                    height: AppDimensions.socialIconSize,
+                    width: SizeUtils.r(context, AppDimensions.socialIconSize),
+                    height: SizeUtils.r(context, AppDimensions.socialIconSize),
                     fit: BoxFit.contain,
                   ),
                   label: AppStrings.continueWithFacebook,
@@ -248,7 +267,9 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: AppDimensions.bottomSpacing),
+                SizedBox(
+                  height: SizeUtils.h(context, AppDimensions.bottomSpacing),
+                ),
 
                 // Terms
                 RichText(

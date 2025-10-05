@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class ProfileActionTile extends StatelessWidget {
   final IconData? icon;
@@ -29,43 +30,61 @@ class ProfileActionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget leadingWidget = SizedBox(
-      width: AppDimensions.profileCardIconSize,
-      height: AppDimensions.profileCardIconSize,
+      width: SizeUtils.r(context, AppDimensions.profileCardIconSize),
+      height: SizeUtils.r(context, AppDimensions.profileCardIconSize),
       child: Center(
         child:
             leading ??
             Icon(
               icon!,
-              size: AppDimensions.profileCardIconSize,
+              size: SizeUtils.r(context, AppDimensions.profileCardIconSize),
               color: iconColor,
             ),
       ),
     );
 
     return SizedBox(
-      width: AppDimensions.profileCardWidth,
+      width: SizeUtils.w(context, AppDimensions.profileCardWidth),
       child: Material(
         color: AppColors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+          borderRadius: BorderRadius.circular(
+            SizeUtils.r(context, AppDimensions.borderRadius),
+          ),
           onTap: onTap,
           child: Container(
-            constraints: const BoxConstraints(
-              minHeight: AppDimensions.profileCardMinHeight,
+            constraints: BoxConstraints(
+              maxHeight: SizeUtils.h(
+                context,
+                AppDimensions.profileCardMinHeight,
+              ),
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.profileCardPaddingHorizontal,
-              vertical: AppDimensions.profileCardPaddingVertical,
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeUtils.w(
+                context,
+                AppDimensions.profileCardPaddingHorizontal,
+              ),
+              vertical: SizeUtils.h(
+                context,
+                AppDimensions.profileCardPaddingVertical,
+              ),
             ),
             decoration: BoxDecoration(
               color: backgroundColor,
-              borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+              borderRadius: BorderRadius.circular(
+                SizeUtils.r(context, AppDimensions.borderRadius),
+              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 leadingWidget,
-                const SizedBox(width: AppDimensions.profileCardContentGap),
+                SizedBox(
+                  width: SizeUtils.w(
+                    context,
+                    AppDimensions.profileCardContentGap,
+                  ),
+                ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -73,8 +92,11 @@ class ProfileActionTile extends StatelessWidget {
                     children: [
                       Text(title, style: AppTextStyles.profileActionTitle),
                       if (subtitle != null) ...[
-                        const SizedBox(
-                          height: AppDimensions.profileCardLabelSpacing,
+                        SizedBox(
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.profileCardLabelSpacing,
+                          ),
                         ),
                         Text(
                           subtitle!,

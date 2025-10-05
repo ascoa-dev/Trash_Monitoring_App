@@ -7,6 +7,7 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -20,15 +21,15 @@ class HomeScreen extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       color: AppColors.background,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.screenPadding,
-        vertical: AppDimensions.verticalPadding,
+      padding: EdgeInsets.symmetric(
+        horizontal: SizeUtils.w(context, AppDimensions.screenPadding),
+        vertical: SizeUtils.h(context, AppDimensions.verticalPadding),
       ),
       child: SafeArea(
         child: Column(
           children: [
             // Top spacing
-            const SizedBox(height: AppDimensions.screenPadding),
+            SizedBox(height: SizeUtils.h(context, AppDimensions.screenPadding)),
 
             // Title
             const Text(AppStrings.homeTitle, style: AppTextStyles.heading1),

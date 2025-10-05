@@ -4,6 +4,7 @@ import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class AuthHeader extends StatelessWidget {
   final double scale;
@@ -12,8 +13,14 @@ class AuthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Figma reference box (from provided spec): scaled from base constants
-    final double baseWidth = AppDimensions.authHeaderBaseWidth * scale;
-    final double baseHeight = AppDimensions.authHeaderBaseHeight * scale;
+    final double baseWidth = SizeUtils.w(
+      context,
+      AppDimensions.authHeaderBaseWidth * scale,
+    );
+    final double baseHeight = SizeUtils.h(
+      context,
+      AppDimensions.authHeaderBaseHeight * scale,
+    );
 
     return SizedBox(
       width: baseWidth,
@@ -34,10 +41,19 @@ class AuthHeader extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.visible,
               style: AppTextStyles.heading1.copyWith(
-                fontSize: AppDimensions.authHeaderTitleFontSizeBase * scale,
+                fontSize: SizeUtils.h(
+                  context,
+                  AppDimensions.authHeaderTitleFontSizeBase * scale,
+                ),
                 height:
-                    AppDimensions.authHeaderTitleLineHeightBase /
-                    (AppDimensions.authHeaderTitleFontSizeBase * scale),
+                    SizeUtils.h(
+                      context,
+                      AppDimensions.authHeaderTitleLineHeightBase * scale,
+                    ) /
+                    SizeUtils.h(
+                      context,
+                      AppDimensions.authHeaderTitleFontSizeBase * scale,
+                    ),
                 letterSpacing: -2 * scale,
               ),
             ),
@@ -45,11 +61,20 @@ class AuthHeader extends StatelessWidget {
 
           // Logo image (PNG asset replacement)
           Positioned(
-            left: AppDimensions.authHeaderLogoLeft * scale,
-            top: AppDimensions.authHeaderLogoTop * scale,
+            left: SizeUtils.w(
+              context,
+              AppDimensions.authHeaderLogoLeft * scale,
+            ),
+            top: SizeUtils.h(context, AppDimensions.authHeaderLogoTop * scale),
             child: SizedBox(
-              width: AppDimensions.authHeaderLogoWidth * scale,
-              height: AppDimensions.authHeaderLogoHeight * scale,
+              width: SizeUtils.w(
+                context,
+                AppDimensions.authHeaderLogoWidth * scale,
+              ),
+              height: SizeUtils.h(
+                context,
+                AppDimensions.authHeaderLogoHeight * scale,
+              ),
               child: Image.asset(
                 // use centralized asset constant
                 AppImages.logo,
@@ -60,16 +85,25 @@ class AuthHeader extends StatelessWidget {
 
           // "by" text overlay
           Positioned(
-            left: AppDimensions.authHeaderByLeft * scale,
-            top: AppDimensions.authHeaderByTop * scale,
+            left: SizeUtils.w(context, AppDimensions.authHeaderByLeft * scale),
+            top: SizeUtils.h(context, AppDimensions.authHeaderByTop * scale),
             child: Text(
               AppStrings.authHeaderBy,
               style: AppTextStyles.heading1.copyWith(
-                fontSize: AppDimensions.authHeaderByFontSizeBase * scale,
+                fontSize: SizeUtils.h(
+                  context,
+                  AppDimensions.authHeaderByFontSizeBase * scale,
+                ),
                 fontWeight: FontWeight.w500,
                 height:
-                    AppDimensions.authHeaderByLineHeightBase /
-                    (AppDimensions.authHeaderByFontSizeBase * scale),
+                    SizeUtils.h(
+                      context,
+                      AppDimensions.authHeaderByLineHeightBase * scale,
+                    ) /
+                    SizeUtils.h(
+                      context,
+                      AppDimensions.authHeaderByFontSizeBase * scale,
+                    ),
                 letterSpacing: AppTypography.letterSpacingSmall,
               ),
             ),

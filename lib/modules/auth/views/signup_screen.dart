@@ -16,12 +16,14 @@ import 'package:ascoa_app/shared/widgets/social_button.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/widgets/auth_header.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
     final AuthController controller = Get.find<AuthController>();
     final FormControllers formControllers = Get.find<FormControllers>();
     final ValidationController validationController =
@@ -29,10 +31,19 @@ class SignupScreen extends StatelessWidget {
 
     // Scale for AuthHeader like Login V2
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final double viewportHeight = constraints.maxHeight;
           final double viewportWidth = constraints.maxWidth;
+          final double keyboardHeight =
+              MediaQuery.of(context).viewInsets.bottom;
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (keyboardHeight == 0 && scrollController.hasClients) {
+              scrollController.jumpTo(0);
+            }
+          });
 
           const double referenceWidth = 440.0;
           final double scale = (viewportWidth / referenceWidth).clamp(
@@ -60,9 +71,18 @@ class SignupScreen extends StatelessWidget {
                 ),
                 SafeArea(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.screenPadding,
-                      vertical: AppDimensions.verticalPadding,
+                    controller: scrollController,
+                    padding: EdgeInsets.only(
+                      left: SizeUtils.w(context, AppDimensions.screenPadding),
+                      right: SizeUtils.w(context, AppDimensions.screenPadding),
+                      top: SizeUtils.h(context, AppDimensions.verticalPadding),
+                      bottom:
+                          keyboardHeight > 0
+                              ? keyboardHeight
+                              : SizeUtils.h(
+                                context,
+                                AppDimensions.verticalPadding,
+                              ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,7 +93,7 @@ class SignupScreen extends StatelessWidget {
                               AppDimensions.authScreenXLargeSpacer,
                         ),
                         AuthHeader(scale: scale),
-                        const SizedBox(height: 16),
+                        SizedBox(height: SizeUtils.h(context, 16)),
                         const Text(
                           AppStrings.signupTitle,
                           textAlign: TextAlign.center,
@@ -143,9 +163,18 @@ class SignupScreen extends StatelessWidget {
                                   .value)
                                 PasswordStrengthChecklist(
                                   padding: EdgeInsets.only(
-                                    top: AppDimensions.inputErrorSpacing,
-                                    left: AppDimensions.chipHorizontalPadding,
-                                    right: AppDimensions.chipHorizontalPadding,
+                                    top: SizeUtils.h(
+                                      context,
+                                      AppDimensions.inputErrorSpacing,
+                                    ),
+                                    left: SizeUtils.w(
+                                      context,
+                                      AppDimensions.chipHorizontalPadding,
+                                    ),
+                                    right: SizeUtils.w(
+                                      context,
+                                      AppDimensions.chipHorizontalPadding,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -162,8 +191,14 @@ class SignupScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                    width: AppDimensions.checkboxSize,
-                                    height: AppDimensions.checkboxSize,
+                                    width: SizeUtils.r(
+                                      context,
+                                      AppDimensions.checkboxSize,
+                                    ),
+                                    height: SizeUtils.r(
+                                      context,
+                                      AppDimensions.checkboxSize,
+                                    ),
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                         color:
@@ -178,12 +213,21 @@ class SignupScreen extends StatelessWidget {
                                                         .termsError
                                                         .value !=
                                                     null
-                                                ? AppDimensions
-                                                    .inputBorderWidthError
-                                                : AppDimensions.borderWidth,
+                                                ? SizeUtils.w(
+                                                  context,
+                                                  AppDimensions
+                                                      .inputBorderWidthError,
+                                                )
+                                                : SizeUtils.w(
+                                                  context,
+                                                  AppDimensions.borderWidth,
+                                                ),
                                       ),
                                       borderRadius: BorderRadius.circular(
-                                        AppDimensions.checkboxCornerRadius,
+                                        SizeUtils.r(
+                                          context,
+                                          AppDimensions.checkboxCornerRadius,
+                                        ),
                                       ),
                                     ),
                                     child: Checkbox(
@@ -206,8 +250,11 @@ class SignupScreen extends StatelessWidget {
                                       side: BorderSide.none,
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: AppDimensions.tinySpacing,
+                                  SizedBox(
+                                    width: SizeUtils.w(
+                                      context,
+                                      AppDimensions.tinySpacing,
+                                    ),
                                   ),
                                   Expanded(
                                     child: RichText(
@@ -257,8 +304,11 @@ class SignupScreen extends StatelessWidget {
                               ),
                               if (validationController.termsError.value != null)
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: AppDimensions.smallSpacing,
+                                  padding: EdgeInsets.only(
+                                    top: SizeUtils.h(
+                                      context,
+                                      AppDimensions.smallSpacing,
+                                    ),
                                   ),
                                   child: Text(
                                     validationController.termsError.value!,
@@ -298,36 +348,39 @@ class SignupScreen extends StatelessWidget {
                         SizedBox(
                           height: viewportHeight * AppDimensions.sectionSpacing,
                         ),
-                        Builder(
-                          builder: (context) {
-                            final sideWidth =
-                                MediaQuery.of(context).size.width *
-                                AppDimensions.authDividerSideWidthFactor;
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: sideWidth,
-                                  height: AppDimensions.dividerThickness,
-                                  color: AppColors.divider,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: SizeUtils.h(
+                                  context,
+                                  AppDimensions.dividerThickness,
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppDimensions.dividerPadding,
-                                  ),
-                                  child: Text(
-                                    AppStrings.otherSignUpOptions,
-                                    style: AppTextStyles.dividerText,
-                                  ),
+                                color: AppColors.divider,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: SizeUtils.w(
+                                  context,
+                                  AppDimensions.dividerPadding,
                                 ),
-                                Container(
-                                  width: sideWidth,
-                                  height: AppDimensions.dividerThickness,
-                                  color: AppColors.divider,
+                              ),
+                              child: const Text(
+                                AppStrings.otherSignUpOptions,
+                                style: AppTextStyles.dividerText,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: SizeUtils.h(
+                                  context,
+                                  AppDimensions.dividerThickness,
                                 ),
-                              ],
-                            );
-                          },
+                                color: AppColors.divider,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: viewportHeight * AppDimensions.sectionSpacing,
@@ -338,22 +391,37 @@ class SignupScreen extends StatelessWidget {
                               child: SocialButton(
                                 icon: Image.asset(
                                   AppImages.googleNeutral2x,
-                                  width: AppDimensions.socialIconSize,
-                                  height: AppDimensions.socialIconSize,
+                                  width: SizeUtils.r(
+                                    context,
+                                    AppDimensions.socialIconSize,
+                                  ),
+                                  height: SizeUtils.r(
+                                    context,
+                                    AppDimensions.socialIconSize,
+                                  ),
                                 ),
                                 color: AppColors.google,
                                 onPressed: () => controller.loginWithGoogle(),
                               ),
                             ),
-                            const SizedBox(
-                              width: AppDimensions.socialButtonSpacing,
+                            SizedBox(
+                              width: SizeUtils.w(
+                                context,
+                                AppDimensions.socialButtonSpacing,
+                              ),
                             ),
                             Expanded(
                               child: SocialButton(
                                 icon: Image.asset(
                                   AppImages.facebookPrimary,
-                                  width: AppDimensions.socialIconSize,
-                                  height: AppDimensions.socialIconSize,
+                                  width: SizeUtils.r(
+                                    context,
+                                    AppDimensions.socialIconSize,
+                                  ),
+                                  height: SizeUtils.r(
+                                    context,
+                                    AppDimensions.socialIconSize,
+                                  ),
                                 ),
                                 color: AppColors.facebook,
                                 onPressed: () => controller.loginWithFacebook(),

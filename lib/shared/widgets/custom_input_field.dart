@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class CustomInputField extends StatefulWidget {
   final TextEditingController controller;
@@ -43,14 +44,16 @@ class _CustomInputFieldState extends State<CustomInputField> {
     if (!_isControllerValid) {
       return Container(
         width: double.infinity,
-        height: AppDimensions.inputFieldHeight,
+        height: SizeUtils.h(context, AppDimensions.inputFieldHeight),
         decoration: BoxDecoration(
           color: AppColors.pureWhite,
           border: Border.all(
             color: AppColors.accentGreen,
-            width: AppDimensions.borderWidth,
+            width: SizeUtils.w(context, AppDimensions.borderWidth),
           ),
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+          borderRadius: BorderRadius.circular(
+            SizeUtils.r(context, AppDimensions.borderRadius),
+          ),
         ),
       );
     }
@@ -60,7 +63,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
       children: [
         Container(
           width: double.infinity,
-          height: AppDimensions.inputFieldHeight,
+          height: SizeUtils.h(context, AppDimensions.inputFieldHeight),
           decoration: BoxDecoration(
             color: AppColors.pureWhite,
             border: Border.all(
@@ -70,25 +73,39 @@ class _CustomInputFieldState extends State<CustomInputField> {
                       : AppColors.accentGreen,
               width:
                   widget.errorText != null
-                      ? AppDimensions.inputBorderWidthError
+                      ? SizeUtils.w(
+                        context,
+                        AppDimensions.inputBorderWidthError,
+                      )
                       : (_focusNode.hasFocus
-                          ? AppDimensions.inputBorderWidthFocused
-                          : AppDimensions.borderWidth),
+                          ? SizeUtils.w(
+                            context,
+                            AppDimensions.inputBorderWidthFocused,
+                          )
+                          : SizeUtils.w(context, AppDimensions.borderWidth)),
             ),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-            boxShadow: const [
+            borderRadius: BorderRadius.circular(
+              SizeUtils.r(context, AppDimensions.borderRadius),
+            ),
+            boxShadow: [
               BoxShadow(
                 color: AppColors.shadow,
-                blurRadius: AppDimensions.boxShadowBlurRadius,
+                blurRadius: SizeUtils.r(
+                  context,
+                  AppDimensions.boxShadowBlurRadius,
+                ),
                 offset: Offset(
-                  AppDimensions.boxShadowOffsetX,
-                  AppDimensions.boxShadowOffsetY,
+                  SizeUtils.w(context, AppDimensions.boxShadowOffsetX),
+                  SizeUtils.h(context, AppDimensions.boxShadowOffsetY),
                 ),
               ),
             ],
           ),
           padding: EdgeInsets.symmetric(
-            horizontal: AppDimensions.inputHorizontalPadding,
+            horizontal: SizeUtils.w(
+              context,
+              AppDimensions.inputHorizontalPadding,
+            ),
           ),
           alignment: Alignment.centerLeft,
           child: TextField(
@@ -105,9 +122,13 @@ class _CustomInputFieldState extends State<CustomInputField> {
           ),
         ),
         if (widget.errorText != null) ...[
-          SizedBox(height: AppDimensions.inputErrorSpacing),
+          SizedBox(
+            height: SizeUtils.h(context, AppDimensions.inputErrorSpacing),
+          ),
           Padding(
-            padding: EdgeInsets.only(left: AppDimensions.inputErrorSpacing),
+            padding: EdgeInsets.only(
+              left: SizeUtils.w(context, AppDimensions.inputErrorSpacing),
+            ),
             child: Text(widget.errorText!, style: AppTextStyles.errorText),
           ),
         ],
