@@ -397,7 +397,6 @@ We recently added several `AppDimensions` tokens to centralize sizes used across
 - Change-password layout: `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, `changePasswordHalfInputSpacing`, and `changePasswordInputSpacing`
 - Profile logout CTA: `AppDimensions.profileSignOutHeight`, `profileSignOutHorizontalPadding`, `profileSignOutIconGap`
 
-
 Widget changes to be aware of:
 
 ## Recent code changes (detailed)
@@ -431,6 +430,7 @@ These changes keep the existing `AppDimensions` tokens untouched as the single s
 ### Other functional changes (profile / auth flows)
 
 - `lib/modules/auth/views/login_screen_v2.dart`
+
   - Fixed the unintended always-scroll behavior: `SingleChildScrollView` now uses `AlwaysScrollableScrollPhysics()` when keyboard is visible and `NeverScrollableScrollPhysics()` otherwise. This prevents the page from scrolling when the keyboard is not shown.
   - Screen continues to compute a `scale` factor for the `AuthHeader` from reference width and passes it to the header.
 
@@ -454,7 +454,6 @@ If you need a full per-file diff for review, run:
 ```powershell
 git --no-pager diff -- lib
 ```
-
 
 - `FloatingLabelInputField` now derives its input/hint/floating-label/support font sizes from `AppDimensions` (use `topSpacing` to adjust vertical spacing between stacked fields).
 - `CountryCodeSelectorField` uses `AppDimensions.flagEmojiSize` and `selectorIconSize` to ensure consistent flag and chevron sizing.

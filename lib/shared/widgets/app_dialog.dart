@@ -182,7 +182,7 @@ class AppDialog extends StatelessWidget {
                           Text(
                             title,
                             textAlign: TextAlign.center,
-                            style: AppTextStyles.heading2.copyWith(
+                            style: AppTextStyles.heading2(context).copyWith(
                               fontWeight: FontWeight.w500,
                               fontSize: SizeUtils.h(
                                 context,
@@ -223,7 +223,7 @@ class AppDialog extends StatelessWidget {
                             Text(
                               body!,
                               textAlign: TextAlign.center,
-                              style: AppTextStyles.body.copyWith(
+                              style: AppTextStyles.body(context).copyWith(
                                 fontSize: SizeUtils.h(
                                   context,
                                   AppDimensions.dialogBodyFontSize,
@@ -265,13 +265,15 @@ class AppDialog extends StatelessWidget {
                               onPressed: onPrimaryAction,
                               child: Text(
                                 primaryActionLabel,
-                                style: AppTextStyles.body.copyWith(
+                                style: AppTextStyles.body(context).copyWith(
                                   fontWeight: FontWeight.w700,
                                   fontSize: SizeUtils.h(
                                     context,
                                     AppDimensions.dialogActionFontSize,
                                   ),
-                                  height: 20 / 14,
+                                  height:
+                                      SizeUtils.h(context, 20) /
+                                      SizeUtils.h(context, 14),
                                   color: AppColors.pureWhite,
                                   letterSpacing:
                                       AppTypography.letterSpacingSmall,

@@ -94,10 +94,10 @@ class SignupScreen extends StatelessWidget {
                         ),
                         AuthHeader(scale: scale),
                         SizedBox(height: SizeUtils.h(context, 16)),
-                        const Text(
+                        Text(
                           AppStrings.signupTitle,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.heading2,
+                          style: AppTextStyles.heading2(context),
                         ),
                         SizedBox(
                           height:
@@ -259,7 +259,7 @@ class SignupScreen extends StatelessWidget {
                                   Expanded(
                                     child: RichText(
                                       text: TextSpan(
-                                        style: AppTextStyles.termsBase,
+                                        style: AppTextStyles.termsBase(context),
                                         children: [
                                           const TextSpan(
                                             text: AppStrings.termsTextSignUp,
@@ -312,7 +312,7 @@ class SignupScreen extends StatelessWidget {
                                   ),
                                   child: Text(
                                     validationController.termsError.value!,
-                                    style: AppTextStyles.errorText,
+                                    style: AppTextStyles.errorText(context),
                                   ),
                                 ),
                             ],
@@ -366,9 +366,9 @@ class SignupScreen extends StatelessWidget {
                                   AppDimensions.dividerPadding,
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 AppStrings.otherSignUpOptions,
-                                style: AppTextStyles.dividerText,
+                                style: AppTextStyles.dividerText(context),
                               ),
                             ),
                             Expanded(
@@ -435,9 +435,9 @@ class SignupScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               AppStrings.haveAccount,
-                              style: AppTextStyles.bodySecondary,
+                              style: AppTextStyles.bodySecondary(context),
                             ),
                             TextButton(
                               style: TextButton.styleFrom(
@@ -458,9 +458,9 @@ class SignupScreen extends StatelessWidget {
                                 validation.clearPasswordValidation();
                                 Get.offNamed(AppRoutes.login);
                               },
-                              child: const Text(
+                              child: Text(
                                 AppStrings.loginButton,
-                                style: AppTextStyles.buttonLink,
+                                style: AppTextStyles.buttonLink(context),
                               ),
                             ),
                           ],

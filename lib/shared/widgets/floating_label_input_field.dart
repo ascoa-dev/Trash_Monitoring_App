@@ -169,7 +169,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                     textInputAction: widget.textInputAction,
                     onSubmitted: widget.onSubmitted,
                     onEditingComplete: widget.onEditingComplete,
-                    style: AppTextStyles.body.copyWith(
+                    style: AppTextStyles.body(context).copyWith(
                       color: AppColors.textPrimary,
                       fontSize: SizeUtils.h(
                         context,
@@ -182,7 +182,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
-                      hintStyle: AppTextStyles.inputHint.copyWith(
+                      hintStyle: AppTextStyles.inputHint(context).copyWith(
                         fontSize: SizeUtils.h(
                           context,
                           AppDimensions.inputFontSize,
@@ -215,7 +215,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                   color: AppColors.background,
                   child: Text(
                     widget.label,
-                    style: AppTextStyles.body.copyWith(
+                    style: AppTextStyles.body(context).copyWith(
                       fontSize: SizeUtils.h(
                         context,
                         AppDimensions.floatingLabelFontSize,
@@ -248,7 +248,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
               ),
               child: Text(
                 widget.supportText!,
-                style: AppTextStyles.bodySecondary.copyWith(
+                style: AppTextStyles.bodySecondary(context).copyWith(
                   fontSize: SizeUtils.h(
                     context,
                     AppDimensions.supportTextFontSize,

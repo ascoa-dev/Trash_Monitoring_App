@@ -42,7 +42,7 @@ class PrimaryButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           label,
-          style: labelStyle ?? AppTextStyles.buttonPrimaryText,
+          style: labelStyle ?? AppTextStyles.buttonPrimaryText(context),
         ),
       ),
     );

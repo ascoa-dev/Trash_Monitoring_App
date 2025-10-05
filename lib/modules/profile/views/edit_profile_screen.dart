@@ -201,7 +201,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                     Text(
                                       title,
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyles.heading2.copyWith(
+                                      style: AppTextStyles.heading2(context).copyWith(
                                         fontWeight: FontWeight.w700,
                                         fontSize: SizeUtils.h(
                                           context,
@@ -256,7 +256,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                       ),
                                       child: Text(
                                         editPhotoLabel,
-                                        style: AppTextStyles.body.copyWith(
+                                        style: AppTextStyles.body(context).copyWith(
                                           fontSize: SizeUtils.h(
                                             context,
                                             AppDimensions.floatingLabelFontSize,
@@ -304,8 +304,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                             return Text(
                                               displayName,
                                               textAlign: TextAlign.center,
-                                              style: AppTextStyles.profileName
-                                                  .copyWith(
+                                              style: AppTextStyles.profileName(context).copyWith(
                                                     fontSize: SizeUtils.h(
                                                       context,
                                                       22,
@@ -319,7 +318,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                     Text(
                                       emailText,
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyles.body.copyWith(
+                                      style: AppTextStyles.body(context).copyWith(
                                         fontSize: SizeUtils.h(
                                           context,
                                           AppDimensions.linkFontSize,
@@ -340,7 +339,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                     Text(
                                       subtitle,
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyles.body.copyWith(
+                                      style: AppTextStyles.body(context).copyWith(
                                         fontSize: SizeUtils.h(
                                           context,
                                           AppDimensions.subtitleFontSize,
@@ -570,8 +569,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                         onPressed: Get.back,
                                         child: Text(
                                           cancelLabel,
-                                          style: AppTextStyles.buttonPrimaryText
-                                              .copyWith(
+                                          style: AppTextStyles.buttonPrimaryText(context).copyWith(
                                                 color: AppColors.textDark,
                                               ),
                                         ),

@@ -155,7 +155,7 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                               Text(
                                 title,
                                 textAlign: TextAlign.center,
-                                style: AppTextStyles.heading2.copyWith(
+                                style: AppTextStyles.heading2(context).copyWith(
                                   fontWeight: FontWeight.w600,
                                   fontSize: SizeUtils.h(
                                     context,
@@ -186,7 +186,7 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                               Text(
                                 subtitle,
                                 textAlign: TextAlign.center,
-                                style: AppTextStyles.body.copyWith(
+                                style: AppTextStyles.body(context).copyWith(
                                   fontSize: SizeUtils.h(
                                     context,
                                     AppDimensions.subtitleFontSize,
@@ -352,8 +352,7 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                                   onPressed: () => Get.back(),
                                   child: Text(
                                     cancelLabel,
-                                    style: AppTextStyles.buttonPrimaryText
-                                        .copyWith(color: AppColors.textDark),
+                                    style: AppTextStyles.buttonPrimaryText(context).copyWith(color: AppColors.textDark),
                                   ),
                                 ),
                               ),

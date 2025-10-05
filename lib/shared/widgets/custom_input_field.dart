@@ -117,7 +117,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
             decoration: InputDecoration(
               hintText: widget.hint,
               border: InputBorder.none,
-              hintStyle: AppTextStyles.inputHint,
+              hintStyle: AppTextStyles.inputHint(context),
             ),
           ),
         ),
@@ -129,7 +129,10 @@ class _CustomInputFieldState extends State<CustomInputField> {
             padding: EdgeInsets.only(
               left: SizeUtils.w(context, AppDimensions.inputErrorSpacing),
             ),
-            child: Text(widget.errorText!, style: AppTextStyles.errorText),
+            child: Text(
+              widget.errorText!,
+              style: AppTextStyles.errorText(context),
+            ),
           ),
         ],
       ],

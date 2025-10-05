@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
+import '../utils/size_utils.dart';
 
 class AppTextStyles {
   // Font Families
@@ -9,97 +10,97 @@ class AppTextStyles {
   static const String rubik = 'Rubik';
 
   // Heading Styles
-  static const TextStyle heading1 = TextStyle(
+  static TextStyle heading1(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w800,
-    fontSize: 57,
+    fontSize: SizeUtils.h(context, 57),
     color: AppColors.textDark, // Primary heading color (dark slate)
   );
 
-  static const TextStyle heading2 = TextStyle(
+  static TextStyle heading2(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w600,
-    fontSize: 32,
+    fontSize: SizeUtils.h(context, 32),
     color: AppColors.textDark, // Primary heading color (dark slate)
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
-  static const TextStyle profileHeading = TextStyle(
+  static TextStyle profileHeading(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w700,
-    fontSize: 28,
+    fontSize: SizeUtils.h(context, 28),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
-  static const TextStyle profileName = TextStyle(
+  static TextStyle profileName(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w700,
-    fontSize: 22,
+    fontSize: SizeUtils.h(context, 22),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
-  static const TextStyle profileCaption = TextStyle(
+  static TextStyle profileCaption(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w800,
-    fontSize: 13,
+    fontSize: SizeUtils.h(context, 13),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
-  static const TextStyle profileActionTitle = TextStyle(
+  static TextStyle profileActionTitle(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: 16,
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
-  static const TextStyle profileActionSubtitle = TextStyle(
+  static TextStyle profileActionSubtitle(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: 12,
+    fontSize: SizeUtils.h(context, 12),
     color: AppColors.textDark65,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
-  static const TextStyle profileSignOutText = TextStyle(
+  static TextStyle profileSignOutText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w500,
-    fontSize: 16,
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.textWhite,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   // Label Styles
-  static const TextStyle label = TextStyle(
+  static TextStyle label(BuildContext context) => TextStyle(
     fontFamily: rubik,
-    fontSize: 16,
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.textAccent, // Label / input label color
   );
 
   // Body Styles
-  static const TextStyle body = TextStyle(
+  static TextStyle body(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: 14, // Updated to match Figma
+    fontSize: SizeUtils.h(context, 14), // Updated to match Figma
     color: AppColors.textDark, // Primary body text color
   );
 
-  static const TextStyle bodySecondary = TextStyle(
+  static TextStyle bodySecondary(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: 14,
+    fontSize: SizeUtils.h(context, 14),
     color: AppColors.textDark, // Secondary body text color
     letterSpacing: AppTypography.letterSpacingSmall,
   );
 
   // Button Styles
-  static const TextStyle buttonLink = TextStyle(
+  static TextStyle buttonLink(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w800, // Updated to match Figma
-    fontSize: 14,
+    fontSize: SizeUtils.h(context, 14),
     color: AppColors.textDark,
     decoration: TextDecoration.underline,
     decorationThickness: 1.0,
@@ -108,18 +109,18 @@ class AppTextStyles {
   );
 
   // Divider Text
-  static const TextStyle dividerText = TextStyle(
+  static TextStyle dividerText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w500,
-    fontSize: 16,
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.textDark, // Divider text color (e.g., "OR")
   );
 
   // Terms Text Styles
-  static const TextStyle termsBase = TextStyle(
+  static TextStyle termsBase(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: 14,
+    fontSize: SizeUtils.h(context, 14),
     color: AppColors.textDark, // Terms and legal text color
     height: AppTypography.lineHeightLong, // 160% line height
   );
@@ -131,34 +132,34 @@ class AppTextStyles {
   );
 
   // Error Text
-  static const TextStyle errorText = TextStyle(
+  static TextStyle errorText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: 12,
+    fontSize: SizeUtils.h(context, 12),
     color: AppColors.error, // Error color for inline validation messages
   );
 
   // Primary Button Text
-  static const TextStyle buttonPrimaryText = TextStyle(
+  static TextStyle buttonPrimaryText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w900,
-    fontSize: 16,
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.pureWhite,
     letterSpacing: AppTypography.letterSpacingButtonPrimary,
   );
 
   // Social Button Text
-  static const TextStyle buttonSocialText = TextStyle(
+  static TextStyle buttonSocialText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w700,
-    fontSize: 16,
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.buttonText,
   );
 
   // Input hint text style
-  static const TextStyle inputHint = TextStyle(
+  static TextStyle inputHint(BuildContext context) => TextStyle(
     fontFamily: rubik,
-    fontSize: 16,
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.textHint,
   );
 

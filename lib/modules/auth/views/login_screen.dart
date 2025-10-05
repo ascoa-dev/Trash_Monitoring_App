@@ -45,10 +45,10 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: size.height * AppDimensions.titleTopSpacing),
 
                 // Title
-                const Text(
+                Text(
                   AppStrings.loginTitle,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.heading1,
+                  style: AppTextStyles.heading1(context),
                 ),
 
                 SizedBox(
@@ -56,11 +56,11 @@ class LoginScreen extends StatelessWidget {
                 ),
 
                 // Email Label
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     AppStrings.emailLabel,
-                    style: AppTextStyles.label,
+                    style: AppTextStyles.label(context),
                   ),
                 ),
                 SizedBox(
@@ -81,11 +81,11 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: size.height * AppDimensions.inputSpacing),
 
                 // Password Label
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     AppStrings.passwordLabel,
-                    style: AppTextStyles.label,
+                    style: AppTextStyles.label(context),
                   ),
                 ),
                 SizedBox(
@@ -147,9 +147,9 @@ class LoginScreen extends StatelessWidget {
                       }
                       Get.toNamed(AppRoutes.forgotPassword);
                     },
-                    child: const Text(
+                    child: Text(
                       AppStrings.forgotPassword,
-                      style: AppTextStyles.buttonLink,
+                      style: AppTextStyles.buttonLink(context),
                     ),
                   ),
                 ),
@@ -176,9 +176,9 @@ class LoginScreen extends StatelessWidget {
                           AppDimensions.dividerPadding,
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         AppStrings.dividerOr,
-                        style: AppTextStyles.dividerText,
+                        style: AppTextStyles.dividerText(context),
                       ),
                     ),
                     Expanded(
@@ -236,9 +236,9 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       AppStrings.noAccount,
-                      style: AppTextStyles.bodySecondary,
+                      style: AppTextStyles.bodySecondary(context),
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
@@ -259,9 +259,9 @@ class LoginScreen extends StatelessWidget {
                         validation.clearPasswordValidation();
                         Get.offNamed(AppRoutes.signup);
                       },
-                      child: const Text(
+                      child: Text(
                         AppStrings.signUp,
-                        style: AppTextStyles.buttonLink,
+                        style: AppTextStyles.buttonLink(context),
                       ),
                     ),
                   ],
@@ -275,7 +275,7 @@ class LoginScreen extends StatelessWidget {
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                    style: AppTextStyles.termsBase,
+                    style: AppTextStyles.termsBase(context),
                     children: [
                       const TextSpan(text: AppStrings.termsText),
                       TextSpan(

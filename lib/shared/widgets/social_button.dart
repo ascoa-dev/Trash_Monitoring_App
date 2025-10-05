@@ -90,7 +90,7 @@ class SocialButton extends StatelessWidget {
                     Flexible(
                       child: Text(
                         label!,
-                        style: AppTextStyles.buttonSocialText,
+                        style: AppTextStyles.buttonSocialText(context),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

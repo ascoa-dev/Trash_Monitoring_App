@@ -66,9 +66,9 @@ class ProfileSignOutButton extends StatelessWidget {
                     AppDimensions.profileSignOutIconGap,
                   ),
                 ),
-                const Text(
+                Text(
                   AppStrings.profileSignOut,
-                  style: AppTextStyles.profileSignOutText,
+                  style: AppTextStyles.profileSignOutText(context),
                 ),
               ],
             ),

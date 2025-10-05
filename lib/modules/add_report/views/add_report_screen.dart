@@ -16,7 +16,10 @@ class AddReportScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: true,
-        title: const Text(AppStrings.addTitle, style: AppTextStyles.heading2),
+        title: Text(
+          AppStrings.addTitle,
+          style: AppTextStyles.heading2(context),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.close, color: AppColors.textDark),
           onPressed: () => Navigator.of(context).maybePop(),
@@ -32,10 +35,10 @@ class AddReportScreen extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: const [
+          children: [
             Text(
               AppStrings.addReportPlaceholder,
-              style: AppTextStyles.body,
+              style: AppTextStyles.body(context),
               textAlign: TextAlign.center,
             ),
           ],

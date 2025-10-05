@@ -15,9 +15,9 @@ class NewsScreen extends StatelessWidget {
         child: Container(
           color: AppColors.background,
           alignment: Alignment.center,
-          child: const Text(
+          child: Text(
             AppStrings.newsTitle,
-            style: AppTextStyles.heading1,
+            style: AppTextStyles.heading1(context),
             textAlign: TextAlign.center,
           ),
         ),

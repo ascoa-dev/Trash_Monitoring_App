@@ -90,7 +90,10 @@ class ProfileActionTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: AppTextStyles.profileActionTitle),
+                      Text(
+                        title,
+                        style: AppTextStyles.profileActionTitle(context),
+                      ),
                       if (subtitle != null) ...[
                         SizedBox(
                           height: SizeUtils.h(
@@ -100,7 +103,7 @@ class ProfileActionTile extends StatelessWidget {
                         ),
                         Text(
                           subtitle!,
-                          style: AppTextStyles.profileActionSubtitle,
+                          style: AppTextStyles.profileActionSubtitle(context),
                         ),
                       ],
                     ],

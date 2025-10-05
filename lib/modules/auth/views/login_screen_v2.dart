@@ -183,9 +183,9 @@ class LoginScreenV2 extends StatelessWidget {
                                       tapTargetSize:
                                           MaterialTapTargetSize.shrinkWrap,
                                     ),
-                                    child: const Text(
+                                    child: Text(
                                       AppStrings.forgotPassword,
-                                      style: AppTextStyles.buttonLink,
+                                      style: AppTextStyles.buttonLink(context),
                                     ),
                                   ),
                                 ),
@@ -289,9 +289,9 @@ class LoginScreenV2 extends StatelessWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text(
+                                    Text(
                                       AppStrings.noAccount,
-                                      style: AppTextStyles.bodySecondary,
+                                      style: AppTextStyles.bodySecondary(context),
                                     ),
                                     TextButton(
                                       style: TextButton.styleFrom(
@@ -314,9 +314,9 @@ class LoginScreenV2 extends StatelessWidget {
                                         validation.clearPasswordValidation();
                                         Get.offNamed(AppRoutes.signup);
                                       },
-                                      child: const Text(
+                                      child: Text(
                                         AppStrings.signUp,
-                                        style: AppTextStyles.buttonLink,
+                                        style: AppTextStyles.buttonLink(context),
                                       ),
                                     ),
                                   ],
@@ -334,7 +334,7 @@ class LoginScreenV2 extends StatelessWidget {
                                   child: RichText(
                                     textAlign: TextAlign.center,
                                     text: TextSpan(
-                                      style: AppTextStyles.termsBase,
+                                      style: AppTextStyles.termsBase(context),
                                       children: const [
                                         TextSpan(text: AppStrings.termsText),
                                         TextSpan(

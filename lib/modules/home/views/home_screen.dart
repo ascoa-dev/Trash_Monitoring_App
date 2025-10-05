@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: SizeUtils.h(context, AppDimensions.screenPadding)),
 
             // Title
-            const Text(AppStrings.homeTitle, style: AppTextStyles.heading1),
+            Text(AppStrings.homeTitle, style: AppTextStyles.heading1(context)),
 
             const Expanded(child: SizedBox()),
 

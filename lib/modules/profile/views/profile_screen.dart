@@ -92,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             Text(
                               AppStrings.profileManagementTitle,
-                              style: AppTextStyles.profileHeading.copyWith(
+                              style: AppTextStyles.profileHeading(context).copyWith(
                                 fontSize: SizeUtils.h(context, 28),
                               ),
                               textAlign: TextAlign.center,
@@ -138,13 +138,13 @@ class ProfileScreen extends StatelessWidget {
                                     ConnectionState.waiting) {
                                   return Text(
                                     AppStrings.profileNamePlaceholder,
-                                    style: AppTextStyles.profileName,
+                                    style: AppTextStyles.profileName(context),
                                     textAlign: TextAlign.center,
                                   );
                                 } else if (snapshot.hasError) {
                                   return Text(
                                     AppStrings.profileNamePlaceholder,
-                                    style: AppTextStyles.profileName,
+                                    style: AppTextStyles.profileName(context),
                                     textAlign: TextAlign.center,
                                   );
                                 } else {
@@ -152,7 +152,7 @@ class ProfileScreen extends StatelessWidget {
                                     snapshot.data?.isNotEmpty == true
                                         ? snapshot.data!
                                         : AppStrings.profileNamePlaceholder,
-                                    style: AppTextStyles.profileName.copyWith(
+                                    style: AppTextStyles.profileName(context).copyWith(
                                       fontSize: SizeUtils.h(context, 22),
                                     ),
                                     textAlign: TextAlign.center,
@@ -215,7 +215,7 @@ class ProfileScreen extends StatelessWidget {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   AppStrings.profileSupportSection,
-                                  style: AppTextStyles.profileCaption,
+                                  style: AppTextStyles.profileCaption(context),
                                 ),
                               ),
                             ),

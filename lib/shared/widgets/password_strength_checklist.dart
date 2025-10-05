@@ -80,7 +80,7 @@ class _RuleRow extends StatelessWidget {
           Flexible(
             child: Text(
               rule.label,
-              style: AppTextStyles.bodySecondary.copyWith(
+              style: AppTextStyles.bodySecondary(context).copyWith(
                 color: color,
                 fontSize: SizeUtils.h(context, AppDimensions.checklistFontSize),
               ),

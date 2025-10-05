@@ -43,7 +43,7 @@ class CountryCodeSelectorField extends StatelessWidget {
         bottomSheetHeight:
             MediaQuery.of(context).size.height *
             AppDimensions.bottomSheetHeightFactor,
-        textStyle: AppTextStyles.body.copyWith(
+        textStyle: AppTextStyles.body(context).copyWith(
           color: AppColors.textDark,
           fontSize: SizeUtils.h(context, AppDimensions.inputFontSize),
           letterSpacing: AppTypography.letterSpacingSmall,
@@ -53,9 +53,9 @@ class CountryCodeSelectorField extends StatelessWidget {
               isFrench
                   ? AppStrings.countrySearchLabelFrench
                   : AppStrings.countrySearchLabel,
-          labelStyle: AppTextStyles.bodySecondary.copyWith(
-            color: AppColors.textAccent,
-          ),
+          labelStyle: AppTextStyles.bodySecondary(
+            context,
+          ).copyWith(color: AppColors.textAccent),
           border: const OutlineInputBorder(),
         ),
       ),
@@ -123,7 +123,7 @@ class CountryCodeSelectorField extends StatelessWidget {
                       ),
                       Text(
                         '+${selectedCountry.phoneCode}',
-                        style: AppTextStyles.body.copyWith(
+                        style: AppTextStyles.body(context).copyWith(
                           fontSize: SizeUtils.h(
                             context,
                             AppDimensions.inputFontSize,
@@ -162,7 +162,7 @@ class CountryCodeSelectorField extends StatelessWidget {
                   color: AppColors.background,
                   child: Text(
                     label,
-                    style: AppTextStyles.body.copyWith(
+                    style: AppTextStyles.body(context).copyWith(
                       fontSize: SizeUtils.h(
                         context,
                         AppDimensions.floatingLabelFontSize,
@@ -195,7 +195,7 @@ class CountryCodeSelectorField extends StatelessWidget {
               ),
               child: Text(
                 supportText!,
-                style: AppTextStyles.bodySecondary.copyWith(
+                style: AppTextStyles.bodySecondary(context).copyWith(
                   fontSize: SizeUtils.h(
                     context,
                     AppDimensions.supportTextFontSize,

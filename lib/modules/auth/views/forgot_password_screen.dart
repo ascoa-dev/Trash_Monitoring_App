@@ -281,7 +281,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ? AppStrings.forgotPasswordTitleFrench
                               : AppStrings.forgotPasswordTitle,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.heading2,
+                          style: AppTextStyles.heading2(context),
                         ),
                         SizedBox(
                           height:
@@ -291,7 +291,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           isFrench
                               ? AppStrings.forgotPasswordTextFrench
                               : AppStrings.forgotPasswordText,
-                          style: AppTextStyles.bodySecondary,
+                          style: AppTextStyles.bodySecondary(context),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(
@@ -370,7 +370,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               isFrench
                                   ? AppStrings.editProfileCancelFrench
                                   : AppStrings.editProfileCancel,
-                              style: AppTextStyles.buttonPrimaryText.copyWith(
+                              style: AppTextStyles.buttonPrimaryText(context).copyWith(
                                 color: AppColors.textDark,
                               ),
                             ),

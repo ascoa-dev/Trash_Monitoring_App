@@ -159,7 +159,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             isFrench
                 ? AppStrings.editPhotoLabelFrench
                 : AppStrings.editPhotoLabel,
-            style: AppTextStyles.body.copyWith(
+            style: AppTextStyles.body(context).copyWith(
               fontSize: SizeUtils.h(context, AppDimensions.linkFontSize),
               fontWeight: FontWeight.w500,
               color: AppColors.textDark,
@@ -282,7 +282,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                           Text(
                             title,
                             textAlign: TextAlign.center,
-                            style: AppTextStyles.heading2.copyWith(
+                            style: AppTextStyles.heading2(context).copyWith(
                               fontSize: SizeUtils.h(
                                 context,
                                 AppDimensions.heading2FontSize,
@@ -296,7 +296,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                           Text(
                             subtitle,
                             textAlign: TextAlign.center,
-                            style: AppTextStyles.body.copyWith(
+                            style: AppTextStyles.body(context).copyWith(
                               fontSize: SizeUtils.h(
                                 context,
                                 AppDimensions.subtitleFontSize,
