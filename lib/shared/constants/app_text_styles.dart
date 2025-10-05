@@ -52,7 +52,7 @@ class AppTextStyles {
   static TextStyle profileActionTitle(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, 18),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -60,7 +60,7 @@ class AppTextStyles {
   static TextStyle profileActionSubtitle(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 12),
+    fontSize: SizeUtils.h(context, 14),
     color: AppColors.textDark65,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
