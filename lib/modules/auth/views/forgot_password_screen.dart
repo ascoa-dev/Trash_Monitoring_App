@@ -221,7 +221,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 SafeArea(
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
+                    physics:
+                        keyboardHeight > 0
+                            ? const AlwaysScrollableScrollPhysics()
+                            : const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.only(
                       left: SizeUtils.w(context, AppDimensions.screenPadding),
                       right: SizeUtils.w(context, AppDimensions.screenPadding),
@@ -370,9 +373,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               isFrench
                                   ? AppStrings.editProfileCancelFrench
                                   : AppStrings.editProfileCancel,
-                              style: AppTextStyles.buttonPrimaryText(context).copyWith(
-                                color: AppColors.textDark,
-                              ),
+                              style: AppTextStyles.buttonPrimaryText(
+                                context,
+                              ).copyWith(color: AppColors.textDark),
                             ),
                           ),
                         ),

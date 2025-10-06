@@ -105,7 +105,10 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                 SafeArea(
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
+                    physics:
+                        keyboardHeight > 0
+                            ? const AlwaysScrollableScrollPhysics()
+                            : const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.only(
                       left: SizeUtils.w(context, AppDimensions.screenPadding),
                       right: SizeUtils.w(context, AppDimensions.screenPadding),
@@ -352,7 +355,9 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                                   onPressed: () => Get.back(),
                                   child: Text(
                                     cancelLabel,
-                                    style: AppTextStyles.buttonPrimaryText(context).copyWith(color: AppColors.textDark),
+                                    style: AppTextStyles.buttonPrimaryText(
+                                      context,
+                                    ).copyWith(color: AppColors.textDark),
                                   ),
                                 ),
                               ),

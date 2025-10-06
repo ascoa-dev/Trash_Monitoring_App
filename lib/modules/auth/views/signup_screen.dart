@@ -72,6 +72,10 @@ class SignupScreen extends StatelessWidget {
                 SafeArea(
                   child: SingleChildScrollView(
                     controller: scrollController,
+                    physics:
+                        keyboardHeight > 0
+                            ? const AlwaysScrollableScrollPhysics()
+                            : const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.only(
                       left: SizeUtils.w(context, AppDimensions.screenPadding),
                       right: SizeUtils.w(context, AppDimensions.screenPadding),

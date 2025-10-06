@@ -41,10 +41,7 @@ class AuthHeader extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.visible,
               style: AppTextStyles.heading1(context).copyWith(
-                fontSize: SizeUtils.h(
-                  context,
-                  AppDimensions.authHeaderTitleFontSizeBase * scale,
-                ),
+                fontSize: AppDimensions.authHeaderTitleFontSizeBase * scale,
                 height:
                     SizeUtils.h(
                       context,
