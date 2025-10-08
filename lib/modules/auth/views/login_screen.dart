@@ -29,7 +29,7 @@ class LoginScreen extends StatelessWidget {
         width: size.width,
         height: size.height,
         decoration: const BoxDecoration(
-          color: AppColors.primary, // Background blue
+          color: AppColors.background, // Page background
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -130,10 +130,16 @@ class LoginScreen extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      Get.snackbar(
-                        AppStrings.forgotPassword,
-                        AppStrings.forgotPasswordNav,
-                      );
+                      final form = Get.find<FormControllers>();
+                      final validation = Get.find<ValidationController>();
+                      final currentEmail = form.emailController.text;
+                      // Do not carry over error state
+                      validation.clearEmailError();
+                      // Only keep a valid email, otherwise clear on next screen
+                      if (!validation.isEmailValid(currentEmail)) {
+                        form.emailController.clear();
+                      }
+                      Get.toNamed(AppRoutes.forgotPassword);
                     },
                     child: const Text(
                       AppStrings.forgotPassword,
@@ -221,9 +227,17 @@ class LoginScreen extends StatelessWidget {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       onPressed: () {
-                        Get.offAllNamed(
-                          AppRoutes.signup,
-                        ); // Navigate to Signup Screen
+                        final form = Get.find<FormControllers>();
+                        final validation = Get.find<ValidationController>();
+                        final email = form.emailController.text;
+                        validation.clearEmailError();
+                        if (!validation.isEmailValid(email)) {
+                          form.emailController.clear();
+                        }
+                        form.passwordController.clear();
+                        // Prevent password error/checklist state from leaking into Signup
+                        validation.clearPasswordValidation();
+                        Get.offNamed(AppRoutes.signup);
                       },
                       child: const Text(
                         AppStrings.signUp,

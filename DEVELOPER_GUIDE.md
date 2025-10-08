@@ -28,29 +28,37 @@ lib/
 
 ### 2. Authentication Module (`modules/auth/`)
 
-**Login Screen** - Responsive UI with form validation
-- Uses shared constants (colors, text styles, dimensions)
-- Integrates with global AuthController
-- Custom widgets for consistent design
+Screens:
+- `login_screen_v2.dart` — floating label inputs, divider, social buttons
+- `signup_screen.dart` — floating label inputs + PasswordStrengthChecklist; Terms checkbox with inline error and error border when not accepted
+- `forgot_password_screen.dart` — in-place overlay confirmation via `AppDialog` (confirmation screen removed)
 
-AuthController behavior changes:
-- `login` now navigates to `AppRoutes.home` on successful email/password login.
-- `logout` calls `FirebaseAuth.signOut()` and shows a snackbar confirmation.
+Controllers and bindings:
+- Global `AuthController` (permanent)
+- AuthController now interacts with Cloud Firestore to load/create a `users` document after sign-in/signup. See `lib/app/models/user.dart` for the `UserModel` structure.
+- Shared `FormBinding` injects `FormControllers` and `ValidationController`
+- Obsolete: `SignupBinding` and `SignupFormController` removed
+
+Navigation hygiene:
+- Only carry email between screens if valid; clear email errors before navigating
+- Clear password when switching Login ↔ Signup
 
 ### 3. Shared Design System (`shared/constants/`)
 
-Created centralized constants to replace hard-coded values:
+Centralized tokens to replace hard-coded values:
 
-- **AppColors** - Primary, secondary, social button colors
-- **AppTextStyles** - Typography system (headings, body, labels)
-- **AppDimensions** - Spacing, padding, sizing values
-- **AppStrings** - All text content for easy localization
+- `AppColors` — background/accent/text/social/error colors
+- `AppTextStyles` — headings, body, labels, divider, terms, error
+- `AppDimensions` — spacers, border widths; includes `inputBorderWidthFocused`, `inputBorderWidthError`, and `authDividerSideWidthFactor`
+- `AppStrings` — all user-facing copy (e.g., `otherSignUpOptions`)
 
 ### 4. Reusable Components (`shared/widgets/`)
 
-- **CustomInputField** - Styled text inputs with validation
-- **PrimaryButton** - Main action buttons
-- **SocialButton** - Google/Facebook login buttons
+- `FloatingLabelInputField` — inputs with focus/error border thickness
+- `PasswordStrengthChecklist` — live password rules
+- `AuthHeader` — Figma-inspired header block
+- `AppDialog` — reusable overlay dialog with internal decorative background
+- `PrimaryButton`, `SocialButton` — actions and social sign-ins
 
 ### 5. Utilities (`shared/utils/`)
 
@@ -61,11 +69,13 @@ Created centralized constants to replace hard-coded values:
 
 ### 6. Form Management (`shared/controllers/`)
 
-**FormControllers** - Manages TextEditingControllers with automatic cleanup
+`FormControllers` — shared email/password controllers
 
-**ValidationController** updates:
-- New reactive `isTermsAccepted` (tracks checkbox state for terms and conditions).
-- New reactive `termsError` (string) to hold inline validation error for the terms checkbox; the signup UI displays this inline like other field errors.
+`ValidationController` — centralized validation state and helpers
+- `isTermsAccepted` (RxBool)
+- `termsError` (RxString?)
+- `isEmailValid(String)` and `clearEmailError()`
+- `showPasswordChecklist` kept visible during typing even when valid
 
 ## Key Architectural Decisions
 
@@ -74,6 +84,17 @@ Created centralized constants to replace hard-coded values:
 3. **Shared Constants** - No more hard-coded values
 4. **Design System** - Consistent UI across the app
 5. **Form Validation** - Centralized validation logic
+
+## Recent Updates
+
+### Forgot Password Feature
+- Added `ForgotPasswordScreen` with real-time email validation and bilingual support.
+- Integrated `AppDialog` for in-place overlay confirmation.
+- Removed obsolete confirmation screen.
+- Updated `AuthController` with `forgotPassword` method for handling reset requests.
+- Navigation hygiene: Clears email errors and resets password validation state on screen transitions.
+- Breaking Change: Removed `SignupBinding` and `SignupFormController`.
+ - New behavior: After successful authentication, the app will check the Firestore `users` document. If `isProfileComplete` is false the user will be routed to `AppRoutes.completeProfile` to complete profile information. This adds a required setup step for new users.
 
 ## Quick Reference
 

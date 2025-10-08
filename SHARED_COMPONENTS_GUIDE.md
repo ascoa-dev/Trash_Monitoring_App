@@ -10,16 +10,16 @@ Quick reference for reusable components, constants, and utilities in the ASCOA a
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 
 // Usage
-Container(color: AppColors.primary)  // Background color (white)
+Container(color: AppColors.primary)  // Background color (off-white)
 ```
 
-- `AppColors.primary` - White background (0xFFFFFFFF)
-- `AppColors.accent` - Green accent color (0xFFA4C639)
-- `AppColors.buttonPrimary` - Green button color (0xFF228B22)
-- `AppColors.white` - Pure white (Colors.white)
+- `AppColors.primary` - Off-white page background (0xFFFBFFF4)
+- `AppColors.accent` - Accent green (0xFF658638)
+- `AppColors.buttonPrimary` - Button green (0xFF419310)
+- `AppColors.white` - Historical alias to background (kept for compatibility)
 - `AppColors.google` - Google blue (0xFF4285F4)
 - `AppColors.facebook` - Facebook blue (0xFF4267B2)
-- `AppColors.error` - Red color used for inline error messages (0xFFFF0000)
+- `AppColors.error` - Error/validation color (0xFFFBB825)
 
 ### Text Styles (`app_text_styles.dart`)
 
@@ -48,9 +48,74 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 Padding(padding: EdgeInsets.all(AppDimensions.screenPadding))
 ```
 
-- `AppDimensions.screenPadding` - 24px main padding
-- `AppDimensions.smallSpacing` - 8px small gaps
-- `AppDimensions.verticalPadding` - 16px vertical space
+- `AppDimensions.screenPadding` - 24.0 - Main screen horizontal padding
+- `AppDimensions.verticalPadding` - 16.0 - Vertical padding used in page layouts
+- `AppDimensions.smallSpacing` - 8.0 - Small gaps between inline elements
+- `AppDimensions.tinySpacing` - 10.0 - Very small horizontal gaps
+- `AppDimensions.dividerPadding` - 12.0 - Padding used around divider text
+- `AppDimensions.socialButtonSpacing` - 16.0 - Gap between social buttons
+- `AppDimensions.bottomSpacing` - 56.0 - Bottom safe-area spacing for footers
+
+#### Button & Control Dimensions
+
+- `AppDimensions.buttonHeight` - 48.0 - Standard full-width button height
+- `AppDimensions.buttonHorizontalPadding` - 24.0 - Button internal horizontal padding
+- `AppDimensions.buttonVerticalPadding` - 12.0 - Button internal vertical padding
+- `AppDimensions.checkboxSize` - 24.0 - Square checkbox control size
+- `AppDimensions.checkboxCornerRadius` - 5.0 - Small checkbox corner radius
+
+#### Input & Field Dimensions
+
+- `AppDimensions.inputFieldHeight` - 56.0 - Standard input field height
+- `AppDimensions.inputHorizontalPadding` - 16.0 - Input left/right padding
+- `AppDimensions.inputErrorSpacing` - 4.0 - Vertical gap above error messages
+- `AppDimensions.fieldVerticalSpacing` - 12.0 - Vertical gap between stacked input fields
+
+#### Tiny utilities
+
+- `AppDimensions.smallRadius` - 4.0 - Small corner radius used for chips/inputs
+- `AppDimensions.chipHorizontalPadding` - 4.0 - Horizontal padding for small label chips
+- `AppDimensions.statusDotSize` - 14.0 - Checklist dot size
+- `AppDimensions.statusDotBorderWidth` - 2.0 - Checklist dot border width
+- `AppDimensions.statusIconSize` - 10.0 - Icon size inside checklist dot
+
+#### Auth header reference sizes
+
+- `AppDimensions.authHeaderBaseWidth` - 295.0 - Base width used by `AuthHeader`
+- `AppDimensions.authHeaderBaseHeight` - 127.0 - Base height used by `AuthHeader`
+- `AppDimensions.authHeaderLogoWidth` - 187.0 - Base logo width used by `AuthHeader`
+- `AppDimensions.authHeaderLogoHeight` - 80.0 - Base logo height used by `AuthHeader`
+- `AppDimensions.authHeaderTitleWidthOffset` - 18.0 - Title width offset used by `AuthHeader`
+- `AppDimensions.authHeaderLogoLeft` / `authHeaderLogoTop` - Logo positioning offsets (base px, scaled)
+- `AppDimensions.authHeaderByLeft` / `authHeaderByTop` - "by" overlay positioning offsets (base px, scaled)
+- `AppDimensions.authHeaderTitleFontSizeBase` / `authHeaderTitleLineHeightBase` - Base typography sizes for header title
+- `AppDimensions.authHeaderByFontSizeBase` / `authHeaderByLineHeightBase` - Base typography sizes for the small "by" text
+
+#### Auth screen spacers & helpers
+
+- `AppDimensions.authHeaderTopSpacing` - 0.24 - Large top gap used before auth header (relative to screen height)
+- `AppDimensions.authScreenSpacerSmall` - 0.025 - Small vertical gap used between auth elements
+- `AppDimensions.authScreenSpacerMedium` - 0.03 - Medium vertical gap used between auth elements
+- `AppDimensions.authScreenLargeSpacer` - 0.08 - Larger vertical gap (e.g., icon groups)
+- `AppDimensions.authScreenXLargeSpacer` - 0.10 - Extra-large spacer (used sparingly)
+- `AppDimensions.iconBackSize` - 28.0 - Standard back/icon button size used across auth screens
+
+#### Dialog / Overlay
+
+- `AppDimensions.dialogWidth` - 320.0
+- `AppDimensions.dialogHeight` - 300.0
+- `AppDimensions.dialogRadius` - 28.0
+- `AppDimensions.dialogHorizontalPadding` - 24.0
+- `AppDimensions.dialogTopPadding` - 24.0
+- `AppDimensions.dialogBottomPadding` - 20.0
+- `AppDimensions.dialogTitleFontSize`/`dialogTitleLineHeight` - 28 / 40
+- `AppDimensions.dialogBodyFontSize`/`dialogBodyLineHeight` - 16 / 22
+- `AppDimensions.dialogHeroSize` - 80.0
+
+#### Dividers
+
+- `AppDimensions.dividerThickness` - 1.0
+- `AppDimensions.authDividerSideWidthFactor` - 0.173 - Short side lines factor used around auth dividers label
 
 ### Text Content (`app_strings.dart`)
 
@@ -94,6 +159,24 @@ PrimaryButton(
 
 **Use for:** Main action buttons (Login, Submit, etc.)
 
+**Sizing note:** `PrimaryButton` is full-width by default to match input fields. You can override sizing with the optional `fixedWidth` and `fixedHeight` parameters when a fixed size is needed:
+
+```dart
+// Full-width (default)
+PrimaryButton(
+  label: 'Login',
+  onPressed: handleLogin,
+)
+
+// Fixed size
+PrimaryButton(
+  label: 'Continue',
+  fixedWidth: 200,
+  fixedHeight: 48,
+  onPressed: handleContinue,
+)
+```
+
 ### SocialButton
 
 ```dart
@@ -108,6 +191,159 @@ SocialButton(
 ```
 
 **Use for:** Social login buttons (Google, Facebook)
+
+### New Shared Components
+
+These components were added to support recent UI/validation improvements. Use them to keep auth screens consistent.
+
+#### AuthHeader (`shared/widgets/auth_header.dart`)
+
+```dart
+import 'package:ascoa_app/shared/widgets/auth_header.dart';
+
+// AuthHeader is responsive and scales from a Figma base. Provide the
+// `scale` value computed from screen width relative to the design reference.
+AuthHeader(scale: computedScale),
+```
+
+Use for: Top-of-screen header on login/signup screens. It renders the logo,
+page title, and optional subtitle with responsive spacing. Prefer passing the
+same `scale` value used by the surrounding screen to keep type and image
+proportions in sync.
+
+Related module docs:
+
+- `lib/modules/auth/forgot_password.md` — implementation notes, assets, and examples for the Forgot Password screen and dialog.
+
+Migration notes: Replace local `_LogoGroup` or duplicated header widgets with
+`AuthHeader`. Use `AppDimensions` auth header base constants to compute `scale`.
+
+#### FloatingLabelInputField (`shared/widgets/floating_label_input_field.dart`)
+
+```dart
+FloatingLabelInputField(
+  controller: formControllers.emailController,
+  label: AppStrings.emailLabel,
+  hintText: AppStrings.emailHint,
+  isError: validationController.emailError != null,
+  onChanged: validationController.validateEmail,
+)
+```
+
+Use for: Inputs that require a floating label animation (email, password). It preserves accessibility and supports `supportText` and `isError` props. Border thickness increases on focus; error increases further per `AppDimensions.inputBorderWidthError`.
+
+Migration notes: `FloatingLabelInputField` wraps `CustomInputField` styling but provides the floating-label UX; prefer it for new auth forms.
+
+Visual feedback: Input fields now increase their border thickness when focused and increase further when showing a validation error. Use `isError`/`errorText` to trigger the error state; focus is detected automatically.
+
+#### PasswordStrengthChecklist (`shared/widgets/password_strength_checklist.dart`)
+
+```dart
+PasswordStrengthChecklist(
+  hasMinLength: validationController.hasMinLength,
+  hasUppercase: validationController.hasUppercase,
+  hasLowercase: validationController.hasLowercase,
+  hasNumber: validationController.hasNumber,
+  hasSpecial: validationController.hasSpecial,
+)
+```
+
+Use for: Signup password fields to show real-time completion of password rules. The checklist is shown during typing/focus and remains visible even when all rules are satisfied.
+
+Migration notes: When showing the checklist, suppress the aggregated `validateStrongPassword` error message to avoid duplicate feedback.
+
+#### AuthFormUtils (`shared/utils/auth_form_utils.dart`)
+
+#### AppDialog (`shared/widgets/app_dialog.dart`)
+
+```dart
+showDialog(
+  context: context,
+  barrierDismissible: true,
+  builder: (_) => AppDialog(
+    title: 'Title',
+    body: 'Optional body copy',
+    hero: Icon(Icons.info, color: Colors.white),
+    primaryActionLabel: 'Okay',
+    onPrimaryAction: () => Get.back(),
+  ),
+);
+```
+
+Use for: Reusable overlay dialogs with consistent styling. Title/body/action are configurable; pass an optional `hero` widget for an icon or illustration.
+
+Extended AppDialog usage (new API):
+
+```dart
+// Icon-based hero (auto-decorated circular hero)
+AppDialog(
+  title: 'Check your email',
+  body: 'We sent a password reset link',
+  icon: Icons.mark_email_read,
+  primaryActionLabel: 'Back to login',
+  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
+);
+
+// Image asset hero (plain image, no decoration)
+AppDialog(
+  title: 'Check your email',
+  body: 'We sent a password reset link',
+  imageAsset: 'assets/ASCOA/Forgot_Password_confirm_Icon.png',
+  decoratedHero: false, // render the asset as-is
+  imageWidth: AppDimensions.dialogImageWidth,
+  imageHeight: AppDimensions.dialogImageHeight,
+  primaryActionLabel: 'Back to login',
+  onPrimaryAction: () => Get.offAllNamed(AppRoutes.login),
+);
+```
+
+API details (key props):
+
+- `title` (String, required): dialog headline
+
+- `body` (String?): optional paragraph text
+
+- `hero` (Widget?): advanced override for a custom hero
+
+- `icon` (IconData?): simple icon that will be wrapped in the circular gradient hero
+
+- `imageAsset` (String?): path to an asset used as the hero
+
+  - `decoratedHero` (bool): when true (default), the hero is rendered inside the gradient circle; when false, the image/icon is shown plain
+
+  - `imageWidth` / `imageHeight` (double?): explicit image dimensions for non-square assets
+
+  - Decorative background: The dialog renders a fixed decorative background image behind its content when appropriate. This decorative image is internal to `AppDialog` and is not configurable by callers — there are no background-related props. The asset, opacity, flip, and height are fixed by design.
+
+  - `primaryActionLabel` (String): button text
+
+  - `onPrimaryAction` (VoidCallback): handler invoked when primary button pressed
+
+Notes:
+
+- Prefer `icon` or `imageAsset` for most dialogs. Use `hero` only if you need custom layout/animation.
+- The decorative background image is internal to `AppDialog`. Callers do not configure it.
+- Styling and sizes use `AppDimensions` constants.
+
+New dimensions (see `app_dimensions.dart`):
+
+- `AppDimensions.dialogImageWidth` (double): default width for dialog images (134.0)
+
+- `AppDimensions.dialogImageHeight` (double): default height for dialog images (94.0)
+
+- `AppDimensions.forgotBgTopHeight` (double): screen-relative top background image height (~0.235)
+
+- `AppDimensions.forgotBgBottomHeight` (double): screen-relative bottom background image height (~0.306)
+
+```dart
+// Centralized helpers used by auth screens
+AuthFormUtils.validateLogin(validationController, email, password);
+AuthFormUtils.handleSignupPasswordChange(validationController, password);
+```
+
+Use for: Centralized validation wiring to avoid duplicated logic between login and signup screens. Keep the UI layer thin and use these helpers in screen `onChanged`/`onPressed` handlers.
+
+Migration notes: Replace inline ad-hoc validation wiring with `AuthFormUtils` calls when possible to reduce duplication.
 
 ## Utilities (shared/utils/)
 
@@ -125,6 +361,12 @@ String? error = Validators.validatePassword(password);
 // Strong password (signup)
 String? error = Validators.validateStrongPassword(password);
 ```
+
+### Migration Notes
+
+- Many screens now use `AppDimensions` multipliers instead of hardcoded `size.height * <number>` values. When updating or adding layouts, prefer these constants and add new entries to `app_dimensions.dart` if a new semantic gap is needed.
+- `AuthHeader` previously used inline numbers; switch to `AuthHeader(scale: computedScale)` and reuse `AppDimensions.authHeader*` base values.
+- If you see a direct pixel number used in a widget (e.g., `size: 28`), replace it with a semantically named constant in `AppDimensions` (e.g., `iconBackSize`).
 
 **Available validators:**
 
@@ -155,9 +397,40 @@ CustomInputField(
 ### ValidationController additions
 
 - `isTermsAccepted` (RxBool) — tracks whether the user has accepted Terms & Conditions (used by signup UI).
-- `termsError` (Rx<String?>) — holds an inline error string for the terms checkbox; signup displays this below the checkbox similar to other field errors.
+- `termsError` (Rx<String?>) — inline error string; signup shows this below the checkbox and switches checkbox border to `AppColors.error` with `AppDimensions.inputBorderWidthError`.
+- `isEmailValid(String)` and `clearEmailError()` — used to sanitize state between Login, Signup, and Forgot.
 
 ### ValidationController (`validation_controller.dart`)
+
+#### Cross-screen email handoff (Login ↔ Forgot Password)
+
+To prevent leaking error states between auth screens, email state is sanitized during navigation:
+
+- Only carry the email text between screens if it is valid.
+- Always clear the email error state before navigating.
+
+Helpers available:
+
+- `bool isEmailValid(String email)` — quick validity check without mutating state.
+- `void clearEmailError()` — clears only the email error (keeps other validation state).
+
+Recommended usage before navigating from Login → Forgot Password (and similarly on back/confirm from Forgot → Login):
+
+```dart
+final form = Get.find<FormControllers>();
+final validation = Get.find<ValidationController>();
+
+final currentEmail = form.emailController.text;
+validation.clearEmailError();
+if (!validation.isEmailValid(currentEmail)) {
+  form.emailController.clear();
+}
+Get.toNamed(AppRoutes.forgotPassword);
+```
+
+Notes:
+
+- `ForgotPasswordScreen` also sanitizes on init, so the UI won’t show stale errors even if callers forget. Pre-sanitizing on navigation is still recommended for clarity and consistency.
 
 ```dart
 // Usage in screen (automatically injected via FormBinding)
@@ -233,10 +506,9 @@ if (emailError != null) {
 
 **Architecture Notes:**
 
-- FormBinding automatically injects FormControllers and ValidationController
-- Controllers are lazy-loaded and auto-disposed
-- Login uses validateRequired() for password, signup will use validateStrongPassword()
-- Follow GetX binding pattern as defined in Structure.md
+- `FormBinding` injects `FormControllers` and `ValidationController` for auth screens.
+- Login uses `validatePasswordRequired`; Signup uses `validateStrongPassword` + live checklist.
+- Forgot Password confirmation screen was removed; we use `AppDialog` overlay instead.
 
 **When to Add New Shared Components:**
 

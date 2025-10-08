@@ -1,24 +1,93 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthController extends GetxController {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final FirebaseAuth _auth;
   Rxn<User> firebaseUser = Rxn<User>();
 
   @override
   void onInit() {
+    _auth = FirebaseAuth.instance;
     firebaseUser.bindStream(_auth.authStateChanges());
     super.onInit();
+  }
+
+  Future<void> _handleUserPostLogin(User user, String signUpMethod) async {
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+
+      if (userDoc.exists && userDoc.data() != null) {
+        final userData = userDoc.data()!;
+        if (userData['signUpMethod'] != signUpMethod) {
+          Get.snackbar(
+            'Login Failed',
+            'This account was registered using ${userData['signUpMethod']}. Please login with that method.',
+          );
+          await _signOutAll(); // Sign out from all providers
+          return;
+        }
+        if (userData['isProfileComplete'] == true) {
+          Get.snackbar('Login Successful', 'Welcome back!');
+          Get.offAllNamed(AppRoutes.home);
+        } else {
+          Get.snackbar(
+            'Incomplete Profile',
+            'Please complete your profile information.',
+          );
+          Get.offAllNamed(AppRoutes.completeProfile);
+        }
+      } else {
+        // New user - create document
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': user.email,
+          'firstName': '',
+          'lastName': '',
+          'phoneNumber': '',
+          'city': '',
+          'isProfileComplete': false,
+          'createdAt': FieldValue.serverTimestamp(), // Good practice
+          'signUpMethod': signUpMethod,
+        });
+        Get.snackbar('Welcome!', 'Please complete your profile information.');
+        Get.offAllNamed(AppRoutes.completeProfile);
+      }
+    } on FirebaseException catch (e) {
+      Get.snackbar('Error', 'Failed to load user data: ${e.message}');
+      await _signOutAll(); // Sign out if profile loading fails
+    } catch (e) {
+      Get.snackbar('Error', 'An unexpected error occurred: $e');
+      await _signOutAll(); // Sign out if profile loading fails
+    }
   }
 
   Future<void> login(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Get.snackbar('Login Successful', 'Welcome back!');
-      Get.offAllNamed(AppRoutes.home);
+      final user = _auth.currentUser;
+      if (user == null) throw Exception('No user found after sign-in.');
+      await _handleUserPostLogin(user, 'email');
+    } on FirebaseAuthException catch (e) {
+      // More specific error messages
+      String message = 'Login failed';
+      if (e.code == 'user-not-found') {
+        message = 'No user found with this email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Incorrect password.';
+      } else if (e.code == 'invalid-email') {
+        message = 'Invalid email address.';
+      } else if (e.code == 'invalid-credential') {
+        message = 'Invalid email or password.';
+      }
+      Get.snackbar('Login Failed', message);
     } catch (e) {
       Get.snackbar('Login Failed', e.toString());
     }
@@ -26,27 +95,28 @@ class AuthController extends GetxController {
 
   Future<void> loginWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         Get.snackbar('Login Failed', 'Google sign-in was cancelled.');
         return;
       }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+
+      final googleAuth = await googleUser.authentication;
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        Get.snackbar('Error', 'Failed to get authentication tokens.');
-        return;
+        throw Exception('Failed to get authentication tokens.');
       }
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
       await _auth.signInWithCredential(credential);
-      Get.snackbar('Login Successful', 'Logged in with Google!');
-      Get.offAllNamed(AppRoutes.home);
+      final user = _auth.currentUser;
+      if (user == null) throw Exception('No user found after Google sign-in.');
+      await _handleUserPostLogin(user, 'google');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
-        // Try to get the email and fetch sign-in methods
         Get.snackbar(
           'Account Exists',
           'This email is already registered with another sign-in method. Please use that method first.',
@@ -54,8 +124,10 @@ class AuthController extends GetxController {
       } else {
         Get.snackbar('Google Login Failed', e.message ?? 'Unknown error');
       }
+      await _signOutAll();
     } catch (e) {
       Get.snackbar('Google Login Failed', e.toString());
+      await _signOutAll();
     }
   }
 
@@ -66,7 +138,7 @@ class AuthController extends GetxController {
       );
 
       if (result.status == LoginStatus.cancelled) {
-        Get.snackbar('Login Failed', 'Facebook login was cancelled.');
+        // User cancelled - don't show error
         return;
       }
 
@@ -82,26 +154,45 @@ class AuthController extends GetxController {
           FacebookAuthProvider.credential(result.accessToken!.token);
 
       await _auth.signInWithCredential(facebookAuthCredential);
-      Get.snackbar('Login Successful', 'Logged in with Facebook!');
-      Get.offAllNamed(AppRoutes.home);
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('No user found after Facebook sign-in.');
+      }
+
+      // FIXED: Now calls _handleUserPostLogin for consistency
+      await _handleUserPostLogin(user, 'facebook');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
-        // Try to get the email and fetch sign-in methods
         Get.snackbar(
           'Account Exists',
-          'This email is already registered with another sign-in method. Please use that method first.',
+          'This email is already registered with another sign-in method.',
         );
       } else {
         Get.snackbar('Facebook Login Failed', e.message ?? 'Unknown error');
       }
+      // Clean up Facebook sign-in state
+      await FacebookAuth.instance.logOut();
     } catch (e) {
       Get.snackbar('Facebook Login Failed', e.toString());
+      await FacebookAuth.instance.logOut();
     }
   }
 
   Future<void> logout() async {
-    await _auth.signOut();
+    await _signOutAll();
     Get.snackbar('Logout', 'You have been logged out.');
+  }
+
+  Future<void> _signOutAll() async {
+    try {
+      await _auth.signOut();
+      await GoogleSignIn().signOut();
+      await FacebookAuth.instance.logOut();
+    } catch (e) {
+      debugPrint(
+        'Error during logout: $e',
+      ); // Optional: log error for debugging
+    }
   }
 
   Future<void> signup(String email, String password) async {
@@ -110,14 +201,24 @@ class AuthController extends GetxController {
         email: email,
         password: password,
       );
-      Get.snackbar('Signup Successful', 'Welcome to ASCOA!');
-      Get.offAllNamed(AppRoutes.home);
+      final user = _auth.currentUser;
+      if (user == null) throw Exception('No user found after sign-up.');
+
+      // FIXED: Now calls _handleUserPostLogin to create user document
+      await _handleUserPostLogin(user, 'email');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         Get.snackbar(
           'Signup Failed',
           'This email is already in use. Please use a different email.',
         );
+      } else if (e.code == 'weak-password') {
+        Get.snackbar(
+          'Signup Failed',
+          'Password is too weak. Please use a stronger password.',
+        );
+      } else if (e.code == 'invalid-email') {
+        Get.snackbar('Signup Failed', 'Invalid email address.');
       } else {
         Get.snackbar(
           'Signup Failed',
@@ -128,4 +229,42 @@ class AuthController extends GetxController {
       Get.snackbar('Signup Failed', e.toString());
     }
   }
+
+  // ===============================================
+  // FORGOT PASSWORD FEATURE - Added by Michel
+  // Branch: feature/forgot-password
+  // Improved: by Rohith
+  // ===============================================
+
+  /// Loading state for forgot password
+  RxBool isLoadingForgotPassword = false.obs;
+
+  /// Send password reset email
+  /// Returns a string status for UI dialog handling
+  Future<String> forgotPassword(String email) async {
+    isLoadingForgotPassword.value = true;
+    try {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+      return 'success';
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'user-not-found':
+          return 'user-not-found';
+        case 'invalid-email':
+          return 'invalid-email';
+        case 'too-many-requests':
+          return 'too-many-requests';
+        default:
+          return 'error';
+      }
+    } catch (_) {
+      return 'error';
+    } finally {
+      isLoadingForgotPassword.value = false;
+    }
+  }
+
+  // ===============================================
+  // END FORGOT PASSWORD FEATURE - Michel
+  // ===============================================
 }

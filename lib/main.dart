@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/routes/app_routes.dart';
-import 'modules/auth/views/login_screen.dart';
+import 'modules/auth/views/login_screen_v2.dart';
 import 'modules/auth/views/signup_screen.dart';
 import 'app/controllers/auth_controller.dart';
 import 'shared/controllers/form_binding.dart';
@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'modules/home/views/home_screen.dart';
+import 'modules/auth/views/forgot_password_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: AppRoutes.login,
-          page: () => const LoginScreen(),
+          page: () => const LoginScreenV2(),
           bindings: [FormBinding()],
         ),
         GetPage(
@@ -44,6 +45,12 @@ class MyApp extends StatelessWidget {
           bindings: [FormBinding()],
         ),
         GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
+
+        GetPage(
+          name: AppRoutes.forgotPassword,
+          page: () => ForgotPasswordScreen(),
+          bindings: [FormBinding()],
+        ),
         // Add more GetPages for other routes
       ],
       theme: ThemeData(

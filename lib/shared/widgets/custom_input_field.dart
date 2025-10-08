@@ -3,12 +3,13 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 
-class CustomInputField extends StatelessWidget {
+class CustomInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
   final bool obscure;
   final ValueChanged<String>? onChanged;
   final String? errorText;
+  final ValueChanged<bool>? onFocusChange;
 
   const CustomInputField({
     required this.controller,
@@ -16,11 +17,44 @@ class CustomInputField extends StatelessWidget {
     this.obscure = false,
     this.onChanged,
     this.errorText,
+    this.onFocusChange,
     super.key,
   });
 
   @override
+  State<CustomInputField> createState() => _CustomInputFieldState();
+}
+
+class _CustomInputFieldState extends State<CustomInputField> {
+  late FocusNode _focusNode;
+  bool get _isControllerValid {
+    try {
+      // Try to access the controller's value to check if it's disposed
+      widget.controller.value;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // If controller is disposed, return a basic container to prevent crashes
+    if (!_isControllerValid) {
+      return Container(
+        width: double.infinity,
+        height: AppDimensions.inputFieldHeight,
+        decoration: BoxDecoration(
+          color: AppColors.pureWhite,
+          border: Border.all(
+            color: AppColors.accentGreen,
+            width: AppDimensions.borderWidth,
+          ),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,17 +62,28 @@ class CustomInputField extends StatelessWidget {
           width: double.infinity,
           height: AppDimensions.inputFieldHeight,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.pureWhite,
             border: Border.all(
-              color: errorText != null ? AppColors.error : AppColors.accent,
-              width: AppDimensions.borderWidth,
+              color:
+                  widget.errorText != null
+                      ? AppColors.error
+                      : AppColors.accentGreen,
+              width:
+                  widget.errorText != null
+                      ? AppDimensions.inputBorderWidthError
+                      : (_focusNode.hasFocus
+                          ? AppDimensions.inputBorderWidthFocused
+                          : AppDimensions.borderWidth),
             ),
             borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
-                blurRadius: 4,
-                offset: Offset(0, 4),
+                blurRadius: AppDimensions.boxShadowBlurRadius,
+                offset: Offset(
+                  AppDimensions.boxShadowOffsetX,
+                  AppDimensions.boxShadowOffsetY,
+                ),
               ),
             ],
           ),
@@ -47,25 +92,43 @@ class CustomInputField extends StatelessWidget {
           ),
           alignment: Alignment.centerLeft,
           child: TextField(
-            controller: controller,
-            obscureText: obscure,
-            onChanged: onChanged,
+            focusNode: _focusNode,
+            controller: widget.controller,
+            obscureText: widget.obscure,
+            onChanged: widget.onChanged,
             // Launch validation via onChanged callback
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: widget.hint,
               border: InputBorder.none,
               hintStyle: AppTextStyles.inputHint,
             ),
           ),
         ),
-        if (errorText != null) ...[
+        if (widget.errorText != null) ...[
           SizedBox(height: AppDimensions.inputErrorSpacing),
           Padding(
             padding: EdgeInsets.only(left: AppDimensions.inputErrorSpacing),
-            child: Text(errorText!, style: AppTextStyles.errorText),
+            child: Text(widget.errorText!, style: AppTextStyles.errorText),
           ),
         ],
       ],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(() {
+      if (widget.onFocusChange != null) {
+        widget.onFocusChange!(_focusNode.hasFocus);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 }

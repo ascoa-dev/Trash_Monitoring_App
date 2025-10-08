@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: AppColors.primary,
+        color: AppColors.background,
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimensions.screenPadding,
           vertical: AppDimensions.verticalPadding,
@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               // Top spacing
-              const SizedBox(height: 24),
+              const SizedBox(height: AppDimensions.screenPadding),
 
               // Title
               const Text('Home', style: AppTextStyles.heading1),
@@ -40,10 +40,10 @@ class HomeScreen extends StatelessWidget {
                   Get.offAllNamed(AppRoutes.login);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonPrimary,
+                  backgroundColor: AppColors.buttonGreen,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
+                    horizontal: AppDimensions.buttonHorizontalPadding,
+                    vertical: AppDimensions.buttonVerticalPadding,
                   ),
                 ),
                 child: const Text(
