@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ASCOA App</string>
+    
+    <!-- Facebook Configuration -->
+    <!-- Replace these with your actual Facebook App ID and Client Token from Facebook Developers Console -->
+    
+    <string name="facebook_app_id">2607547772920181</string>
+    <string name="fb_login_protocol_scheme">fb2607547772920181</string>
+    <string name="facebook_client_token">98d1927bf8b87f3e4ecc5fd22f753088</string>
+</resources>

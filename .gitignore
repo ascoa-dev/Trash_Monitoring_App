@@ -62,6 +62,51 @@ flutter_*.png
 *.iml
 *.hprof
 
+# Android NDK
+**/obj/
+**/jniLibs/
+
+# iOS/Flutter build
+**/Flutter/App.framework
+**/Flutter/Flutter.framework
+**/Flutter/Generated.xcconfig
+**/Flutter/ephemeral/
+
+# macOS
+**/macos/Flutter/ephemeral/
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/Generated.xcconfig
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+**/macos/Podfile.lock
+
+# Windows
+**/windows/runner/Debug/
+**/windows/runner/Release/
+**/windows/runner/x64/
+**/windows/runner/x86/
+**/windows/runner/GeneratedPluginRegistrant.*
+
+# Web
+**/web/generated_plugin_registrant.dart
+
+# VS Code
+.vscode/
+
+# Miscellaneous
+*.orig
+*.tmp
+*.bak
+*.swp
+*.swo
+*.swn
+*.tmp
+*.temp
+*.log.*
+
+# Coverage
+coverage/
+
 # iOS
 **/Pods/
 **/.symlinks/
@@ -69,3 +114,4 @@ flutter_*.png
 *.xcworkspace
 
 .fake
+List.md
