@@ -212,6 +212,7 @@ Generated files:
 ### Validation
 
 **When `allowCustomCities` is `false`:**
+
 - Users must select a city from the configured list
 - Validation controller checks if entered city exists in the list (case-insensitive)
 - Error message displayed: "Please select a city from the list" (localized)
@@ -219,6 +220,7 @@ Generated files:
 - Uses `CitiesController.isCityValid()` method for validation
 
 **When `allowCustomCities` is `true`:**
+
 - Users can type any city name
 - No validation against the city list
 - Custom cities are accepted and saved

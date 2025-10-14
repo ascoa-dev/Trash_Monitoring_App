@@ -88,9 +88,10 @@ class ValidationController extends GetxController {
           // If custom cities not allowed, validate against the list
           if (!citiesController.isCityValid(trimmed)) {
             final isFrench = Get.locale?.languageCode == 'fr';
-            cityError.value = isFrench 
-                ? AppStrings.citySelectorPleaseSelectFrench
-                : AppStrings.citySelectorPleaseSelect;
+            cityError.value =
+                isFrench
+                    ? AppStrings.citySelectorPleaseSelectFrench
+                    : AppStrings.citySelectorPleaseSelect;
             return;
           }
         }
