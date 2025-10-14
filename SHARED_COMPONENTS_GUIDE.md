@@ -238,6 +238,17 @@ Widgets index (lib/shared/widgets)
 - `floating_label_input_field.dart` — Main input used in forms with floating label, hint and support text.
 - `nav_bar.dart` — Bottom navigation bar; uses `AppImages` for icons and `AppDimensions` for sizing.
 - `password_strength_checklist.dart` — Small helper widget that renders password requirement checklist and colors using `AppColors`.
+
+Latest changes (component review)
+
+- Circular loader (`lib/shared/widgets/circular_loader.dart`): updated to fix an AnimatedBuilder signature bug and to add a small transparent gap between the loader track and active arc. The widget now consumes `AppDimensions.circularLoaderSize`, `circularLoaderStrokeWidth` and `circularLoaderGap` plus `AppColors.loaderTrack` / `AppColors.loaderActive` tokens. The gap is implemented with a saveLayer + BlendMode.clear technique to ensure it renders crisply on different backgrounds.
+- Button sizing: To keep consistent sizing across auth flows, full-width `OutlinedButton` actions (for example "Use another email" / "Resend") should be wrapped in `SizedBox(width: double.infinity, height: SizeUtils.h(context, AppDimensions.buttonHeight))`. Primary buttons remain full-width by default via `PrimaryButton`.
+- Tokens: Several new constants were added to `app_dimensions.dart` and `app_colors.dart` to support the verification screen and loader visuals. Prefer using these instead of inlining numeric values or color hex literals.
+
+Small guidance for maintainers:
+
+- When authoring new small widgets that emulate auth-screen action rows, reuse `AppDimensions.buttonHeight` for vertical rhythm.
+- For artwork-heavy screens (auth/profile), follow the `LayoutBuilder` + `Stack` + `Positioned` pattern used in `forgot_password_screen.dart` and `email_verification_screen.dart` so hero artwork remains anchored independent of content spacing changes.
 - `primary_button.dart` — Standard full-width button used across screens; uses `AppDimensions.buttonHeight` and `AppColors.buttonGreen`.
 - `social_button.dart` — Social login button with icon slot (now using `AppImages` for logos where applicable).
 - `profile_signout_button.dart` (modules/profile/widgets) — Branded logout CTA sized with profile tokens; supply an `onPressed` that triggers `AuthController.logout()` or similar.

@@ -89,6 +89,10 @@ class AppColors {
   static const Color navBarSelectedBackground = Color(0xFFC7E0B0);
   static const Color profileCardBackground = navBarSelectedBackground;
 
+  // Circular loader colors
+  static const Color loaderTrack = Color(0xFFB4D17B); // light green track
+  static const Color loaderActive = Color(0xFF658638); // dark green active arc
+
   // Prevent instantiation
   AppColors._();
 }

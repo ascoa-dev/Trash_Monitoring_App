@@ -26,7 +26,7 @@ class AppDimensions {
 
   // Screen Height Multipliers
   static const double titleTopSpacing = 0.16;
-  static const double forgotTitleTopSpacing = 0.12;
+  static const double forgotTitleTopSpacing = 0.21;
   static const double titleBottomSpacing = 0.02;
   static const double inputSpacing = 0.01;
   static const double buttonSpacing = 0.03;
@@ -78,6 +78,10 @@ class AppDimensions {
   static const double statusDotBorderWidth = 2.0;
   static const double statusIconSize = 10.0;
   static const double checklistItemSpacing = 2.0;
+  // Loader spacing
+  static const double circularLoaderGap = 4.5;
+  static const double circularLoaderSize = 40.0;
+  static const double circularLoaderStrokeWidth = 4.0;
   // Navigation bar sizing
   static const double navBarHeight = 64.0;
   static const double navBarHorizontalPadding = 24.0;
@@ -176,6 +180,13 @@ class AppDimensions {
   static const double dialogHeroSize = 80.0;
   // Email verification screen - large icon size
   static const double emailVerificationIconSize = 100.0;
+  static const double emailVerificationIconWidth = 209.0;
+  static const double emailVerificationIconHeight = 97.0;
+  static const double emailVerificationHeading = 28.0;
+  static const double emailVerificationSubheading = 16.0;
+  static const double emailVerificationTopSpacing = 210.0;
+  static const double verticalPaddingVerification = 8.0;
+  static const double screenPaddingVerification = 18.0;
   // Dialog action font size
   static const double dialogActionFontSize = 14.0;
   // Checklist / small helper font sizes

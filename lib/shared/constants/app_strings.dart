@@ -214,20 +214,35 @@ class AppStrings {
   static const String profileSignOut = "Sign Out";
 
   // Email verification
-  static const String emailVerificationTitle = "Verify Your Email";
+  static const String emailVerificationTitle = "Verify email";
+  static const String emailVerificationTitleFrench = "Vérifier l'email";
   // Template expects one placeholder '%s' for the user email
   static const String emailVerificationBodyTemplate =
       "We have sent a verification link to %s. Please check your email and click on the verification link to continue.";
+  static const String emailVerificationBody =
+      "We have sent a verification link to: \n%s";
+  static const String emailVerificationBodyFrench =
+      "Nous avons envoyé un lien de vérification à :\n%s";
   static const String emailVerificationCheckAgain =
       "I have verified, check again";
   static const String emailVerificationResend = "Resend";
+  static const String emailVerificationResendLink = "RESEND LINK";
+  static const String emailVerificationResendLinkFrench = "RÉENVOYER LE LIEN";
   static const String emailVerificationResending = "Resending...";
+  static const String emailVerificationResendingFrench = "RÉENVOI...";
+  static const String emailVerificationUseAnother = "USE ANOTHER EMAIL";
+  static const String emailVerificationUseAnotherFrench =
+      "UTILISER UN AUTRE EMAIL";
+  static const String emailVerificationSpamNote =
+      "Didn't get the email? \nCheck your spam folder";
+  static const String emailVerificationSpamNoteFrench =
+      "Vous n'avez pas reçu l'email? \nVérifiez votre dossier spam.";
   static const String emailVerifiedSuccessTitle = "Success";
   static const String emailVerifiedSuccessBody = "Email verified successfully!";
   static const String emailVerificationSentTitle = "Verification Sent";
   static const String emailVerificationSentBody =
       "A verification email was sent to %s.";
-  static const String emailVerificationSpamNote =
+  static const String emailVerificationSpamNoteOld =
       "Please make sure to check your spam/junk folder if you do not see the email in your inbox.";
 
   // Forgot Password - error messages

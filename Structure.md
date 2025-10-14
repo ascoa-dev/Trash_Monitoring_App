@@ -92,6 +92,12 @@ class FormBinding extends Bindings {
 
 Used in routes for Login, Signup, and Forgot Password.
 
+Latest updates
+
+- The `email_verification_screen.dart` and `forgot_password_screen.dart` now follow a consistent layout pattern (LayoutBuilder + Stack + Positioned artwork anchored to viewport height) to avoid artwork reflow when content spacing changes.
+- `CircularInfiniteLoader` was fixed and now supports a small transparent gap between the track and the active arc; see `lib/shared/widgets/circular_loader.dart`.
+- City validation is now enforced by `lib/shared/controllers/validation_controller.dart` in coordination with `cities_controller.dart` when `allowCustomCities` is set to false in runtime config.
+
 ## 📂 Folder Guide
 
 A quick overview of the project structure and what goes where:

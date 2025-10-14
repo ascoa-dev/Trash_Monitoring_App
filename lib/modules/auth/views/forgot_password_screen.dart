@@ -244,14 +244,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           alignment: Alignment.centerLeft,
                           child: IconButton(
                             onPressed: () {
-                              final form = Get.find<FormControllers>();
-                              final validation =
-                                  Get.find<ValidationController>();
-                              final currentEmail = form.emailController.text;
-                              validation.clearEmailError();
-                              if (!validation.isEmailValid(currentEmail)) {
-                                form.emailController.clear();
-                              }
                               Get.back();
                             },
                             icon: Icon(

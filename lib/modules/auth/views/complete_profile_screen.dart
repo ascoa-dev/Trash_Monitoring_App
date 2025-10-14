@@ -432,6 +432,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                               ],
                             ),
                           ),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.screenPadding,
+                            ),
+                          ),
                           Obx(
                             () => CitySelectorField(
                               controller: formControllers.cityController,

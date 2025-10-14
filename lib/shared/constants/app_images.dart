@@ -10,6 +10,7 @@ class AppImages {
       'assets/ASCOA/Forgot_Password_Screen_Top.png';
   static const String editProfileBottom =
       'assets/ASCOA/Edit_Profile_Screen_Bottom.png';
+  static const String verifyEmailIcon = 'assets/ASCOA/verify_email_icon.png';
   static const String profilePlaceholder =
       'assets/ASCOA/profileplaceholder.png';
   static const String profileScreenBottom =

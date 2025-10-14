@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
-import '../utils/size_utils.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class AppTextStyles {
   // Font Families

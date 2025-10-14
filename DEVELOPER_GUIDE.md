@@ -163,6 +163,18 @@ Notes for reviewers: check `lib/shared/constants/app_strings.dart` and `lib/shar
 - Reused `CountryCodeSelectorField` for dial-code selection (defaults to Cameroon) and hooked validation into shared controllers.
 - `AuthController.completeProfile` now persists profile data to Firestore, marks `isProfileComplete`, and navigates the user home on success.
 
+Recent updates (quick reviewer notes)
+
+- Email verification screen: reworked to mirror the Forgot Password layout pattern (Stack + Positioned top/bottom artwork anchored to the viewport height). This prevents artwork repositioning when button spacing or content changes. See `lib/modules/auth/views/email_verification_screen.dart`.
+- Circular loader: fixed AnimatedBuilder signature and implemented a small transparent gap between the track and active arc for improved contrast. The implementation uses a saveLayer + BlendMode.clear trick inside `lib/shared/widgets/circular_loader.dart` and relies on `AppDimensions.circularLoaderGap` and color tokens in `app_colors.dart`.
+- City validation: validation is now driven by `lib/shared/controllers/cities_controller.dart` and enforced from `ValidationController` when `allowCustomCities` is false in the runtime config. This prevents saving custom city inputs when the server expects selections from the provided city list.
+
+Migration notes for reviewers:
+
+- When adding translations, include the new email verification and change-password keys found in `lib/shared/constants/app_strings.dart`.
+- If tests read `AppStrings` by exact string, update them to use the new keys to avoid brittle assertions.
+- UI reviewers: verify the resend/use-another-email actions use the same `AppDimensions.buttonHeight` as other auth actions; `OutlinedButton`s should be wrapped in a `SizedBox(width: double.infinity, height: SizeUtils.h(context, AppDimensions.buttonHeight))`.
+
 ## Quick Reference
 
 **Adding New Features:**

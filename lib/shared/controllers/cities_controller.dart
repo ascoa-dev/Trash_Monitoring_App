@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import '../services/cities_service.dart';
-import '../../app/models/cities_config.dart';
-import '../../app/models/city_model.dart';
-import '../utils/city_search.dart';
+import 'package:ascoa_app/shared/services/cities_service.dart';
+import 'package:ascoa_app/app/models/cities_config.dart';
+import 'package:ascoa_app/app/models/city_model.dart';
+import 'package:ascoa_app/shared/utils/city_search.dart';
 
 class CitiesController extends GetxController {
   final CitiesService _service = Get.find<CitiesService>();

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/cities_controller.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_dimensions.dart';
-import '../constants/app_strings.dart';
-import '../constants/app_text_styles.dart';
-import '../constants/app_typography.dart';
-import '../utils/size_utils.dart';
+import 'package:ascoa_app/shared/controllers/cities_controller.dart';
+import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/constants/app_typography.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 /// CitySelectorField with Material Design 3 styling and fuzzy search
 class CitySelectorField extends StatefulWidget {

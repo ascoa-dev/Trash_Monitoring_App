@@ -52,3 +52,29 @@ Initial route is determined at runtime: signed-in users go to Home; otherwise Lo
 - Verification: `flutter analyze`
 
 Older refactors (tokenization sweep, image constants, typography tokens, validator centralization) remain in effect; see commit history for details.
+
+Latest updates (auth & UI fixes)
+
+- Reworked `EmailVerificationScreen` to match the visual structure used by the Forgot Password flow (stacked background images anchored to viewport height, SafeArea + SingleChildScrollView padding, and full-width button sizing). This prevents background artwork from moving when screen content spacing changes.
+- Fixed `CircularInfiniteLoader` crash (AnimatedBuilder signature bug) and added a small transparent gap between the loader track and the active arc for improved contrast. The loader now uses shared constants from `lib/shared/constants/app_dimensions.dart` and `app_colors.dart`.
+- Enforced server-driven city validation: when the configuration `allowCustomCities` is false, the Complete Profile / Edit Profile flows will block saving if a custom/unrecognized city is entered. Validation logic lives in `lib/shared/controllers/validation_controller.dart` and `lib/shared/controllers/cities_controller.dart`.
+- Standardized button sizing for resend / use-another-email actions to match the Forgot Password screen (OutlinedButton wrapped in a SizedBox using `AppDimensions.buttonHeight` and `screenPadding`).
+- Fixed Forgot Password back button behavior (now only navigates back without acting as cancel). The Cancel flow still clears form controllers as intended.
+
+Files touched (high-level):
+
+- lib/modules/auth/views/email_verification_screen.dart
+- lib/modules/auth/views/forgot_password_screen.dart
+- lib/modules/auth/views/complete_profile_screen.dart
+- lib/shared/widgets/circular_loader.dart
+- lib/shared/constants/app_dimensions.dart
+- lib/shared/constants/app_colors.dart
+- lib/shared/constants/app_strings.dart
+- lib/shared/controllers/cities_controller.dart
+
+Testing & verification:
+
+- Ran `flutter analyze` after edits (no static analyzer issues reported).
+- Focused unit/UI tests (forgot password spec) were executed during the changeset iteration.
+
+If you maintain CI or localization files, please check the newly added `AppStrings` keys before merging to avoid missing translations.

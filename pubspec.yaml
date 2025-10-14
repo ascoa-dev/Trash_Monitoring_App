@@ -98,6 +98,7 @@ flutter:
     - assets/ASCOA/Profile_Page_Icons/faq.png
     - assets/ASCOA/Profile_Page_Icons/policy.png
     - assets/ASCOA/Profile_Page_Icons/signout.png
+    - assets/ASCOA/verify_email_icon.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
