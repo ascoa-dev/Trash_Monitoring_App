@@ -51,4 +51,15 @@ class CitiesController extends GetxController {
     if (!isReady.value || _search == null) return [];
     return _search!.search(query).map((c) => c.name).toList();
   }
+
+  /// Check if a city name exists in the configured cities list
+  bool isCityValid(String cityName) {
+    if (!isReady.value || _search == null) return true; // Allow if not ready
+    final trimmed = cityName.trim();
+    if (trimmed.isEmpty) return false;
+    
+    // Check exact match (case-insensitive)
+    final cityNamesLower = cityNames().map((c) => c.toLowerCase()).toList();
+    return cityNamesLower.contains(trimmed.toLowerCase());
+  }
 }

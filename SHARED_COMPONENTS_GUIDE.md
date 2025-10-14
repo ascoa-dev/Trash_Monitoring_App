@@ -525,9 +525,15 @@ Use for: City input with fuzzy search autocomplete and Material Design 3 dropdow
 - Fuzzy search with tokenization (e.g., "abele" matches "ab leila")
 - Smart refocus behavior: shows filtered results based on current input, or all cities if empty
 - Custom city warnings from Firestore config when no matches found
+- **Validation enforcement**: When `allowCustomCities` is false, prevents saving with cities not in the list
 - No gap between input and dropdown for seamless visual experience
 - All dimensions use `AppDimensions` constants
 - Material Design 3 shadows (`AppColors.shadowMedium`, `AppColors.shadowLight`)
+
+**Validation:**
+
+- When `allowCustomCities` is `false`: Users must select from the list. Shows error "Please select a city from the list" if validation fails.
+- When `allowCustomCities` is `true`: Users can type any city name freely.
 
 **Key options:**
 

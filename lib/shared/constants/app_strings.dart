@@ -72,6 +72,8 @@ class AppStrings {
   // City Selector
   static const String citySelectorNoCitiesFound = "No cities found";
   static const String citySelectorNoCitiesFoundFrench = "Aucune ville trouvée";
+  static const String citySelectorPleaseSelect = "Please select a city from the list";
+  static const String citySelectorPleaseSelectFrench = "Veuillez sélectionner une ville dans la liste";
 
   static const String editPhotoLabel = "Edit Photo";
   static const String editPhotoLabelFrench = "Modifier la photo";

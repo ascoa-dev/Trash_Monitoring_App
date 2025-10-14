@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:ascoa_app/shared/utils/validators.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/controllers/cities_controller.dart';
 
 class ValidationController extends GetxController {
   var emailError = Rx<String?>(null);
@@ -80,6 +81,22 @@ class ValidationController extends GetxController {
       // reuse nameRegex for city
       cityError.value = 'Invalid ${AppStrings.cityError}';
     } else {
+      // Check if custom cities are allowed
+      try {
+        final citiesController = Get.find<CitiesController>();
+        if (!citiesController.allowCustomCities) {
+          // If custom cities not allowed, validate against the list
+          if (!citiesController.isCityValid(trimmed)) {
+            final isFrench = Get.locale?.languageCode == 'fr';
+            cityError.value = isFrench 
+                ? AppStrings.citySelectorPleaseSelectFrench
+                : AppStrings.citySelectorPleaseSelect;
+            return;
+          }
+        }
+      } catch (e) {
+        // CitiesController not found, skip validation
+      }
       cityError.value = null; // valid
     }
   }

@@ -209,6 +209,20 @@ Generated files:
 - Displays in yellow/error color to catch user attention
 - Default fallback: "This city is not officially recognized. Please double-check."
 
+### Validation
+
+**When `allowCustomCities` is `false`:**
+- Users must select a city from the configured list
+- Validation controller checks if entered city exists in the list (case-insensitive)
+- Error message displayed: "Please select a city from the list" (localized)
+- Prevents saving Complete Profile or Edit Profile forms with invalid cities
+- Uses `CitiesController.isCityValid()` method for validation
+
+**When `allowCustomCities` is `true`:**
+- Users can type any city name
+- No validation against the city list
+- Custom cities are accepted and saved
+
 ### Smart Refocus Behavior
 
 - When input is empty: shows all cities
