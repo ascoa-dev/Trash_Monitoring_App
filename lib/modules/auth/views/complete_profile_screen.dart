@@ -8,6 +8,7 @@ import 'package:ascoa_app/shared/controllers/form_controllers.dart';
 import 'package:ascoa_app/shared/controllers/validation_controller.dart';
 import 'package:ascoa_app/shared/widgets/country_code_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
+import 'package:ascoa_app/shared/widgets/city_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -431,14 +432,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: SizeUtils.h(
-                              context,
-                              AppDimensions.screenPadding,
-                            ),
-                          ),
                           Obx(
-                            () => FloatingLabelInputField(
+                            () => CitySelectorField(
                               controller: formControllers.cityController,
                               label: cityLabel,
                               hint: AppStrings.cityHint,
@@ -446,8 +441,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                               isError:
                                   validationController.cityError.value != null,
                               onChanged: validationController.validateCity,
-                              textCapitalization: TextCapitalization.words,
-                              textInputAction: TextInputAction.done,
                             ),
                           ),
                           SizedBox(

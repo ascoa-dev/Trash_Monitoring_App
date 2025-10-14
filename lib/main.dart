@@ -20,13 +20,26 @@ import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'modules/profile/views/change_password_screen.dart';
 import 'modules/profile/bindings/change_password_binding.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'app/models/city_model.dart';
+import 'app/models/cities_config.dart';
+import 'shared/services/cities_service.dart';
+import 'shared/controllers/cities_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize Hive and register adapters for cities config
+  await Hive.initFlutter();
+  Hive.registerAdapter(CityAdapter());
+  Hive.registerAdapter(CitiesConfigAdapter());
   // Register AuthController globally and permanently
   await GoogleSignIn.instance.initialize();
   Get.put(AuthController(), permanent: true);
+  // Register and initialize CitiesService
+  final citiesService = await CitiesService().init();
+  Get.put<CitiesService>(citiesService, permanent: true);
+  Get.put(CitiesController());
   runApp(const MyApp());
 }
 

@@ -505,6 +505,45 @@ Use for: Dial code + flag selection with floating label styling. Internally wrap
 
 Key options: `topSpacing` to align with adjacent fields, `enabled` to disable interactions when the form is submitting.
 
+#### CitySelectorField (`shared/widgets/city_selector_field.dart`)
+
+```dart
+CitySelectorField(
+  controller: formControllers.cityController,
+  label: AppStrings.cityLabel,
+  hint: AppStrings.cityHint,
+  supportText: validationController.cityError.value,
+  isError: validationController.cityError.value != null,
+  onChanged: validationController.validateCity,
+)
+```
+
+Use for: City input with fuzzy search autocomplete and Material Design 3 dropdown styling. Fetches city list from Firestore `config/cities` document, caches locally with Hive, and provides intelligent fuzzy matching across city names and alternative names.
+
+**Features:**
+
+- Fuzzy search with tokenization (e.g., "abele" matches "ab leila")
+- Smart refocus behavior: shows filtered results based on current input, or all cities if empty
+- Custom city warnings from Firestore config when no matches found
+- No gap between input and dropdown for seamless visual experience
+- All dimensions use `AppDimensions` constants
+- Material Design 3 shadows (`AppColors.shadowMedium`, `AppColors.shadowLight`)
+
+**Key options:**
+
+- `topSpacing` — adjust vertical spacing (default: `AppDimensions.fieldVerticalSpacing`)
+- `onChanged` — validation callback triggered on text change
+
+**Constants used:**
+
+- `AppDimensions.citySelectorMaxWidth` (300px)
+- `AppDimensions.citySelectorMaxHeight` (240px)
+- `AppDimensions.citySelectorItemHeight` (48px)
+- `AppDimensions.citySelectorTextSize` (18px)
+- `AppStrings.citySelectorNoCitiesFound`
+
+See `CITIES_CONFIG_IMPLEMENTATION.md` for complete architecture documentation.
+
 #### PasswordStrengthChecklist (`shared/widgets/password_strength_checklist.dart`)
 
 ```dart

@@ -53,9 +53,9 @@ class ValidationController extends GetxController {
   void validateFirstName(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) {
-      firstNameError.value = '${AppStrings.firstNameLabel} is required';
+      firstNameError.value = '${AppStrings.firstNameError} is required';
     } else if (!nameRegex.hasMatch(trimmed)) {
-      firstNameError.value = 'Invalid ${AppStrings.firstNameLabel}';
+      firstNameError.value = 'Invalid ${AppStrings.firstNameError}';
     } else {
       firstNameError.value = null; // valid
     }
@@ -64,9 +64,9 @@ class ValidationController extends GetxController {
   void validateLastName(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) {
-      lastNameError.value = '${AppStrings.lastNameLabel} is required';
+      lastNameError.value = '${AppStrings.lastNameError} is required';
     } else if (!nameRegex.hasMatch(trimmed)) {
-      lastNameError.value = 'Invalid ${AppStrings.lastNameLabel}';
+      lastNameError.value = 'Invalid ${AppStrings.lastNameError}';
     } else {
       lastNameError.value = null; // valid
     }
@@ -75,10 +75,10 @@ class ValidationController extends GetxController {
   void validateCity(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) {
-      cityError.value = '${AppStrings.cityLabel} is required';
+      cityError.value = '${AppStrings.cityError} is required';
     } else if (!nameRegex.hasMatch(trimmed)) {
       // reuse nameRegex for city
-      cityError.value = 'Invalid ${AppStrings.cityLabel}';
+      cityError.value = 'Invalid ${AppStrings.cityError}';
     } else {
       cityError.value = null; // valid
     }
@@ -90,7 +90,7 @@ class ValidationController extends GetxController {
     // Check required
     final requiredResult = Validators.validateRequired(
       trimmedNumber,
-      AppStrings.phoneNumberLabel,
+      AppStrings.phoneNumberError,
     );
     if (requiredResult != null) {
       phoneNumberError.value = requiredResult;
@@ -100,7 +100,7 @@ class ValidationController extends GetxController {
     // Combine dial code and number
     final combined = '$dialCode$trimmedNumber'.replaceAll(' ', '');
     if (!phoneRegex.hasMatch(combined)) {
-      phoneNumberError.value = 'Invalid ${AppStrings.phoneNumberLabel}';
+      phoneNumberError.value = 'Invalid ${AppStrings.phoneNumberError}';
     } else {
       phoneNumberError.value = null; // valid
     }

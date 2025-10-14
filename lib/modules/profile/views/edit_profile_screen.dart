@@ -8,6 +8,7 @@ import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/widgets/country_code_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
+import 'package:ascoa_app/shared/widgets/city_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
@@ -201,7 +202,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                     Text(
                                       title,
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyles.heading2(context).copyWith(
+                                      style: AppTextStyles.heading2(
+                                        context,
+                                      ).copyWith(
                                         fontWeight: FontWeight.w700,
                                         fontSize: SizeUtils.h(
                                           context,
@@ -256,7 +259,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                       ),
                                       child: Text(
                                         editPhotoLabel,
-                                        style: AppTextStyles.body(context).copyWith(
+                                        style: AppTextStyles.body(
+                                          context,
+                                        ).copyWith(
                                           fontSize: SizeUtils.h(
                                             context,
                                             AppDimensions.floatingLabelFontSize,
@@ -304,12 +309,14 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                             return Text(
                                               displayName,
                                               textAlign: TextAlign.center,
-                                              style: AppTextStyles.profileName(context).copyWith(
-                                                    fontSize: SizeUtils.h(
-                                                      context,
-                                                      22,
-                                                    ),
-                                                  ),
+                                              style: AppTextStyles.profileName(
+                                                context,
+                                              ).copyWith(
+                                                fontSize: SizeUtils.h(
+                                                  context,
+                                                  22,
+                                                ),
+                                              ),
                                             );
                                           },
                                         );
@@ -318,7 +325,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                     Text(
                                       emailText,
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyles.body(context).copyWith(
+                                      style: AppTextStyles.body(
+                                        context,
+                                      ).copyWith(
                                         fontSize: SizeUtils.h(
                                           context,
                                           AppDimensions.linkFontSize,
@@ -339,7 +348,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                     Text(
                                       subtitle,
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyles.body(context).copyWith(
+                                      style: AppTextStyles.body(
+                                        context,
+                                      ).copyWith(
                                         fontSize: SizeUtils.h(
                                           context,
                                           AppDimensions.subtitleFontSize,
@@ -451,13 +462,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
-                                          height: SizeUtils.h(
-                                            context,
-                                            AppDimensions.inputFontSize,
-                                          ),
-                                        ),
-                                        FloatingLabelInputField(
+                                        CitySelectorField(
                                           controller: forms.cityController,
                                           label: cityLabel,
                                           hint: AppStrings.cityHint,
@@ -467,9 +472,8 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                               validation.cityError.value !=
                                               null,
                                           onChanged: validation.validateCity,
-                                          textCapitalization:
-                                              TextCapitalization.words,
-                                          textInputAction: TextInputAction.done,
+                                          topSpacing:
+                                              AppDimensions.inputFontSize,
                                         ),
                                       ],
                                     ),
@@ -569,7 +573,10 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                         onPressed: Get.back,
                                         child: Text(
                                           cancelLabel,
-                                          style: AppTextStyles.buttonPrimaryText(context).copyWith(
+                                          style:
+                                              AppTextStyles.buttonPrimaryText(
+                                                context,
+                                              ).copyWith(
                                                 color: AppColors.textDark,
                                               ),
                                         ),

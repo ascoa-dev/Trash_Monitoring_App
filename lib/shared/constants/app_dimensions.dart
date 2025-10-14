@@ -61,6 +61,8 @@ class AppDimensions {
   static const double boxShadowOffsetY = 4.0;
   // Standard border widths
   static const double inputBorderWidth = 1.5;
+  static const double inputBorderWidthFocused = 2.4;
+  static const double inputBorderWidthError = 2.8;
   static const double socialOutlinedBorderWidth = 1.5;
   // Larger blur for prominent elements
   static const double prominentBoxShadowBlur = 8.0;
@@ -86,7 +88,7 @@ class AppDimensions {
   static const double navBarBorderRadius = 32.0;
   // How far the nav bar is lifted above the bottom of the screen (in logical px).
   // Increase this value to move the nav bar further up from the screen edge.
-  static const double navBarBottomOffset = 56.0;
+  static const double navBarBottomOffset = 48.0;
   // Center add button sizing (slot 3)
   static const double navBarCenterButtonWidth = 64.0;
   static const double navBarCenterButtonHeight = 52.0;
@@ -204,11 +206,29 @@ class AppDimensions {
   // Dialog decorative background (internal, fixed styling)
   static const double dialogDecorativeBgHeight = 224.0; // ~223.5px from Figma
   static const double dialogDecorativeBgOpacity = 0.27; // subtle overlay
-  // Input border widths
-  static const double inputBorderWidthFocused = 2.4;
-  static const double inputBorderWidthError = 2.8;
   // Common icon sizes
   static const double iconBackSize = 40.0;
+
+  // City selector dropdown constants
+  static const double citySelectorMaxWidth = 300.0;
+  static const double citySelectorMaxHeight = 240.0;
+  static const double citySelectorMinHeight = 56.0;
+  static const double citySelectorBorderRadius = 4.0;
+  static const double citySelectorPadding = 8.0;
+  static const double citySelectorItemHeight = 48.0;
+  static const double citySelectorItemPadding = 8.0;
+  static const double citySelectorIconSize = 24.0;
+  static const double citySelectorIconSpacing = 12.0;
+  static const double citySelectorEmptyPadding = 16.0;
+  static const double citySelectorTextSize = 18.0;
+  static const double citySelectorTextLineHeight = 20.0;
+  static const double citySelectorTextLetterSpacing = 0.1;
+  // Material Design 3 shadow values
+  static const double citySelectorShadowBlurSmall = 2.0;
+  static const double citySelectorShadowBlurLarge = 6.0;
+  static const double citySelectorShadowSpread = 2.0;
+  static const double citySelectorShadowOffsetYSmall = 1.0;
+  static const double citySelectorShadowOffsetYLarge = 2.0;
 
   static const double editProfileSpacing = 4.0;
   static const double editProfileInputSpacing = 20.0;

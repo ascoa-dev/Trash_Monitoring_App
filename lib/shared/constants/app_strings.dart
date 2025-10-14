@@ -46,20 +46,33 @@ class AppStrings {
       "Veuillez remplir ces informations pour commencer";
   static const String firstNameLabel = "First Name *";
   static const String firstNameLabelFrench = "Prénom *";
+  static const String firstNameError = "First Name";
+  static const String firstNameErrorFrench = "Prénom";
   static const String firstNameHint = "e.g. Awa";
   static const String lastNameLabel = "Last Name *";
   static const String lastNameLabelFrench = "Nom *";
+  static const String lastNameError = "Last Name";
+  static const String lastNameErrorFrench = "Nom";
   static const String lastNameHint = "e.g. Nguema";
   static const String phoneNumberLabel = "Phone Number *";
+  static const String phoneNumberError = "Phone Number";
   static const String phoneNumberLabelFrench = "Numéro de téléphone*";
+  static const String phoneNumberErrorFrench = "Numéro de téléphone";
   static const String phoneNumberHint = "6 70 00 00 00";
   static const String cityLabel = "Select your City *";
-  static const String cityLabelFrench = "Ville *";
+  static const String cityLabelFrench = "Sélectionnez votre ville *";
+  static const String cityError = "City";
+  static const String cityErrorFrench = "Ville";
   static const String cityHint = "e.g. Yaoundé";
   static const String countryCodeLabel = "Country *";
   static const String countryCodeLabelFrench = "Pays *";
   static const String countrySearchLabel = "Search";
   static const String countrySearchLabelFrench = "Rechercher";
+
+  // City Selector
+  static const String citySelectorNoCitiesFound = "No cities found";
+  static const String citySelectorNoCitiesFoundFrench = "Aucune ville trouvée";
+
   static const String editPhotoLabel = "Edit Photo";
   static const String editPhotoLabelFrench = "Modifier la photo";
   static const String completeProfileButton = "CREATE PROFILE";

@@ -52,7 +52,7 @@ class AppTextStyles {
   static TextStyle profileActionTitle(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 18),
+    fontSize: SizeUtils.h(context, 16),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -67,7 +67,7 @@ class AppTextStyles {
 
   static TextStyle profileSignOutText(BuildContext context) => TextStyle(
     fontFamily: rubik,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w400,
     fontSize: SizeUtils.h(context, 16),
     color: AppColors.textWhite,
     letterSpacing: AppTypography.letterSpacingSmall,
