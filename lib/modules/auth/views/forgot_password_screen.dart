@@ -85,15 +85,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ? AppStrings.forgotDialogButtonFrench
                   : AppStrings.forgotDialogButton,
           onPrimaryAction: () {
-            final form = Get.find<FormControllers>();
-            final validation = Get.find<ValidationController>();
-            final currentEmail = form.emailController.text;
-            validation.clearEmailError();
-            if (!validation.isEmailValid(currentEmail)) {
-              form.emailController.clear();
-            }
             Get.back();
-            Get.offAllNamed(AppRoutes.login);
+            _navigateBackToLoginClearingForm();
           },
         );
       },
@@ -165,6 +158,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       colorText: AppColors.pureWhite,
       snackPosition: SnackPosition.TOP,
     );
+  }
+
+  // Shared cleanup + navigation used by Back/Cancel flows
+  void _navigateBackToLoginClearingForm() {
+    final form = Get.find<FormControllers>();
+    final validation = Get.find<ValidationController>();
+    final currentEmail = form.emailController.text;
+    validation.clearEmailError();
+    if (!validation.isEmailValid(currentEmail)) {
+      form.emailController.clear();
+    }
+    Get.offAllNamed(AppRoutes.login);
   }
 
   @override
@@ -243,9 +248,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: IconButton(
-                            onPressed: () {
-                              Get.back();
-                            },
+                            onPressed: _navigateBackToLoginClearingForm,
                             icon: Icon(
                               Icons.arrow_back,
                               color: AppColors.buttonGreen,
@@ -350,17 +353,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 ),
                               ),
                             ),
-                            onPressed: () {
-                              final form = Get.find<FormControllers>();
-                              final validation =
-                                  Get.find<ValidationController>();
-                              final currentEmail = form.emailController.text;
-                              validation.clearEmailError();
-                              if (!validation.isEmailValid(currentEmail)) {
-                                form.emailController.clear();
-                              }
-                              Get.offAllNamed(AppRoutes.login);
-                            },
+                            onPressed: _navigateBackToLoginClearingForm,
                             child: Text(
                               isFrench
                                   ? AppStrings.editProfileCancelFrench
