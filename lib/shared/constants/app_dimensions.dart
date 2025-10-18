@@ -26,7 +26,7 @@ class AppDimensions {
 
   // Screen Height Multipliers
   static const double titleTopSpacing = 0.16;
-  static const double forgotTitleTopSpacing = 0.21;
+  static const double forgotTitleTopSpacing = 0.14;
   static const double titleBottomSpacing = 0.02;
   static const double inputSpacing = 0.01;
   static const double buttonSpacing = 0.03;
@@ -251,6 +251,7 @@ class AppDimensions {
   static const double changePasswordIconSize = 0.175;
   static const double changePasswordHalfInputSpacing = 0.01;
   static const double changePasswordInputSpacing = 20.0;
+  static const double confirmTitleTopSpacing = 0.18;
 
   // Prevent instantiation
   AppDimensions._();

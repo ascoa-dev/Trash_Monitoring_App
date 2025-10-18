@@ -176,7 +176,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         SizedBox(
                           height:
                               viewportHeight *
-                              AppDimensions.forgotTitleTopSpacing,
+                              AppDimensions.confirmTitleTopSpacing,
                         ),
                         // Main icon
                         Image.asset(
