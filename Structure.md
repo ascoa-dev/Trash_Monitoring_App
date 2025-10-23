@@ -3,7 +3,7 @@
 This project uses a **modular architecture** with `GetX` for state management, navigation, and dependency injection.  
 The structure ensures **separation of concerns**, **reusability**, and easy scalability.
 
-```plaintext
+````plaintext
 lib/
 │
 ├── main.dart
@@ -73,24 +73,20 @@ class FormBinding extends Bindings {
       Get.put<ValidationController>(ValidationController(), permanent: true);
     }
   }
-```
+````
 
 Used in routes for Login, Signup, and Forgot Password.
 
 Latest updates
 
-
 A quick overview of the project structure and what goes where:
 
 ---
-
 
 ---
 
 - **controllers/** → Global state controllers (e.g. auth). And communicate with external APIs like Firebase.
 - **models/** → Shared data models used across features (e.g. `User`, `Post`).
-
-
 
 Typical structure inside a module:
 
@@ -102,7 +98,7 @@ Examples of modules: `auth/`, `home/`, `profile/`, `posts/`, `search/`, `setting
 
 ---
 
-### `shared/`
+## `shared/`
 
 Holds everything that can be reused across multiple modules.
 

@@ -289,7 +289,7 @@ Other controllers in this folder:
 - `cities_controller.dart` — orchestrates city selection state and validation wiring for `CitySelectorField`; consumes `CitiesService` and exposes reactive lists/selection.
 - `form_binding.dart` — GetX binding that injects `FormControllers` and `ValidationController` for auth/profile routes so widgets can `Get.find()` them safely.
 
-#### CitiesController (`shared/controllers/cities_controller.dart`)
+### CitiesController (`shared/controllers/cities_controller.dart`)
 
 Provides fuzzy-search-backed suggestions and validation helpers for city inputs.
 
