@@ -55,6 +55,7 @@ dependencies:
   uuid: ^4.5.1
   path_provider: ^2.1.5
   path: ^1.9.0
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -139,3 +140,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  color: "#FBFFF4"
+  image: assets/ASCOA/ASCOA_LOGO.png
+  android: true
+  ios: true
+  web: false
+  color_dark: "#000000"
+  android_12:
+    image: assets/ASCOA/ASCOA_LOGO.png
+    icon_background_color: "#FBFFF4"
+    icon_background_color_dark: "#000000"
