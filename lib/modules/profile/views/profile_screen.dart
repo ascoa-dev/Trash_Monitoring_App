@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
@@ -9,6 +10,7 @@ import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/modules/profile/widgets/profile_action_tile.dart';
 import 'package:ascoa_app/modules/profile/widgets/profile_signout_button.dart';
+import 'package:ascoa_app/modules/profile/widgets/full_image_overlay.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'dart:math' as math;
 
@@ -92,9 +94,9 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             Text(
                               AppStrings.profileManagementTitle,
-                              style: AppTextStyles.profileHeading(context).copyWith(
-                                fontSize: SizeUtils.h(context, 28),
-                              ),
+                              style: AppTextStyles.profileHeading(
+                                context,
+                              ).copyWith(fontSize: SizeUtils.h(context, 28)),
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(
@@ -106,22 +108,83 @@ class ProfileScreen extends StatelessWidget {
                                 AppDimensions.profileNameTopGap,
                               ),
                             ),
-                            SizedBox(
-                              width: SizeUtils.r(
-                                context,
-                                AppDimensions.profileAvatarSize,
-                              ),
-                              height: SizeUtils.r(
-                                context,
-                                AppDimensions.profileAvatarSize,
-                              ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  AppImages.profilePlaceholder,
-                                  fit: BoxFit.cover,
+                            Obx(() {
+                              // React to currentUserModel changes
+                              final userModel =
+                                  authController.currentUserModel.value;
+                              final thumbUrl = userModel?.thumbUrl;
+                              final avatarUrl = userModel?.avatarUrl;
+
+                              // Use thumbnail for preview, fallback to full avatar
+                              final previewUrl = thumbUrl ?? avatarUrl;
+                              final fullUrl = avatarUrl;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  // Only show overlay if we have a full-resolution avatar
+                                  if (fullUrl != null && fullUrl.isNotEmpty) {
+                                    final normalizedFullUrl =
+                                        _normalizeCacheBustedUrl(fullUrl);
+                                    FullImageOverlay.show(
+                                      context,
+                                      imageUrl: normalizedFullUrl,
+                                      placeholderAsset:
+                                          AppImages.profilePlaceholder,
+                                    );
+                                  }
+                                },
+                                child: SizedBox(
+                                  width: SizeUtils.r(
+                                    context,
+                                    AppDimensions.profileAvatarSize,
+                                  ),
+                                  height: SizeUtils.r(
+                                    context,
+                                    AppDimensions.profileAvatarSize,
+                                  ),
+                                  child: ClipOval(
+                                    child:
+                                        previewUrl != null &&
+                                                previewUrl.isNotEmpty
+                                            ? CachedNetworkImage(
+                                              imageUrl:
+                                                  _normalizeCacheBustedUrl(
+                                                    previewUrl,
+                                                  ),
+                                              fit: BoxFit.cover,
+                                              placeholder:
+                                                  (context, url) => Container(
+                                                    color:
+                                                        AppColors
+                                                            .profileAvatarBackground,
+                                                    child: Center(
+                                                      child: CircularProgressIndicator(
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                              Color
+                                                            >(
+                                                              AppColors
+                                                                  .buttonGreen,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Image.asset(
+                                                        AppImages
+                                                            .profilePlaceholder,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                            )
+                                            : Image.asset(
+                                              AppImages.profilePlaceholder,
+                                              fit: BoxFit.cover,
+                                            ),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                             SizedBox(
                               height: math.min(
                                 SizeUtils.h(
@@ -152,7 +215,9 @@ class ProfileScreen extends StatelessWidget {
                                     snapshot.data?.isNotEmpty == true
                                         ? snapshot.data!
                                         : AppStrings.profileNamePlaceholder,
-                                    style: AppTextStyles.profileName(context).copyWith(
+                                    style: AppTextStyles.profileName(
+                                      context,
+                                    ).copyWith(
                                       fontSize: SizeUtils.h(context, 22),
                                     ),
                                     textAlign: TextAlign.center,
@@ -327,5 +392,36 @@ class ProfileScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  static String _normalizeCacheBustedUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final params = Map<String, String>.from(uri.queryParameters);
+
+      final token = params['token'];
+      if (token != null && token.contains('?v=')) {
+        final parts = token.split('?v=');
+        params['token'] = parts.first;
+        if (parts.length > 1 && !params.containsKey('v')) {
+          params['v'] = parts.last;
+        }
+      }
+
+      if (!params.containsKey('v') && url.contains('?v=')) {
+        final suffix = url.split('?v=').last;
+        if (suffix.isNotEmpty && !suffix.contains('&')) {
+          params['v'] = suffix;
+        }
+      }
+
+      if (params.isEmpty) {
+        return url;
+      }
+
+      return uri.replace(queryParameters: params).toString();
+    } catch (_) {
+      return url;
+    }
   }
 }

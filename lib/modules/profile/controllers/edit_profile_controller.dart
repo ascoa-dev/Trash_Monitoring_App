@@ -1,6 +1,7 @@
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
 import 'package:ascoa_app/shared/controllers/form_controllers.dart';
 import 'package:ascoa_app/shared/controllers/validation_controller.dart';
+import 'package:ascoa_app/shared/utils/avatar_photo_handler.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,12 @@ class EditProfileController extends GetxController {
   late final ValidationController _validationController;
   late final Rx<Country> _selectedCountry;
 
+  final AvatarPhotoHandler _avatarPhotoHandler = AvatarPhotoHandler();
+
   final RxBool isLoading = false.obs;
   final RxnString email = RxnString();
+  final RxnString avatarUrl = RxnString();
+  final RxnString thumbUrl = RxnString();
 
   Country _defaultCountry() {
     return CountryParser.parseCountryCode('CM');
@@ -50,8 +55,21 @@ class EditProfileController extends GetxController {
       final profileData = await _authController.fetchCurrentUserProfile();
       final userModel = _authController.currentUserModel.value;
 
+      // Prefer typed model values when available, then fall back to Firestore map or Firebase User
       email.value =
-          user?.email ?? profileData?['email'] as String? ?? userModel?.email;
+          user?.email ?? userModel?.email ?? profileData?['email']?.toString();
+
+      // Load avatar URL from typed model -> Firestore map -> Firebase Auth
+      avatarUrl.value =
+          userModel?.avatarUrl ??
+          profileData?['avatarUrl']?.toString() ??
+          user?.photoURL;
+
+      // Load thumbnail URL for preview (fallback to full avatar if no thumb)
+      thumbUrl.value =
+          userModel?.thumbUrl ??
+          profileData?['thumbUrl']?.toString() ??
+          avatarUrl.value;
 
       _formControllers.firstNameController.text =
           userModel?.firstName ??
@@ -61,7 +79,8 @@ class EditProfileController extends GetxController {
           userModel?.lastName ??
           profileData?['lastName']?.toString().trim() ??
           '';
-      final countryCodeStored = profileData?['countryCode']?.toString();
+      final countryCodeStored =
+          userModel?.countryCode ?? profileData?['countryCode']?.toString();
       Country? storedCountry;
       if (countryCodeStored != null && countryCodeStored.trim().isNotEmpty) {
         storedCountry = CountryParser.tryParseCountryCode(
@@ -163,6 +182,16 @@ class EditProfileController extends GetxController {
     );
     final stripped = raw.replaceFirst(pattern, '');
     return stripped.trimLeft();
+  }
+
+  Future<void> handleEditPhoto() async {
+    await _avatarPhotoHandler.handleEditPhoto(
+      onSuccess: (url) {
+        avatarUrl.value = url;
+        // After upload, refresh the profile to get the new thumbUrl
+        _loadProfile();
+      },
+    );
   }
 
   Future<bool> submitChanges() async {

@@ -10,6 +10,8 @@ import 'package:ascoa_app/shared/widgets/country_code_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
 import 'package:ascoa_app/shared/widgets/city_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
+import 'package:ascoa_app/shared/utils/avatar_photo_handler.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +31,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   late final FormControllers formControllers;
   late final ValidationController validationController;
   late Country _selectedCountry;
+  String? _uploadedAvatarUrl;
+  String? _uploadedThumbUrl;
+  final AvatarPhotoHandler _avatarPhotoHandler = AvatarPhotoHandler();
 
   Country _defaultCountry() {
     return Country(
@@ -55,16 +60,17 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     _selectedCountry = _defaultCountry();
   }
 
-  void _handleEditPhoto() {
-    final isFrench = Get.locale?.languageCode == 'fr';
-    Get.snackbar(
-      isFrench ? AppStrings.editPhotoLabelFrench : AppStrings.editPhotoLabel,
-      isFrench
-          ? AppStrings.editPhotoComingSoonFrench
-          : AppStrings.editPhotoComingSoon,
-      backgroundColor: AppColors.buttonGreen40,
-      colorText: AppColors.pureWhite,
-      snackPosition: SnackPosition.TOP,
+  void _handleEditPhoto() async {
+    await _avatarPhotoHandler.handleEditPhoto(
+      context: context,
+      onSuccess: (url) async {
+        // Fetch the user profile to get the thumbUrl
+        final profileData = await authController.fetchCurrentUserProfile();
+        setState(() {
+          _uploadedAvatarUrl = url;
+          _uploadedThumbUrl = profileData?['thumbUrl']?.toString();
+        });
+      },
     );
   }
 
@@ -115,10 +121,33 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               width: SizeUtils.r(context, AppDimensions.avatarDiameter),
               height: SizeUtils.r(context, AppDimensions.avatarDiameter),
               child: ClipOval(
-                child: Image.asset(
-                  AppImages.profilePlaceholder,
-                  fit: BoxFit.cover,
-                ),
+                child:
+                    _uploadedThumbUrl != null || _uploadedAvatarUrl != null
+                        ? CachedNetworkImage(
+                          // Use thumbnail for preview, fallback to full avatar
+                          imageUrl: _uploadedThumbUrl ?? _uploadedAvatarUrl!,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (context, url) => Container(
+                                color: AppColors.profileAvatarBackground,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.buttonGreen,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          errorWidget:
+                              (context, url, error) => Image.asset(
+                                AppImages.profilePlaceholder,
+                                fit: BoxFit.cover,
+                              ),
+                        )
+                        : Image.asset(
+                          AppImages.profilePlaceholder,
+                          fit: BoxFit.cover,
+                        ),
               ),
             ),
             Positioned(
@@ -144,10 +173,16 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                     ),
                   ),
                 ),
-                child: Icon(
-                  Icons.edit,
-                  size: SizeUtils.r(context, AppDimensions.avatarEditIconSize),
-                  color: AppColors.textDark,
+                child: GestureDetector(
+                  onTap: _handleEditPhoto,
+                  child: Icon(
+                    Icons.edit,
+                    size: SizeUtils.r(
+                      context,
+                      AppDimensions.avatarEditIconSize,
+                    ),
+                    color: AppColors.textDark,
+                  ),
                 ),
               ),
             ),

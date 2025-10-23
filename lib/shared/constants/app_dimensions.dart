@@ -199,6 +199,21 @@ class AppDimensions {
   static const double avatarEditOffsetBottom = 4.0;
   static const double avatarEditOffsetRight = 8.0;
   static const double avatarEditBorderWidth = 1.2;
+  // Avatar crop screen dimensions
+  static const double avatarCropPreviewSize =
+      120.0; // Live preview circle at top
+  static const double avatarCropOutputSize = 600.0; // Output pixel dimensions
+  static const double avatarCropThumbSize = 200.0; // Thumbnail pixel dimensions
+  static const double avatarPreviewOverlayRadius =
+      200.0; // Live preview circle at top
+  static const double avatarCropMaxScale = 8.0;
+  static const double avatarCropPadding = 20.0;
+  static const double avatarCropHitTestSize = 20.0;
+  static const double avatarCropLineWidth = 2.0;
+  static const double avatarCropOverlayOpacity = 0.55;
+  static const double avatarCropToolbarHeight = 56.0;
+  static const double avatarCropHelpTextSize = 13.0;
+  static const double avatarCropHelpTextPadding = 16.0;
   // Typography-specific sizes used in a few screens
   static const double heading2FontSize = 28.0;
   static const double subtitleFontSize = 16.0;

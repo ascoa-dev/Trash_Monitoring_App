@@ -10,6 +10,7 @@ Flutter app using GetX, Firebase Auth, and a shared design system.
 - Forgot Password uses an overlay dialog (no separate confirmation screen)
 - Shared `FormBinding` injects `FormControllers` and `ValidationController`
 - Consistent spacing/colors/strings via `AppDimensions`, `AppColors`, `AppStrings`
+- New: Avatar upload with crop, WebP compression, thumbnail generation, and Firebase Storage integration. Uses a shared `AvatarPhotoHandler` with caching via `cached_network_image`, plus tap-to-zoom full-screen preview.
 
 ## 📂 Project Structure
 
@@ -43,6 +44,39 @@ flutter run -d windows
 Initial route is determined at runtime: signed-in users go to Home; otherwise Login.
 
 ## Recent changes
+
+### Avatar upload & profile photos
+
+- Added a unified avatar flow driven by `shared/utils/avatar_photo_handler.dart`:
+
+  - Lets users pick from Camera/Gallery, crop to a circle-aligned square, compress to WebP, and upload to Firebase Storage.
+  - Uploads two assets per user: `avatars/{uid}/avatar.webp` (600×600) and `avatars/{uid}/thumb.webp` (200×200).
+  - Firestore user doc now stores `avatarUrl`, `thumbUrl`, and `avatarUpdatedAt` (plus `photoURL` on the Firebase user where supported).
+  - UI displays the thumbnail when available and falls back to the full-size avatar.
+  - `ProfileScreen` adds a tap-to-zoom overlay (`modules/profile/widgets/full_image_overlay.dart`) to view the full-resolution avatar.
+  - Network images use `CachedNetworkImage` with placeholders and error fallbacks; URLs are normalized to handle cache-busting query params.
+
+- User model additions in `lib/app/models/user.dart`:
+
+  - New fields: `avatarUrl`, `thumbUrl`, `avatarUpdatedAt`, and `photoURL`.
+  - `AuthController` now prefers the typed `currentUserModel` over raw Firestore maps for consistency.
+
+- Screen/controller integrations:
+
+  - `complete_profile_screen.dart`: “Edit” now invokes the avatar flow and immediately previews the uploaded image.
+  - `edit_profile_controller.dart` and `edit_profile_screen.dart`: reactive `avatarUrl`/`thumbUrl` fields, edit button triggers the upload flow.
+  - `profile_screen.dart`: renders the avatar via `CachedNetworkImage`, with a fullscreen viewer on tap.
+
+- New/updated tokens and strings:
+
+  - `AppDimensions`: avatar crop constants (preview size, output sizes, overlay opacity, etc.).
+    - `AppStrings`: bilingual strings for picker/crop/upload flows.
+    - `AppColors`: added `black87` legacy alias.
+
+- Dependencies added (see `pubspec.yaml`): `image_picker`, `croppy`, `extended_image`, `flutter_image_compress`, `firebase_storage`, `cached_network_image`, `uuid`, `path_provider`, `path`.
+
+  - In debug builds we force Croppy’s pure-Dart solver to avoid native FFI on unsupported targets: set in `main.dart` with `croppy.croppyForceUseCassowaryDartImpl = true`.
+  - Lockfile indicates a minimum Flutter SDK of 3.35.0.
 
 - **Change Password feature:** Added `ChangePasswordScreen`, controller, binding, and `ChangePasswordStatus` model. The screen mirrors signup validation (strong password checklist, mismatch handling, new-vs-current guard) and surfaces localized snackbars for success, wrong current password, and generic failures.
 - **Profile updates:** Profile screen now links to Change Password and uses a new `ProfileSignOutButton` widget that keeps sizing consistent with the profile cards while calling `AuthController.logout()`.

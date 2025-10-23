@@ -55,7 +55,7 @@ class AppColors {
   static const Color textBlack70 = Color(
     0xB3000000,
   ); // legacy muted black (design-provided hex)
-
+  static const Color black87 = Color(0xDD000000); // legacy alias
   // Divider Colors
   static const Color divider = Color(
     0xFF357187,

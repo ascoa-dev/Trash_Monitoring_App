@@ -59,18 +59,23 @@ class AuthController extends GetxController {
           userData,
           uidFromDoc: user.uid,
         );
-        if (userData['signUpMethod'] != signUpMethod) {
+
+        // Use typed model instead of map access
+        final model = currentUserModel.value!;
+
+        if (model.signUpMethod != signUpMethod) {
           Get.snackbar(
             'Login Failed',
-            'This account was registered using ${userData['signUpMethod']}. Please login with that method.',
+            'This account was registered using ${model.signUpMethod}. Please login with that method.',
           );
           await _signOutAll(); // Sign out from all providers
           return;
         }
-        if (userData['isProfileComplete'] == true) {
+
+        if (model.isProfileComplete) {
           Get.snackbar(
             'Login Successful',
-            'Welcome back ${userData['firstName']} ${userData['lastName']}!',
+            'Welcome back ${model.firstName} ${model.lastName}!',
           );
           Get.offAllNamed(AppRoutes.home);
         } else {
@@ -650,17 +655,21 @@ class AuthController extends GetxController {
   Future<String> getName() async {
     final user = _auth.currentUser;
     if (user == null) return '';
+
+    // Use typed model if available
+    if (currentUserModel.value != null) {
+      final model = currentUserModel.value!;
+      return '${model.firstName} ${model.lastName}';
+    }
+
+    // Otherwise fetch and populate
     try {
-      final doc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-      final data = doc.data();
-      if (data == null) return '';
-      final firstName = data['firstName'] ?? '';
-      final lastName = data['lastName'] ?? '';
-      return '$firstName $lastName';
+      await fetchCurrentUserProfile();
+      if (currentUserModel.value != null) {
+        final model = currentUserModel.value!;
+        return '${model.firstName} ${model.lastName}';
+      }
+      return '';
     } catch (e) {
       debugPrint('Error fetching user name: $e');
       return '';
@@ -670,15 +679,16 @@ class AuthController extends GetxController {
   Future<String> getFirstName() async {
     final user = _auth.currentUser;
     if (user == null) return '';
+
+    // Use typed model if available
+    if (currentUserModel.value != null) {
+      return currentUserModel.value!.firstName;
+    }
+
+    // Otherwise fetch and populate
     try {
-      final doc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-      final data = doc.data();
-      if (data == null) return '';
-      return data['firstName'] ?? '';
+      await fetchCurrentUserProfile();
+      return currentUserModel.value?.firstName ?? '';
     } catch (e) {
       debugPrint('Error fetching user first name: $e');
       return '';
@@ -688,16 +698,16 @@ class AuthController extends GetxController {
   Future<String> getLastName() async {
     final user = _auth.currentUser;
     if (user == null) return '';
+
+    // Use typed model if available
+    if (currentUserModel.value != null) {
+      return currentUserModel.value!.lastName;
+    }
+
+    // Otherwise fetch and populate
     try {
-      final doc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-      final data = doc.data();
-      if (data == null) return '';
-      final lastName = data['lastName'] ?? '';
-      return lastName;
+      await fetchCurrentUserProfile();
+      return currentUserModel.value?.lastName ?? '';
     } catch (e) {
       debugPrint('Error fetching user last name: $e');
       return '';
@@ -707,16 +717,16 @@ class AuthController extends GetxController {
   Future<String> getCity() async {
     final user = _auth.currentUser;
     if (user == null) return '';
+
+    // Use typed model if available
+    if (currentUserModel.value != null) {
+      return currentUserModel.value!.city;
+    }
+
+    // Otherwise fetch and populate
     try {
-      final doc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-      final data = doc.data();
-      if (data == null) return '';
-      final city = data['city'] ?? '';
-      return city;
+      await fetchCurrentUserProfile();
+      return currentUserModel.value?.city ?? '';
     } catch (e) {
       debugPrint('Error fetching user city: $e');
       return '';

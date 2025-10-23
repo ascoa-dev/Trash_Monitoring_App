@@ -10,6 +10,8 @@ import 'package:ascoa_app/shared/widgets/country_code_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
 import 'package:ascoa_app/shared/widgets/city_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
+import 'package:ascoa_app/shared/utils/avatar_utils.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:get/get.dart';
@@ -57,10 +59,6 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
             : AppStrings.editProfileCancel;
     final editPhotoLabel =
         isFrench ? AppStrings.editPhotoLabelFrench : AppStrings.editPhotoLabel;
-    final editPhotoComingSoon =
-        isFrench
-            ? AppStrings.editPhotoComingSoonFrench
-            : AppStrings.editPhotoComingSoon;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -221,15 +219,64 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                         AppDimensions.smallSpacing,
                                       ),
                                     ),
-                                    Image.asset(
-                                      AppImages.profilePlaceholder,
-                                      width: SizeUtils.r(
-                                        context,
-                                        AppDimensions.profileAvatarSize,
-                                      ),
-                                      height: SizeUtils.r(
-                                        context,
-                                        AppDimensions.profileAvatarSize,
+                                    Obx(
+                                      () => SizedBox(
+                                        width: SizeUtils.r(
+                                          context,
+                                          AppDimensions.profileAvatarSize,
+                                        ),
+                                        height: SizeUtils.r(
+                                          context,
+                                          AppDimensions.profileAvatarSize,
+                                        ),
+                                        child: ClipOval(
+                                          child:
+                                              controller.thumbUrl.value != null
+                                                  ? CachedNetworkImage(
+                                                    imageUrl:
+                                                        AvatarUtils.normalizeUrl(
+                                                          controller
+                                                              .thumbUrl
+                                                              .value!,
+                                                        ),
+                                                    fit: BoxFit.cover,
+                                                    placeholder:
+                                                        (
+                                                          context,
+                                                          url,
+                                                        ) => Container(
+                                                          color:
+                                                              AppColors
+                                                                  .profileAvatarBackground,
+                                                          child: Center(
+                                                            child: CircularProgressIndicator(
+                                                              valueColor:
+                                                                  AlwaysStoppedAnimation<
+                                                                    Color
+                                                                  >(
+                                                                    AppColors
+                                                                        .buttonGreen,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
+                                                        ) => Image.asset(
+                                                          AppImages
+                                                              .profilePlaceholder,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                  )
+                                                  : Image.asset(
+                                                    AppImages
+                                                        .profilePlaceholder,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                        ),
                                       ),
                                     ),
                                     SizedBox(
@@ -239,16 +286,8 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed: () {
-                                        Get.snackbar(
-                                          editPhotoLabel,
-                                          editPhotoComingSoon,
-                                          snackPosition: SnackPosition.TOP,
-                                          backgroundColor:
-                                              AppColors.buttonGreen,
-                                          colorText: AppColors.pureWhite,
-                                        );
-                                      },
+                                      onPressed:
+                                          () => controller.handleEditPhoto(),
                                       style: TextButton.styleFrom(
                                         padding: EdgeInsets.zero,
                                         minimumSize: Size.zero,

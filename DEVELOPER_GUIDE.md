@@ -177,6 +177,22 @@ Migration notes for reviewers:
 
 ## Quick Reference
 
+### Avatar upload & profile photos
+
+- A unified avatar flow is implemented via `lib/shared/utils/avatar_photo_handler.dart`. It handles pick → crop → compress → upload → persist → refresh. Internally uses `image_picker`, `croppy` (cropper), `flutter_image_compress` (WebP), `firebase_storage` (upload), and `cloud_firestore` (persist URLs).
+- Storage layout: `avatars/{uid}/avatar.webp` (600×600) and `avatars/{uid}/thumb.webp` (200×200). Firestore user doc now includes `avatarUrl`, `thumbUrl`, and `avatarUpdatedAt`. We also update `FirebaseAuth.currentUser.photoURL` when supported.
+- UI:
+  - `complete_profile_screen.dart`: “Edit” triggers the handler and previews the result.
+  - `edit_profile_controller.dart`/`edit_profile_screen.dart`: reactive `avatarUrl`/`thumbUrl` fields; button invokes `handleEditPhoto()`.
+  - `profile_screen.dart`: shows a `CachedNetworkImage` avatar (thumb preferred), and a tap-to-zoom fullscreen overlay via `modules/profile/widgets/full_image_overlay.dart`.
+- Model and controller improvements:
+  - `lib/app/models/user.dart` adds `avatarUrl`, `thumbUrl`, `avatarUpdatedAt`, and `photoURL`.
+  - `AuthController` now prefers the typed `currentUserModel` over map access in login/returning user flows and in profile getters (name/city).
+- Debug note: In `main.dart`, debug builds set `croppy.croppyForceUseCassowaryDartImpl = true` to avoid native FFI for the constraint solver.
+- Strings/tokens: `AppStrings` gained bilingual picker/crop/upload strings; `AppDimensions` added avatar crop constants.
+- Dependencies added (see `pubspec.yaml`): `image_picker`, `croppy`, `extended_image`, `flutter_image_compress`, `firebase_storage`, `cached_network_image`, `uuid`, `path_provider`, `path`.
+- Tooling/SDK: `pubspec.lock` indicates Flutter SDK >= 3.35.0; update local SDK if analyze/build fails due to version checks.
+
 **Adding New Features:**
 
 ```plaintext

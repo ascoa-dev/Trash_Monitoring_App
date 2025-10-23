@@ -8,9 +8,13 @@ class UserModel {
   final String phoneNumber;
   final String city;
   final String countryCode;
+  final String? avatarUrl;
+  final String? thumbUrl;
+  final DateTime? avatarUpdatedAt;
   final bool isProfileComplete;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final String? photoURL;
   final String signUpMethod;
 
   UserModel({
@@ -21,9 +25,13 @@ class UserModel {
     required this.phoneNumber,
     required this.city,
     required this.countryCode,
+    this.avatarUrl,
+    this.thumbUrl,
+    this.avatarUpdatedAt,
     required this.isProfileComplete,
     required this.createdAt,
     this.updatedAt,
+    this.photoURL,
     required this.signUpMethod,
   });
 
@@ -33,12 +41,16 @@ class UserModel {
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
+      'avatarUrl': avatarUrl,
+      'thumbUrl': thumbUrl,
+      'avatarUpdatedAt': avatarUpdatedAt?.toIso8601String(),
       'phoneNumber': phoneNumber,
       'city': city,
       'countryCode': countryCode,
       'isProfileComplete': isProfileComplete,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'photoURL': photoURL,
       'signUpMethod': signUpMethod,
     };
   }
@@ -63,6 +75,12 @@ class UserModel {
     final phoneNumber = (map['phoneNumber'] as String?) ?? '';
     final city = (map['city'] as String?) ?? '';
     final countryCode = (map['countryCode'] as String?) ?? '';
+    final avatarUrl = (map['avatarUrl'] as String?);
+    final thumbUrl = (map['thumbUrl'] as String?);
+    final avatarUpdatedAt =
+        map['avatarUpdatedAt'] != null
+            ? parseDate(map['avatarUpdatedAt'])
+            : null;
     final isProfileComplete =
         (map['isProfileComplete'] is bool)
             ? map['isProfileComplete'] as bool
@@ -71,6 +89,7 @@ class UserModel {
     final updatedAt =
         map['updatedAt'] != null ? parseDate(map['updatedAt']) : null;
     final signUpMethod = (map['signUpMethod'] as String?) ?? '';
+    final photoURL = (map['photoURL'] as String?);
 
     return UserModel(
       uid: uid,
@@ -80,9 +99,13 @@ class UserModel {
       phoneNumber: phoneNumber,
       city: city,
       countryCode: countryCode,
+      avatarUrl: avatarUrl,
+      thumbUrl: thumbUrl,
+      avatarUpdatedAt: avatarUpdatedAt,
       isProfileComplete: isProfileComplete,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      photoURL: photoURL,
       signUpMethod: signUpMethod,
     );
   }

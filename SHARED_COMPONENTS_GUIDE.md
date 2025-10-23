@@ -10,6 +10,7 @@ This guide documents the contents of `lib/shared/`. At a glance the folder conta
 - `controllers/` — small shared controllers used across screens (form controllers, validation, etc.).
 - `widgets/` — small reusable widgets used across features (see the Widgets section below for specifics).
 - `utils/` — helper utilities (parsers, formatters) used by shared widgets and controllers.
+- `services/` — app-wide services (Firebase, caching, or config). Key files: `avatar_uploader.dart`, `cities_service.dart`.
 
 What changed recently / guidance
 
@@ -17,6 +18,7 @@ What changed recently / guidance
 - AppTypography: small, reusable typography tokens (letter spacing & line-height) were added in `app_typography.dart`. Prefer `AppTypography.letterSpacingSmall` instead of literal `0.1` values.
 - AppDimensions: several auth spacing multipliers and small helpers were added (for example `authSmallSpacerFactor`, `authXSmallSpacerFactor`, `bottomSheetHeightFactor`, and `profileCardTextWidthOffset`) to replace magic viewport multipliers and numeric offsets.
 - AppTextStyles now references `AppTypography` tokens and many widgets were updated to use these shared tokens.
+- Avatar photos: a shared `AvatarPhotoHandler` was added in `lib/shared/utils/avatar_photo_handler.dart` to standardize pick → crop → compress → upload across screens. Profile images are rendered via `CachedNetworkImage`; tap-to-zoom uses `modules/profile/widgets/full_image_overlay.dart`.
 
 Constants responsibilities (quick map)
 
@@ -46,6 +48,7 @@ Container(color: AppColors.primary)  // Background color (off-white)
 - `AppColors.facebook` - Facebook blue (0xFF4267B2)
 - `AppColors.profileAvatarBackground` - Soft yellow circle behind avatar placeholder (0xFFFCF1AA)
 - `AppColors.profileAvatarAccent` - Accent golden highlight used for avatar glyph (0xFFFBB825)
+- `AppColors.black87` - Legacy alias used in a few places for text (0xDD000000)
 - `AppColors.error` - Error/validation color (0xFFFBB825)
 
 ### Text Styles (`app_text_styles.dart`)
@@ -188,6 +191,7 @@ Recent additions for profile/change-password flows:
 - `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, and `changePasswordHalfInputSpacing` — control hero spacing, illustration height, and field rhythm on the change password screen.
 - `AppDimensions.profileSignOutHeight`, `profileSignOutHorizontalPadding`, and `profileSignOutIconGap` — size the dedicated sign-out CTA so it lines up with `ProfileActionTile` cards.
 - `AppDimensions.editProfileHeightFactor` and `changePasswordInputSpacing` — shared background/field spacing reused between edit profile and change password layouts.
+- Avatar crop constants used by the cropping UI (see `AppDimensions`): `avatarCropPreviewSize`, `avatarCropOutputSize`, `avatarCropThumbSize`, `avatarCropMaxScale`, `avatarCropPadding`, `avatarCropHitTestSize`, `avatarCropLineWidth`, `avatarCropOverlayOpacity`, `avatarCropToolbarHeight`, `avatarCropHelpTextSize`, `avatarCropHelpTextPadding`.
 
 #### Dividers
 
@@ -212,6 +216,7 @@ Recent additions:
 - Change password copy: titles, subtitles, snackbar strings (success, wrong current password, provider mismatch) and the "new password must differ" validation message—available in English and French.
 - Email verification copy: resend, cancel, spam-note, and success messages backing the refreshed verification screen.
 - Profile utilities: `profileSignOut`, `profileChangePasswordTitle`, and related subtitles for the new profile actions.
+- Avatar flow: picker/crop/upload strings (English/French) used by `AvatarPhotoHandler` and cropping UI.
 
 ## Widgets (shared/widgets/)
 
@@ -244,6 +249,7 @@ Latest changes (component review)
 - Circular loader (`lib/shared/widgets/circular_loader.dart`): updated to fix an AnimatedBuilder signature bug and to add a small transparent gap between the loader track and active arc. The widget now consumes `AppDimensions.circularLoaderSize`, `circularLoaderStrokeWidth` and `circularLoaderGap` plus `AppColors.loaderTrack` / `AppColors.loaderActive` tokens. The gap is implemented with a saveLayer + BlendMode.clear technique to ensure it renders crisply on different backgrounds.
 - Button sizing: To keep consistent sizing across auth flows, full-width `OutlinedButton` actions (for example "Use another email" / "Resend") should be wrapped in `SizedBox(width: double.infinity, height: SizeUtils.h(context, AppDimensions.buttonHeight))`. Primary buttons remain full-width by default via `PrimaryButton`.
 - Tokens: Several new constants were added to `app_dimensions.dart` and `app_colors.dart` to support the verification screen and loader visuals. Prefer using these instead of inlining numeric values or color hex literals.
+- Full image overlay: `modules/profile/widgets/full_image_overlay.dart` displays a fullscreen image viewer for the profile avatar. Provide a public URL and an asset placeholder.
 
 Small guidance for maintainers:
 
@@ -278,12 +284,197 @@ These controllers are small, reusable Getx controllers registered via bindings a
 
 These controllers are commonly obtained via `Get.find<FormControllers>()` or `Get.find<ValidationController>()` inside widgets.
 
+Other controllers in this folder:
+
+- `cities_controller.dart` — orchestrates city selection state and validation wiring for `CitySelectorField`; consumes `CitiesService` and exposes reactive lists/selection.
+- `form_binding.dart` — GetX binding that injects `FormControllers` and `ValidationController` for auth/profile routes so widgets can `Get.find()` them safely.
+
+#### CitiesController (`shared/controllers/cities_controller.dart`)
+
+Provides fuzzy-search-backed suggestions and validation helpers for city inputs.
+
+Usage with an input field:
+
+```dart
+final cities = Get.find<CitiesController>();
+
+// onChanged handler
+void handleCityChanged(String value) {
+  cities.searchCities(value);
+  // cities.suggestions is an RxList<City>; bind it to your dropdown
+}
+
+final isValid = cities.isCityValid('Douala');
+final allowCustom = cities.allowCustomCities;
+```
+
+#### FormBinding (`shared/controllers/form_binding.dart`)
+
+Ensures `FormControllers` and `ValidationController` are available app-wide.
+
+Register once:
+
+```dart
+GetMaterialApp(
+  initialBinding: FormBinding(),
+  // ... routes, theme, etc.
+)
+```
+
 ## Utils (lib/shared/utils)
 
 Small helper utilities used by controllers and widgets.
 
 - `validators.dart` — central validators for email, required fields, and strong password rules. `ValidationController` delegates to these functions.
 - `auth_form_utils.dart` — small helpers used by auth forms (formatting and parsing helper functions). Check these before duplicating parsing logic in screens.
+- `avatar_photo_handler.dart` — unified avatar photo pipeline (pick → crop → compress → upload → persist). Exposes a `handleEditPhoto` entrypoint from screens/controllers.
+- `avatar_utils.dart` — small helpers like URL normalization for cache-busted Firebase Storage URLs.
+- `size_utils.dart` — device-aware scaling helpers (`h`, `w`, `r`) used in build-time to apply `AppDimensions` responsively.
+- `image_utils.dart` — compression/resizing helpers (WebP) used by the avatar flow.
+- `city_search.dart` — fuzzy search utilities backing `CitySelectorField` and the Cities config feature.
+
+### SizeUtils (`shared/utils/size_utils.dart`)
+
+Responsive scaling helpers that preserve the emulator/Figma proportions across devices.
+
+API:
+
+- `SizeUtils.h(context, px)` — vertical sizes and font sizes (defaults to content-height scaling)
+- `SizeUtils.w(context, px)` — horizontal sizes, paddings, and offsets
+- `SizeUtils.r(context, px)` — general sizes/radii using an average scale
+
+Example mapping in widgets:
+
+```dart
+// From tokens to runtime sizes
+final buttonH = SizeUtils.h(context, AppDimensions.buttonHeight);
+final cardRadius = SizeUtils.r(context, AppDimensions.borderRadius);
+final sidePad = SizeUtils.w(context, AppDimensions.screenPadding);
+
+SizedBox(height: buttonH);
+Container(
+  padding: EdgeInsets.symmetric(horizontal: sidePad),
+  decoration: BoxDecoration(borderRadius: BorderRadius.circular(cardRadius)),
+)
+```
+
+Guidance:
+
+- Keep `AppDimensions` as the design source of truth; apply `SizeUtils` only at build-time in widgets.
+- Use `h` for vertical rhythm and typography, `w` for horizontal spacing, `r` for radii and icon/container sizes.
+
+### ImageUtils (`shared/utils/image_utils.dart`)
+
+Compression and thumbnail helpers for avatar flow (WebP output, EXIF stripped).
+
+API:
+
+- `compressToWebP(File file, {required int targetSizePx, int quality = 75})` → `Future<File?>`
+- `createThumbnail(File file, {int sizePx = 200, int quality = 70})` → `Future<File?>`
+- `cleanupTempFiles(List<File> files)` → `Future<void>`
+
+Usage (standalone):
+
+```dart
+final full = await ImageUtils.compressToWebP(srcFile, targetSizePx: 600, quality: 75);
+final thumb = await ImageUtils.createThumbnail(srcFile, sizePx: 200, quality: 70);
+if (full != null && thumb != null) {
+  // upload then cleanup
+  await ImageUtils.cleanupTempFiles([full, thumb]);
+}
+```
+
+Notes:
+
+- Returns `null` on failure; always handle `null` before proceeding to upload.
+- Temp files are created under the app cache directory; call `cleanupTempFiles` after successful upload.
+
+### CitySearch (`shared/utils/city_search.dart`)
+
+Fuzzy search over the Firestore-driven cities list with configurable thresholds.
+
+Key methods and getters:
+
+- `search(String query)` → `List<City>` (returns all when empty)
+- `getAllCities()` → `List<City>`
+- `allowCustomCities` → `bool`
+- `maxSuggestions` / `fuzzyThreshold`
+
+Usage:
+
+```dart
+final service = Get.find<CitiesService>();
+final cfg = service.config; // ensure CitiesService.init() ran
+if (cfg != null) {
+  final search = CitySearch(cfg);
+  final results = search.search('dou');
+  // feed results to your suggestions list
+}
+```
+
+## Services (lib/shared/services)
+
+- `avatar_uploader.dart` — encapsulates Firebase Storage uploads for avatars (main + thumbnail) and Firestore updates for `avatarUrl`, `thumbUrl`, and `avatarUpdatedAt`. Also updates `FirebaseAuth.currentUser.photoURL` when available.
+- `cities_service.dart` — GetX service that loads `config/cities` from Firestore, caches it locally (Hive), and exposes reactive config used by `cities_controller.dart` and `CitySelectorField`.
+
+### AvatarUploader (`shared/services/avatar_uploader.dart`)
+
+Uploads avatar and thumbnail to Firebase Storage and updates the user doc in Firestore, then syncs FirebaseAuth `photoURL` and refreshes `AuthController`.
+
+API:
+
+- `uploadAvatar({required File avatarFile, required File thumbnailFile, required void Function(double) onProgress})` → `Future<String>`
+- `deleteAvatar()` → `Future<void>`
+
+Usage (advanced; prefer using `AvatarPhotoHandler` which wraps this end-to-end):
+
+```dart
+final uploader = AvatarUploader();
+final progress = 0.0.obs;
+
+final url = await uploader.uploadAvatar(
+  avatarFile: full,
+  thumbnailFile: thumb,
+  onProgress: (p) => progress.value = p, // 0.0 - 1.0
+);
+
+// Later, to remove avatar
+await uploader.deleteAvatar();
+```
+
+Notes:
+
+- Storage paths: `avatars/{uid}/avatar.webp` and `avatars/{uid}/thumb.webp`.
+- Firestore fields: `avatarUrl` (cache-busted), `thumbUrl`, `avatarUpdatedAt`, `photoURL` (clean), `updatedAt`.
+- Throws if user is not authenticated; wrap in try/catch in custom flows.
+
+### CitiesService (`shared/services/cities_service.dart`)
+
+Loads and caches the `config/cities` document. Exposes the parsed `CitiesConfig` reactively via `config` getter.
+
+API:
+
+- `init()` → `Future<CitiesService>` — loads from Hive, then fetches latest from Firestore
+- `fetchAndCache()` / `loadFromLocal()` — manual refresh or local load
+- `initializeOnAppStart()` — ensures fresh data at app boot
+
+App initialization example:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final cities = Get.put(CitiesService());
+  await cities.init();
+  runApp(const App());
+}
+```
+
+Consumption:
+
+```dart
+final cities = Get.find<CitiesService>();
+final cfg = cities.config; // may be null briefly until init completes
+```
 
 Usage tips
 
@@ -560,6 +751,40 @@ Use for: City input with fuzzy search autocomplete and Material Design 3 dropdow
 - `AppStrings.citySelectorNoCitiesFound`
 
 See `CITIES_CONFIG_IMPLEMENTATION.md` for complete architecture documentation.
+
+#### AvatarCropScreen (`shared/widgets/avatar_crop_screen.dart`)
+
+Provides the in-app avatar cropping UI used by `AvatarPhotoHandler`.
+
+- Uses the Croppy package to render a circular crop viewport sized via `AppDimensions.avatarCrop*` tokens.
+- Produces both a full-size square and a smaller thumbnail for upload via `AvatarUploader`.
+- All paddings, hit areas, and help text sizes are driven by `AppDimensions`.
+
+Usage: this screen is typically pushed by `AvatarPhotoHandler.handleEditPhoto(context, ...)` after the user picks an image. Prefer calling the handler instead of navigating to the screen directly.
+
+Direct (advanced) usage:
+
+```dart
+final file = await Get.to<File?>(() => AvatarCropScreen(imageFile: pickedFile));
+if (file != null) {
+  // compress & upload
+}
+```
+
+#### ImagePickerDialog (`shared/widgets/image_picker_dialog.dart`)
+
+Small bottom sheet that lets users choose Camera or Gallery when changing their avatar.
+
+- Labels come from `AppStrings` (English/French).
+- Button sizes and spacing derive from `AppDimensions`.
+- Consumed by `AvatarPhotoHandler` — prefer the handler instead of showing this dialog directly.
+
+Direct (advanced) usage:
+
+```dart
+// Returns ImageSource.camera or ImageSource.gallery or null
+final source = await Get.dialog<ImageSource?>(const ImagePickerDialog());
+```
 
 #### PasswordStrengthChecklist (`shared/widgets/password_strength_checklist.dart`)
 

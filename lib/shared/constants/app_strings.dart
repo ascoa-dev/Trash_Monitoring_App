@@ -96,6 +96,44 @@ class AppStrings {
   static const String editPhotoComingSoonFrench =
       "Le téléversement de la photo de profil arrive bientôt.";
 
+  // Avatar Upload
+  static const String avatarPickerTitle = "Choose Photo Source";
+  static const String avatarPickerTitleFrench = "Choisir la source";
+  static const String avatarPickerCamera = "Take Photo";
+  static const String avatarPickerCameraFrench = "Prendre une photo";
+  static const String avatarPickerGallery = "Choose from Gallery";
+  static const String avatarPickerGalleryFrench = "Choisir dans la galerie";
+  static const String avatarPickerCancel = "Cancel";
+  static const String avatarPickerCancelFrench = "Annuler";
+  static const String avatarCropTitle = "Edit Photo";
+  static const String avatarCropTitleFrench = "Modifier la photo";
+  static const String avatarCropSave = "Save";
+  static const String avatarCropSaveFrench = "Enregistrer";
+  static const String avatarCropHelp =
+      "Move & zoom to select the part of the photo that will be shown inside the circle.";
+  static const String avatarCropHelpFrench =
+      "Déplacez et zoomez pour sélectionner la partie de la photo qui sera affichée dans le cercle.";
+  static const String avatarCropFailed = "Crop failed. Try again.";
+  static const String avatarCropFailedFrench = "Échec du recadrage. Réessayez.";
+  static const String avatarUploadProgress = "Uploading photo...";
+  static const String avatarUploadProgressFrench =
+      "Téléversement de la photo...";
+  static const String avatarUploadSuccess = "Photo updated successfully!";
+  static const String avatarUploadSuccessFrench =
+      "Photo mise à jour avec succès !";
+  static const String avatarUploadError =
+      "Failed to upload photo. Please try again.";
+  static const String avatarUploadErrorFrench =
+      "Échec du téléversement. Veuillez réessayer.";
+  static const String avatarCompressionError =
+      "Failed to process photo. Try another image.";
+  static const String avatarCompressionErrorFrench =
+      "Échec du traitement. Essayez une autre image.";
+  static const String avatarPermissionDenied =
+      "Camera/gallery permission required";
+  static const String avatarPermissionDeniedFrench =
+      "Permission caméra/galerie requise";
+
   // Edit Profile Screen
   static const String editProfileTitle = "Edit Profile";
   static const String editProfileTitleFrench = "Modifier le profil";

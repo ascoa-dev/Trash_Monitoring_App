@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:croppy/croppy.dart' as croppy;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -29,6 +31,10 @@ import 'shared/controllers/cities_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (kDebugMode) {
+    // Use the pure Dart solver in debug so we do not depend on the native FFI lib.
+    croppy.croppyForceUseCassowaryDartImpl = true;
+  }
   // Initialize Hive and register adapters for cities config
   await Hive.initFlutter();
   Hive.registerAdapter(CityAdapter());

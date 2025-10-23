@@ -48,32 +48,21 @@ lib/
 │   │   └── widgets/
 │   │       ├── profile_action_tile.dart
 │   │       └── profile_signout_button.dart
-│   │
-│   ├── posts/               # Posts/feed
-│   │   ├── views/
 │   │   │   ├── post_list_screen.dart
 │   │   │   └── post_detail_screen.dart
 │   │   └── widgets/
 │   │
 │   ├── search/              # Search feature
-│   │   └── views/
 │   │       └── search_screen.dart
 │   │
 │   └── settings/            # Settings
-│       └── views/
-│           └── settings_screen.dart
 │
-└── shared/                  # Reusable across modules
     ├── widgets/             # Buttons, text fields, loaders
     ├── constants/           # Colors, strings, sizes
     ├── utils/               # Validators, formatters, helpers
     └── themes/              # Light/dark theme, text styles
 
-```
 
-## Shared Controllers and Bindings
-
-Auth screens reuse the same form and validation state via a shared binding:
 
 ```dart
 // shared/controllers/form_binding.dart
@@ -81,49 +70,27 @@ class FormBinding extends Bindings {
   @override
   void dependencies() {
     if (!Get.isRegistered<FormControllers>()) {
-      Get.put<FormControllers>(FormControllers(), permanent: true);
-    }
-    if (!Get.isRegistered<ValidationController>()) {
       Get.put<ValidationController>(ValidationController(), permanent: true);
     }
   }
-}
 ```
 
 Used in routes for Login, Signup, and Forgot Password.
 
 Latest updates
 
-- The `email_verification_screen.dart` and `forgot_password_screen.dart` now follow a consistent layout pattern (LayoutBuilder + Stack + Positioned artwork anchored to viewport height) to avoid artwork reflow when content spacing changes.
-- `CircularInfiniteLoader` was fixed and now supports a small transparent gap between the track and the active arc; see `lib/shared/widgets/circular_loader.dart`.
-- City validation is now enforced by `lib/shared/controllers/validation_controller.dart` in coordination with `cities_controller.dart` when `allowCustomCities` is set to false in runtime config.
-
-## 📂 Folder Guide
 
 A quick overview of the project structure and what goes where:
 
 ---
 
-### `main.dart`
-
-- Entry point of the app.
-- Sets up the root widget and initializes required bindings/services.
 
 ---
 
-### `app/`
-
-Core setup that holds global app logic.
-
-- **routes/** → Centralized navigation (all `GetPages` live here).
 - **controllers/** → Global state controllers (e.g. auth). And communicate with external APIs like Firebase.
 - **models/** → Shared data models used across features (e.g. `User`, `Post`).
 
----
 
-### `modules/`
-
-Feature-based folders. Each feature is self-contained with its own screens, widgets, and bindings.
 
 Typical structure inside a module:
 
@@ -155,12 +122,10 @@ Holds everything that can be reused across multiple modules.
 - `complete_profile_screen.dart` - Collects first/last name, phone, and city with country selector.
 - Shared bindings: `FormBinding` for controllers.
 
-#### Profile Module
-
-- `profile_screen.dart` now surfaces Change Password and sign-out actions via card-style tiles.
 - `change_password_screen.dart` mirrors signup password validation with snackbar feedback; paired with `ChangePasswordController`, `ChangePasswordBinding`, and `ChangePasswordStatus` model.
 - `profile_signout_button.dart` provides a reusable CTA with consistent spacing/branding for logout actions.
 - `edit_profile_screen.dart` reuses shared validation/controllers and now aligns background/spacing with the change password flow.
+- Avatar editing/viewing: `edit_profile_screen.dart` and `complete_profile_screen.dart` integrate a shared `AvatarPhotoHandler` to pick/crop/compress/upload avatars. The `profile_screen.dart` shows the cached avatar (thumb preferred) and supports tap-to-zoom via `modules/profile/widgets/full_image_overlay.dart`.
 
 #### Shared Components
 
