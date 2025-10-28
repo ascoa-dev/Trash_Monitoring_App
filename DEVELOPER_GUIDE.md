@@ -88,6 +88,22 @@ Centralized tokens to replace hard-coded values:
 
 ## Recent Updates
 
+### Reset Password deep link flow
+
+- Added a reset-password feature set in `lib/modules/auth/`:
+  - `views/reset_password_screen.dart` mirrors the change-password layout (minus the current-password field), reuses the shared password checklist, and blocks navigation until the success dialog closes.
+  - `controllers/reset_password_controller.dart` wraps validation, handles localized snackbar messaging, and delegates to `AuthController.resetPasswordWithCode` for Firebase updates.
+  - `bindings/reset_password_binding.dart` injects the controller and extracts the `oobCode` argument passed via `Get.toNamed` or deep links.
+  - `models/reset_password_status.dart` enumerates result states shared between the controller and the auth service.
+- `main.dart` now bootstraps the [`app_links`](https://pub.dev/packages/app_links) listener in `_initDeepLinks`; incoming URLs with `mode=resetPassword` and an `oobCode` automatically navigate to `AppRoutes.resetPassword`.
+- `AuthController` exposes `resetPasswordWithCode`, translating `FirebaseAuth.confirmPasswordReset` errors into strongly typed results so the UI can react consistently.
+- Android manifest adds an auto-verified VIEW intent filter for `https://accounts.ascoa-cm.org/reset`, ensuring Firebase password-reset emails launch the installed app when available. The Gradle namespace/applicationId and Kotlin package were updated to `com.ascoa.app` to match the production bundle ID.
+- Shared resources received additions to support the flow:
+  - `AppStrings` gained English/French copy for reset-password titles, buttons, and error states.
+  - `AppImages.passwordUpdateSuccessful` points to the new dialog artwork declared in `pubspec.yaml`.
+  - Plugin registrants for desktop targets were regenerated to include `AppLinks`.
+- Firebase configuration files (`firebase_options.dart`, `firebase.json`, `android/app/google-services.json`) were refreshed to point at the `trash-monitoring-app-88131` project used by the new Android application ID.
+
 ### Change Password Flow (Profile Module)
 
 - Added `ChangePasswordScreen`, `ChangePasswordController`, `ChangePasswordBinding`, and `ChangePasswordStatus` enum under `lib/modules/profile/`.

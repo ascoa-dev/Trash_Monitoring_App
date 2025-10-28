@@ -7,5 +7,6 @@ abstract class AppRoutes {
   static const editProfile = '/edit-profile';
   static const changePassword = '/change-password';
   static const emailVerification = '/email-verification';
+  static const resetPassword = '/reset-password';
   // Add more routes as needed
 }

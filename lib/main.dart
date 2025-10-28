@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croppy/croppy.dart' as croppy;
 import 'package:flutter/foundation.dart';
@@ -14,6 +15,7 @@ import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'modules/main/views/main_screen.dart';
 import 'modules/auth/views/forgot_password_screen.dart';
+import 'modules/auth/views/reset_password_screen.dart';
 import 'modules/auth/views/complete_profile_screen.dart';
 import 'modules/auth/views/email_verification_screen.dart';
 import 'modules/profile/views/edit_profile_screen.dart';
@@ -22,11 +24,13 @@ import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'modules/profile/views/change_password_screen.dart';
 import 'modules/profile/bindings/change_password_binding.dart';
+import 'modules/auth/bindings/reset_password_binding.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'app/models/city_model.dart';
 import 'app/models/cities_config.dart';
 import 'shared/services/cities_service.dart';
 import 'shared/controllers/cities_controller.dart';
+import 'package:app_links/app_links.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +50,36 @@ void main() async {
   final citiesService = await CitiesService().init();
   Get.put<CitiesService>(citiesService, permanent: true);
   Get.put(CitiesController());
+  await _initDeepLinks();
   runApp(const MyApp());
+}
+
+final AppLinks _appLinks = AppLinks();
+
+Future<void> _initDeepLinks() async {
+  try {
+    final initialUri = await _appLinks.getInitialLink();
+    if (initialUri != null) {
+      debugPrint('Initial URI: $initialUri');
+      _handleIncomingUri(initialUri);
+    }
+    _appLinks.uriLinkStream.listen((Uri? uri) {
+      if (uri != null) _handleIncomingUri(uri);
+    });
+  } catch (e) {
+    debugPrint('Error initializing deep links: $e');
+  }
+}
+
+void _handleIncomingUri(Uri uri) {
+  debugPrint('Received deep link: $uri');
+
+  final mode = uri.queryParameters['mode'];
+  final oobCode = uri.queryParameters['oobCode'];
+
+  if (mode == 'resetPassword' && oobCode != null) {
+    Get.offAllNamed(AppRoutes.resetPassword, arguments: {'oobCode': oobCode});
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -147,6 +180,11 @@ class MyApp extends StatelessWidget {
               name: AppRoutes.forgotPassword,
               page: () => ForgotPasswordScreen(),
               bindings: [FormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.resetPassword,
+              page: () => const ResetPasswordScreen(),
+              bindings: [FormBinding(), ResetPasswordBinding()],
             ),
             GetPage(
               name: AppRoutes.completeProfile,

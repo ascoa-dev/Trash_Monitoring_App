@@ -199,6 +199,41 @@ class AppStrings {
   static const String changePasswordSameAsCurrentFrench =
       "Votre nouveau mot de passe doit être différent de votre mot de passe actuel.";
 
+  // Reset Password Screen
+  static const String resetPasswordTitle = "Reset Password";
+  static const String resetPasswordTitleFrench =
+      "Réinitialiser le mot de passe";
+  static const String resetPasswordSubtitle =
+      "Create your new password and confirm it below.";
+  static const String resetPasswordSubtitleFrench =
+      "Créez votre nouveau mot de passe et confirmez-le ci-dessous.";
+  static const String resetPasswordButton = "UPDATE PASSWORD";
+  static const String resetPasswordButtonFrench =
+      "Mettre à jour le mot de passe";
+  static const String resetPasswordSaving = "UPDATING...";
+  static const String resetPasswordSavingFrench = "Mise à jour...";
+  static const String resetPasswordInvalidLink =
+      "The reset link is missing or invalid. Please request a new one.";
+  static const String resetPasswordInvalidLinkFrench =
+      "Le lien de réinitialisation est manquant ou invalide. Veuillez en demander un nouveau.";
+  static const String resetPasswordInvalidCode =
+      "The reset link is invalid or has already been used.";
+  static const String resetPasswordInvalidCodeFrench =
+      "Le lien de réinitialisation est invalide ou a déjà été utilisé.";
+  static const String resetPasswordExpired =
+      "The reset link has expired. Please request a new one.";
+  static const String resetPasswordExpiredFrench =
+      "Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.";
+  static const String resetPasswordGenericError =
+      "We couldn't reset your password. Please try again.";
+  static const String resetPasswordGenericErrorFrench =
+      "Nous n'avons pas pu réinitialiser votre mot de passe. Veuillez réessayer.";
+  static const String resetPasswordSuccessTitle = "Password update successful";
+  static const String resetPasswordSuccessTitleFrench =
+      "Mot de passe mis à jour";
+  static const String resetPasswordSuccessButton = "Go to Login";
+  static const String resetPasswordSuccessButtonFrench = "Aller à la connexion";
+
   // Forgot Password Screen
   static const String forgotPasswordTitle = "Forgot Password";
   static const String forgotPasswordTitleFrench = "Mot de passe oublié";

@@ -6,6 +6,7 @@ Flutter app using GetX, Firebase Auth, and a shared design system.
 
 - Modular architecture with shared widgets and centralized tokens
 - Auth flows with improved UX (floating labels, live password checklist)
+- Deep-link driven Reset Password screen that reuses shared validation, shows the new success dialog artwork, and routes back to Login after completion
 - **Profile module now includes a dedicated Change Password flow** with strong password validation, bilingual copy, and success/error snackbars aligned with the signup UX.
 - Forgot Password uses an overlay dialog (no separate confirmation screen)
 - Shared `FormBinding` injects `FormControllers` and `ValidationController`
@@ -44,6 +45,25 @@ flutter run -d windows
 Initial route is determined at runtime: signed-in users go to Home; otherwise Login.
 
 ## Recent changes
+
+### Reset Password deep link flow
+
+- Added a reset-password module under `lib/modules/auth/`:
+  - `views/reset_password_screen.dart` mirrors the change-password layout without the current-password field, integrates the password checklist, and presents a blocking success dialog that clears auth state before returning to Login.
+  - `controllers/reset_password_controller.dart` coordinates validation, interacts with `AuthController.resetPasswordWithCode`, and centralizes snackbar feedback for all Firebase error codes.
+  - `bindings/reset_password_binding.dart` injects the controller and forwards the out-of-band code (`oobCode`) passed from deep links or manual navigation.
+  - `models/reset_password_status.dart` enumerates the result states used by both the controller and the auth service layer.
+- Introduced a dedicated `AppRoutes.resetPassword` entry, wired into `main.dart` alongside existing auth routes, and updated the shared `FormBinding` registration so the screen can reuse global controllers.
+- Hooked up deep links using the [`app_links`](https://pub.dev/packages/app_links) plugin. The app now listens for Firebase reset-password emails targeting `https://accounts.ascoa-cm.org/reset?mode=resetPassword&oobCode=...` and navigates directly into the new flow.
+- Updated `AuthController` with `resetPasswordWithCode`, which calls `FirebaseAuth.confirmPasswordReset` and translates its exceptions into the new enum.
+- Android configuration:
+  - `MainActivity` package renamed to `com.ascoa.app`, with Gradle namespace/applicationId updated to match.
+  - `AndroidManifest.xml` now contains an auto-verified `<intent-filter>` for the production reset-password host/path and keeps the activity in singleTask mode.
+- Firebase configuration files (`google-services.json`, `firebase_options.dart`, `firebase.json`) refreshed with the new app IDs and project metadata.
+- Assets and strings:
+  - Added `assets/ASCOA/Password_update_successful.png` and exposed it via `AppImages.passwordUpdateSuccessful` for the success dialog artwork.
+  - Expanded `AppStrings` with English/French copy for the reset-password screen, errors, and success states.
+- Added the `app_links` dependency in `pubspec.yaml` and re-generated platform plugin registrants for Linux, macOS, and Windows.
 
 ### Avatar upload & profile photos
 

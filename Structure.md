@@ -18,15 +18,22 @@ lib/
 │       └── posts.dart
 │
 ├── modules/                 # Feature-based modules
-│   ├── auth/                # Login/Signup/Forgot Password/Verification
+│   ├── auth/                # Login/Signup/Forgot/Reset Password/Verification
 │   │   ├── views/           # Screens
 │   │   │   ├── login_screen_v2.dart
 │   │   │   ├── signup_screen.dart
 │   │   │   ├── forgot_password_screen.dart
+│   │   │   ├── reset_password_screen.dart
 │   │   │   ├── complete_profile_screen.dart
 │   │   │   └── email_verification_screen.dart
+│   │   ├── controllers/     # Feature controllers scoped to auth flows
+│   │   │   └── reset_password_controller.dart
+│   │   ├── bindings/        # Route bindings for auth screens
+│   │   │   └── reset_password_binding.dart
+│   │   ├── models/          # Auth-specific models/enums
+│   │   │   └── reset_password_status.dart
 │   │   ├── widgets/         # Widgets used inside auth
-│   │   └── (bindings are centralized in shared/controllers/form_binding.dart)
+│   │   └── (shared FormBinding still lives in shared/controllers/form_binding.dart)
 │   │
 │   ├── home/                # Home/dashboard
 │   │   └── views/
@@ -114,9 +121,11 @@ Holds everything that can be reused across multiple modules.
 #### Auth Module
 
 - `forgot_password_screen.dart` - Handles Forgot Password flow with overlay dialog.
+- `reset_password_screen.dart` - Handles deep-link driven password resets, reusing the password checklist and showing a success dialog before returning to Login.
 - `email_verification_screen.dart` - Polls verification status, exposes resend/cancel actions, and routes verified users through `AuthController.handleUserPostVerification`.
 - `complete_profile_screen.dart` - Collects first/last name, phone, and city with country selector.
 - Shared bindings: `FormBinding` for controllers.
+- Screen-specific binding/controller/model: `reset_password_binding.dart`, `reset_password_controller.dart`, `reset_password_status.dart`.
 
 - `change_password_screen.dart` mirrors signup password validation with snackbar feedback; paired with `ChangePasswordController`, `ChangePasswordBinding`, and `ChangePasswordStatus` model.
 - `profile_signout_button.dart` provides a reusable CTA with consistent spacing/branding for logout actions.
@@ -128,6 +137,7 @@ Holds everything that can be reused across multiple modules.
 - `app_dialog.dart` - Overlay dialog for confirmations.
 - `validation_controller.dart` - Centralized validation logic.
 - `form_binding.dart` - Shared bindings for form state management.
+- `AppLinks` integration is bootstrapped from `main.dart`, where `_initDeepLinks` listens for Firebase reset-password links and routes to `AppRoutes.resetPassword` with the out-of-band code argument.
 
 ---
 

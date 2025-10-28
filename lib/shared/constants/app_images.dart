@@ -42,6 +42,8 @@ class AppImages {
       'assets/ASCOA/Forgot_Password_Screen_Bottom.png';
   static const String forgotPasswordIcon =
       'assets/ASCOA/ForgotPasswordIcon.png';
+  static const String passwordUpdateSuccessful =
+      'assets/ASCOA/Password_update_successful.png';
 
   // Misc auth/background assets
   static const String loginBottom = 'assets/ASCOA/Login_Bottom.png';

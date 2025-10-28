@@ -7,6 +7,7 @@ import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ascoa_app/modules/profile/models/change_password_status.dart';
+import 'package:ascoa_app/modules/auth/models/reset_password_status.dart';
 import 'package:ascoa_app/app/models/user.dart';
 
 class AuthController extends GetxController {
@@ -632,7 +633,19 @@ class AuthController extends GetxController {
   Future<String> forgotPassword(String email) async {
     isLoadingForgotPassword.value = true;
     try {
-      await _auth.sendPasswordResetEmail(email: email.trim());
+      ActionCodeSettings actionCodeSettings = ActionCodeSettings(
+        url: 'https://accounts.ascoa-cm.org/reset',
+        handleCodeInApp: true,
+        androidPackageName: 'com.ascoa.app',
+        androidInstallApp: false,
+        androidMinimumVersion: '0',
+        iOSBundleId: 'org.ascoa.app',
+      );
+
+      await _auth.sendPasswordResetEmail(
+        email: email.trim(),
+        actionCodeSettings: actionCodeSettings,
+      );
       return 'success';
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -649,6 +662,33 @@ class AuthController extends GetxController {
       return 'error';
     } finally {
       isLoadingForgotPassword.value = false;
+    }
+  }
+
+  Future<ResetPasswordStatus> resetPasswordWithCode({
+    required String oobCode,
+    required String newPassword,
+  }) async {
+    if (oobCode.isEmpty) {
+      return ResetPasswordStatus.invalidCode;
+    }
+
+    try {
+      await _auth.confirmPasswordReset(code: oobCode, newPassword: newPassword);
+      return ResetPasswordStatus.success;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'expired-action-code') {
+        return ResetPasswordStatus.expired;
+      }
+      if (e.code == 'invalid-action-code') {
+        return ResetPasswordStatus.invalidCode;
+      }
+      if (e.code == 'weak-password') {
+        return ResetPasswordStatus.validationError;
+      }
+      return ResetPasswordStatus.error;
+    } catch (_) {
+      return ResetPasswordStatus.error;
     }
   }
 

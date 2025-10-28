@@ -1,4 +1,4 @@
-package com.example.ascoa_app
+package com.ascoa.app
 
 import io.flutter.embedding.android.FlutterActivity
 

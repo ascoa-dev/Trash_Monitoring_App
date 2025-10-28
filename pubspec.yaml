@@ -56,6 +56,7 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.0
   flutter_native_splash: ^2.4.7
+  app_links: ^6.4.1
 
 dev_dependencies:
   flutter_test:
@@ -109,6 +110,8 @@ flutter:
     - assets/ASCOA/Profile_Page_Icons/policy.png
     - assets/ASCOA/Profile_Page_Icons/signout.png
     - assets/ASCOA/verify_email_icon.png
+    - assets/ASCOA/Password_update_successful.png
+    - assets/ASCOA/Profile_update_successful.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

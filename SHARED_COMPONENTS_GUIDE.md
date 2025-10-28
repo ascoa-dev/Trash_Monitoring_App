@@ -99,6 +99,7 @@ Common categories currently exposed:
 - **Navigation icons:** `navHome`, `navStats`, `navAdd`, `navNews`, `navProfile` consumed by the shared bottom navigation bar.
 - **3rd-party logos:** `googleNeutral2x`, `facebookPrimary` for social buttons.
 - **Forgot password assets:** `forgotConfirmIcon`, `forgotPasswordBottom`, `forgotPasswordIcon` powering the forgot-password screen and confirmation dialog.
+- **Reset password artwork:** `passwordUpdateSuccessful` used by the reset-password success dialog that returns the user to Login.
 
 Adding a new asset checklist:
 

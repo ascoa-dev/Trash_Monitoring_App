@@ -7,20 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:677557829420:android:c93571664673c01670f689",
+        "mobilesdk_app_id": "1:677557829420:android:2eef313a096af2c370f689",
         "android_client_info": {
-          "package_name": "com.example.ascoa_app"
+          "package_name": "com.ascoa.app"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "677557829420-qockvs645gge6adhhsdoeea0irv2a2th.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.ascoa_app",
-            "certificate_hash": "551671fe14c0b0fbbbae3d7f14f1e9262f097731"
-          }
-        },
         {
           "client_id": "677557829420-gp8j8k67or2nbkv9f9u310scfe48mb89.apps.googleusercontent.com",
           "client_type": 3
