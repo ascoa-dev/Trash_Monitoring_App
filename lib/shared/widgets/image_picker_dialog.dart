@@ -40,7 +40,10 @@ class ImagePickerDialog extends StatelessWidget {
                   ? AppStrings.avatarPickerTitleFrench
                   : AppStrings.avatarPickerTitle,
               style: AppTextStyles.heading2(context).copyWith(
-                fontSize: SizeUtils.h(context, 22),
+                fontSize: SizeUtils.h(
+                  context,
+                  AppDimensions.profileNameFontSize,
+                ),
                 color: AppColors.textDark,
               ),
               textAlign: TextAlign.center,
@@ -63,7 +66,7 @@ class ImagePickerDialog extends StatelessWidget {
                 icon: Icon(
                   Icons.camera_alt,
                   color: AppColors.pureWhite,
-                  size: SizeUtils.r(context, 20),
+                  size: SizeUtils.r(context, AppDimensions.smallIconSize),
                 ),
                 label: Text(
                   isFrench
@@ -96,7 +99,7 @@ class ImagePickerDialog extends StatelessWidget {
                 icon: Icon(
                   Icons.photo_library,
                   color: AppColors.buttonGreen,
-                  size: SizeUtils.r(context, 20),
+                  size: SizeUtils.r(context, AppDimensions.smallIconSize),
                 ),
                 label: Text(
                   isFrench

@@ -15,6 +15,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:get/get.dart';
+import 'package:ascoa_app/shared/widgets/app_dialog.dart';
 
 class EditProfileScreen extends GetWidget<EditProfileController> {
   const EditProfileScreen({super.key});
@@ -353,7 +354,8 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                               ).copyWith(
                                                 fontSize: SizeUtils.h(
                                                   context,
-                                                  22,
+                                                  AppDimensions
+                                                      .profileNameFontSize,
                                                 ),
                                               ),
                                             );
@@ -542,27 +544,58 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                             debugPrint(
                                               'EditProfile: submitChanges succeeded, attempting to pop edit screen',
                                             );
-
                                             if (!context.mounted) {
                                               return;
                                             }
 
-                                            final popped =
-                                                await Navigator.of(
-                                                  context,
-                                                ).maybePop();
-
-                                            if (!popped) {
-                                              debugPrint(
-                                                'EditProfile: pop failed, navigating to profile tab via home route',
-                                              );
-                                              Get.offNamed(
-                                                AppRoutes.home,
-                                                arguments: const {
-                                                  'initialTab': 'profile',
-                                                },
-                                              );
-                                            }
+                                            // Show success dialog and navigate to profile tab
+                                            await showDialog<void>(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (ctx) {
+                                                final isFrench =
+                                                    Get.locale?.languageCode ==
+                                                    'fr';
+                                                return AppDialog(
+                                                  title:
+                                                      isFrench
+                                                          ? AppStrings
+                                                              .editProfileSuccessDialogTitle
+                                                          : AppStrings
+                                                              .editProfileSuccessDialogTitle,
+                                                  decoratedHero: false,
+                                                  imageAsset:
+                                                      AppImages
+                                                          .profileUpdateSuccessful,
+                                                  imageWidth: SizeUtils.w(
+                                                    ctx,
+                                                    AppDimensions
+                                                        .dialogImageWidth,
+                                                  ),
+                                                  imageHeight: SizeUtils.h(
+                                                    ctx,
+                                                    AppDimensions
+                                                        .dialogImageHeight,
+                                                  ),
+                                                  body: null,
+                                                  primaryActionLabel:
+                                                      isFrench
+                                                          ? AppStrings
+                                                              .editProfileSuccessDialogButton
+                                                          : AppStrings
+                                                              .editProfileSuccessDialogButton,
+                                                  onPrimaryAction: () {
+                                                    Navigator.of(ctx).pop();
+                                                    Get.offNamed(
+                                                      AppRoutes.home,
+                                                      arguments: const {
+                                                        'initialTab': 'profile',
+                                                      },
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
                                           } else {
                                             final isFrench =
                                                 Get.locale?.languageCode ==

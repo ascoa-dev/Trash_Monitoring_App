@@ -16,6 +16,9 @@ class FloatingLabelInputField extends StatefulWidget {
   final bool obscure;
   final String? supportText; // error or helper
   final bool isError;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
   final ValueChanged<bool>? onFocusChange;
   final TextInputType keyboardType;
@@ -34,6 +37,9 @@ class FloatingLabelInputField extends StatefulWidget {
     this.obscure = false,
     this.supportText,
     this.isError = false,
+    this.readOnly = false,
+    this.onTap,
+    this.suffixIcon,
     this.onChanged,
     this.onFocusChange,
     this.keyboardType = TextInputType.text,
@@ -161,6 +167,8 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                   child: TextField(
                     controller: widget.controller,
                     focusNode: _focusNode,
+                    readOnly: widget.readOnly,
+                    onTap: widget.onTap,
                     obscureText: widget.obscure,
                     onChanged: widget.onChanged,
                     keyboardType: widget.keyboardType,
@@ -189,9 +197,15 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                         ),
                         letterSpacing: AppTypography.letterSpacingSmall,
                       ),
+                      suffixIcon: widget.suffixIcon,
                       border: InputBorder.none,
                       isCollapsed: true,
-                      contentPadding: EdgeInsets.zero,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: SizeUtils.h(
+                          context,
+                          AppDimensions.inputContentVerticalPadding,
+                        ), // Center text vertically
+                      ),
                     ),
                   ),
                 ),
@@ -221,7 +235,10 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                         AppDimensions.floatingLabelFontSize,
                       ),
                       height:
-                          SizeUtils.h(context, 16) /
+                          SizeUtils.h(
+                            context,
+                            AppDimensions.floatingLabelLineHeight,
+                          ) /
                           SizeUtils.h(
                             context,
                             AppDimensions.floatingLabelFontSize,
@@ -254,10 +271,15 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                     AppDimensions.supportTextFontSize,
                   ),
                   height:
-                      SizeUtils.h(context, 16) /
+                      SizeUtils.h(
+                        context,
+                        AppDimensions.supportTextLineHeight,
+                      ) /
                       SizeUtils.h(context, AppDimensions.supportTextFontSize),
                   color:
-                      widget.isError ? AppColors.error : AppColors.textAccent,
+                      widget.isError
+                          ? AppColors.errorRed
+                          : AppColors.textAccent,
                   letterSpacing: AppTypography.letterSpacingSmall,
                 ),
               ),

@@ -12,6 +12,8 @@ import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
 import 'package:ascoa_app/shared/widgets/password_strength_checklist.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/widgets/app_dialog.dart';
+import 'package:ascoa_app/app/routes/app_routes.dart';
 
 class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
   const ChangePasswordScreen({super.key});
@@ -114,7 +116,8 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                       right: SizeUtils.w(context, AppDimensions.screenPadding),
                       top: SizeUtils.h(
                         context,
-                        AppDimensions.verticalPadding * 0.6,
+                        AppDimensions.verticalPadding *
+                            AppDimensions.changePasswordTopPaddingFactor,
                       ),
                       bottom:
                           keyboardHeight > 0
@@ -320,8 +323,52 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                                       if (!context.mounted) {
                                         return;
                                       }
-                                      await Navigator.of(context).maybePop();
-                                      Get.back(result: true);
+                                      // Show non-dismissible success dialog and
+                                      // navigate to profile tab when user continues.
+                                      await showDialog<void>(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (ctx) {
+                                          final isFrenchInner =
+                                              Get.locale?.languageCode == 'fr';
+                                          return AppDialog(
+                                            title:
+                                                isFrenchInner
+                                                    ? AppStrings
+                                                        .changePasswordSuccessDialogTitleFrench
+                                                    : AppStrings
+                                                        .changePasswordSuccessDialogTitle,
+                                            decoratedHero: false,
+                                            imageAsset:
+                                                AppImages
+                                                    .passwordUpdateSuccessful,
+                                            imageWidth: SizeUtils.w(
+                                              ctx,
+                                              AppDimensions.dialogImageWidth,
+                                            ),
+                                            imageHeight: SizeUtils.h(
+                                              ctx,
+                                              AppDimensions.dialogImageHeight,
+                                            ),
+                                            body: null,
+                                            primaryActionLabel:
+                                                isFrenchInner
+                                                    ? AppStrings
+                                                        .changePasswordSuccessDialogButtonFrench
+                                                    : AppStrings
+                                                        .changePasswordSuccessDialogButton,
+                                            onPrimaryAction: () {
+                                              Navigator.of(ctx).pop();
+                                              Get.offNamed(
+                                                AppRoutes.home,
+                                                arguments: const {
+                                                  'initialTab': 'profile',
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
                                     }
                                   },
                                 ),

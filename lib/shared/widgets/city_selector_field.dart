@@ -316,7 +316,10 @@ class _CitySelectorFieldState extends State<CitySelectorField> {
                         context,
                         AppDimensions.inputHorizontalPadding,
                       ),
-                      right: SizeUtils.w(context, 48),
+                      right: SizeUtils.w(
+                        context,
+                        AppDimensions.citySelectorRightPadding,
+                      ),
                     ),
                     child: TextField(
                       controller: widget.controller,
@@ -374,7 +377,10 @@ class _CitySelectorFieldState extends State<CitySelectorField> {
                           AppDimensions.floatingLabelFontSize,
                         ),
                         height:
-                            SizeUtils.h(context, 16) /
+                            SizeUtils.h(
+                              context,
+                              AppDimensions.floatingLabelLineHeight,
+                            ) /
                             SizeUtils.h(
                               context,
                               AppDimensions.floatingLabelFontSize,
@@ -408,7 +414,10 @@ class _CitySelectorFieldState extends State<CitySelectorField> {
                     AppDimensions.supportTextFontSize,
                   ),
                   height:
-                      SizeUtils.h(context, 16) /
+                      SizeUtils.h(
+                        context,
+                        AppDimensions.supportTextLineHeight,
+                      ) /
                       SizeUtils.h(context, AppDimensions.supportTextFontSize),
                   color:
                       widget.isError ? AppColors.error : AppColors.textAccent,

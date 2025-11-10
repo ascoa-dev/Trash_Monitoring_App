@@ -15,12 +15,19 @@ class AppImages {
       'assets/ASCOA/profileplaceholder.png';
   static const String profileScreenBottom =
       'assets/ASCOA/Profile_Screen_Bottom.png';
+  static const String dashboardTop = 'assets/ASCOA/Dashboard_Top1.png';
+  static const String dashboardBottom = forgotPasswordBottom;
 
   // Profile page icons
   static const String policy = 'assets/ASCOA/Profile_Page_Icons/policy.png';
   static const String faq = 'assets/ASCOA/Profile_Page_Icons/faq.png';
   static const String contact = 'assets/ASCOA/Profile_Page_Icons/contact.png';
   static const String signout = 'assets/ASCOA/Profile_Page_Icons/signout.png';
+
+  //Dashboard icons
+  static const String cleanup =
+      'assets/ASCOA/Dashboard_Icons/new_cleanup_icon.png';
+  static const String blog = 'assets/ASCOA/Dashboard_Icons/blog.png';
 
   // Navigation icons
   static const String navHome = 'assets/ASCOA/Nav_bar_icons/home.png';
@@ -45,10 +52,20 @@ class AppImages {
   static const String passwordUpdateSuccessful =
       'assets/ASCOA/Password_update_successful.png';
 
+  // Profile update success image
+  static const String profileUpdateSuccessful =
+      'assets/ASCOA/Profile_update_successful.png';
+
   // Misc auth/background assets
   static const String loginBottom = 'assets/ASCOA/Login_Bottom.png';
   static const String completeProfileTop =
       'assets/ASCOA/Complete_Profile_Top.png';
+
+  // CleanUp Screen
+  static const String cleanupBottom = profileScreenBottom;
+  static const String cleanupTop = signupTop;
+  static const String placeholder = 'assets/ASCOA/placeholder.png';
+  static const String cleanConfirm = 'assets/ASCOA/clean_confirm.png';
 
   AppImages._();
 }

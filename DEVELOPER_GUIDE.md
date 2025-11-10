@@ -40,6 +40,26 @@ Navigation hygiene:
 - Only carry email between screens if valid; clear email errors before navigating
 - Clear password when switching Login ↔ Signup
 
+### 2. Home module and news integration (`lib/modules/home/`)
+
+The Home module renders the dashboard and a horizontally scrolling News section backed by WordPress posts from [ascoa-cm.org](https://ascoa-cm.org).
+
+- Binding: `HomeBinding` lazily provides `HomePostsController` with `fenix: true` so it survives tab switches.
+- Controller: `HomePostsController` loads posts, deduplicates media requests, and caches results in Hive (`home_posts_cache`) for instant warm-starts and basic offline display.
+- Services: `ApiService` wraps HTTP calls to WordPress REST endpoints for posts and media. Minimal fields are requested to reduce payload.
+- Models: `Post` (Hive typeId 10) and `MediaModel` live under `lib/app/models/`. `PostAdapter` is registered in `main.dart`.
+- Views/Widgets: `HomeScreen` composes the dashboard layout (hero, Start Cleanup card, Highlights carousel, News list, Blog card). News tiles use `HomeNewsCard` with `CachedNetworkImage` and fall back to an asset placeholder. A `NewsSkeletonCard` provides a shimmer-like placeholder while loading.
+- Assets: new artwork added under `assets/ASCOA/` and `assets/ASCOA/Dashboard_Icons/` (declared in `pubspec.yaml`). Paths are centralized in `AppImages`.
+- Tokens: multiple Home-specific `AppDimensions.homeScreen*` constants were added for precise Figma alignment; sizes are applied at build-time via `SizeUtils`.
+- External links: tapping a news card opens `link` in the system browser via `url_launcher`.
+
+Dependencies added in `pubspec.yaml` (already declared): `http`, `cached_network_image`, `url_launcher`, `hive`, `hive_flutter`.
+
+Initialization notes:
+
+- `main.dart` registers `PostAdapter` with Hive and initializes Hive early alongside the existing Cities config adapters.
+- The initial route computation still resolves to `AppRoutes.home` for authenticated, verified users with a completed profile. The Home module is rendered inside `MainScreen`.
+
 ### 3. Shared Design System (`shared/constants/`)
 
 Centralized tokens to replace hard-coded values:
@@ -88,6 +108,13 @@ Centralized tokens to replace hard-coded values:
 
 ## Recent Updates
 
+### Home module + WordPress News feed
+
+- Implemented `lib/modules/home/` with GetX binding/controller/services and a responsive UI that mirrors the design. Posts are fetched from WordPress (`/wp-json/wp/v2/posts`) and associated media is fetched in parallel only for unique `featured_media` IDs to minimize calls.
+- Added `Post` and `MediaModel` under `lib/app/models/` and registered `PostAdapter` in `main.dart` for Hive caching. The controller reads from cache on init, then updates with fresh network data and re-caches results.
+- Introduced `HomeNewsCard` and `NewsSkeletonCard` widgets for the news rail; cards rely on new tokens in `AppDimensions` and colors in `AppColors`. News links open externally via `url_launcher`.
+- New assets for the dashboard hero and icons have been added and centralized under `AppImages` along with corresponding `pubspec.yaml` entries.
+
 ### Reset Password deep link flow
 
 - Added a reset-password feature set in `lib/modules/auth/`:
@@ -122,6 +149,41 @@ Centralized tokens to replace hard-coded values:
 - `AppStrings` gained change-password and email-verification copy (English/French). Reference these keys instead of duplicating strings in UI layers.
 - `AppDimensions` gained change-password layout tokens (`changePasswordTopSpacing`, `changePasswordIconSize`, `profileSignOutHeight`, etc.) to align new screens with the design system.
 - New `ProfileSignOutButton` widget (modules/profile/widgets) encapsulates the logout CTA layout used on the profile screen; reuse it for future profile-related sign-out flows.
+
+### Date Picker & Location Search (new shared widgets)
+
+- Added `shared/widgets/custom_date_picker.dart` — a Material 3 single-date picker dialog with month/year dropdowns, swipe navigation, and fully tokenized dimensions (`AppDimensions.datePicker*`). Use `CustomDatePicker.show(context, ...)` to retrieve a `DateTime?`.
+- Added `shared/widgets/location_search_field.dart` — Google Places–powered autocomplete input with overlay suggestions; debounced search, bounded overlay height, reused shadow & corner tokens from the city selector. Loader and suggestion row sizing use new `locationField*` tokens in `AppDimensions`.
+- Added supporting dimension tokens in `app_dimensions.dart` (date picker: menu offsets, header icon container size, text button paddings; location search: loader/suggestion sizes).
+
+### Avatar Flow Enhancements
+
+- `image_picker_dialog.dart` now uses `AppDimensions.profileNameFontSize` and `smallIconSize` tokens for consistent sizing, replacing literals.
+- `avatar_crop_screen.dart` updated to use dedicated crop tokens (`avatarCropCornerSize`, `avatarCropCornerThickness`, `avatarCropCircleStrokeWidth`, plus generic `cropper*` tokens for gesture padding and rotate icon size) for clearer maintenance.
+- Dialog success flows (change password, edit profile, cleanup saved) now standardized on `AppDialog` with new image size tokens (`dialogImageWidth`, `dialogImageHeight`).
+
+### Dimension & Typography Token Sweep
+
+- Extended `app_dimensions.dart` with: `datePickerVerticalPadding`, `datePickerMenuIconSize`, `datePickerHeaderIconContainerSize`, `datePickerTextButton*` tokens, `inputLineHeight`, `inputContentVerticalPadding`, `floatingLabelLineHeight`, `supportTextLineHeight`, and location-specific `locationField*` tokens.
+- Ensured all recently modified shared widgets wrap numeric layout values via `SizeUtils` (`h`, `w`, `r`) for responsive scaling.
+- Added/used `mediumFontSize` and `smallFontSize` for suggestion row text in `LocationSearchField`.
+
+### Updated Shared Components Guide
+
+- `SHARED_COMPONENTS_GUIDE.md` expanded to document new widgets (CustomDatePicker, LocationSearchField, ImagePickerDialog) and all newly added dimension tokens so future contributors have an authoritative reference.
+- Added explicit sections for Date Picker and Location Search tokens; clarified usage and feature sets.
+
+### Consistency Improvements
+
+- Replaced remaining literal icon/spacing values across shared widgets with semantic tokens (e.g., icon sizes 18/20 → `datePickerMenuIconSize`, `smallIconSize`).
+- Centralized loader spacing & stroke widths (`circularLoaderGap`, `circularLoaderStrokeWidth`, `smallLoaderStrokeWidth`) and applied them in the circular loader implementation.
+- Removed stray inline numbers from `app_dialog.dart`, `floating_label_input_field.dart`, `city_selector_field.dart`, and `custom_date_picker.dart` in favor of tokens.
+
+### Developer Workflow Notes
+
+- When adding a new shared widget: define semantic tokens in `app_dimensions.dart` first; avoid reusing unrelated tokens (e.g., don’t borrow a cleanup constant for a profile widget). Update both guides (`SHARED_COMPONENTS_GUIDE.md`, this file) in the same commit.
+- Prefer adding a short “Key tokens” subsection in the shared guide for any non-trivial widget to speed onboarding.
+- Run `flutter analyze` after token additions; mismatched or unused constants often surface as analyzer hints—clean them before merging.
 
 ### Forgot Password Feature
 

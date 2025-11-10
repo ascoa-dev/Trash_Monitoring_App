@@ -51,12 +51,17 @@ dependencies:
   croppy: ^1.4.1
   flutter_image_compress: ^2.3.0
   firebase_storage: ^13.0.2
-  cached_network_image: ^3.4.1
+  cached_network_image: ^3.4.0
   uuid: ^4.5.1
   path_provider: ^2.1.5
   path: ^1.9.0
   flutter_native_splash: ^2.4.7
   app_links: ^6.4.1
+  google_maps_flutter: ^2.7.0
+  geocoding: ^3.0.0
+  geolocator: ^13.0.2
+  url_launcher: ^6.3.0
+  http: ^1.5.0
 
 dev_dependencies:
   flutter_test:
@@ -112,6 +117,12 @@ flutter:
     - assets/ASCOA/verify_email_icon.png
     - assets/ASCOA/Password_update_successful.png
     - assets/ASCOA/Profile_update_successful.png
+    - assets/ASCOA/Dashboard_Top.png
+    - assets/ASCOA/Dashboard_Top1.png
+    - assets/ASCOA/Dashboard_Icons/blog.png
+    - assets/ASCOA/Dashboard_Icons/start_New_Cleanup.png
+    - assets/ASCOA/placeholder.png
+    - assets/ASCOA/Dashboard_Icons/new_cleanup_icon.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

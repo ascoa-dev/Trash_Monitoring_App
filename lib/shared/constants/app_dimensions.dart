@@ -1,4 +1,85 @@
 class AppDimensions {
+  // HomeScreen additional constants from regex search
+  static const double homeScreenHighlightViewportFraction = 0.82;
+  static const double homeScreenStartCleanupCardShadowBlur = 10.0;
+  static const double homeScreenStartCleanupCardShadowOffsetY = 4.0;
+  static const double homeScreenStatsSpacing = 2.0;
+  static const double homeScreenNewsSectionSpacing = 12.0;
+  static const double homeScreenNewsCardSpacing = 16.0;
+  static const double homeScreenNewsErrorSpacing = 8.0;
+  static const double homeScreenBlogCardShadowBlur = 8.0;
+  static const double homeScreenBlogCardShadowOffsetY = 4.0;
+  static const double homeScreenAuthHeaderCurrent = 319.0;
+  static const double homeScreenAuthHeaderSmall = 280.0;
+  static const double homeScreenAuthHeaderLarge = 350.0;
+  static const double homeScreenAuthHeaderTargetWidth = 240.0;
+  // HomeScreen-specific dimensions (not linked to other screens)
+  static const double homeScreenWelcomeTop = 72.0;
+  static const double homeScreenHeaderTop = 224.0;
+  static const double homeScreenHeaderHeight = 94.0;
+  static const double homeScreenStartCleanupCardWidth = 340.0;
+  static const double homeScreenStartCleanupCardRadius = 12.0;
+  static const double homeScreenStartCleanupImageSize = 77.0;
+  static const double homeScreenStartCleanupCardHorizontalPadding = 16.0;
+  static const double homeScreenStartCleanupCardVerticalPadding = 8.0;
+  static const double homeScreenStartCleanupButtonWidth = 200.0;
+  static const double homeScreenStartCleanupButtonHeight = 40.0;
+  static const double homeScreenStartCleanupButtonFontSize = 14.0;
+  static const double homeScreenStartCleanupCardSpacing = 8.0;
+  static const double homeScreenHighlightCarouselHeight = 210.0;
+  static const double homeScreenHighlightCarouselSpacing = 12.0;
+  static const double homeScreenHighlightCardRadius = 28.0;
+  static const double homeScreenHighlightCardWidth = 316.0;
+  static const double homeScreenHighlightCardHeight = 205.0;
+  static const double homeScreenHighlightCardSpacing = 12.0;
+  static const double homeScreenBlogCardRadius = 10.0;
+  static const double homeScreenBlogCardIconSize = 24.0;
+  static const double homeScreenBlogCardHeight = 56.0;
+  static const double homeScreenBlogCardHorizontalPadding = 16.0;
+  static const double homeScreenBlogCardSpacing = 16.0;
+  static const double homeScreenBottomGraphicHeight = 293.0;
+  // Cleanup screen specific dimensions (kept separate so other screens don't change)
+  static const double cleanupTopImageHeight = 287.0;
+  static const double cleanupCleanImageHeight = 100.0;
+  static const double cleanupHeaderBackLeft = 15.0;
+  static const double cleanupHeaderBackTopInset = 16.0;
+  static const double cleanupSubtitleHorizontalPadding = 49.0;
+  static const double cleanupSectionsHorizontalPadding = 40.0;
+  static const double cleanupSectionWidth = 360.0;
+  static const double cleanupSectionRadius = 10.0;
+  static const double cleanupSectionShadowOffsetX = 2.0;
+  static const double cleanupSectionShadowOffsetY = 2.0;
+  static const double cleanupSectionShadowBlur = 4.0;
+  static const double cleanupCollapsedHeight = 56.0;
+  static const double cleanupFooterHorizontalPadding = 74.0;
+  static const double cleanupFooterBottomExtra = 20.0;
+  static const double cleanupCancelButtonHeight = 48.0;
+  static const double cleanupCancelButtonRadius = 6.0;
+  static const double cleanupCancelButtonVerticalPadding = 10.0;
+  static const double cleanupCancelButtonHorizontalPadding = 16.0;
+  static const double cleanupFooterExtraSpacing = 200.0;
+  static const double cleanupSectionGapLarge = 32.0;
+  static const double cleanupSpacing20 = 20.0;
+  static const double cleanupSpacing16 = 20.0;
+  static const double cleanupSpacing4 = 4.0;
+  static const double cleanupSpacing12 = 12.0;
+  static const double cleanupSpacing24 = 24.0;
+  static const double cleanupSpacing6 = 6.0;
+  static const double cleanupContentPadding = 16.0;
+  // Cleanup - category dropdown specific dimensions
+  static const double cleanupCategoryItemVerticalPadding = 4.0;
+  static const double cleanupCategoryItemHorizontalPadding = 12.0;
+  static const double cleanupCategoryBorderRadius = 6.0;
+  static const double cleanupCategoryCounterHeight = 28.0;
+  static const double cleanupCategoryCounterWidth = 34.0;
+  static const double cleanupCategorySpacing = 6.0;
+  // Home News Card dimensions
+  static const double newsCardImageHeight = 128.0;
+  static const double newsCardTextSectionHeight = 78.0;
+  static const double newsCardRadius = 30.0;
+  static const double newsCardWidth = 324.0;
+  static const double newsCardHorizontalPadding = 16.0;
+  static const double newsCardVerticalPadding = 13.0;
   static const double zero = 0.0;
   static const double one = 1.0;
   // Padding & Margins
@@ -82,6 +163,53 @@ class AppDimensions {
   static const double circularLoaderGap = 4.5;
   static const double circularLoaderSize = 40.0;
   static const double circularLoaderStrokeWidth = 4.0;
+  // Stroke width for small/compact loaders
+  static const double smallLoaderStrokeWidth = 2.0;
+  // Small loader used in snackbars and compact indicators
+  static const double smallLoaderSize = 20.0;
+  // Small horizontal gap used in snackbars
+  static const double snackBarGapSmall = 16.0;
+  // Shimmer / skeleton animation defaults
+  static const int shimmerDurationMs = 1500;
+  static const double shimmerBaseAlpha = 0.5;
+  static const double shimmerRangeAlpha = 0.5;
+  // Small utility sizes used by several compact controls
+  static const double smallIconSize = 20.0;
+  static const double smallFontSize = 12.0;
+  static const double mediumFontSize = 15.0;
+  static const double smallButtonHorizontalPadding = 20.0;
+  static const double smallButtonVerticalPadding = 14.0;
+  static const double smallButtonRadius = 6.0;
+  // Debounce for place/map search in milliseconds
+  static const int placeSearchDebounceMs = 800;
+  // Map preview height used in BasicInformationSection
+  static const double mapPreviewHeight = 300.0;
+
+  // Cleanup - category / trash collected helper dimensions
+  static const double cleanupCategoryTileRadius = 8.0;
+  // Standard border widths used in cleanup category tiles and controls
+  static const double cleanupCategoryBorderWidth = 1.0;
+  static const double cleanupCategoryControlBorderWidth = 2.0;
+  static const double cleanupCategoryItemRadius = 12.0;
+  static const double cleanupCategoryItemInnerVerticalPadding = 8.0;
+  static const double cleanupCategoryHeaderVerticalPadding = 1.0;
+  static const double cleanupCategoryHeaderHorizontalPadding = 12.0;
+  static const double cleanupCategoryItemBottomSpacing = 8.0;
+  static const double cleanupCategoryControlHeight = 40.0;
+  static const double cleanupCategoryControlButtonSize = 32.0;
+  static const double cleanupCategoryControlCountWidth = 40.0;
+  static const double cleanupCategorySmallGap = 3.0;
+  static const double cleanupCategoryControlBorderRadius = 15.0;
+  // Per-component font/icon sizing for cleanup category controls
+  static const double cleanupCategoryItemFontSize = 15.0;
+  static const double cleanupCategoryIconSize = 14.0;
+  static const double cleanupCategoryCounterFontSize = 13.0;
+  // Small loader used in snackbars and compact indicators (alternate size)
+  static const double cleanupSmallLoaderSize = 24.0;
+  // Font size used in the count display inside category controls
+  static const double cleanupCategoryControlCountFontSize = 16.0;
+  // Icon size used inside category controls when a larger icon is appropriate
+  static const double cleanupCategoryIconLargeSize = 20.0;
   // Navigation bar sizing
   static const double navBarHeight = 64.0;
   static const double navBarHorizontalPadding = 24.0;
@@ -130,6 +258,11 @@ class AppDimensions {
   static const double profileTopBackgroundHeightFactor = 0.30;
   static const double profileBottomBackgroundHeightFactor = 0.38;
 
+  // Login / Auth screen reference widths and scale limits
+  static const double loginReferenceWidth = 440.0;
+  static const double authScaleMin = 0.8;
+  static const double authScaleMax = 1.25;
+
   // Auth header reference sizes (base measurements, scaled in widget)
   static const double authHeaderBaseWidth = 295.0;
   static const double authHeaderBaseHeight = 127.0;
@@ -173,11 +306,43 @@ class AppDimensions {
   static const double dialogTitleLineHeight = 40.0;
   static const double dialogBodyFontSize = 16.0;
   static const double dialogBodyLineHeight = 22.0;
+  // Dialog action (button) line-height
+  static const double dialogActionLineHeight = 20.0;
   static const double dialogTitleLetterSpacing = 0.1;
   static const double dialogBodyLetterSpacing = 0.1;
   static const double dialogButtonLetterSpacing = 0.1;
   // Dialog hero
   static const double dialogHeroSize = 80.0;
+  // Date picker specific dimensions
+  static const double datePickerWidth = 360.0;
+  static const double datePickerBorderRadius = 16.0;
+  static const double datePickerHeaderHeight = 64.0;
+  static const double datePickerHorizontalPadding = 12.0;
+  static const double datePickerVerticalPadding = 4.0;
+  static const double datePickerDaySize = 40.0;
+  static const double datePickerMenuMaxHeight = 240.0;
+  static const double datePickerMenuItemHeight = 48.0;
+  static const double datePickerMenuVerticalPadding = 10.0;
+  static const double datePickerMenuFontSize = 14.0;
+  // Date picker helper dimensions for menu positioning and buttons
+  static const double datePickerMenuOffsetX1 = 20.0;
+  static const double datePickerMenuOffsetY1 = 50.0;
+  static const double datePickerMenuOffsetX2 = 170.0;
+  static const double datePickerMenuOffsetY2 = 90.0;
+  static const double datePickerMenuOffsetYearX1 = 180.0;
+  static const double datePickerMenuOffsetYearRight = 280.0;
+  static const double datePickerTextButtonHeight = 40.0;
+  static const double datePickerTextButtonHorizontalPadding = 16.0;
+  static const double datePickerTextButtonVerticalPadding = 10.0;
+  // Small gap inside date picker (used for tight vertical spacing)
+  static const double datePickerSmallGap = 4.0;
+  // Icon container size used in date picker header (tap targets)
+  static const double datePickerHeaderIconContainerSize = 48.0;
+  // Icon size used beside month/year labels in date picker
+  static const double datePickerMenuIconSize = 18.0;
+  static const double datePickerDayFontSize = 16.0;
+  static const double datePickerButtonHeight = 56.0;
+  static const double datePickerHeaderIconSize = 24.0;
   // Email verification screen - large icon size
   static const double emailVerificationIconSize = 100.0;
   static const double emailVerificationIconWidth = 209.0;
@@ -214,14 +379,28 @@ class AppDimensions {
   static const double avatarCropToolbarHeight = 56.0;
   static const double avatarCropHelpTextSize = 13.0;
   static const double avatarCropHelpTextPadding = 16.0;
+  // Avatar crop painter and layout helpers
+  static const double avatarCropCornerSize = 24.0;
+  static const double avatarCropCornerThickness = 4.0;
+  static const double avatarCropCircleStrokeWidth = 3.0;
+  // Full-image overlay (profile avatar preview) constants
+  static const double fullImageOverlayMaxViewportFactor = 0.9;
+  static const double fullImageOverlayMinScale = 0.5;
+  static const double fullImageOverlayMaxScale = 4.0;
+  static const double fullImageOverlayErrorIconSize = 64.0;
   // Typography-specific sizes used in a few screens
   static const double heading2FontSize = 28.0;
   static const double subtitleFontSize = 16.0;
+  // Profile-specific font sizes
+  static const double profileNameFontSize = 22.0;
   static const double linkFontSize = 13.0;
   // Input-related font sizes
   static const double inputFontSize = 16.0;
   static const double floatingLabelFontSize = 13.0;
   static const double supportTextFontSize = 13.0;
+  // Input line-height and content padding
+  static const double inputLineHeight = 22.0;
+  static const double inputContentVerticalPadding = 12.0;
   // Country selector / small controls
   static const double flagEmojiSize = 22.0;
   static const double selectorIconSize = 20.0;
@@ -234,6 +413,18 @@ class AppDimensions {
   static const double dialogDecorativeBgOpacity = 0.27; // subtle overlay
   // Common icon sizes
   static const double iconBackSize = 40.0;
+
+  // Avatar cropper / cropper widget dimensions
+  static const double cropperGesturePadding = 24.0;
+  static const double cropperRotateIconSize = 28.0;
+  static const double cropperControlsHorizontalPadding = 32.0;
+  static const double cropperButtonFontSize = 16.0;
+  static const double cropperCornerSize = 24.0;
+  static const double cropperCornerThickness = 4.0;
+  static const double cropperBorderStrokeWidth = 2.0;
+  static const double cropperGridStrokeWidth = 1.0;
+  static const double cropperCircleStrokeWidth = 3.0;
+  // (avatar-specific constants are defined separately above)
 
   // City selector dropdown constants
   static const double citySelectorMaxWidth = 300.0;
@@ -249,6 +440,10 @@ class AppDimensions {
   static const double citySelectorTextSize = 18.0;
   static const double citySelectorTextLineHeight = 20.0;
   static const double citySelectorTextLetterSpacing = 0.1;
+  // Additional city selector helper sizes
+  static const double citySelectorRightPadding = 48.0;
+  static const double floatingLabelLineHeight = 16.0;
+  static const double supportTextLineHeight = 16.0;
   // Material Design 3 shadow values
   static const double citySelectorShadowBlurSmall = 2.0;
   static const double citySelectorShadowBlurLarge = 6.0;
@@ -265,9 +460,24 @@ class AppDimensions {
   static const double changePasswordTopSpacing = 0.04;
   static const double changePasswordIconSize = 0.175;
   static const double changePasswordHalfInputSpacing = 0.01;
+  // Multiplier used to scale the top padding on the change password screen
+  static const double changePasswordTopPaddingFactor = 0.6;
   static const double changePasswordInputSpacing = 20.0;
   static const double confirmTitleTopSpacing = 0.18;
 
+  static const double dashboardAvatarSize = 72.0;
+  static const double homeScreenStatsGap = 16.0;
+  static const double homeScreenCarouselGap = 24.0;
+  static const double homeScreenButtonGap = 32.0;
+  static const double homeScreenBottomGap = 140.0;
+  static const double homeScreenSpacer = 12.0;
+
+  static const double locationFieldHeight = 22.0;
+  static const double locationFieldLoaderPadding = 12.0;
+  static const double locationFieldLoaderDimensions = 16.0;
+  static const double locationFieldLoaderIconSize = 20.0;
+  static const double locationFieldTextSize = 16.0;
+  static const double locationFieldErrorPadding = 4.0;
   // Prevent instantiation
   AppDimensions._();
 }

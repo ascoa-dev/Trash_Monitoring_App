@@ -53,8 +53,8 @@ class FullImageOverlay extends StatelessWidget {
                 child: Hero(
                   tag: 'avatar_$imageUrl',
                   child: InteractiveViewer(
-                    minScale: 0.5,
-                    maxScale: 4.0,
+                    minScale: AppDimensions.fullImageOverlayMinScale,
+                    maxScale: AppDimensions.fullImageOverlayMaxScale,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(
                         SizeUtils.r(
@@ -64,8 +64,12 @@ class FullImageOverlay extends StatelessWidget {
                       ),
                       child: Container(
                         constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.9,
-                          maxHeight: MediaQuery.of(context).size.height * 0.9,
+                          maxWidth:
+                              MediaQuery.of(context).size.width *
+                              AppDimensions.fullImageOverlayMaxViewportFactor,
+                          maxHeight:
+                              MediaQuery.of(context).size.height *
+                              AppDimensions.fullImageOverlayMaxViewportFactor,
                         ),
                         child: CachedNetworkImage(
                           imageUrl: imageUrl,
@@ -85,10 +89,13 @@ class FullImageOverlay extends StatelessWidget {
                                 fit: BoxFit.contain,
                               );
                             }
-                            return const Icon(
+                            return Icon(
                               Icons.error_outline,
                               color: AppColors.primary,
-                              size: 64,
+                              size: SizeUtils.r(
+                                context,
+                                AppDimensions.fullImageOverlayErrorIconSize,
+                              ),
                             );
                           },
                         ),

@@ -8,5 +8,6 @@ abstract class AppRoutes {
   static const changePassword = '/change-password';
   static const emailVerification = '/email-verification';
   static const resetPassword = '/reset-password';
+  static const newCleanUp = '/new-cleanup';
   // Add more routes as needed
 }

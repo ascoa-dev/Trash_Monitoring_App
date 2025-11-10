@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ascoa_app/modules/start_cleanup/views/new_cleanup_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croppy/croppy.dart' as croppy;
 import 'package:flutter/foundation.dart';
@@ -25,9 +26,11 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'modules/profile/views/change_password_screen.dart';
 import 'modules/profile/bindings/change_password_binding.dart';
 import 'modules/auth/bindings/reset_password_binding.dart';
+import 'modules/start_cleanup/bindings/cleanup_form_binding.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'app/models/city_model.dart';
 import 'app/models/cities_config.dart';
+import 'app/models/post.dart';
 import 'shared/services/cities_service.dart';
 import 'shared/controllers/cities_controller.dart';
 import 'package:app_links/app_links.dart';
@@ -43,6 +46,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(CityAdapter());
   Hive.registerAdapter(CitiesConfigAdapter());
+  Hive.registerAdapter(PostAdapter());
   // Register AuthController globally and permanently
   await GoogleSignIn.instance.initialize();
   Get.put(AuthController(), permanent: true);
@@ -204,6 +208,11 @@ class MyApp extends StatelessWidget {
             GetPage(
               name: AppRoutes.emailVerification,
               page: () => EmailVerificationScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.newCleanUp,
+              page: () => const NewCleanUpScreen(),
+              bindings: [CleanupFormBinding()],
             ),
             // Add more GetPages for other routes
           ],

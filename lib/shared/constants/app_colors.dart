@@ -56,6 +56,11 @@ class AppColors {
     0xB3000000,
   ); // legacy muted black (design-provided hex)
   static const Color black87 = Color(0xDD000000); // legacy alias
+  static const Color black54 = Color(0x8A000000); // 54% black for muted text
+  static const Color blackWithOpacity15 = Color(
+    0x26000000,
+  ); // 15% black for subtle shadows
+
   // Divider Colors
   static const Color divider = Color(
     0xFF357187,
@@ -73,6 +78,14 @@ class AppColors {
     0xFF448AFF,
   ); // matches Colors.blueAccent
 
+  // Skeleton / placeholder greys used for loading states
+  static const Color skeletonBase = Color(0xFFB4D17B);
+  static const Color skeletonHighlight = Color(0xFF789E71);
+  static const Color skeletonShade = Color(0xFFD0D0D0);
+
+  // Card background alias (used by dashboard/home cards)
+  static const Color cardBackground = loaderTrack;
+
   // Utility colors used in multiple widgets
   static const Color transparent = Color(0x00000000); // fully transparent
   // Shadow color matching Flutter's Colors.black26
@@ -83,6 +96,39 @@ class AppColors {
   // Error Colors
   static const Color error = Color(0xFFFBB825); // Error / validation red
 
+  // Snackbar / Feedback Colors
+  static const Color success = Color(
+    0xFF4CAF50,
+  ); // Success green (Material green)
+  static const Color errorRed = Color(0xFFF44336); // Error red (Material red)
+  static const Color info = Color(0xFF2196F3); // Info blue (Material blue)
+  static const Color warning = Color(
+    0xFFFF9800,
+  ); // Warning orange (Material orange)
+
+  // Date picker colors
+  static const Color datePickerPrimary = Color(
+    0xFF18333D,
+  ); // Dark teal text/icon color
+  static const Color datePickerPrimaryDisabled30 = Color(
+    0x4D18333D,
+  ); // 30% opacity disabled state
+  static const Color datePickerPrimaryDisabled38 = Color(
+    0x6118333D,
+  ); // 38% opacity disabled state
+  static const Color datePickerSelected = Color(
+    0xFF419310,
+  ); // Green selection color
+
+  // Additional opacity variants for common uses
+  static const Color blackWithOpacity10 = Color(
+    0x1A000000,
+  ); // 10% black for subtle shadows
+  static const Color blackWithOpacity20 = Color(0x33000000); // 20% black
+  static const Color textHintWithOpacity20 = Color(
+    0x337E8389,
+  ); // textHint with 20% opacity for borders
+
   // Dialog background used by AppDialog (kept as design-provided hex)
   static const Color dialogBackground = Color(0xFFC7E0B0);
 
@@ -92,7 +138,15 @@ class AppColors {
   // Circular loader colors
   static const Color loaderTrack = Color(0xFFB4D17B); // light green track
   static const Color loaderActive = Color(0xFF658638); // dark green active arc
+  static const Color newsCardPlaceholder = Color(0xFFEFEFEF);
 
+  // Additional greys matching Flutter's material grey shades used across widgets
+  static const Color grey300 = Color(0xFFE0E0E0);
+  static const Color grey400 = Color(0xFFBDBDBD);
+
+  // Cleanup / small component helpers
+  static const Color cleanupCounterBg = Color(0xFFDCE9CB);
+  static const Color cleanupCounterIcon = Color(0xFF5E7D3A);
   // Prevent instantiation
   AppColors._();
 }

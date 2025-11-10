@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/modules/home/views/home_screen.dart';
+import 'package:ascoa_app/modules/home/bindings/home_binding.dart';
 import 'package:ascoa_app/modules/news/views/news_screen.dart';
 import 'package:ascoa_app/modules/profile/views/profile_screen.dart';
 import 'package:ascoa_app/modules/stats/views/stats_screen.dart';
-import 'package:ascoa_app/modules/add_report/views/add_report_screen.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/widgets/nav_bar.dart';
+import 'package:ascoa_app/app/routes/app_routes.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,6 +25,10 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Initialize home binding for lazy controller loading
+    HomeBinding().dependencies();
+
     final args = Get.arguments;
     if (args is Map) {
       final initialTab = args['initialTab'];
@@ -96,6 +101,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _openAddReport() {
-    Get.to(() => const AddReportScreen());
+    Get.toNamed(AppRoutes.newCleanUp);
   }
 }

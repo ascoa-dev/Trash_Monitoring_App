@@ -16,6 +16,7 @@ class UserModel {
   final DateTime? updatedAt;
   final String? photoURL;
   final String signUpMethod;
+  final List<String> cleanups; // Array of cleanup document IDs
 
   UserModel({
     required this.uid,
@@ -33,6 +34,7 @@ class UserModel {
     this.updatedAt,
     this.photoURL,
     required this.signUpMethod,
+    this.cleanups = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -52,6 +54,7 @@ class UserModel {
       'updatedAt': updatedAt?.toIso8601String(),
       'photoURL': photoURL,
       'signUpMethod': signUpMethod,
+      'cleanups': cleanups,
     };
   }
 
@@ -90,6 +93,7 @@ class UserModel {
         map['updatedAt'] != null ? parseDate(map['updatedAt']) : null;
     final signUpMethod = (map['signUpMethod'] as String?) ?? '';
     final photoURL = (map['photoURL'] as String?);
+    final cleanups = (map['cleanups'] as List<dynamic>?)?.cast<String>() ?? [];
 
     return UserModel(
       uid: uid,
@@ -107,6 +111,7 @@ class UserModel {
       updatedAt: updatedAt,
       photoURL: photoURL,
       signUpMethod: signUpMethod,
+      cleanups: cleanups,
     );
   }
 }

@@ -13,14 +13,14 @@ class AppTextStyles {
   static TextStyle heading1(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w800,
-    fontSize: SizeUtils.h(context, 57),
+    fontSize: SizeUtils.h(context, AppTypography.heading1FontSize),
     color: AppColors.textDark, // Primary heading color (dark slate)
   );
 
   static TextStyle heading2(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w600,
-    fontSize: SizeUtils.h(context, 32),
+    fontSize: SizeUtils.h(context, AppTypography.heading2FontSize),
     color: AppColors.textDark, // Primary heading color (dark slate)
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -28,7 +28,7 @@ class AppTextStyles {
   static TextStyle profileHeading(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w700,
-    fontSize: SizeUtils.h(context, 28),
+    fontSize: SizeUtils.h(context, AppTypography.profileHeadingFontSize),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -36,7 +36,7 @@ class AppTextStyles {
   static TextStyle profileName(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w700,
-    fontSize: SizeUtils.h(context, 22),
+    fontSize: SizeUtils.h(context, AppTypography.profileNameFontSize),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -44,7 +44,7 @@ class AppTextStyles {
   static TextStyle profileCaption(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w800,
-    fontSize: SizeUtils.h(context, 13),
+    fontSize: SizeUtils.h(context, AppTypography.profileCaptionFontSize),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -52,7 +52,7 @@ class AppTextStyles {
   static TextStyle profileActionTitle(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, AppTypography.profileActionTitleFontSize),
     color: AppColors.textDark,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -60,7 +60,7 @@ class AppTextStyles {
   static TextStyle profileActionSubtitle(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 14),
+    fontSize: SizeUtils.h(context, AppTypography.profileActionSubtitleFontSize),
     color: AppColors.textDark65,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -68,7 +68,7 @@ class AppTextStyles {
   static TextStyle profileSignOutText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, AppTypography.profileSignOutFontSize),
     color: AppColors.textWhite,
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -76,7 +76,7 @@ class AppTextStyles {
   // Label Styles
   static TextStyle label(BuildContext context) => TextStyle(
     fontFamily: rubik,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, AppTypography.labelFontSize),
     color: AppColors.textAccent, // Label / input label color
   );
 
@@ -84,14 +84,17 @@ class AppTextStyles {
   static TextStyle body(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 14), // Updated to match Figma
+    fontSize: SizeUtils.h(
+      context,
+      AppTypography.bodyFontSize,
+    ), // Updated to match Figma
     color: AppColors.textDark, // Primary body text color
   );
 
   static TextStyle bodySecondary(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 14),
+    fontSize: SizeUtils.h(context, AppTypography.bodyFontSize),
     color: AppColors.textDark, // Secondary body text color
     letterSpacing: AppTypography.letterSpacingSmall,
   );
@@ -100,7 +103,7 @@ class AppTextStyles {
   static TextStyle buttonLink(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w800, // Updated to match Figma
-    fontSize: SizeUtils.h(context, 14),
+    fontSize: SizeUtils.h(context, AppTypography.buttonLinkFontSize),
     color: AppColors.textDark,
     decoration: TextDecoration.underline,
     decorationThickness: 1.0,
@@ -112,7 +115,7 @@ class AppTextStyles {
   static TextStyle dividerText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w500,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, AppTypography.dividerTextFontSize),
     color: AppColors.textDark, // Divider text color (e.g., "OR")
   );
 
@@ -120,7 +123,7 @@ class AppTextStyles {
   static TextStyle termsBase(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 14),
+    fontSize: SizeUtils.h(context, AppTypography.termsBaseFontSize),
     color: AppColors.textDark, // Terms and legal text color
     height: AppTypography.lineHeightLong, // 160% line height
   );
@@ -135,7 +138,7 @@ class AppTextStyles {
   static TextStyle errorText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w400,
-    fontSize: SizeUtils.h(context, 12),
+    fontSize: SizeUtils.h(context, AppTypography.errorTextFontSize),
     color: AppColors.error, // Error color for inline validation messages
   );
 
@@ -143,7 +146,7 @@ class AppTextStyles {
   static TextStyle buttonPrimaryText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w900,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, AppTypography.buttonPrimaryFontSize),
     color: AppColors.pureWhite,
     letterSpacing: AppTypography.letterSpacingButtonPrimary,
   );
@@ -152,16 +155,171 @@ class AppTextStyles {
   static TextStyle buttonSocialText(BuildContext context) => TextStyle(
     fontFamily: rubik,
     fontWeight: FontWeight.w700,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, AppTypography.buttonSocialFontSize),
     color: AppColors.buttonText,
   );
 
   // Input hint text style
   static TextStyle inputHint(BuildContext context) => TextStyle(
     fontFamily: rubik,
-    fontSize: SizeUtils.h(context, 16),
+    fontSize: SizeUtils.h(context, AppTypography.inputHintFontSize),
     color: AppColors.textHint,
   );
+
+  static TextStyle cleanUpSubtitle(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w300,
+    fontStyle: FontStyle.italic,
+    fontSize: SizeUtils.h(context, AppTypography.cleanUpSubtitleFontSize),
+    color: AppColors.textAccent,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle dashboardHeading(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w500,
+    fontSize: SizeUtils.h(context, AppTypography.dashboardHeadingFontSize),
+    color: AppColors.textDark, // Primary heading color (dark slate)
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle dashboardGreeting(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w500,
+    fontSize: SizeUtils.h(context, 22),
+    color: AppColors.background, // Primary heading color (dark slate)
+    letterSpacing: AppTypography.homeTextLetterSpacing,
+  );
+
+  static TextStyle newsCaption(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w800,
+    decoration: TextDecoration.underline,
+    fontSize: SizeUtils.h(context, AppTypography.newsCaptionFontSize),
+    color: AppColors.textDark,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle newsBody(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w400,
+    fontSize: SizeUtils.h(context, AppTypography.newsBodyFontSize),
+    color: AppColors.textDark65,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle blogText(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w600,
+    fontSize: SizeUtils.h(context, AppTypography.blogTextFontSize),
+    color: AppColors.textDark,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle cleanUpSectionTitle(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w700,
+    fontSize: SizeUtils.h(context, AppTypography.cleanUpSectionTitleFontSize),
+    color: AppColors.textDark,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle cleanUpSectionSubtitle(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w600,
+    fontSize: SizeUtils.h(
+      context,
+      AppTypography.cleanUpSectionSubtitleFontSize,
+    ),
+    color: AppColors.textDark,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  // Date Picker specific styles
+  static TextStyle datePickerMenuItem(BuildContext context) => TextStyle(
+    fontFamily: roboto,
+    fontWeight: FontWeight.w500,
+    fontSize: SizeUtils.h(context, AppTypography.datePickerMenuItemFontSize),
+    color: AppColors.datePickerPrimary,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle datePickerDay(BuildContext context) => TextStyle(
+    fontFamily: roboto,
+    fontWeight: FontWeight.w400,
+    fontSize: SizeUtils.h(context, AppTypography.datePickerDayFontSize),
+    color: AppColors.datePickerPrimary,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle datePickerButton(BuildContext context) => TextStyle(
+    fontFamily: roboto,
+    fontWeight: FontWeight.w500,
+    fontSize: SizeUtils.h(context, AppTypography.datePickerButtonFontSize),
+    color: AppColors.buttonGreen,
+  );
+
+  static TextStyle cleanUpOptionsCollapsed(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w500,
+    fontSize: SizeUtils.h(context, 16),
+    color: AppColors.textDark,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle cleanUpOptionsExpanded(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w400,
+    fontSize: SizeUtils.h(context, 16),
+    color: AppColors.background,
+    letterSpacing: AppTypography.letterSpacingSmall,
+  );
+
+  static TextStyle saveCleanUpText(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w800,
+    fontSize: SizeUtils.h(context, 16),
+    color: AppColors.pureWhite,
+    letterSpacing: AppTypography.letterSpacingButtonPrimary,
+  );
+
+  static TextStyle cancelCleanUpText(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w800,
+    fontSize: SizeUtils.h(context, 16),
+    color: AppColors.textDark65,
+    letterSpacing: AppTypography.letterSpacingButtonPrimary,
+  );
+
+  static TextStyle trashCollectionLabel(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w400,
+    fontSize: SizeUtils.h(context, 16),
+    color: AppColors.textDark,
+  );
+
+  static TextStyle trashCollectionEnvironment(BuildContext context) =>
+      TextStyle(
+        fontFamily: rubik,
+        fontWeight: FontWeight.w400,
+        fontSize: SizeUtils.h(context, 14),
+        color: AppColors.textAccent,
+      );
+
+  static TextStyle trashCollectionSubtitle(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w400,
+    fontSize: SizeUtils.h(context, 13),
+    color: AppColors.textAccent,
+  );
+
+  static TextStyle trashCollectionDropdownCategory(BuildContext context) =>
+      TextStyle(
+        fontFamily: rubik,
+        fontWeight: FontWeight.w400,
+        fontSize: SizeUtils.h(context, 14),
+        color: AppColors.textDark,
+      );
 
   // Prevent instantiation
   AppTextStyles._();

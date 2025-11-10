@@ -258,7 +258,10 @@ class AppDialog extends StatelessWidget {
                                 backgroundColor: AppColors.buttonGreen,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                    SizeUtils.r(context, 6),
+                                    SizeUtils.r(
+                                      context,
+                                      AppDimensions.smallButtonRadius,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -272,8 +275,14 @@ class AppDialog extends StatelessWidget {
                                     AppDimensions.dialogActionFontSize,
                                   ),
                                   height:
-                                      SizeUtils.h(context, 20) /
-                                      SizeUtils.h(context, 14),
+                                      SizeUtils.h(
+                                        context,
+                                        AppDimensions.dialogActionLineHeight,
+                                      ) /
+                                      SizeUtils.h(
+                                        context,
+                                        AppDimensions.dialogActionFontSize,
+                                      ),
                                   color: AppColors.pureWhite,
                                   letterSpacing:
                                       AppTypography.letterSpacingSmall,

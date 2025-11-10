@@ -115,16 +115,21 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
     final controller = _controller!;
 
     return Padding(
-      padding: EdgeInsets.all(SizeUtils.h(context, 24)),
+      padding: EdgeInsets.all(
+        SizeUtils.h(context, AppDimensions.avatarCropPadding),
+      ),
       child: AnimatedCroppableImageViewport(
         controller: controller,
-        gesturePadding: SizeUtils.h(context, 24),
+        gesturePadding: SizeUtils.h(context, AppDimensions.avatarCropPadding),
         overlayOpacityAnimation: const AlwaysStoppedAnimation(1.0),
         shouldLightenOnTransform: false,
         cropHandlesBuilder:
             (context) => _AvatarImageCropperHandles(
               controller: controller,
-              gesturePadding: SizeUtils.h(context, 24),
+              gesturePadding: SizeUtils.h(
+                context,
+                AppDimensions.avatarCropPadding,
+              ),
             ),
       ),
     );
@@ -133,10 +138,12 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
   Widget _buildControls(BuildContext context) {
     final TextStyle buttonStyle = AppTextStyles.buttonPrimaryText(
       context,
-    ).copyWith(fontSize: SizeUtils.h(context, 16));
+    ).copyWith(
+      fontSize: SizeUtils.h(context, AppDimensions.dialogBodyFontSize),
+    );
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: SizeUtils.w(context, 32),
+        horizontal: SizeUtils.w(context, AppDimensions.avatarCropPadding * 1.0),
         vertical: SizeUtils.h(context, AppDimensions.smallSpacing),
       ),
       child: Row(
@@ -156,7 +163,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
             icon: Icon(
               Icons.rotate_right,
               color: AppColors.primary,
-              size: SizeUtils.r(context, 28),
+              size: SizeUtils.r(context, AppDimensions.avatarEditButtonSize),
             ),
             tooltip: _isFrench ? 'Pivoter' : 'Rotate',
           ),
@@ -340,14 +347,14 @@ class _AvatarHandlesPainter extends CustomPainter {
     final Paint borderPaint =
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.0
+          ..strokeWidth = AppDimensions.avatarCropLineWidth
           ..color = AppColors.primary;
     canvas.drawPath(path, borderPaint);
 
     final Paint gridPaint =
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0
+          ..strokeWidth = AppDimensions.one
           ..color = AppColors.pureWhite.withAlpha((0.4 * 255).round());
     canvas.drawLine(
       Offset(cropRect.left + cropRect.width / 3, cropRect.top),
@@ -374,8 +381,8 @@ class _AvatarHandlesPainter extends CustomPainter {
         Paint()
           ..color = AppColors.primary
           ..style = PaintingStyle.fill;
-    const double cornerSize = 24.0;
-    const double cornerThickness = 4.0;
+    const double cornerSize = AppDimensions.avatarCropCornerSize;
+    const double cornerThickness = AppDimensions.avatarCropCornerThickness;
 
     void drawCorner(double left, double top, bool right, bool bottom) {
       final double cornerLeft = right ? left - cornerSize : left;
@@ -404,7 +411,7 @@ class _AvatarHandlesPainter extends CustomPainter {
     final Paint circlePaint =
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3.0
+          ..strokeWidth = AppDimensions.avatarCropCircleStrokeWidth
           ..color = AppColors.buttonGreen;
     canvas.drawOval(circleRect, circlePaint);
   }

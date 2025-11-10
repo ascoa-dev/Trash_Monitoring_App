@@ -286,6 +286,13 @@ class AppStrings {
   static const String profileContactSubtitle = "Contact Us for support";
   static const String profileSignOut = "Sign Out";
 
+  // Common short actions
+  static const String cancel = "Cancel";
+  static const String ok = "OK";
+  static const String retry = "Retry";
+  static const String failedToLoadNews = "Failed to load news";
+  static const String noNewsFound = "No news found";
+
   // Email verification
   static const String emailVerificationTitle = "Verify email";
   static const String emailVerificationTitleFrench = "Vérifier l'email";
@@ -364,6 +371,127 @@ class AppStrings {
   // Auth header texts
   static const String authHeaderTitle = 'Clean Earth';
   static const String authHeaderBy = 'by';
+
+  // Dashboard Texts
+  static const String startNewCleanup = "START NEW CLEANUP";
+  static const String highlights = "Highlights";
+  static const String news = "News";
+  static const String moreNews = "More News";
+  static const String blog = "Learn More in the ASCOA Blog";
+  static const String newslink = "https://ascoa-cm.org/news/";
+  static const String couldNotOpenNewsLink =
+      "Could not open the link. Please try again later.";
+  static const String comingSoon = "Coming Soon";
+  static const String comingSoonMessage =
+      "The ASCOA blog will be available in a future update.";
+
+  //CleanUp Screen Texts
+  static const String newCleanUp = "New Clean Up";
+  static const String fillInformation =
+      "Please fill all the information for your clean up.\nExpand each section to complete the fields.";
+  static const String basicInformation = "Basic Information";
+  static const String trashCollected = "Trash Collected";
+  static const String photosVideosOptional = "Photos & Videos (Optional)";
+  static const String saveCleanUp = "SAVE CLEAN UP";
+  static const String cancelCleanUp = "CANCEL";
+  static const String cleanUpSavedSuccess =
+      "Your clean up has been saved successfully!";
+  // Dialog shown after successful cleanup submission
+  static const String cleanUpSavedDialogTitle = "Clean Up Saved";
+  static const String cleanUpSavedDialogSubtitle =
+      "You can view your clean up in reports.";
+  static const String cleanUpSavedDialogButton = "Go Home";
+
+  // Dialog/button labels for confirmations
+  static const String continueButton = "Continue";
+
+  // Change password success dialog
+  static const String changePasswordSuccessDialogTitle =
+      "Password Updated Successfully";
+  static const String changePasswordSuccessDialogButton = "Continue";
+  static const String changePasswordSuccessDialogTitleFrench =
+      "Mot de passe mis à jour avec succès";
+  static const String changePasswordSuccessDialogButtonFrench = "Continuer";
+
+  // Edit profile success dialog
+  static const String editProfileSuccessDialogTitle =
+      "Profile Updated successfully";
+  static const String editProfileSuccessDialogButton = "Continue";
+  static const String editProfileSuccessDialogTitleFrench =
+      "Profil mis à jour avec succès";
+  static const String editProfileSuccessDialogButtonFrench = "Continuer";
+
+  //Basic Information Section Texts
+  static const String numberOfPeopleLabel = "Number of people *";
+  static const String totalParticipants = "Total participants.";
+  static const String groupNameLabel = "Group Name *";
+  static const String dateLabel = "Date *";
+  static const String locationLabel = "Location *";
+
+  // Trash Collected Section Texts
+  static const String environmentLabel = "Environment *";
+  static const String categoriesLabel = "Categories *";
+
+  static const List<String> environments = [
+    'Inland',
+    'Freshwater',
+    'Saltwater',
+  ];
+
+  static const String categoriesSubtitle =
+      "Select at least one item from one category";
+
+  // Cleanup Form Validation Messages
+  static const String pleaseFixFormErrors = "Please fix the errors in the form";
+  static const String mustBeLoggedIn =
+      "You must be logged in to submit a cleanup";
+  static const String submittingCleanup = "Submitting cleanup...";
+  static const String cleanupSubmittedSuccess =
+      "Cleanup submitted successfully!";
+  static const String cleanupSubmitFailed =
+      "Failed to submit cleanup. Please try again.";
+  static const String fixErrorsBeforeClosing =
+      "Please fix all errors before closing this section";
+  static const String fixErrorsBeforeProceeding =
+      "Please fix the errors in the current section before proceeding";
+  static const String photosVideosPlaceholder =
+      "Photos and videos upload fields go here...";
+
+  // Location Messages
+  static const String enableLocationServices =
+      "Please enable location services in your device settings";
+  static const String locationPermissionDenied = "Location permission denied";
+  static const String locationPermissionPermanentlyDenied =
+      "Location permission permanently denied. Please enable in settings.";
+  static const String gettingYourLocation = "Getting your location...";
+  static const String locationOutsideCameroon =
+      "Your location is outside Cameroon. This app only works in Cameroon.";
+  static const String selectLocationInCameroon =
+      "Please select a location within Cameroon";
+  static const String locationSetSuccessfully = "Location set successfully";
+  static const String locationFetchFailed =
+      "Failed to get location. Please try again or enter manually.";
+  static const String appOnlyWorksInCameroon =
+      "This app only works in Cameroon";
+  static const String cameroonOnlyLocation =
+      "This app only works in Cameroon. Please select a location within Cameroon.";
+  static const String useMyLocation = "USE MY LOCATION";
+  static const String selectedLocation = "Selected Location";
+
+  // Form Field Hints
+  static const String enterGroupName = "Enter group name";
+  static const String datePlaceholder = "dd/mm/yyyy";
+  static const String searchForLocation = "Search for location";
+
+  // Trash Collection Messages
+  static const String loadingCategories = "Loading categories...";
+  static const String noCategoriesAvailable = "No categories available";
+
+  // Additional cleanup UI strings
+  static const String cleanAloneHint =
+      "If you cleaned alone, enter your own name.";
+  static const String searchOrDragMapHint =
+      "Search or drag map to set location";
 
   AppStrings._();
 }

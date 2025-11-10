@@ -96,7 +96,12 @@ class ProfileScreen extends StatelessWidget {
                               AppStrings.profileManagementTitle,
                               style: AppTextStyles.profileHeading(
                                 context,
-                              ).copyWith(fontSize: SizeUtils.h(context, 28)),
+                              ).copyWith(
+                                fontSize: SizeUtils.h(
+                                  context,
+                                  AppDimensions.heading2FontSize,
+                                ),
+                              ),
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(
@@ -218,7 +223,10 @@ class ProfileScreen extends StatelessWidget {
                                     style: AppTextStyles.profileName(
                                       context,
                                     ).copyWith(
-                                      fontSize: SizeUtils.h(context, 22),
+                                      fontSize: SizeUtils.h(
+                                        context,
+                                        AppDimensions.profileNameFontSize,
+                                      ),
                                     ),
                                     textAlign: TextAlign.center,
                                   );

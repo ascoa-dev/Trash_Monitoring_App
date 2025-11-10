@@ -47,5 +47,10 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<!-- Location permissions for GPS functionality -->
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>ASCOA needs access to your location to mark cleanup sites on the map</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>ASCOA needs access to your location to mark cleanup sites on the map</string>
 	</dict>
 </plist>

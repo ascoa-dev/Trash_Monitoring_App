@@ -46,10 +46,10 @@ class LoginScreenV2 extends StatelessWidget {
             }
           });
 
-          const double referenceWidth = 440.0;
+          final double referenceWidth = AppDimensions.loginReferenceWidth;
           final double scale = (viewportWidth / referenceWidth).clamp(
-            0.8,
-            1.25,
+            AppDimensions.authScaleMin,
+            AppDimensions.authScaleMax,
           );
 
           return Container(
@@ -94,7 +94,9 @@ class LoginScreenV2 extends StatelessWidget {
                     ),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 440),
+                        constraints: BoxConstraints(
+                          maxWidth: AppDimensions.profileContentMaxWidth,
+                        ),
                         child: SingleChildScrollView(
                           controller: scrollController,
                           physics:
@@ -291,7 +293,9 @@ class LoginScreenV2 extends StatelessWidget {
                                   children: [
                                     Text(
                                       AppStrings.noAccount,
-                                      style: AppTextStyles.bodySecondary(context),
+                                      style: AppTextStyles.bodySecondary(
+                                        context,
+                                      ),
                                     ),
                                     TextButton(
                                       style: TextButton.styleFrom(
@@ -316,7 +320,9 @@ class LoginScreenV2 extends StatelessWidget {
                                       },
                                       child: Text(
                                         AppStrings.signUp,
-                                        style: AppTextStyles.buttonLink(context),
+                                        style: AppTextStyles.buttonLink(
+                                          context,
+                                        ),
                                       ),
                                     ),
                                   ],

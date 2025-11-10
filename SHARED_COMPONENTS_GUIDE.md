@@ -20,6 +20,29 @@ What changed recently / guidance
 - AppTextStyles now references `AppTypography` tokens and many widgets were updated to use these shared tokens.
 - Avatar photos: a shared `AvatarPhotoHandler` was added in `lib/shared/utils/avatar_photo_handler.dart` to standardize pick → crop → compress → upload across screens. Profile images are rendered via `CachedNetworkImage`; tap-to-zoom uses `modules/profile/widgets/full_image_overlay.dart`.
 
+## Home-specific shared tokens and widgets
+
+- New Home sizing tokens were added to `app_dimensions.dart` for precise layout control, for example:
+
+  - `homeScreenWelcomeTop`, `homeScreenHeaderTop`, `homeScreenHeaderHeight`, `homeScreenSpacer`
+  - `homeScreenStartCleanup*` (card/button/image/spacing/radius)
+  - `homeScreenHighlight*` (carousel/card sizes and spacing)
+  - `homeScreenNews*` (section spacing, card spacing, error spacing)
+  - `homeScreenBlogCard*` and `homeScreenBottomGraphicHeight`
+  - News card tokens: `newsCardImageHeight`, `newsCardTextSectionHeight`, `newsCardRadius`, `newsCardWidth`, padding
+    Use these with `SizeUtils.h/w/r` in widgets (see `HomeScreen` and `HomeNewsCard`).
+
+- New shared widgets under the Home module:
+
+  - `modules/home/widgets/home_news_card.dart` — displays a post title and image; supports asset or network image with `CachedNetworkImage`; tapping opens the link via `url_launcher`.
+  - `modules/home/widgets/news_skeleton_card.dart` — lightweight animated skeleton used while News is loading.
+
+- AppImages additions for Home:
+  - `dashboardTop` and `dashboardBottom` hero artwork
+  - `cleanup`, `blog` under `ASCOA/Dashboard_Icons/`
+  - `placeholder` generic fallback
+    Reference via `AppImages.<name>` instead of raw asset strings and ensure assets are declared in `pubspec.yaml`.
+
 Constants responsibilities (quick map)
 
 - `app_colors.dart` — canonical color palette and legacy aliases. Use `AppColors` for any color used in UI.
@@ -187,6 +210,49 @@ Padding(padding: EdgeInsets.all(AppDimensions.screenPadding))
 - `AppDimensions.dialogBodyFontSize`/`dialogBodyLineHeight` - 16 / 22
 - `AppDimensions.dialogHeroSize` - 80.0
 
+#### Date Picker (tokens used by `shared/widgets/custom_date_picker.dart`)
+
+- `AppDimensions.datePickerWidth` - 360.0 — overall dialog/card width
+- `AppDimensions.datePickerBorderRadius` - 16.0 — container corner radius
+- `AppDimensions.datePickerHeaderHeight` - 64.0 — header row height
+- `AppDimensions.datePickerHorizontalPadding` - 12.0 — left/right padding
+- `AppDimensions.datePickerVerticalPadding` - 4.0 — compact vertical gap
+- `AppDimensions.datePickerDaySize` - 40.0 — day cell width/height
+- `AppDimensions.datePickerDayFontSize` - 16.0 — day number font size
+- `AppDimensions.datePickerMenuMaxHeight` - 240.0 — dropdown max height
+- `AppDimensions.datePickerMenuItemHeight` - 48.0 — dropdown row height
+- `AppDimensions.datePickerMenuVerticalPadding` - 10.0 — dropdown item v-pad
+- `AppDimensions.datePickerMenuFontSize` - 14.0 — dropdown item font size
+- `AppDimensions.datePickerMenuIconSize` - 18.0 — chevron icon beside labels
+- `AppDimensions.datePickerHeaderIconContainerSize` - 48.0 — header icon tap target (prev/next)
+- `AppDimensions.datePickerHeaderIconSize` - 24.0 — header icon size
+- `AppDimensions.datePickerButtonHeight` - 56.0 — bottom actions container height
+- `AppDimensions.datePickerTextButtonHeight` - 40.0 — small text button height
+- `AppDimensions.datePickerTextButtonHorizontalPadding` - 16.0 — text button x-pad
+- `AppDimensions.datePickerTextButtonVerticalPadding` - 10.0 — text button y-pad
+- Menu positioning helpers for overlay menus: `datePickerMenuOffsetX1/Y1/X2/Y2`, `datePickerMenuOffsetYearX1`, `datePickerMenuOffsetYearRight`
+
+#### Location Search (tokens used by `shared/widgets/location_search_field.dart`)
+
+- `AppDimensions.locationFieldHeight` - 22.0 — base line-height used in text field
+- `AppDimensions.locationFieldLoaderPadding` - 12.0 — loader padding
+- `AppDimensions.locationFieldLoaderDimensions` - 16.0 — loader size
+- `AppDimensions.locationFieldLoaderIconSize` - 20.0 — search icon size
+- `AppDimensions.locationFieldTextSize` - 16.0 — input text size
+- `AppDimensions.locationFieldErrorPadding` - 4.0 — error top padding
+- Reuses City selector tokens for overlay: `citySelectorMaxHeight`, `citySelectorBorderRadius`, `citySelectorShadow*`, `citySelectorIconSpacing`
+
+#### Loader & Dialog Illustration Tokens
+
+- `AppDimensions.circularLoaderSize` — base diameter of circular loader
+- `AppDimensions.circularLoaderStrokeWidth` — active arc stroke width
+- `AppDimensions.smallLoaderStrokeWidth` — reduced stroke width for inline loaders
+- `AppDimensions.circularLoaderGap` — transparent gap between track and active arc (rendered via saveLayer)
+- `AppDimensions.dialogImageWidth` — default width for dialog hero images
+- `AppDimensions.dialogImageHeight` — default height for dialog hero images
+- `AppDimensions.forgotBgTopHeight` — top decorative background height factor
+- `AppDimensions.forgotBgBottomHeight` — bottom decorative background height factor
+
 Recent additions for profile/change-password flows:
 
 - `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, and `changePasswordHalfInputSpacing` — control hero spacing, illustration height, and field rhythm on the change password screen.
@@ -241,7 +307,10 @@ Widgets index (lib/shared/widgets)
 - `auth_header.dart` — Top-of-screen auth header with logo, title and subtitle; scales based on `AppDimensions` base values.
 - `country_code_selector_field.dart` — Country picker input used alongside phone inputs; uses `AppDimensions.bottomSheetHeightFactor` for the picker.
 - `custom_input_field.dart` — Lower-level input widget used by `FloatingLabelInputField` and other places.
+- `custom_date_picker.dart` — Material-3 styled date picker overlay with month/year dropdowns.
 - `floating_label_input_field.dart` — Main input used in forms with floating label, hint and support text.
+- `image_picker_dialog.dart` — Avatar source selector (Camera/Gallery) used by the avatar flow.
+- `location_search_field.dart` — Google Places-powered location autocomplete field.
 - `nav_bar.dart` — Bottom navigation bar; uses `AppImages` for icons and `AppDimensions` for sizing.
 - `password_strength_checklist.dart` — Small helper widget that renders password requirement checklist and colors using `AppColors`.
 
@@ -417,6 +486,7 @@ if (cfg != null) {
 
 - `avatar_uploader.dart` — encapsulates Firebase Storage uploads for avatars (main + thumbnail) and Firestore updates for `avatarUrl`, `thumbUrl`, and `avatarUpdatedAt`. Also updates `FirebaseAuth.currentUser.photoURL` when available.
 - `cities_service.dart` — GetX service that loads `config/cities` from Firestore, caches it locally (Hive), and exposes reactive config used by `cities_controller.dart` and `CitySelectorField`.
+- `google_places_service.dart` — Provides Google Places Autocomplete & Details queries (debounced) backing `LocationSearchField`; centralizes API key usage, error handling, and structured place detail parsing.
 
 ### AvatarUploader (`shared/services/avatar_uploader.dart`)
 
@@ -786,6 +856,96 @@ Direct (advanced) usage:
 // Returns ImageSource.camera or ImageSource.gallery or null
 final source = await Get.dialog<ImageSource?>(const ImagePickerDialog());
 ```
+
+#### CustomDatePicker (`shared/widgets/custom_date_picker.dart`)
+
+Material 3–styled date picker used for selecting a single date within optional start/end bounds.
+
+- Month and Year selectors open overlay menus positioned relative to the header.
+- Swipe left/right to navigate months; chevrons navigate months/years bounded by `startDate`/`endDate`.
+- All sizes use `AppDimensions` with `SizeUtils` wrappers.
+
+Usage:
+
+```dart
+// Show an overlay dialog that returns a DateTime or null
+final picked = await CustomDatePicker.show(
+  context,
+  initialDate: DateTime.now(),
+  startDate: DateTime(2024, 1, 1),
+  endDate: DateTime(2024, 12, 31),
+);
+```
+
+Key tokens:
+
+- Container/layout: `datePickerWidth`, `datePickerBorderRadius`, `datePickerHorizontalPadding`, `datePickerVerticalPadding`
+- Header: `datePickerHeaderHeight`, `datePickerHeaderIconContainerSize`, `datePickerHeaderIconSize`, `datePickerMenuIconSize`
+- Grid: `datePickerDaySize`, `datePickerDayFontSize`
+- Dropdowns: `datePickerMenuItemHeight`, `datePickerMenuMaxHeight`, `datePickerMenuVerticalPadding`, `datePickerMenuFontSize`
+- Offsets: `datePickerMenuOffsetX1/Y1/X2/Y2`, `datePickerMenuOffsetYearX1`, `datePickerMenuOffsetYearRight`
+- Actions: `datePickerButtonHeight`, `datePickerTextButtonHeight`, `datePickerTextButtonHorizontalPadding`, `datePickerTextButtonVerticalPadding`
+
+Styling/text comes from `AppTextStyles.datePickerMenuItem`, `datePickerDay`, and `datePickerButton`.
+
+#### CircularLoader (`shared/widgets/circular_loader.dart`)
+
+Reusable animated circular progress indicator with a transparent inner gap for visual separation between the static track and the animated arc.
+
+Usage:
+
+```dart
+const CircularLoader(); // defaults to AppDimensions.circularLoaderSize
+```
+
+Options (if implemented as named params): `size`, `strokeWidth`, `trackColor`, `activeColor` (falls back to tokens if omitted).
+
+Features:
+
+- Gap between track and active arc (`AppDimensions.circularLoaderGap`).
+- Stroke widths from `AppDimensions.circularLoaderStrokeWidth` (normal) and `smallLoaderStrokeWidth` (compact scenarios like inline buttons).
+- Consistent colors via `AppColors.loaderTrack` and `AppColors.loaderActive` (fallback to palette if undefined).
+- Uses `AnimatedBuilder` for smooth, low-allocation rotation.
+
+Tokens used:
+
+- `circularLoaderSize`
+- `circularLoaderStrokeWidth`
+- `smallLoaderStrokeWidth`
+- `circularLoaderGap`
+
+Prefer this over ad‑hoc `CircularProgressIndicator` instances to keep sizing, stroke, and color consistent across screens.
+
+#### LocationSearchField (`shared/widgets/location_search_field.dart`)
+
+Google Places–powered location input with Material 3 style overlay suggestions.
+
+Features:
+
+- Debounced search; shows overlay when results exist; clears on blur.
+- Suggestion rows include an icon and 2-line text (main/secondary) with ellipsis.
+- Reuses city selector overlay tokens for a consistent look.
+
+Usage:
+
+```dart
+LocationSearchField(
+  controller: formControllers.cityController,
+  label: AppStrings.cityLabel,
+  hint: AppStrings.cityHint,
+  onPlaceSelected: (PlaceDetails place) {
+    // use place.formattedAddress / place.latLng
+  },
+  onChanged: (q) => validationController.validateCity(q),
+)
+```
+
+Key tokens:
+
+- Input: `inputFieldHeight`, `inputHorizontalPadding`, `inputFontSize`, `inputLineHeight`, `inputContentVerticalPadding`
+- Loader/icon: `locationFieldLoaderPadding`, `locationFieldLoaderDimensions`, `locationFieldLoaderIconSize`
+- Overlay: `citySelectorMaxHeight`, `citySelectorBorderRadius`, `citySelectorShadow*`, `citySelectorIconSpacing`
+- Typography: `mediumFontSize` (title), `smallFontSize` (secondary), `AppTextStyles.body/bodySecondary`
 
 #### PasswordStrengthChecklist (`shared/widgets/password_strength_checklist.dart`)
 

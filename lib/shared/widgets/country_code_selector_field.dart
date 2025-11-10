@@ -129,7 +129,10 @@ class CountryCodeSelectorField extends StatelessWidget {
                             AppDimensions.inputFontSize,
                           ),
                           height:
-                              SizeUtils.h(context, 22) /
+                              SizeUtils.h(
+                                context,
+                                AppDimensions.inputLineHeight,
+                              ) /
                               SizeUtils.h(context, AppDimensions.inputFontSize),
                           letterSpacing: AppTypography.letterSpacingSmall,
                         ),

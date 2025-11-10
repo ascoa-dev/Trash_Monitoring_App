@@ -306,7 +306,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   ),
                   child: Center(
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 440),
+                      constraints: BoxConstraints(
+                        maxWidth: AppDimensions.profileContentMaxWidth,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -328,7 +330,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                               color: AppColors.pureWhite,
                             ),
                           ),
-                          SizedBox(height: SizeUtils.h(context, 8)),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.smallSpacing,
+                            ),
+                          ),
                           Text(
                             subtitle,
                             textAlign: TextAlign.center,
@@ -338,7 +345,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                                 AppDimensions.subtitleFontSize,
                               ),
                               height:
-                                  SizeUtils.h(context, 22) /
+                                  SizeUtils.h(
+                                    context,
+                                    AppDimensions.dialogBodyLineHeight,
+                                  ) /
                                   SizeUtils.h(
                                     context,
                                     AppDimensions.subtitleFontSize,
@@ -429,7 +439,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                                     topSpacing: AppDimensions.zero,
                                   ),
                                 ),
-                                SizedBox(width: SizeUtils.w(context, 8)),
+                                SizedBox(
+                                  width: SizeUtils.w(
+                                    context,
+                                    AppDimensions.smallSpacing,
+                                  ),
+                                ),
                                 Expanded(
                                   flex: 7,
                                   child: Obx(
@@ -502,7 +517,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                               },
                             );
                           }),
-                          SizedBox(height: SizeUtils.h(context, 40)),
+                          SizedBox(
+                            height: SizeUtils.h(
+                              context,
+                              AppDimensions.profileSectionSignoutSpacing,
+                            ),
+                          ),
                         ],
                       ),
                     ),

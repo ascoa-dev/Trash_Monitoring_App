@@ -45,11 +45,9 @@ class SignupScreen extends StatelessWidget {
             }
           });
 
-          const double referenceWidth = 440.0;
-          final double scale = (viewportWidth / referenceWidth).clamp(
-            0.8,
-            1.25,
-          );
+          final double scale = (viewportWidth /
+                  AppDimensions.loginReferenceWidth)
+              .clamp(AppDimensions.authScaleMin, AppDimensions.authScaleMax);
 
           return Container(
             width: viewportWidth,
@@ -97,7 +95,12 @@ class SignupScreen extends StatelessWidget {
                               AppDimensions.authScreenXLargeSpacer,
                         ),
                         AuthHeader(scale: scale),
-                        SizedBox(height: SizeUtils.h(context, 16)),
+                        SizedBox(
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.verticalPadding,
+                          ),
+                        ),
                         Text(
                           AppStrings.signupTitle,
                           textAlign: TextAlign.center,
