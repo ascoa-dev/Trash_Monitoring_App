@@ -1,5 +1,6 @@
 import 'package:ascoa_app/modules/start_cleanup/views/basic_infomation_section.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/trash_collected.dart';
+import 'package:ascoa_app/modules/start_cleanup/views/photos_section.dart';
 import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
@@ -65,6 +66,14 @@ class NewCleanUpScreen extends StatelessWidget {
       return;
     }
 
+    // Check if photos are still uploading
+    final hasUploadsInProgress =
+        controller.mediaUploadController.hasUploadsInProgress;
+    final uploadMessage =
+        hasUploadsInProgress
+            ? AppStrings.waitingForPhotoUploads
+            : AppStrings.submittingCleanup;
+
     // Show loading indicator
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -84,12 +93,12 @@ class NewCleanUpScreen extends StatelessWidget {
               SizedBox(
                 width: SizeUtils.w(context, AppDimensions.snackBarGapSmall),
               ),
-              Text(AppStrings.submittingCleanup),
+              Expanded(child: Text(uploadMessage)),
             ],
           ),
           backgroundColor: AppColors.info,
           behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 30),
+          duration: const Duration(minutes: 5), // Long duration for uploads
         ),
       );
     }
@@ -546,17 +555,7 @@ class _CleanUpSectionState extends State<CleanUpSection> {
                 else if (widget.title == AppStrings.trashCollected)
                   TrashCollectedSection(controller: widget.controller)
                 else if (widget.title == AppStrings.photosVideosOptional)
-                  Padding(
-                    padding: EdgeInsets.all(
-                      SizeUtils.h(context, AppDimensions.cleanupContentPadding),
-                    ),
-                    child: Text(
-                      AppStrings.photosVideosPlaceholder,
-                      style: AppTextStyles.bodySecondary(
-                        context,
-                      ).copyWith(color: AppColors.black54),
-                    ),
-                  ),
+                  PhotosSection(formController: widget.controller),
               ],
             ),
           ),

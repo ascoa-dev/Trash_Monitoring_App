@@ -253,6 +253,33 @@ Migration notes for reviewers:
 - If tests read `AppStrings` by exact string, update them to use the new keys to avoid brittle assertions.
 - UI reviewers: verify the resend/use-another-email actions use the same `AppDimensions.buttonHeight` as other auth actions; `OutlinedButton`s should be wrapped in a `SizedBox(width: double.infinity, height: SizeUtils.h(context, AppDimensions.buttonHeight))`.
 
+### Photo upload (StartCleanUp)
+
+- Implemented immediate photo uploads for the StartCleanUp flow. Key files added/modified:
+  - `lib/modules/start_cleanup/controllers/media_upload_controller.dart` — new controller that handles selection, compression (via `flutter_image_compress`), upload (Firebase Storage), progress tracking, cancellation, and cleanup of unused photos.
+  - `lib/modules/start_cleanup/views/photos_section.dart` — UI for selecting images (image-only, enforced max), responsive preview grid, per-photo progress overlay using `CircularUploadProgress`, and per-photo cancel/delete actions.
+  - `lib/modules/start_cleanup/controllers/cleanup_form_controller.dart` — pre-generates a cleanup document ID to allow immediate uploads, waits for in-progress uploads during submit, and triggers storage cleanup of removed photos before final save.
+  - `lib/shared/widgets/circular_upload_progress.dart` — static circular progress painter used by the photos grid to match the app loader style.
+
+Key behaviors and design notes:
+
+- Immediate upload: selected images start compressing and uploading as soon as they're picked. This reduces wait time on final submit and gives users instant feedback.
+- Max photos: enforced by `MediaUploadConfig.maxPhotos` (default 5). The picker uses a limit plus a manual fallback to ensure the cap works across platforms.
+- Pre-generated cleanupDocId: a Firestore doc ID is created before uploads so files are stored under `cleanups/{cleanupDocId}/{uuid}.jpg` and associated with the eventual cleanup document.
+- Upload waiting: submitting the cleanup waits for in-progress uploads (with a 5-minute timeout) and warns the user if uploads did not finish.
+- Storage cleanup: uploaded photos that are later removed from the UI are deleted from Firebase Storage during form submission to avoid orphaned files.
+
+Tokens & strings added:
+
+- `AppDimensions` additions: `photosActionButtonSize`, `photosActionButtonIconSize`, `photosGridChildAspectRatio`, `photosOverlayOpacity`, `photosActionButtonOffset`, `photosActionButtonShadowBlur`, `photosActionButtonShadowYOffset`, `photosBorderRadiusMultiplier`, `photosErrorIconSizeMultiplier`.
+- `AppStrings` additions: `uploadImagesButton`, `previewLabel`, `waitingForPhotoUploads`.
+
+Files & assets:
+
+- `pubspec.yaml` updated to include `assets/ASCOA/clean_confirm.png` used by the cleanup confirmation dialog.
+
+See `PHOTO_UPLOAD_IMPLEMENTATION.md` (root) for a detailed implementation guide, flow diagrams and customization notes.
+
 ## Quick Reference
 
 ### Avatar upload & profile photos

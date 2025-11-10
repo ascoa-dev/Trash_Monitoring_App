@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ascoa_app/app/models/cleanup_model.dart';
+import 'package:ascoa_app/modules/start_cleanup/controllers/media_upload_controller.dart';
+import 'package:get/get.dart';
 
 /// Controller to manage cleanup form state and validation
 /// Ensures only one section is expanded at a time
 class CleanupFormController extends ChangeNotifier {
   String? _expandedSection;
+
+  // Media upload controller
+  final MediaUploadController mediaUploadController = MediaUploadController();
+
+  // Pre-generated cleanup document ID for photo uploads
+  String? _cleanupDocId;
+  String get cleanupDocId {
+    _cleanupDocId ??=
+        FirebaseFirestore.instance.collection('cleanups').doc().id;
+    return _cleanupDocId!;
+  }
 
   // Basic Information fields
   int peopleCount = 0;
@@ -295,6 +308,30 @@ class CleanupFormController extends ChangeNotifier {
         return null;
       }
 
+      // If there are uploads in progress, wait for them to complete
+      if (mediaUploadController.hasUploadsInProgress) {
+        debugPrint('[SubmitCleanup] Waiting for photo uploads to complete...');
+        final uploadSuccess = await mediaUploadController
+            .waitForUploadsToComplete(timeout: const Duration(minutes: 5));
+
+        if (!uploadSuccess) {
+          debugPrint(
+            '[SubmitCleanup] Photo uploads did not complete successfully',
+          );
+          Get.snackbar(
+            'Upload Error',
+            'Some photos failed to upload. Please try again.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          // You might want to show an error to the user here
+          // For now, we'll continue anyway with whatever uploaded
+        }
+      }
+
+      // Clean up any photos that were uploaded but then removed
+      await mediaUploadController.cleanupUnusedPhotos();
+
       // Get item weights from template
       final itemWeights = _getItemWeights();
 
@@ -311,6 +348,18 @@ class CleanupFormController extends ChangeNotifier {
         return null;
       }
 
+      final firestore = FirebaseFirestore.instance;
+
+      // Use the pre-generated cleanup document ID (same one used for photo uploads)
+      final cleanupRef = firestore.collection('cleanups').doc(cleanupDocId);
+
+      // Photos should already be uploaded by now (uploaded immediately after selection)
+      // Just get the URLs
+      final photoUrls = mediaUploadController.uploadedPhotoUrls;
+      debugPrint(
+        '[SubmitCleanup] Photos already uploaded: ${photoUrls.length}',
+      );
+
       // Create cleanup model from form data
       final cleanup = CleanupModel.fromFormData(
         userId: userId,
@@ -324,15 +373,12 @@ class CleanupFormController extends ChangeNotifier {
         trashItems: trashItems,
         itemWeights: itemWeights,
         itemCategories: itemCategories,
-      );
-
-      final firestore = FirebaseFirestore.instance;
+      ).copyWith(photoUrls: photoUrls.isNotEmpty ? photoUrls : null);
 
       // Use a batch for atomic operation
       final batch = firestore.batch();
 
       // Create cleanup document
-      final cleanupRef = firestore.collection('cleanups').doc();
       batch.set(cleanupRef, cleanup.toFirestore());
 
       // Update user document with cleanup ID

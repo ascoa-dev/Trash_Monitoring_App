@@ -446,6 +446,8 @@ class AppStrings {
   static const String mustBeLoggedIn =
       "You must be logged in to submit a cleanup";
   static const String submittingCleanup = "Submitting cleanup...";
+  static const String waitingForPhotoUploads =
+      "Waiting for photo uploads to complete...";
   static const String cleanupSubmittedSuccess =
       "Cleanup submitted successfully!";
   static const String cleanupSubmitFailed =
@@ -456,6 +458,8 @@ class AppStrings {
       "Please fix the errors in the current section before proceeding";
   static const String photosVideosPlaceholder =
       "Photos and videos upload fields go here...";
+  static const String uploadImagesButton = "UPLOAD IMAGES";
+  static const String previewLabel = "Preview";
 
   // Location Messages
   static const String enableLocationServices =

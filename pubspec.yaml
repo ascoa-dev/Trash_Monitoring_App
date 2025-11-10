@@ -123,6 +123,7 @@ flutter:
     - assets/ASCOA/Dashboard_Icons/start_New_Cleanup.png
     - assets/ASCOA/placeholder.png
     - assets/ASCOA/Dashboard_Icons/new_cleanup_icon.png
+    - assets/ASCOA/clean_confirm.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

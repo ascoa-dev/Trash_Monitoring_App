@@ -287,6 +287,34 @@ Recent additions:
 
 ## Widgets (shared/widgets/)
 
+### Photos (StartCleanUp)
+
+This section documents the new photo upload UI and controller used by the StartCleanUp flow.
+
+- `MediaUploadController` (`lib/modules/start_cleanup/controllers/media_upload_controller.dart`)
+
+  - Responsibilities: selection, compression (flutter_image_compress), upload to Firebase Storage, progress tracking, cancellation, and cleanup of unused uploaded files.
+  - Configuration: `MediaUploadConfig.maxPhotos` controls the maximum number of images (default 5). Compression parameters are also centralized in the same class.
+  - Public API highlights: `addPhotos(List<File>)`, `compressAndUpload(photoId, cleanupDocId)`, `compressAndUploadAll(cleanupDocId)`, `waitForUploadsToComplete(timeout)`, `cleanupUnusedPhotos()`, `removePhoto(photoId)`, `uploadedPhotoUrls`.
+
+- `PhotosSection` (`lib/modules/start_cleanup/views/photos_section.dart`)
+
+  - Provides the upload button, image picker (images-only), preview grid, per-photo progress overlay and action buttons (cancel/delete).
+  - Uses `SizeUtils` + `AppDimensions` for responsive sizing and now consumes the `CircularUploadProgress` painter for progress UI.
+  - Notes: the picker uses `pickMultiImage(limit: remainingSlots)` and a manual fallback to enforce the max across platforms.
+
+- `CircularUploadProgress` (`lib/shared/widgets/circular_upload_progress.dart`)
+  - A lightweight static painter that shows progress from 0..1 without rotation and matches the app loader visuals.
+
+Tokens & strings introduced (for maintainers):
+
+- `AppDimensions.photosActionButtonSize` / `photosActionButtonIconSize`
+- `AppDimensions.photosActionButtonOffset`, `photosActionButtonShadowBlur`, `photosActionButtonShadowYOffset`
+- `AppDimensions.photosGridChildAspectRatio`, `photosOverlayOpacity`, `photosBorderRadiusMultiplier`, `photosErrorIconSizeMultiplier`
+- `AppStrings.uploadImagesButton`, `AppStrings.previewLabel`, `AppStrings.waitingForPhotoUploads`
+
+See `PHOTO_UPLOAD_IMPLEMENTATION.md` for a full developer-facing walkthrough, upload flow, and customization options.
+
 ### CustomInputField
 
 ```dart

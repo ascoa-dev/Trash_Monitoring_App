@@ -210,6 +210,21 @@ class AppDimensions {
   static const double cleanupCategoryControlCountFontSize = 16.0;
   // Icon size used inside category controls when a larger icon is appropriate
   static const double cleanupCategoryIconLargeSize = 20.0;
+
+  // Photos section dimensions
+  static const double photosActionButtonSize = 28.0;
+  static const double photosActionButtonIconSize = 16.0;
+  static const double photosGridChildAspectRatio = 1.2;
+  static const double photosOverlayOpacity = 0.7;
+  // Photo section helpers
+  static const double photosActionButtonOffset = 4.0;
+  static const double photosActionButtonShadowBlur = 4.0;
+  static const double photosActionButtonShadowYOffset = 2.0;
+  // Multiplier applied to the standard border radius for photo cards & overlays
+  static const double photosBorderRadiusMultiplier = 1.6;
+  // Multiplier for error icon sizing inside photo cards
+  static const double photosErrorIconSizeMultiplier = 2.0;
+
   // Navigation bar sizing
   static const double navBarHeight = 64.0;
   static const double navBarHorizontalPadding = 24.0;
