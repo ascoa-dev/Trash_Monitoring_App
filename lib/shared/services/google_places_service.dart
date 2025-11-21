@@ -6,7 +6,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Service to interact with Google Places API
 /// Handles autocomplete search and place details
 class GooglePlacesService {
-  // TODO: Replace with your actual Google Maps API key
   // This should ideally come from environment variables or secure config
   static const String _apiKey = 'AIzaSyD3Of3mq_589PvECQl_yHyQ_coI2bWUCD0';
 
