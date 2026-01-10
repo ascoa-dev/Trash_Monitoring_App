@@ -122,3 +122,4 @@ news.json
 ascoa-release.jks
 ascoa-release.jks.base64
 build-script.ps1
+*.env
