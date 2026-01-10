@@ -33,7 +33,7 @@ jobs:
       - name: Build APK
         run: flutter build apk --release --dart-define=FB_APP_ID=${{ secrets.FB_APP_ID }} --dart-define=FB_APP_SECRET=${{ secrets.FB_APP_SECRET }} --dart-define=API_KEY=${{ secrets.API_KEY }}
         env:
-          KEYSTORE_FILE: android/app/key.jks
+          KEYSTORE_FILE: key.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
