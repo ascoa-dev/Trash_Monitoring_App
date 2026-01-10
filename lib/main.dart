@@ -51,8 +51,11 @@ void main() async {
     persistenceEnabled: true,
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
   );
-  await dotenv.load();
+
   if (kDebugMode) {
+    await dotenv.load(fileName: ".env").catchError((_) {
+      debugPrint('No .env file found, proceeding without it.');
+    });
     // Use the pure Dart solver in debug so we do not depend on the native FFI lib.
     croppy.croppyForceUseCassowaryDartImpl = true;
   }
