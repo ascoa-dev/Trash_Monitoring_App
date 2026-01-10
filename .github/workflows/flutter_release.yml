@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/stats-screen-and-offline-support
 
 jobs:
   build:
@@ -40,8 +41,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: v1.0.0
-          release_name: Release v1.0.0
+          tag_name: test-${{ github.sha }}
+          release_name: Test Release ${{ github.sha }}
           draft: false
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
