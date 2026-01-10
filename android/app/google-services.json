@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "677557829420-ckmej1rg4iufigts9rq4b7i1ieevma0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ascoa.app",
+            "certificate_hash": "551671fe14c0b0fbbbae3d7f14f1e9262f097731"
+          }
+        },
+        {
           "client_id": "677557829420-gp8j8k67or2nbkv9f9u310scfe48mb89.apps.googleusercontent.com",
           "client_type": 3
         }

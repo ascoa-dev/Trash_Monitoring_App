@@ -65,7 +65,14 @@ void main() async {
   Hive.registerAdapter(PendingCleanupModelAdapter());
   Hive.registerAdapter(CachedCleanupModelAdapter());
   // Register AuthController globally and permanently
-  await GoogleSignIn.instance.initialize();
+  if (kIsWeb) {
+    await GoogleSignIn.instance.initialize(
+      clientId:
+          "677557829420-gp8j8k67or2nbkv9f9u310scfe48mb89.apps.googleusercontent.com",
+    );
+  } else {
+    await GoogleSignIn.instance.initialize();
+  }
   Get.put(AuthController(), permanent: true);
   Get.put(HapticController(), permanent: true);
   Get.put(PendingCleanupsController(), permanent: true);
@@ -184,7 +191,7 @@ class MyApp extends StatelessWidget {
                 // Replace deprecated textScaleFactor with textScaler
                 textScaler: const TextScaler.linear(1.0),
               ),
-              child: child!,
+              child: child ?? const SizedBox.shrink(),
             );
           },
           initialRoute: snapshot.data!,

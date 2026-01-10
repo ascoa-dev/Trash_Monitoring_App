@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,8 +25,12 @@ class AuthController extends GetxController {
     super.onInit();
     _auth = FirebaseAuth.instance;
     firebaseUser.bindStream(_auth.authStateChanges());
+  }
 
-    _initHive();
+  @override
+  Future<void> onReady() async {
+    super.onReady();
+    await _initHive();
   }
 
   Future<void> _initHive() async {
@@ -163,27 +168,22 @@ class AuthController extends GetxController {
 
   Future<void> loginWithGoogle() async {
     try {
-      // Use the package singleton and its authenticate flow. `authenticate`
-      // returns a GoogleSignInAccount (or throws) and the account's
-      // `authentication` getter is synchronous (returns a
-      // GoogleSignInAuthentication), so do NOT `await` it.
-      final googleUser = await GoogleSignIn.instance.authenticate();
-
-      // `authenticate` returns a signed-in account or throws. The
-      // GoogleSignInAuthentication exposed here contains an idToken (the
-      // package version used does not expose an accessToken), so use idToken
-      // when creating the Firebase credential.
-      final googleAuth = googleUser.authentication; // synchronous getter
-      if (googleAuth.idToken == null) {
-        throw Exception('Failed to get ID token from Google sign-in.');
+      UserCredential userCredential;
+      if (kIsWeb) {
+        final googleProvider = GoogleAuthProvider();
+        userCredential = await _auth.signInWithPopup(googleProvider);
+      } else {
+        final googleUser = await GoogleSignIn.instance.authenticate();
+        final googleAuth = googleUser.authentication;
+        if (googleAuth.idToken == null) {
+          throw Exception('Failed to get ID token from Google sign-in.');
+        }
+        final credential = GoogleAuthProvider.credential(
+          idToken: googleAuth.idToken,
+        );
+        userCredential = await _auth.signInWithCredential(credential);
       }
-
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-
-      await _auth.signInWithCredential(credential);
-      final user = _auth.currentUser;
+      final user = userCredential.user;
       if (user == null) throw Exception('No user found after Google sign-in.');
       await _handleUserPostLogin(user, 'google');
     } on FirebaseAuthException catch (e) {
