@@ -6,6 +6,9 @@ on:
       - main
       - feature/stats-screen-and-offline-support
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,8 +30,8 @@ jobs:
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/key.jks
           ls -l android/app/key.jks
 
-      - name: Check current directory
-        run: pwd && ls -R android/app
+      - name: Generate Splash Screen
+        run: flutter pub run flutter_native_splash:create
 
       - name: Build APK
         run: flutter build apk --release --dart-define=GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
@@ -40,7 +43,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         with:
           tag_name: test-${{ github.sha }}
           release_name: Test Release ${{ github.sha }}
