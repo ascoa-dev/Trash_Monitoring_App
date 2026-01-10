@@ -1,18 +1,24 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:ascoa_app/app/controllers/pending_cleanups_controller.dart';
+import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
 
 class CustomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final int noOfPending;
 
   const CustomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.noOfPending = 0,
   });
 
   static const List<_NavItemData> _items = [
@@ -123,6 +129,9 @@ class _NavBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PendingCleanupsController pendingCleanupsController =
+        Get.find<PendingCleanupsController>();
+    final haptics = Get.find<HapticController>();
     final double targetWidth;
     final double targetHeight;
     if (isCenter) {
@@ -173,7 +182,12 @@ class _NavBarButton extends StatelessWidget {
         button: true,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: onTap,
+          onTap: () {
+            if (!isSelected) {
+              haptics.selectionClick();
+            }
+            onTap();
+          },
           child: SizedBox.expand(
             child: Center(
               child: AnimatedContainer(
@@ -186,10 +200,52 @@ class _NavBarButton extends StatelessWidget {
                   borderRadius: borderRadius,
                 ),
                 alignment: Alignment.center,
-                child: Image.asset(
-                  data.assetPath,
-                  width: iconWidth,
-                  height: iconHeight,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Image.asset(
+                      data.assetPath,
+                      width: iconWidth,
+                      height: iconHeight,
+                    ),
+                    if (!isCenter &&
+                        data.semanticLabel == AppStrings.statsTitle)
+                      Positioned(
+                        top: -AppDimensions.navBarPendingOffset,
+                        right: -AppDimensions.navBarPendingOffset,
+                        child: Obx(() {
+                          final count =
+                              pendingCleanupsController.pendingCleanups.length;
+                          if (count == 0) return const SizedBox.shrink();
+
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal:
+                                  AppDimensions.navBarPendingInsetHorizontal,
+                              vertical:
+                                  AppDimensions.navBarPendingInsetVertical,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.pendingUploads, // badge color
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.navBarPendingBadgeRadius,
+                              ),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth:
+                                  AppDimensions.navBarPendingBadgeMinDimensions,
+                              minHeight:
+                                  AppDimensions.navBarPendingBadgeMinDimensions,
+                            ),
+                            child: Text(
+                              count > 99 ? '99+' : '$count',
+                              style: AppTextStyles.navBarBadge(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        }),
+                      ),
+                  ],
                 ),
               ),
             ),

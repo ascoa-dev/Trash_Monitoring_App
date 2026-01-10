@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,7 @@ class ImagePickerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isFrench = Get.locale?.languageCode == 'fr';
+    final haptics = Get.find<HapticController>();
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -54,7 +56,11 @@ class ImagePickerDialog extends StatelessWidget {
               width: double.infinity,
               height: SizeUtils.h(context, AppDimensions.buttonHeight),
               child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).pop(ImageSource.camera),
+                onPressed:
+                    () => {
+                      haptics.light(),
+                      Navigator.of(context).pop(ImageSource.camera),
+                    },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonGreen,
                   shape: RoundedRectangleBorder(
@@ -84,7 +90,11 @@ class ImagePickerDialog extends StatelessWidget {
               width: double.infinity,
               height: SizeUtils.h(context, AppDimensions.buttonHeight),
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
+                onPressed:
+                    () => {
+                      haptics.light(),
+                      Navigator.of(context).pop(ImageSource.gallery),
+                    },
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
                     color: AppColors.buttonGreen,
@@ -114,7 +124,7 @@ class ImagePickerDialog extends StatelessWidget {
             SizedBox(height: SizeUtils.h(context, AppDimensions.smallSpacing)),
             // Cancel button
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => {haptics.light(), Navigator.of(context).pop()},
               child: Text(
                 isFrench
                     ? AppStrings.avatarPickerCancelFrench

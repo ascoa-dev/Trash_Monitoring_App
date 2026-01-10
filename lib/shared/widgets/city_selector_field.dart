@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/shared/controllers/cities_controller.dart';
@@ -35,6 +36,7 @@ class CitySelectorField extends StatefulWidget {
 
 class _CitySelectorFieldState extends State<CitySelectorField> {
   final CitiesController _citiesController = Get.find<CitiesController>();
+  final haptics = Get.find<HapticController>();
   final List<String> _filteredCities = [];
   late final FocusNode _focusNode;
   final LayerLink _layerLink = LayerLink();
@@ -76,6 +78,7 @@ class _CitySelectorFieldState extends State<CitySelectorField> {
       setState(() => _hasFocus = _focusNode.hasFocus);
     }
     if (_focusNode.hasFocus) {
+      haptics.selectionClick();
       // When refocusing, use current input to filter suggestions
       // Only show all cities if input is empty
       final query = widget.controller.text;
@@ -193,6 +196,7 @@ class _CitySelectorFieldState extends State<CitySelectorField> {
   Widget _buildMenuItem(String city) {
     return InkWell(
       onTap: () {
+        haptics.light();
         widget.controller.text = city;
         _focusNode.unfocus();
         if (widget.onChanged != null) widget.onChanged!(city);

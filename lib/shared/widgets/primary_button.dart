@@ -1,8 +1,10 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String label;
@@ -24,6 +26,7 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final haptics = Get.find<HapticController>();
     final scaledHeight =
         fixedHeight ?? SizeUtils.h(context, AppDimensions.buttonHeight);
     return SizedBox(
@@ -39,7 +42,10 @@ class PrimaryButton extends StatelessWidget {
           ),
           minimumSize: Size(fixedWidth ?? double.infinity, scaledHeight),
         ),
-        onPressed: onPressed,
+        onPressed: () {
+          haptics.light();
+          onPressed();
+        },
         child: Text(
           label,
           style: labelStyle ?? AppTextStyles.buttonPrimaryText(context),

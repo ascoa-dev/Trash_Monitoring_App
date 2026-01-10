@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
@@ -50,6 +51,7 @@ class ResetPasswordScreen extends GetWidget<ResetPasswordController> {
   }
 
   void _navigateToLogin() {
+    Get.find<HapticController>().selectionClick();
     if (Get.isRegistered<FormControllers>()) {
       Get.find<FormControllers>().resetAuthFields();
     }
@@ -65,6 +67,7 @@ class ResetPasswordScreen extends GetWidget<ResetPasswordController> {
     FocusScope.of(context).unfocus();
     final status = await controller.submit();
     if (status == ResetPasswordStatus.success && context.mounted) {
+      Get.find<HapticController>().medium();
       await _showSuccessDialog(context);
     }
   }

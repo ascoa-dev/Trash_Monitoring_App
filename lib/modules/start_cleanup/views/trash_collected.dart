@@ -1,9 +1,11 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 
 class TrashCollectedSection extends StatefulWidget {
@@ -29,6 +31,7 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
   }
 
   void _onEnvironmentChanged(String? environment) {
+    Get.find<HapticController>().selectionClick();
     setState(() => _selectedEnvironment = environment);
     widget.controller.selectedEnvironments.clear();
     if (environment != null) {
@@ -38,7 +41,9 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
   }
 
   void _onItemCountChanged(String itemName, int count) {
+    Get.find<HapticController>().selectionClick();
     if (count > 0) {
+      Get.find<HapticController>().light();
       widget.controller.trashItems[itemName] = count;
     } else {
       widget.controller.trashItems.remove(itemName);
@@ -104,7 +109,10 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                               context,
                             ),
                           ),
-                          onTap: () => _onEnvironmentChanged(env),
+                          onTap: () {
+                            Get.find<HapticController>().selectionClick();
+                            _onEnvironmentChanged(env);
+                          },
                         );
                       }),
                     ],
@@ -125,7 +133,7 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                     ),
                     child: Text(
                       widget.controller.environmentError!,
-                      style: AppTextStyles.errorText(context),
+                      style: AppTextStyles.trashErrorText(context),
                     ),
                   ),
                 SizedBox(
@@ -221,6 +229,7 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                           ),
                           child: InkWell(
                             onTap: () {
+                              Get.find<HapticController>().light();
                               setState(() {
                                 _expandedCategory =
                                     isExpanded ? null : categoryKey;
@@ -624,14 +633,80 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                     ),
                     child: Text(
                       widget.controller.trashItemsError!,
-                      style: AppTextStyles.errorText(context),
+                      style: AppTextStyles.trashErrorText(context),
                     ),
                   ),
+
+                // Next Button
+                SizedBox(
+                  height: SizeUtils.h(context, AppDimensions.cleanupSpacing24),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: SizeUtils.h(context, AppDimensions.buttonHeight),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Get.find<HapticController>().medium();
+                      _handleNext(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonGreen,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          SizeUtils.r(context, AppDimensions.borderRadius),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.nextButton,
+                      style: AppTextStyles.saveCleanUpText(
+                        context,
+                      ).copyWith(color: AppColors.pureWhite),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: SizeUtils.h(context, AppDimensions.cleanupSpacing12),
+                ),
               ],
             ),
           ),
         );
       },
     );
+  }
+
+  void _handleNext(BuildContext context) {
+    // Validate all fields in this section
+    final isValid = widget.controller.validateSection(
+      AppStrings.trashCollected,
+    );
+
+    if (!isValid) {
+      Get.find<HapticController>().heavy();
+      // Show specific error message based on what's missing
+      String errorMessage = AppStrings.pleaseFixFormErrors;
+      if (widget.controller.environmentError != null) {
+        errorMessage = AppStrings.pleaseSelectEnvironment;
+      } else if (widget.controller.trashItemsError != null) {
+        errorMessage = AppStrings.pleaseAddTrashItem;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: AppColors.errorRed,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+    Get.find<HapticController>().medium();
+    // Mark section as completed
+    widget.controller.markSectionCompleted(AppStrings.trashCollected);
+
+    // Move to next section (Photos)
+    widget.controller.setExpandedSection(AppStrings.photosVideosOptional);
   }
 }

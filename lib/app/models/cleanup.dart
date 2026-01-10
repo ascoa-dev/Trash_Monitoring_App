@@ -4,6 +4,8 @@ class Cleanup {
   final String groupName;
   final DateTime date;
   final String location;
+  final double? latitude;
+  final double? longitude;
   final String photoUrl;
   final String? videoUrl;
   final String environmentType;
@@ -17,6 +19,8 @@ class Cleanup {
     required this.groupName,
     required this.date,
     required this.location,
+    this.latitude,
+    this.longitude,
     required this.photoUrl,
     this.videoUrl,
     required this.environmentType,
@@ -30,6 +34,8 @@ class Cleanup {
     groupName: json['groupName'],
     date: DateTime.parse(json['date']),
     location: json['location'],
+    latitude: (json['latitude'] as num?)?.toDouble(),
+    longitude: (json['longitude'] as num?)?.toDouble(),
     photoUrl: json['photoUrl'],
     videoUrl: json['videoUrl'],
     environmentType: json['environmentType'],
@@ -45,6 +51,8 @@ class Cleanup {
     'groupName': groupName,
     'date': date.toIso8601String(),
     'location': location,
+    'latitude': latitude,
+    'longitude': longitude,
     'photoUrl': photoUrl,
     'videoUrl': videoUrl,
     'environmentType': environmentType,

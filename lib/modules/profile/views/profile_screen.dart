@@ -1,17 +1,20 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/modules/profile/widgets/profile_action_tile.dart';
 import 'package:ascoa_app/modules/profile/widgets/profile_signout_button.dart';
 import 'package:ascoa_app/modules/profile/widgets/full_image_overlay.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
+import 'package:ascoa_app/shared/widgets/app_dialog.dart';
 import 'dart:math' as math;
 
 class ProfileScreen extends StatelessWidget {
@@ -20,6 +23,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthController authController = Get.find<AuthController>();
+    final ConnectivityController connectivityController =
+        Get.find<ConnectivityController>();
 
     return Scaffold(
       body: LayoutBuilder(
@@ -128,6 +133,8 @@ class ProfileScreen extends StatelessWidget {
                                 onTap: () {
                                   // Only show overlay if we have a full-resolution avatar
                                   if (fullUrl != null && fullUrl.isNotEmpty) {
+                                    Get.find<HapticController>()
+                                        .selectionClick();
                                     final normalizedFullUrl =
                                         _normalizeCacheBustedUrl(fullUrl);
                                     FullImageOverlay.show(
@@ -246,7 +253,17 @@ class ProfileScreen extends StatelessWidget {
                               icon: Icons.edit_outlined,
                               title: AppStrings.profileEditTitle,
                               subtitle: AppStrings.profileEditSubtitle,
-                              onTap: () => Get.toNamed(AppRoutes.editProfile),
+                              onTap: () {
+                                if (!connectivityController.isOnline.value) {
+                                  _showOfflineDialog(
+                                    context,
+                                    AppStrings.profileEditTitle,
+                                    AppStrings.profileEditNoInternet,
+                                  );
+                                } else {
+                                  Get.toNamed(AppRoutes.editProfile);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: math.min(
@@ -262,8 +279,17 @@ class ProfileScreen extends StatelessWidget {
                               title: AppStrings.profileChangePasswordTitle,
                               subtitle:
                                   AppStrings.profileChangePasswordSubtitle,
-                              onTap:
-                                  () => Get.toNamed(AppRoutes.changePassword),
+                              onTap: () {
+                                if (!connectivityController.isOnline.value) {
+                                  _showOfflineDialog(
+                                    context,
+                                    AppStrings.profileChangePasswordTitle,
+                                    AppStrings.profileChangePasswordNoInternet,
+                                  );
+                                } else {
+                                  Get.toNamed(AppRoutes.changePassword);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: math.min(
@@ -378,6 +404,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             ProfileSignOutButton(
                               onPressed: () async {
+                                Get.find<HapticController>().medium();
                                 await authController.logout();
                                 Get.offAllNamed(AppRoutes.login);
                               },
@@ -431,5 +458,26 @@ class ProfileScreen extends StatelessWidget {
     } catch (_) {
       return url;
     }
+  }
+
+  void _showOfflineDialog(
+    BuildContext context,
+    String featureName,
+    String message,
+  ) {
+    Get.find<HapticController>().selectionClick();
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder:
+          (_) => AppDialog(
+            title: AppStrings.profileNoInternetTitle,
+            body: message,
+            icon: Icons.wifi_off_rounded,
+            decoratedHero: true,
+            primaryActionLabel: 'OK',
+            onPrimaryAction: () => Get.back(),
+          ),
+    );
   }
 }

@@ -2,6 +2,8 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 
 class ItemCounterScreen extends StatefulWidget {
   final String title; // e.g. "Most likely to find items"
@@ -130,7 +132,10 @@ class _ItemCounterScreenState extends State<ItemCounterScreen> {
                                   color: AppColors.cleanupCounterIcon,
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
-                                  onPressed: () => _decrement(index),
+                                  onPressed: () {
+                                    Get.find<HapticController>().light();
+                                    _decrement(index);
+                                  },
                                 ),
                               ),
                               Container(
@@ -179,7 +184,10 @@ class _ItemCounterScreenState extends State<ItemCounterScreen> {
                                   color: AppColors.cleanupCounterIcon,
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
-                                  onPressed: () => _increment(index),
+                                  onPressed: () {
+                                    Get.find<HapticController>().light();
+                                    _increment(index);
+                                  },
                                 ),
                               ),
                             ],

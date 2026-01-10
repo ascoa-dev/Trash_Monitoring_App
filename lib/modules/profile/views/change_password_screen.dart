@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/modules/profile/controllers/change_password_controller.dart';
@@ -141,7 +142,11 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: IconButton(
-                                  onPressed: () => Get.back(),
+                                  onPressed: () {
+                                    Get.find<HapticController>()
+                                        .selectionClick();
+                                    Get.back();
+                                  },
                                   padding: EdgeInsets.zero,
                                   icon: Icon(
                                     Icons.arrow_back,

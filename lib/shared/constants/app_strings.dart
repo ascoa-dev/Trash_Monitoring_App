@@ -374,6 +374,14 @@ class AppStrings {
 
   // Dashboard Texts
   static const String startNewCleanup = "START NEW CLEANUP";
+  static const String statMessageFirstWeek = "The month has just started 🌱";
+  static const String statSubMessageFirstWeek =
+      "Every pickup matters. Start a cleanup today!";
+  static const String statMessagePostFirstWeek = "No cleanups yet this month.";
+  static const String statSubMessagePostFirstWeek =
+      "Let's make a difference together. Start a cleanup!";
+  static const String statMessageClean = " cleanups this month!";
+  static const String statSubMessageClean = " KGs of trash collected.";
   static const String highlights = "Highlights";
   static const String news = "News";
   static const String moreNews = "More News";
@@ -496,6 +504,100 @@ class AppStrings {
       "If you cleaned alone, enter your own name.";
   static const String searchOrDragMapHint =
       "Search or drag map to set location";
+
+  // Cleanup flow navigation buttons
+  static const String nextButton = "NEXT";
+  static const String pleaseSelectEnvironment =
+      "Please select an environment type";
+  static const String pleaseAddTrashItem = "Please add at least one trash item";
+  static const String pleaseCompleteAllSections =
+      "Please complete all sections before submitting";
+
+  // Stats Screen Strings
+  static const String statsPageTitle = "Reports";
+  static const String statsSubtitle = "Here's a summary of your cleanups.";
+  static const String statsYourActivity = "Your Activity";
+  static const String statsCleanups = "Cleanups";
+  static const String statsTrashCollected = "Trash collected";
+  static const String statsKgs = "KGs";
+  static const String statsChartTitle =
+      "Items Collected by Waste Category and Environment";
+  static const String statsMapTitle = "Waste Collected by Location";
+  static const String statsMapSubtitle =
+      "Tap each point to see more information about the cleanups.";
+  static const String statsFilterDate = "Date";
+  static const String statsFilterEnvironment = "Environment";
+  static const String statsDateLabel = "Date";
+  static const String statsEnvironmentLabel = "Environment";
+  static const String statsAll = "All";
+  static const String statsInland = "Inland";
+  static const String statsFreshwater = "Freshwater";
+  static const String statsSaltwater = "Saltwater";
+  static const String environmentFreshwater = "Freshwater";
+  static const String environmentLand = "Land";
+  static const String environmentSaltwater = "Saltwater";
+  static const String statsLegendFreshwater = "Freshwater";
+  static const String statsLegendLand = "Land";
+  static const String statsLegendSaltwater = "Saltwater";
+  static const String statsErrorFromDate =
+      "From date cannot be later than To date";
+  static const String statsErrorToDate =
+      "To date cannot be earlier than From date";
+  static const String statsMapInfoCollected = "KGs collected";
+  static const String statsRefreshTooltip = "Refresh data";
+  static const String statsErrorNoCachedData =
+      "No cached data available. Please connect to the internet.";
+  static const String statsErrorFailedInit = "Failed to initialize";
+  static const String statsErrorNoInternet =
+      "No internet connection. Showing cached data.";
+  static const String statsErrorNotAuthenticated = "User not authenticated";
+  static const String statsErrorFailedLoad = "Failed to load cleanups";
+
+  // Pending Cleanups Screen Strings
+  static const String pendingCleanupsTitle = "Pending Cleanups";
+  static const String pendingCleanupsTitleFrench = "Nettoyages en attente";
+  static const String pendingCleanupsNone = "No pending cleanups";
+  static const String pendingCleanupsNoneFrench = "Aucun nettoyage en attente";
+  static const String pendingCleanupsAllUploaded =
+      "All your cleanups have been uploaded";
+  static const String pendingCleanupsAllUploadedFrench =
+      "Tous vos nettoyages ont été téléchargés";
+  static const String pendingCleanupsPeople = "people";
+  static const String pendingCleanupsPeopleFrench = "personnes";
+  static const String pendingCleanupsItems = "items";
+  static const String pendingCleanupsItemsFrench = "articles";
+  static const String pendingCleanupsPhotos = "photos";
+  static const String pendingCleanupsSaved = "Saved";
+  static const String pendingCleanupsSavedFrench = "Enregistré";
+  static const String pendingCleanupsDelete = "Delete";
+  static const String pendingCleanupsDeleteFrench = "Supprimer";
+  static const String pendingCleanupsUpload = "Upload";
+  static const String pendingCleanupsUploadFrench = "Téléverser";
+  static const String pendingCleanupsUploadAll = "Upload All";
+  static const String pendingCleanupsUploadAllFrench = "Tout téléverser";
+  static const String pendingCleanupsDeleteTitle = "Delete Cleanup?";
+  static const String pendingCleanupsDeleteTitleFrench =
+      "Supprimer le nettoyage?";
+  static const String pendingCleanupsDeleteMessage =
+      "This action cannot be undone. The cleanup will be permanently deleted.";
+  static const String pendingCleanupsDeleteMessageFrench =
+      "Cette action est irréversible. Le nettoyage sera définitivement supprimé.";
+  static const String pendingCleanupsUploadAllTitle = "Upload All?";
+  static const String pendingCleanupsUploadAllMessage =
+      "All pending cleanups will be uploaded. Make sure you have a stable internet connection.";
+  static const String pendingCleanupsUploadAllMessageFrench =
+      "Tous les nettoyages en attente seront téléchargés. Assurez-vous d'avoir une connexion Internet stable.";
+  static const String pendingCleanupsCancel = "Cancel";
+
+  // Profile Screen Strings (offline dialog messages)
+  static const String profileEditNoInternet =
+      "You need an internet connection to edit your profile. Please check your connection and try again.";
+  static const String profileChangePasswordNoInternet =
+      "You need an internet connection to change your password. Please check your connection and try again.";
+  static const String profilePendingCleanupsTitle = "Pending Cleanups";
+  static const String profilePendingCleanupsSubtitle =
+      "View and upload offline cleanups";
+  static const String profileNoInternetTitle = "No Internet Connection";
 
   AppStrings._();
 }

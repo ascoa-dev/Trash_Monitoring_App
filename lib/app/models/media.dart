@@ -15,7 +15,7 @@ class MediaModel {
         (json['media_details']?['sizes']?['medium']?['source_url']
             as String?) ??
         '';
-    debugPrint(src);
+    debugPrint('[Media URL] $src');
     return MediaModel(id: json['id'] as int, sourceUrl: src);
   }
 }

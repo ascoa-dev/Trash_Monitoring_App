@@ -4,6 +4,8 @@ import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class ProfileSignOutButton extends StatelessWidget {
@@ -24,7 +26,10 @@ class ProfileSignOutButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(
             SizeUtils.r(context, AppDimensions.borderRadius),
           ),
-          onTap: onPressed,
+          onTap: () {
+            Get.find<HapticController>().light();
+            onPressed();
+          },
           child: Container(
             height: SizeUtils.h(context, AppDimensions.profileSignOutHeight),
             padding: EdgeInsets.symmetric(

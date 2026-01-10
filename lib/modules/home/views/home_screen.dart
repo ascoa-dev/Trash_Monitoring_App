@@ -1,3 +1,5 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:ascoa_app/modules/stats/controllers/stats_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
@@ -36,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   late final HomePostsController _postsController;
+  late final StatsController _statsController;
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Load posts once on init
     _postsController.loadPosts(perPage: 10);
+    _statsController = Get.find<StatsController>(tag: 'stats_controller');
   }
 
   @override
@@ -240,6 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return GestureDetector(
         onTap: () {
           if (fullUrl != null && fullUrl.isNotEmpty) {
+            Get.find<HapticController>().selectionClick();
             final normalized = _normalizeCacheBustedUrl(fullUrl);
             FullImageOverlay.show(
               context,
@@ -382,7 +387,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 AppDimensions.homeScreenStartCleanupButtonHeight,
                 useContentHeight: false,
               ),
-              onPressed: () => Get.toNamed(AppRoutes.newCleanUp),
+              onPressed: () {
+                Get.find<HapticController>().medium();
+                Get.toNamed(AppRoutes.newCleanUp);
+              },
               labelStyle: AppTextStyles.buttonPrimaryText(context).copyWith(
                 fontSize: SizeUtils.h(
                   context,
@@ -417,24 +425,65 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildStats(BuildContext context) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            '3 Cleanups this month',
-            style: AppTextStyles.cleanUpSubtitle(context),
-            textAlign: TextAlign.center,
+    return Obx(() {
+      if (_statsController.isLoading.value &&
+          _statsController.allCleanups.isEmpty) {
+        return Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Please Wait...',
+                style: AppTextStyles.cleanUpSubtitle(context),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                'Loading your stats',
+                style: AppTextStyles.cleanUpSubtitle(context),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          // SizedBox(height: SizeUtils.h(context, AppDimensions.homeScreenStatsSpacing)),
-          Text(
-            '15 kg of trash collected',
-            style: AppTextStyles.cleanUpSubtitle(context),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+        );
+      }
+      final int cleanups = _statsController.currentMonthCleanupCount;
+      final String trashKg = _statsController.currentMonthTrashKg
+          .toStringAsFixed(3);
+      final bool isFirstWeek = _statsController.isFirstWeekOfMonth;
+      String message;
+      String subMessage;
+
+      if (cleanups == 0) {
+        if (isFirstWeek) {
+          message = AppStrings.statMessageFirstWeek;
+          subMessage = AppStrings.statSubMessageFirstWeek;
+        } else {
+          message = AppStrings.statMessagePostFirstWeek;
+          subMessage = AppStrings.statSubMessagePostFirstWeek;
+        }
+      } else {
+        message = '$cleanups${AppStrings.statMessageClean}';
+        subMessage = '$trashKg${AppStrings.statSubMessageClean}';
+      }
+
+      return Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              message,
+              style: AppTextStyles.cleanUpSubtitle(context),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              subMessage,
+              style: AppTextStyles.cleanUpSubtitle(context),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildHighlightsSection(BuildContext context) {
@@ -493,6 +542,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             GestureDetector(
               onTap: () async {
+                Get.find<HapticController>().selectionClick();
                 final Uri url = Uri.parse(AppStrings.newslink);
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -631,11 +681,10 @@ class _HomeScreenState extends State<HomeScreen> {
         color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(radius),
-          onTap:
-              () => Get.snackbar(
-                AppStrings.comingSoon,
-                AppStrings.comingSoonMessage,
-              ),
+          onTap: () {
+            Get.find<HapticController>().selectionClick();
+            Get.snackbar(AppStrings.comingSoon, AppStrings.comingSoonMessage);
+          },
           child: Container(
             width: cardWidth,
             height: SizeUtils.h(
@@ -788,5 +837,3 @@ class _HighlightItem {
 
   final String imageAsset;
 }
-
-// _NewsItem removed — now using PostsController and Post model

@@ -1,7 +1,9 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
 import 'package:ascoa_app/shared/widgets/custom_date_picker.dart';
@@ -11,6 +13,7 @@ import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_control
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -37,6 +40,8 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
   Set<Marker> markers = {};
   Timer? _debounceTimer;
   bool _isUpdatingFromMap = false;
+
+  late final Worker _connectivityWorker;
 
   @override
   void initState() {
@@ -72,6 +77,39 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
         _autoFetchLocation();
       });
     }
+    final connectivity = Get.find<ConnectivityController>();
+
+    _connectivityWorker = ever<bool>(connectivity.isOnline, (isOnline) async {
+      if (!isOnline) return;
+
+      // Only re-check if we already have a selected location
+      if (currentPosition == null) return;
+
+      debugPrint('[GeoFence] Connectivity restored – revalidating location');
+
+      final isValid = await _isInCameroon(currentPosition!);
+
+      if (!mounted) return;
+
+      if (!isValid) {
+        widget.controller.locationError = AppStrings.selectLocationInCameroon;
+        debugPrint('[GeoFence] Location invalid after reconnect');
+      } else {
+        widget.controller.clearFieldError('location');
+        debugPrint('[GeoFence] Location valid after reconnect');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _connectivityWorker.dispose();
+    _debounceTimer?.cancel();
+    peopleController.dispose();
+    groupController.dispose();
+    dateController.dispose();
+    locationController.dispose();
+    super.dispose();
   }
 
   /// Restore map marker and camera to previously saved location
@@ -144,7 +182,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
         );
 
         // Check if location is in Cameroon (rough bounds check)
-        final isInCameroon = _isInCameroon(userLocation);
+        final isInCameroon = await _isInCameroon(userLocation);
         debugPrint(
           '[BasicInfo] _autoFetchLocation: isInCameroon=$isInCameroon',
         );
@@ -213,19 +251,33 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
   }
 
   /// Check if coordinates are within Cameroon bounds
-  bool _isInCameroon(LatLng location) {
-    // Cameroon bounds (approximate)
-    // North: 13.08°N, South: 1.65°N
-    // West: 8.49°E, East: 16.19°E
-    const double northBound = 13.08;
-    const double southBound = 1.65;
-    const double westBound = 8.49;
-    const double eastBound = 16.19;
+  Future<bool> _isInCameroon(LatLng location) async {
+    final connectivity = Get.find<ConnectivityController>();
+    final isOnline = connectivity.isOnline.value;
 
-    return location.latitude >= southBound &&
-        location.latitude <= northBound &&
-        location.longitude >= westBound &&
-        location.longitude <= eastBound;
+    if (!isOnline) {
+      debugPrint('[GeoFence] Offline - using bounding box check only');
+      return location.latitude >= 1.72767263428 &&
+          location.latitude <= 12.8593962671 &&
+          location.longitude >= 8.48881554529 &&
+          location.longitude <= 16.0128524106;
+    }
+
+    return isInCameroonByGeocoding(location);
+  }
+
+  Future<bool> isInCameroonByGeocoding(LatLng location) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        location.latitude,
+        location.longitude,
+      );
+      if (placemarks.isEmpty) return false;
+      return placemarks.first.isoCountryCode == 'CM';
+    } catch (e) {
+      debugPrint('[GeoFence] Reverse geocoding failed: $e');
+      return false;
+    }
   }
 
   void _syncPeopleCount() {
@@ -369,7 +421,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
       );
 
       // Check if location is in Cameroon
-      final isInCameroon = _isInCameroon(userLocation);
+      final isInCameroon = await _isInCameroon(userLocation);
       debugPrint('[BasicInfo] _getLocation: isInCameroon=$isInCameroon');
 
       if (!isInCameroon) {
@@ -476,9 +528,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     mapController?.animateCamera(CameraUpdate.newLatLng(position));
   }
 
-  void _onPlaceSelected(PlaceDetails details) {
+  void _onPlaceSelected(PlaceDetails details) async {
+    Get.find<HapticController>().selectionClick();
     // Check if selected place is in Cameroon
-    if (!_isInCameroon(details.latLng)) {
+    if (!await _isInCameroon(details.latLng)) {
       // Set field error instead of showing snackbar
       widget.controller.locationError = AppStrings.selectLocationInCameroon;
       return;
@@ -487,12 +540,15 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     _updateMapLocation(details.latLng);
   }
 
-  void _onMapDragEnd() {
+  void _onMapDragEnd() async {
+    Get.find<HapticController>().selectionClick();
     // When user drags map, update the search field with reverse geocoded address
     if (currentPosition == null || _isUpdatingFromMap) return;
 
+    widget.controller.locationLatitude = currentPosition!.latitude;
+    widget.controller.locationLongitude = currentPosition!.longitude;
     // Check if dragged location is in Cameroon
-    if (!_isInCameroon(currentPosition!)) {
+    if (!await _isInCameroon(currentPosition!)) {
       // Set field error instead of showing snackbar
       widget.controller.locationError = AppStrings.selectLocationInCameroon;
       // Reset to center of Cameroon
@@ -581,7 +637,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
                       children: [
                         // Decrement button
                         IconButton(
-                          onPressed: _decrementPeople,
+                          onPressed: () {
+                            Get.find<HapticController>().selectionClick();
+                            _decrementPeople();
+                          },
                           icon: Icon(
                             Icons.remove,
                             size: SizeUtils.r(
@@ -622,7 +681,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
 
                         // Increment button
                         IconButton(
-                          onPressed: _incrementPeople,
+                          onPressed: () {
+                            Get.find<HapticController>().selectionClick();
+                            _incrementPeople();
+                          },
                           icon: Icon(
                             Icons.add,
                             size: SizeUtils.r(
@@ -702,6 +764,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
                 supportText: widget.controller.dateError,
                 isError: widget.controller.dateError != null,
                 onTap: () async {
+                  Get.find<HapticController>().selectionClick();
                   // open custom date picker on tap
                   // ignore: use_build_context_synchronously
                   final picked = await CustomDatePicker.show(
@@ -744,7 +807,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: _getLocation,
+              onPressed: () {
+                Get.find<HapticController>().medium();
+                _getLocation();
+              },
               icon: Icon(Icons.my_location, color: AppColors.pureWhite),
               label: Text(
                 AppStrings.useMyLocation,
@@ -872,18 +938,80 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
               ),
             ),
           ),
+
+          // Next Button
+          SizedBox(
+            height: SizeUtils.h(context, AppDimensions.cleanupSpacing24),
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: SizeUtils.h(context, AppDimensions.buttonHeight),
+            child: ElevatedButton(
+              onPressed: _handleNext,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.buttonGreen,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    SizeUtils.r(context, AppDimensions.borderRadius),
+                  ),
+                ),
+              ),
+              child: Text(
+                AppStrings.nextButton,
+                style: AppTextStyles.saveCleanUpText(
+                  context,
+                ).copyWith(color: AppColors.pureWhite),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: SizeUtils.h(context, AppDimensions.cleanupSpacing12),
+          ),
         ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _debounceTimer?.cancel();
-    peopleController.dispose();
-    groupController.dispose();
-    dateController.dispose();
-    locationController.dispose();
-    super.dispose();
+  void _handleNext() async {
+    Get.find<HapticController>().medium();
+    // Validate all fields in this section
+    final isValid = widget.controller.validateSection(
+      AppStrings.basicInformation,
+    );
+
+    if (!isValid) {
+      Get.find<HapticController>().light();
+      // Show error snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.pleaseFixFormErrors),
+          backgroundColor: AppColors.errorRed,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Additional validation: Check if location is within Cameroon (offline-safe)
+    if (currentPosition != null && !await _isInCameroon(currentPosition!)) {
+      Get.find<HapticController>().light();
+      widget.controller.locationError = AppStrings.selectLocationInCameroon;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.selectLocationInCameroon),
+          backgroundColor: AppColors.errorRed,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+    Get.find<HapticController>().light();
+    // Mark section as completed
+    widget.controller.markSectionCompleted(AppStrings.basicInformation);
+
+    // Move to next section (Trash Collected)
+    widget.controller.setExpandedSection(AppStrings.trashCollected);
   }
 }

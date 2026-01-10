@@ -9,9 +9,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ascoa_app/modules/profile/models/change_password_status.dart';
 import 'package:ascoa_app/modules/auth/models/reset_password_status.dart';
 import 'package:ascoa_app/app/models/user.dart';
+import 'package:hive/hive.dart';
 
 class AuthController extends GetxController {
   late final FirebaseAuth _auth;
+  late Box<UserModel> userBox;
   Rxn<User> firebaseUser = Rxn<User>();
   Rxn<UserModel> currentUserModel = Rxn<UserModel>();
   RxBool isCompletingProfile = false.obs;
@@ -19,9 +21,15 @@ class AuthController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
     _auth = FirebaseAuth.instance;
     firebaseUser.bindStream(_auth.authStateChanges());
-    super.onInit();
+
+    _initHive();
+  }
+
+  Future<void> _initHive() async {
+    userBox = await Hive.openBox<UserModel>('user_profile');
   }
 
   Future<void> _handleUserPostLogin(User user, String signUpMethod) async {
@@ -60,6 +68,7 @@ class AuthController extends GetxController {
           userData,
           uidFromDoc: user.uid,
         );
+        await userBox.put(user.uid, currentUserModel.value!);
 
         // Use typed model instead of map access
         final model = currentUserModel.value!;
@@ -107,15 +116,21 @@ class AuthController extends GetxController {
           newDoc,
           uidFromDoc: user.uid,
         );
+        await userBox.put(user.uid, currentUserModel.value!);
+
         Get.snackbar('Welcome!', 'Please complete your profile information.');
         Get.offAllNamed(AppRoutes.completeProfile);
       }
     } on FirebaseException catch (e) {
-      Get.snackbar('Error', 'Failed to load user data: ${e.message}');
-      await _signOutAll(); // Sign out if profile loading fails
+      debugPrint('Firestore error: ${e.message}');
+
+      final cached = userBox.get(user.uid);
+      if (cached != null) {
+        currentUserModel.value = cached;
+        Get.offAllNamed(AppRoutes.home);
+      }
     } catch (e) {
       Get.snackbar('Error', 'An unexpected error occurred: $e');
-      await _signOutAll(); // Sign out if profile loading fails
     }
   }
 
@@ -346,6 +361,7 @@ class AuthController extends GetxController {
           doc.data()!,
           uidFromDoc: user.uid,
         );
+        await userBox.put(user.uid, currentUserModel.value!);
       }
 
       Get.snackbar(
@@ -381,28 +397,33 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<Map<String, dynamic>?> fetchCurrentUserProfile() async {
+  Future<UserModel?> fetchCurrentUserProfile() async {
     final user = _auth.currentUser;
-    if (user == null) {
-      return null;
-    }
+    if (user == null) return null;
+
     try {
-      final doc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get(const GetOptions(source: Source.serverAndCache));
+
       if (doc.data() != null) {
-        currentUserModel.value = UserModel.fromMap(
-          doc.data()!,
-          uidFromDoc: user.uid,
-        );
+        final model = UserModel.fromMap(doc.data()!, uidFromDoc: user.uid);
+        currentUserModel.value = model;
+        await userBox.put(user.uid, model);
+        return model;
       }
-      return doc.data();
-    } catch (e) {
-      debugPrint('fetchCurrentUserProfile error: $e');
-      return null;
+    } catch (_) {
+      debugPrint('Using cached user profile');
     }
+
+    final cached = userBox.get(user.uid);
+    if (cached != null) {
+      currentUserModel.value = cached;
+      return cached;
+    }
+
+    return null;
   }
 
   Future<UserModel?> updateProfile({
@@ -452,6 +473,7 @@ class AuthController extends GetxController {
           doc.data()!,
           uidFromDoc: user.uid,
         );
+        await userBox.put(user.uid, currentUserModel.value!);
       }
 
       Get.snackbar(
@@ -693,84 +715,24 @@ class AuthController extends GetxController {
   }
 
   Future<String> getName() async {
-    final user = _auth.currentUser;
-    if (user == null) return '';
-
-    // Use typed model if available
-    if (currentUserModel.value != null) {
-      final model = currentUserModel.value!;
-      return '${model.firstName} ${model.lastName}';
-    }
-
-    // Otherwise fetch and populate
-    try {
-      await fetchCurrentUserProfile();
-      if (currentUserModel.value != null) {
-        final model = currentUserModel.value!;
-        return '${model.firstName} ${model.lastName}';
-      }
-      return '';
-    } catch (e) {
-      debugPrint('Error fetching user name: $e');
-      return '';
-    }
+    final model = currentUserModel.value ?? await fetchCurrentUserProfile();
+    if (model == null) return '';
+    return '${model.firstName} ${model.lastName}';
   }
 
   Future<String> getFirstName() async {
-    final user = _auth.currentUser;
-    if (user == null) return '';
-
-    // Use typed model if available
-    if (currentUserModel.value != null) {
-      return currentUserModel.value!.firstName;
-    }
-
-    // Otherwise fetch and populate
-    try {
-      await fetchCurrentUserProfile();
-      return currentUserModel.value?.firstName ?? '';
-    } catch (e) {
-      debugPrint('Error fetching user first name: $e');
-      return '';
-    }
+    final model = currentUserModel.value ?? await fetchCurrentUserProfile();
+    return model?.firstName ?? '';
   }
 
   Future<String> getLastName() async {
-    final user = _auth.currentUser;
-    if (user == null) return '';
-
-    // Use typed model if available
-    if (currentUserModel.value != null) {
-      return currentUserModel.value!.lastName;
-    }
-
-    // Otherwise fetch and populate
-    try {
-      await fetchCurrentUserProfile();
-      return currentUserModel.value?.lastName ?? '';
-    } catch (e) {
-      debugPrint('Error fetching user last name: $e');
-      return '';
-    }
+    final model = currentUserModel.value ?? await fetchCurrentUserProfile();
+    return model?.lastName ?? '';
   }
 
   Future<String> getCity() async {
-    final user = _auth.currentUser;
-    if (user == null) return '';
-
-    // Use typed model if available
-    if (currentUserModel.value != null) {
-      return currentUserModel.value!.city;
-    }
-
-    // Otherwise fetch and populate
-    try {
-      await fetchCurrentUserProfile();
-      return currentUserModel.value?.city ?? '';
-    } catch (e) {
-      debugPrint('Error fetching user city: $e');
-      return '';
-    }
+    final model = currentUserModel.value ?? await fetchCurrentUserProfile();
+    return model?.city ?? '';
   }
 
   // ===============================================

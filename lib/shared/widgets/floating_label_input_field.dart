@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
@@ -5,6 +6,7 @@ import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
 
 /// FloatingLabelInputField replicates the Figma absolute label effect:
 /// A bordered container with a small label chip overlapping the top border
@@ -91,6 +93,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
 
   @override
   Widget build(BuildContext context) {
+    final haptics = Get.find<HapticController>();
     // Focus node is created in initState and updates _hasFocus via listener
 
     // If controller is disposed, return a basic container to prevent crashes
@@ -168,7 +171,10 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                     controller: widget.controller,
                     focusNode: _focusNode,
                     readOnly: widget.readOnly,
-                    onTap: widget.onTap,
+                    onTap: () {
+                      haptics.selectionClick();
+                      widget.onTap!();
+                    },
                     obscureText: widget.obscure,
                     onChanged: widget.onChanged,
                     keyboardType: widget.keyboardType,

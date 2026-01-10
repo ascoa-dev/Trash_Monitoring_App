@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
 import 'package:ascoa_app/modules/start_cleanup/controllers/media_upload_controller.dart';
 import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
+import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
@@ -29,6 +32,7 @@ class _PhotosSectionState extends State<PhotosSection> {
     try {
       // Check if we can add more photos
       if (!controller.canAddMore) {
+        Get.find<HapticController>().light();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -54,6 +58,7 @@ class _PhotosSectionState extends State<PhotosSection> {
       );
 
       if (pickedFiles.isEmpty) return;
+      Get.find<HapticController>().selectionClick();
 
       // Take only the number of photos we can add (fallback for platforms that don't respect limit)
       final filesToAdd = pickedFiles.take(remainingSlots).toList();
@@ -62,37 +67,55 @@ class _PhotosSectionState extends State<PhotosSection> {
       final files = filesToAdd.map((xFile) => File(xFile.path)).toList();
       await controller.addPhotos(files);
 
-      // Get the cleanup doc ID and start uploading immediately
-      final cleanupDocId = widget.formController.cleanupDocId;
+      // Check connectivity before attempting upload
+      final connectivityController = Get.find<ConnectivityController>();
+      final isOnline = connectivityController.isOnline.value;
 
-      // Upload all pending photos
-      for (final file in files) {
-        final photo = controller.photos.firstWhere(
-          (p) => p.file.path == file.path,
-        );
-        controller.compressAndUpload(photo.id, cleanupDocId);
+      if (isOnline) {
+        Get.find<HapticController>().selectionClick();
+        // Get the cleanup doc ID and start uploading immediately
+        final cleanupDocId = widget.formController.cleanupDocId;
+
+        // Upload all pending photos
+        for (final file in files) {
+          final photo = controller.photos.firstWhere(
+            (p) => p.file.path == file.path,
+          );
+          controller.compressAndUpload(photo.id, cleanupDocId);
+        }
       }
 
       // Show feedback
       if (mounted) {
-        final message =
-            filesToAdd.length < pickedFiles.length
-                ? 'Only ${filesToAdd.length} photo${filesToAdd.length > 1 ? 's' : ''} added (limit: ${MediaUploadConfig.maxPhotos})'
-                : '${files.length} photo${files.length > 1 ? 's' : ''} uploading...';
+        String message;
+        Color backgroundColor;
+
+        if (filesToAdd.length < pickedFiles.length) {
+          message =
+              'Only ${filesToAdd.length} photo${filesToAdd.length > 1 ? 's' : ''} added (limit: ${MediaUploadConfig.maxPhotos})';
+          backgroundColor = AppColors.warning;
+        } else if (!isOnline) {
+          Get.find<HapticController>().light();
+          message =
+              '${files.length} photo${files.length > 1 ? 's' : ''} added. Will upload when online.';
+          backgroundColor = AppColors.info;
+        } else {
+          message =
+              '${files.length} photo${files.length > 1 ? 's' : ''} uploading...';
+          backgroundColor = AppColors.info;
+        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
-            backgroundColor:
-                filesToAdd.length < pickedFiles.length
-                    ? AppColors.warning
-                    : AppColors.info,
+            backgroundColor: backgroundColor,
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 2),
           ),
         );
       }
     } catch (e) {
+      Get.find<HapticController>().light();
       debugPrint('[PhotosSection] Error picking images: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -121,7 +144,13 @@ class _PhotosSectionState extends State<PhotosSection> {
             width: double.infinity,
             height: SizeUtils.h(context, AppDimensions.buttonHeight),
             child: ElevatedButton(
-              onPressed: controller.canAddMore ? _pickImages : null,
+              onPressed:
+                  controller.canAddMore
+                      ? () {
+                        Get.find<HapticController>().medium();
+                        _pickImages();
+                      }
+                      : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.buttonGreen,
                 disabledBackgroundColor: AppColors.grey400,
@@ -170,7 +199,71 @@ class _PhotosSectionState extends State<PhotosSection> {
               );
             },
           ),
+
+          // Done/Complete Button - Photos are optional so always enable
+          SizedBox(
+            height: SizeUtils.h(context, AppDimensions.cleanupSpacing24),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Photos are optional. You can continue without uploading photos.',
+                textAlign: TextAlign.start,
+                style: AppTextStyles.trashCollectionSubtitle(context),
+              ),
+              SizedBox(
+                height: SizeUtils.h(context, AppDimensions.cleanupSpacing4),
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: SizeUtils.h(context, AppDimensions.buttonHeight),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Get.find<HapticController>().medium();
+                    _handleComplete();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.buttonGreen,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        SizeUtils.r(context, AppDimensions.borderRadius),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    AppStrings.continueButton,
+                    style: AppTextStyles.saveCleanUpText(
+                      context,
+                    ).copyWith(color: AppColors.pureWhite),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: SizeUtils.h(context, AppDimensions.cleanupSpacing12),
+          ),
         ],
+      ),
+    );
+  }
+
+  void _handleComplete() {
+    // Photos are optional - no validation needed
+    // Mark section as completed
+    widget.formController.markSectionCompleted(AppStrings.photosVideosOptional);
+
+    // Collapse this section (no more sections to navigate to)
+    widget.formController.setExpandedSection(null);
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('All sections completed! You can now save your cleanup.'),
+        backgroundColor: AppColors.success,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
       ),
     );
   }
@@ -323,14 +416,20 @@ class _PhotosSectionState extends State<PhotosSection> {
       // Cancel button during upload
       icon = Icons.close;
       backgroundColor = AppColors.errorRed;
-      onPressed = () => controller.removePhoto(photo.id);
+      onPressed = () {
+        Get.find<HapticController>().light();
+        controller.removePhoto(photo.id);
+      };
     } else if (photo.status == PhotoUploadStatus.completed ||
         photo.status == PhotoUploadStatus.pending ||
         photo.status == PhotoUploadStatus.error) {
       // Discard button after upload or if pending/error
       icon = Icons.delete_outline;
       backgroundColor = AppColors.errorRed;
-      onPressed = () => controller.removePhoto(photo.id);
+      onPressed = () {
+        Get.find<HapticController>().light();
+        controller.removePhoto(photo.id);
+      };
     } else {
       // Cancelled - no button
       return const SizedBox.shrink();

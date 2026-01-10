@@ -246,6 +246,12 @@ class AppDimensions {
   static const double navBarShadowOffsetYLarge = 6.0;
   static const double navBarShadowBlurSmall = 3.0;
   static const double navBarShadowOffsetYSmall = 2.0;
+  static const double navBarPendingOffset = 18.0;
+  static const double navBarPendingInsetHorizontal = 8.0;
+  static const double navBarPendingInsetVertical = 6.0;
+  static const double navBarPendingBadgeRadius = 20.0;
+  static const double navBarPendingBadgeMinDimensions = 18.0;
+  static const double navBarPendingBadgeFontSize = 12.0;
   // Profile screen measurements
   static const double profileContentMaxWidth = 440.0;
   static const double profileAvatarSize = 98.0;
@@ -493,6 +499,123 @@ class AppDimensions {
   static const double locationFieldLoaderIconSize = 20.0;
   static const double locationFieldTextSize = 16.0;
   static const double locationFieldErrorPadding = 4.0;
+
+  // Stats Screen Dimensions
+  static const double statsHeaderHeight = 280.0;
+  static const double statsHeaderText = 28.0;
+  static const double statsCardBorderRadius = 12.0;
+  static const double statsChartTitleFontSize = 16.0;
+  static const double statsChartPadding = 16.0;
+  static const double statsChartAspectRatio = 1.0;
+  static const double statsFilterSpacing = 16.0;
+  static const double statsMapHeight = 300.0;
+  static const double statsMarkerSize = 18.0;
+  static const double statsMarkerBorderWidth = 2.0;
+  static const double statsSliderHandleWidth = 4.0;
+  static const double statsSliderHandleHeight = 44.0;
+  static const double statsSliderTrackHeight = 16.0;
+  static const double statsSliderPaddingWidth = 6.0;
+  static const double statsCheckboxSize = 18.0;
+  static const double statsCheckboxBorderWidth = 2.0;
+  static const double statsCheckboxBorderRadius = 2.0;
+  static const double statsCheckboxIconSize = 12.0;
+  static const double statsActivityCardPadding = 4.0;
+  static const double statsActivityValueFontSize = 57.0;
+  static const double statsActivityLabelFontSize = 24.0;
+  static const double statsActivityLabelSmallFontSize = 14.0;
+  static const double statsActivityUnitLabelFontSize = 16.0;
+  static const double statsActivityUnitFontSize = 14.0;
+  static const double statsActivityUnitTopOffset = 44.0;
+  static const double statsChartLegendIconSize = 12.0;
+  static const double statsChartLegendSpacing = 6.0;
+  static const double statsChartLegendFontSize = 10.0;
+  static const double statsChartLabelFontSize = 9.0;
+  static const double statsChartLabelWidth = 60.0;
+  static const double statsChartBarsFontSize = 10.0;
+  static const double statsChartBarsGap = 6.0;
+  static const double statsFilterDateFontSize = 14.0;
+  static const double statsFilterLabelFontSize = 16.0;
+  static const double statsSliderDotSize = 4.0;
+  static const double statsErrorFontSize = 12.0;
+  static const double statsMapInfoFontSize = 14.0;
+
+  // Stats Screen - pending section dimensions
+  static const double statsPendingSectionPaddingVertical = 4.0;
+  static const double statsPendingSectionPaddingVertical2 = 12.0;
+  static const double statsPendingSectionPaddingHorizontal = 24.0;
+  static const double statsPendingContainerPaddingVertical = 20.0;
+  static const double statsPendingIconSize = 28.0;
+  static const double statsPendingIconSpacing = 4.0;
+  static const double statsPendingSectionSpacing = 12.0;
+  static const double statsPendingButtonFontSize = 16.0;
+
+  // Stats screen - additional dimensions found in sweep
+  static const double statsPagePaddingHorizontal = 24.0;
+  static const double statsPageActivityCardPaddingVertical = 0.0;
+  static const double statsPageChartTitlePaddingHorizontal = 32.0;
+  static const double statsPageCardPaddingHorizontal = 44.0;
+  static const double statsPageCardPaddingVertical = 8.0;
+  static const double statsHeaderPositionBottom = 10.0;
+  static const double statsPagePaddingVertical = 12.0;
+  static const double statsActivityCardSpacing = 8.0;
+  static const double statsMapSpacing = 8.0;
+  static const double statsActivityCardShadowBlur = 6.0;
+  static const double statsActivityCardShadowOffsetY = 2.0;
+  static const double statsCardShadowBlur = 10.0;
+  static const double statsCardShadowOffsetY = 4.0;
+  static const double statsBottomPadding = 120.0;
+  static const double statsHeaderIconSize = 40.0;
+  static const double statsHeaderIconSpacing = 8.0;
+  static const double statsHeaderRefreshSpacing = 4.0;
+  static const double statsActivityValueDecimalSpacing = 2.0;
+  static const double statsActivityDecimalBottomPadding = 6.0;
+  static const double statsChartLabelTopPadding = 8.0;
+  static const double statsChartBottomReservedSize = 40.0;
+  static const double statsChartLeftReservedSize = 30.0;
+  static const double statsChartGridStrokeWidth = 1.0;
+  static const double statsChartLegendTopOffset = 8.0;
+  static const double statsChartLegendRightOffset = 8.0;
+  static const double statsChartLegendPaddingHorizontal = 8.0;
+  static const double statsChartLegendPaddingVertical = 6.0;
+  static const double statsChartLegendBorderRadius = 4.0;
+  static const double statsChartLegendBorderWidth = 1.0;
+  static const double statsChartLegendItemSpacing = 4.0;
+  static const double statsChartBarWidth = 40.0;
+  static const double statsChartBarBorderRadius = 4.0;
+  static const double statsFilterSectionSpacing = 20.0;
+  static const double statsFilterLabelSpacing = 12.0;
+  static const double statsFilterCheckboxSpacing = 16.0;
+  static const double statsFilterCheckboxIconSpacing = 6.0;
+  static const double statsFilterErrorTopPadding = 8.0;
+  static const double statsActivityUnitLeftPadding = 4.0;
+  static const double statsSliderTrackBorderRadius = 8.0;
+  static const double statsSliderHandleBorderRadius = 2.0;
+  static const double statsLegendItemIconBorderRadius = 2.0;
+  static const double statsSliderDotPadding = 4.0;
+
+  // Pending Cleanups Screen Dimensions
+  static const double pendingCleanupsEmptyPadding = 32.0;
+  static const double pendingCleanupsEmptyIconSize = 80.0;
+  static const double pendingCleanupsEmptyIconSpacing = 16.0;
+  static const double pendingCleanupsEmptyTextSpacing = 8.0;
+  static const double pendingCleanupsListPadding = 16.0;
+  static const double pendingCleanupsCardMargin = 12.0;
+  static const double pendingCleanupsCardBorderRadius = 12.0;
+  static const double pendingCleanupsCardElevation = 2.0;
+  static const double pendingCleanupsCardPadding = 16.0;
+  static const double pendingCleanupsIconSize = 20.0;
+  static const double pendingCleanupsIconSpacing = 8.0;
+  static const double pendingCleanupsProgressSize = 20.0;
+  static const double pendingCleanupsProgressStrokeWidth = 2.0;
+  static const double pendingCleanupsInfoSpacing = 12.0;
+  static const double pendingCleanupsInfoRowSpacing = 8.0;
+  static const double pendingCleanupsFontSize = 12.0;
+  static const double pendingCleanupsButtonSpacing = 8.0;
+  static const double pendingCleanupsFooterPadding = 16.0;
+  static const double pendingCleanupsFooterShadowBlur = 10.0;
+  static const double pendingCleanupsFooterShadowOffsetY = -2.0;
+  static const double pendingCleanupsInfoIconSize = 16.0;
+
   // Prevent instantiation
   AppDimensions._();
 }

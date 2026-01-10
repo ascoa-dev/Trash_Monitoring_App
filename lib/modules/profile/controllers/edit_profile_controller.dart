@@ -57,30 +57,28 @@ class EditProfileController extends GetxController {
 
       // Prefer typed model values when available, then fall back to Firestore map or Firebase User
       email.value =
-          user?.email ?? userModel?.email ?? profileData?['email']?.toString();
+          user?.email ?? userModel?.email ?? profileData?.email.toString();
 
       // Load avatar URL from typed model -> Firestore map -> Firebase Auth
       avatarUrl.value =
           userModel?.avatarUrl ??
-          profileData?['avatarUrl']?.toString() ??
+          profileData?.avatarUrl?.toString() ??
           user?.photoURL;
 
       // Load thumbnail URL for preview (fallback to full avatar if no thumb)
       thumbUrl.value =
           userModel?.thumbUrl ??
-          profileData?['thumbUrl']?.toString() ??
+          profileData?.thumbUrl?.toString() ??
           avatarUrl.value;
 
       _formControllers.firstNameController.text =
           userModel?.firstName ??
-          profileData?['firstName']?.toString().trim() ??
+          profileData?.firstName.toString().trim() ??
           '';
       _formControllers.lastNameController.text =
-          userModel?.lastName ??
-          profileData?['lastName']?.toString().trim() ??
-          '';
+          userModel?.lastName ?? profileData?.lastName.toString().trim() ?? '';
       final countryCodeStored =
-          userModel?.countryCode ?? profileData?['countryCode']?.toString();
+          userModel?.countryCode ?? profileData?.countryCode.toString();
       Country? storedCountry;
       if (countryCodeStored != null && countryCodeStored.trim().isNotEmpty) {
         storedCountry = CountryParser.tryParseCountryCode(
@@ -90,7 +88,7 @@ class EditProfileController extends GetxController {
 
       final phoneRaw =
           userModel?.phoneNumber ??
-          profileData?['phoneNumber']?.toString().trim() ??
+          profileData?.phoneNumber.toString().trim() ??
           '';
       if (phoneRaw.isNotEmpty) {
         final parsed = _parsePhoneNumber(phoneRaw, storedCountry);
@@ -101,7 +99,7 @@ class EditProfileController extends GetxController {
         _formControllers.phoneNumberController.clear();
       }
       _formControllers.cityController.text =
-          userModel?.city ?? profileData?['city']?.toString().trim() ?? '';
+          userModel?.city ?? profileData?.city.toString().trim() ?? '';
     } catch (e) {
       debugPrint('EditProfileController load error: $e');
     } finally {

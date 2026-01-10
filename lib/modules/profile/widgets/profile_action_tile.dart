@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
@@ -51,7 +53,13 @@ class ProfileActionTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(
             SizeUtils.r(context, AppDimensions.borderRadius),
           ),
-          onTap: onTap,
+          onTap:
+              onTap != null
+                  ? () {
+                    Get.find<HapticController>().selectionClick();
+                    onTap!();
+                  }
+                  : null,
           child: Container(
             constraints: BoxConstraints(
               maxHeight: SizeUtils.h(

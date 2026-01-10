@@ -3,6 +3,8 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 
 class SocialButton extends StatelessWidget {
   final Widget icon;
@@ -20,8 +22,12 @@ class SocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final haptics = Get.find<HapticController>();
     return InkWell(
-      onTap: onPressed,
+      onTap: () {
+        haptics.light();
+        onPressed();
+      },
       child: Container(
         width: double.infinity,
         height: SizeUtils.h(context, AppDimensions.buttonHeight),

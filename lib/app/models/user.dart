@@ -1,21 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 
+part 'user.g.dart';
+
+@HiveType(typeId: 20)
 class UserModel {
+  @HiveField(0)
   final String uid;
+  @HiveField(1)
   final String email;
+  @HiveField(2)
   final String firstName;
+  @HiveField(3)
   final String lastName;
+  @HiveField(4)
   final String phoneNumber;
+  @HiveField(5)
   final String city;
+  @HiveField(6)
   final String countryCode;
+  @HiveField(7)
   final String? avatarUrl;
+  @HiveField(8)
   final String? thumbUrl;
+  @HiveField(9)
   final DateTime? avatarUpdatedAt;
+  @HiveField(10)
   final bool isProfileComplete;
+  @HiveField(11)
   final DateTime createdAt;
+  @HiveField(12)
   final DateTime? updatedAt;
+  @HiveField(13)
   final String? photoURL;
+  @HiveField(14)
   final String signUpMethod;
+  @HiveField(15)
   final List<String> cleanups; // Array of cleanup document IDs
 
   UserModel({

@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Service to interact with Google Places API
 /// Handles autocomplete search and place details
 class GooglePlacesService {
   // This should ideally come from environment variables or secure config
-  static const String _apiKey = 'AIzaSyD3Of3mq_589PvECQl_yHyQ_coI2bWUCD0';
+  static final String _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
 
   static const String _baseUrl = 'https://maps.googleapis.com/maps/api/place';
 

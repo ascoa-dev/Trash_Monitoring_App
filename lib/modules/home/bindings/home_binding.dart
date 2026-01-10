@@ -1,3 +1,4 @@
+import 'package:ascoa_app/modules/stats/controllers/stats_controller.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/modules/home/controller/posts_controller.dart';
 
@@ -9,6 +10,12 @@ class HomeBinding extends Bindings {
     Get.lazyPut<HomePostsController>(
       () => HomePostsController(),
       tag: 'home_posts',
+      fenix: true,
+    );
+
+    Get.lazyPut<StatsController>(
+      () => StatsController(),
+      tag: 'stats_controller',
       fenix: true,
     );
   }

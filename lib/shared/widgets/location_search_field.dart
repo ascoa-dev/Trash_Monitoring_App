@@ -6,6 +6,8 @@ import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:ascoa_app/shared/services/google_places_service.dart';
+import 'package:get/get.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 
 /// Location search field with autocomplete dropdown
 /// Styled to match the custom date picker dropdowns
@@ -36,6 +38,7 @@ class LocationSearchField extends StatefulWidget {
 }
 
 class _LocationSearchFieldState extends State<LocationSearchField> {
+  final haptics = Get.find<HapticController>();
   late final FocusNode _focusNode;
   bool _hasFocus = false;
   List<PlaceSuggestion> _suggestions = [];
@@ -48,17 +51,21 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
     super.initState();
     _focusNode = FocusNode();
     _focusNode.addListener(() {
+      final hasFocus = _focusNode.hasFocus;
+
       if (mounted) {
-        setState(() => _hasFocus = _focusNode.hasFocus);
-        // Clear suggestions and overlay when field loses focus
-        if (!_hasFocus) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            if (mounted) {
-              _removeOverlay();
-              setState(() => _suggestions = []);
-            }
-          });
-        }
+        setState(() => _hasFocus = hasFocus);
+      }
+
+      if (hasFocus) {
+        haptics.selectionClick();
+      } else {
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (mounted) {
+            _removeOverlay();
+            setState(() => _suggestions = []);
+          }
+        });
       }
     });
   }
@@ -267,6 +274,7 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
   }
 
   Future<void> _onSuggestionTapped(PlaceSuggestion suggestion) async {
+    haptics.light();
     // Get detailed place information
     final details = await GooglePlacesService.getPlaceDetails(
       suggestion.placeId,

@@ -3,6 +3,8 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 
 class CustomInputField extends StatefulWidget {
   final TextEditingController controller;
@@ -28,6 +30,7 @@ class CustomInputField extends StatefulWidget {
 
 class _CustomInputFieldState extends State<CustomInputField> {
   late FocusNode _focusNode;
+  final haptics = Get.find<HapticController>();
   bool get _isControllerValid {
     try {
       // Try to access the controller's value to check if it's disposed
@@ -144,8 +147,14 @@ class _CustomInputFieldState extends State<CustomInputField> {
     super.initState();
     _focusNode = FocusNode();
     _focusNode.addListener(() {
+      final hasFocus = _focusNode.hasFocus;
+
+      if (hasFocus) {
+        haptics.selectionClick(); // 🔔 entering text input
+      }
+
       if (widget.onFocusChange != null) {
-        widget.onFocusChange!(_focusNode.hasFocus);
+        widget.onFocusChange!(hasFocus);
       }
     });
   }

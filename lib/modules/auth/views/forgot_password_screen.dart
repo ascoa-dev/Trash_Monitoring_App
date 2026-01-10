@@ -10,6 +10,7 @@
 // ===============================================
 
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
@@ -37,6 +38,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late final AuthController controller;
   late final FormControllers formControllers;
   late final ValidationController validationController;
+  final haptics = Get.find<HapticController>();
 
   @override
   void initState() {
@@ -107,6 +109,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           .then((result) {
             switch (result) {
               case 'success':
+                haptics.medium();
                 _showConfirmationOverlay();
                 break;
               case 'user-not-found':
@@ -162,6 +165,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   // Shared cleanup + navigation used by Back/Cancel flows
   void _navigateBackToLoginClearingForm() {
+    haptics.selectionClick();
     final form = Get.find<FormControllers>();
     final validation = Get.find<ValidationController>();
     final currentEmail = form.emailController.text;

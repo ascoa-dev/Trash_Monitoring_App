@@ -1,4 +1,5 @@
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -277,6 +278,8 @@ class SignupScreen extends StatelessWidget {
                                             recognizer:
                                                 TapGestureRecognizer()
                                                   ..onTap = () {
+                                                    Get.find<HapticController>()
+                                                        .selectionClick();
                                                     Get.snackbar(
                                                       AppStrings.termsLink,
                                                       AppStrings.termsNav,
@@ -292,6 +295,8 @@ class SignupScreen extends StatelessWidget {
                                             recognizer:
                                                 TapGestureRecognizer()
                                                   ..onTap = () {
+                                                    Get.find<HapticController>()
+                                                        .selectionClick();
                                                     Get.snackbar(
                                                       AppStrings
                                                           .privacyPolicyLink,
@@ -345,6 +350,7 @@ class SignupScreen extends StatelessWidget {
 
                             if (validationController.isFormValid &&
                                 validationController.isTermsAccepted.value) {
+                              Get.find<HapticController>().medium();
                               controller.signup(
                                 formControllers.emailController.text,
                                 formControllers.passwordController.text,
@@ -453,6 +459,7 @@ class SignupScreen extends StatelessWidget {
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               onPressed: () {
+                                Get.find<HapticController>().selectionClick();
                                 final form = Get.find<FormControllers>();
                                 final validation =
                                     Get.find<ValidationController>();

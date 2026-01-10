@@ -62,6 +62,10 @@ dependencies:
   geolocator: ^13.0.2
   url_launcher: ^6.3.0
   http: ^1.5.0
+  flutter_dotenv: ^6.0.0
+  connectivity_plus: ^6.0.5
+  fl_chart: ^0.69.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +92,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - .env
     - assets/Google/android_neutral_rd_na@2x.png
     - assets/Google/android_dark_rd_na@2x.png
     - assets/Google/android_light_rd_na@2x.png
@@ -95,6 +100,25 @@ flutter:
     - assets/Facebook/Facebook_Logo_Secondary.png
     - assets/ASCOA/ASCOA_LOGO.png
     - assets/ASCOA/Login_Bottom.png
+    - assets/ASCOA/Login_Top.png
+    - assets/ASCOA/Login_Top.svg
+    - assets/ASCOA/Login_Bottom.svg
+    - assets/ASCOA/Signup_Screen_Top.png
+    - assets/ASCOA/Dashboard_Top.png
+    - assets/ASCOA/Dashboard_Top1.png
+    - assets/ASCOA/Complete_Profile_Top.png
+    - assets/ASCOA/Profile_Screen_Bottom.png
+    - assets/ASCOA/Edit_Profile_Screen_Bottom.png
+    - assets/ASCOA/Forgot_Password_Screen_Top.png
+    - assets/ASCOA/Forgot_Password_Screen_Bottom.png
+    - assets/ASCOA/ForgotPasswordIcon.png
+    - assets/ASCOA/Forgot_Password_confirm_Icon.png
+    - assets/ASCOA/Password_update_successful.png
+    - assets/ASCOA/Profile_update_successful.png
+    - assets/ASCOA/verify_email_icon.png
+    - assets/ASCOA/clean_confirm.png
+    - assets/ASCOA/placeholder.png
+    - assets/ASCOA/profileplaceholder.png
     - assets/ASCOA/Login_Top.png
     - assets/ASCOA/ForgotPasswordIcon.png
     - assets/ASCOA/Forgot_Password_confirm_Icon.png

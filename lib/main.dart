@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:ascoa_app/app/controllers/pending_cleanups_controller.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/new_cleanup_screen.dart';
+import 'package:ascoa_app/modules/pending_cleanups/views/pending_cleanups_screen.dart';
+import 'package:ascoa_app/modules/pending_cleanups/bindings/pending_cleanups_binding.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croppy/croppy.dart' as croppy;
 import 'package:flutter/foundation.dart';
@@ -31,13 +35,23 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'app/models/city_model.dart';
 import 'app/models/cities_config.dart';
 import 'app/models/post.dart';
+import 'app/models/user.dart';
 import 'shared/services/cities_service.dart';
 import 'shared/controllers/cities_controller.dart';
+import 'shared/controllers/connectivity_controller.dart';
+import 'app/models/pending_cleanup_model.dart';
+import 'app/models/cached_cleanup_model.dart';
 import 'package:app_links/app_links.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
+  await dotenv.load();
   if (kDebugMode) {
     // Use the pure Dart solver in debug so we do not depend on the native FFI lib.
     croppy.croppyForceUseCassowaryDartImpl = true;
@@ -47,13 +61,20 @@ void main() async {
   Hive.registerAdapter(CityAdapter());
   Hive.registerAdapter(CitiesConfigAdapter());
   Hive.registerAdapter(PostAdapter());
+  Hive.registerAdapter(UserModelAdapter());
+  Hive.registerAdapter(PendingCleanupModelAdapter());
+  Hive.registerAdapter(CachedCleanupModelAdapter());
   // Register AuthController globally and permanently
   await GoogleSignIn.instance.initialize();
   Get.put(AuthController(), permanent: true);
+  Get.put(HapticController(), permanent: true);
+  Get.put(PendingCleanupsController(), permanent: true);
   // Register and initialize CitiesService
   final citiesService = await CitiesService().init();
   Get.put<CitiesService>(citiesService, permanent: true);
   Get.put(CitiesController());
+  // Register ConnectivityController
+  Get.put(ConnectivityController(), permanent: true);
   await _initDeepLinks();
   runApp(const MyApp());
 }
@@ -213,6 +234,11 @@ class MyApp extends StatelessWidget {
               name: AppRoutes.newCleanUp,
               page: () => const NewCleanUpScreen(),
               bindings: [CleanupFormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.pendingCleanups,
+              page: () => const PendingCleanupsScreen(),
+              bindings: [PendingCleanupsBinding()],
             ),
             // Add more GetPages for other routes
           ],

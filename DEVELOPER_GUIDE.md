@@ -106,6 +106,209 @@ Centralized tokens to replace hard-coded values:
 4. **Design System** - Consistent UI across the app
 5. **Form Validation** - Centralized validation logic
 
+## Constants Usage Guidelines
+
+### Why Use Shared Constants?
+
+All hardcoded values (colors, dimensions, strings, text styles) must be defined in `lib/shared/constants/` to ensure:
+
+1. **Consistency** - Same values used across the entire app
+2. **Maintainability** - Update once, change everywhere
+3. **i18n Ready** - Centralized strings ready for localization
+4. **Refactoring Safety** - Find all usages easily
+5. **Design System** - Enforces design token discipline
+
+### Constants Files Structure
+
+```dart
+lib/shared/constants/
+├── app_colors.dart       // All color values
+├── app_dimensions.dart   // All sizing constants
+├── app_strings.dart      // All UI strings (i18n ready)
+├── app_text_styles.dart  // All text styling
+├── app_typography.dart   // Letter spacing, line heights
+└── app_images.dart       // All asset paths
+```
+
+### When Adding New Features
+
+**ALWAYS follow this order:**
+
+1. **Define constants FIRST** in shared folders:
+
+   ```dart
+   // app_dimensions.dart
+   static const double myFeatureCardPadding = 16.0;
+   static const double myFeatureIconSize = 24.0;
+
+   // app_strings.dart
+   static const String myFeatureTitle = 'My Feature';
+   static const String myFeatureError = 'Something went wrong';
+
+   // app_colors.dart
+   static const Color myFeatureAccent = Color(0xFF419310);
+   ```
+
+2. **Use constants in your widgets**:
+
+   ```dart
+   Container(
+     padding: EdgeInsets.all(AppDimensions.myFeatureCardPadding),
+     child: Text(
+       AppStrings.myFeatureTitle,
+       style: AppTextStyles.heading1(context),
+     ),
+   )
+   ```
+
+3. **NEVER hardcode values** in widgets:
+
+   ```dart
+   // ❌ WRONG
+   padding: EdgeInsets.all(16.0)
+   Text('My Feature')
+   fontSize: 24.0
+
+   // ✅ CORRECT
+   padding: EdgeInsets.all(AppDimensions.myFeatureCardPadding)
+   Text(AppStrings.myFeatureTitle)
+   fontSize: AppDimensions.myFeatureTitleFontSize
+   ```
+
+### Naming Conventions
+
+**Module-specific constants:**
+
+- Prefix with module name: `stats*`, `profile*`, `home*`, `cleanup*`
+- Examples: `statsCardBorderRadius`, `profileAvatarSize`, `homeScreenHeaderHeight`
+
+**Shared/generic constants:**
+
+- Use semantic names: `screenPadding`, `cardBorderRadius`, `buttonHeight`
+- These can be reused across modules
+
+**Dimension categories:**
+
+- Layout: `*Padding`, `*Margin`, `*Spacing`, `*Height`, `*Width`
+- Visual: `*BorderRadius`, `*BorderWidth`, `*ShadowBlur`, `*ShadowOffset`
+- Icons/Images: `*IconSize`, `*ImageHeight`
+
+### Constants vs Configuration Values
+
+**DO use constants for:**
+
+- ✅ UI dimensions (padding, margins, sizes)
+- ✅ UI strings (titles, labels, messages)
+- ✅ Colors and visual styling
+- ✅ Text styles and typography
+- ✅ Asset paths
+
+**DO NOT use constants for:**
+
+- ❌ Alpha/opacity values (0.1, 0.5, 0.9) - these are visual effects
+- ❌ Map zoom levels (5, 6, 10) - these are configuration
+- ❌ Flex ratios (1, 2, 5) - these are layout ratios
+- ❌ maxLines counts (2, 3) - these are text constraints
+- ❌ Duration milliseconds (2000, 300) - these are timing
+- ❌ Data values (0, 1) - these are business logic
+- ❌ Conditional padding (keyboard visible: padding vs 0)
+
+### Responsive Sizing with SizeUtils
+
+Always wrap dimension constants with `SizeUtils` for responsive scaling:
+
+```dart
+// Horizontal spacing
+SizeUtils.w(context, AppDimensions.screenPadding)
+
+// Vertical spacing
+SizeUtils.h(context, AppDimensions.cardHeight)
+
+// Radius (uses smaller dimension)
+SizeUtils.r(context, AppDimensions.cardBorderRadius)
+```
+
+### Module Refactoring Checklist
+
+When refactoring a module to use shared constants:
+
+1. **Search for hardcoded values:**
+
+   - Colors: `Color(0x`, `Colors.red`, etc.
+   - Dimensions: `padding: 16`, `size: 24`, etc.
+   - Strings: `'Text'`, `"Label"`, etc.
+
+2. **Add missing constants** to shared folders (if they don't exist)
+
+3. **Replace all hardcoded values** with constants
+
+4. **Run `flutter analyze`** to catch errors
+
+5. **Test the module** to ensure visual correctness
+
+6. **Update documentation** (SHARED_COMPONENTS_GUIDE.md)
+
+### Common Pitfalls
+
+**❌ Don't create duplicate constants:**
+
+```dart
+// Bad - two constants for same value
+static const double statsCardRadius = 12.0;
+static const double profileCardRadius = 12.0;
+
+// Good - reuse when semantic meaning is same
+static const double cardBorderRadius = 12.0;
+```
+
+**❌ Don't mix units or contexts:**
+
+```dart
+// Bad - borrowing unrelated tokens
+padding: EdgeInsets.all(AppDimensions.avatarCropCircleStrokeWidth)
+
+// Good - use semantic token
+padding: EdgeInsets.all(AppDimensions.screenPadding)
+```
+
+**❌ Don't skip SizeUtils:**
+
+```dart
+// Bad - not responsive
+SizedBox(width: AppDimensions.cardWidth)
+
+// Good - scales with screen size
+SizedBox(width: SizeUtils.w(context, AppDimensions.cardWidth))
+```
+
+### Example: Stats Module Constants
+
+The Stats module is a good example of proper constants usage:
+
+```dart
+// All colors defined
+AppColors.statsChartFreshwater
+AppColors.statsChartSaltwater
+AppColors.statsActivityCardBg
+
+// All dimensions defined
+AppDimensions.statsHeaderHeight
+AppDimensions.statsCardBorderRadius
+AppDimensions.statsMarkerSize
+
+// All strings defined
+AppStrings.statsPageTitle
+AppStrings.statsFilterDate
+AppStrings.statsErrorNoData
+
+// All text styles defined
+AppTextStyles.statsTitle(context)
+AppTextStyles.statsChartLabel(context)
+AppTextStyles.statsError(context)
+```
+
+Result: **Zero hardcoded values** in the entire Stats module (stats_screen.dart, stats_header_widget.dart, waste_chart_widget.dart, stats_filter_widget.dart, stats_controller.dart).
+
 ## Recent Updates
 
 ### Home module + WordPress News feed
@@ -143,6 +346,49 @@ Centralized tokens to replace hard-coded values:
 - `EmailVerificationScreen` polls Firebase every five seconds, lets users resend the verification email, and provides a cancel/try-again path that clears shared form controllers and signs out safely before returning to Login.
 - `AuthController.login` surfaces clearer copy for `invalid-credential` responses, and `AuthController.changePassword` now treats both `wrong-password` and `invalid-credential` as “wrong current password” so the UI shows the custom snackbar instead of the generic Firebase error.
 - Forgot Password initialization sanitizes carried-over email state (clears invalid addresses, resets validation errors) before showing the screen.
+
+### Stats Module + Offline Caching
+
+- Implemented `lib/modules/stats/` with comprehensive offline support using Hive for local data persistence
+- Architecture follows cache-first strategy: instant display of cached data → background sync → full repopulation
+- Added `CachedCleanupModel` (Hive TypeId 4) - Hive-compatible version of `CleanupModel` for offline storage with conversion methods
+- `StatsController` manages cache lifecycle:
+  - `_initializeCache()` - Opens 'cached_cleanups' Hive box and loads cached data first
+  - `_loadFromCache()` - Filters cached cleanups by current user, converts to CleanupModel, updates UI
+  - `_saveToCache()` - Deletes old cache entries, saves fresh data after successful Firestore fetch
+  - `fetchCleanups()` - Checks connectivity before fetching, falls back to cache if offline
+  - `refresh()` - Manual refresh trigger with pull-to-refresh support
+- Offline behavior:
+  - First load: cached data displays instantly (no loading delay), fresh data syncs in background if online
+  - Offline mode: all cached data accessible, charts/filters/maps work normally with cached coordinates
+  - No cache: shows "No cached data" message; fetches and caches when connectivity returns
+- Stats widgets (`stats_header_widget.dart`, `waste_chart_widget.dart`, `stats_filter_widget.dart`):
+  - 7-category stacked bar chart using fl_chart with environment-based colors
+  - Dual date slider with Figma-exact design (two separate sliders for from/to dates)
+  - Google Maps integration with custom circle markers (24px) colored by environment type
+  - Activity cards showing total cleanups and trash collected (KGs)
+- All stats components use shared constants exclusively (zero hardcoded values)
+- Registered `CachedCleanupModelAdapter` in `main.dart` alongside existing Hive adapters
+
+### Cleanup Model Consolidation
+
+- Consolidated to single source of truth: `CleanupModel` (`lib/app/models/cleanup_model.dart`)
+- Removed duplicate/incorrect `cleanup.dart` model that had flat structure mismatching Firestore
+- Fixed `StatsController` to use proper `CleanupModel` with correct field access:
+  - `cleanup.environment` (not `environmentType`)
+  - `cleanup.totalWeight` (not `trashCollectedKg`)
+  - `cleanup.locationLatitude/locationLongitude` (not `latitude/longitude`)
+  - Date parsing for string format (dd/mm/yyyy)
+  - Environment mapping ("Inland" → "Land" for chart consistency)
+- `CleanupModel` structure matches Firestore exactly with nested `categories` map and `CleanupItem` objects
+
+### Offline Capabilities
+
+- App launches successfully offline after initial setup
+- User profile caching implemented via Hive - profiles load from cache
+- Cities config, news posts, and user data cached locally
+- Limitations: data submission features (cleanups, photo uploads) require connectivity
+- No offline queue system yet - submissions fail gracefully with error messages when offline
 
 ### Shared Tokens & Widgets
 

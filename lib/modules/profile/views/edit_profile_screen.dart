@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/modules/profile/controllers/edit_profile_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
@@ -180,7 +181,11 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: IconButton(
-                                        onPressed: Get.back,
+                                        onPressed: () {
+                                          Get.find<HapticController>()
+                                              .selectionClick();
+                                          Get.back();
+                                        },
                                         padding: EdgeInsets.zero,
                                         icon: Icon(
                                           Icons.arrow_back,
@@ -287,8 +292,11 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed:
-                                          () => controller.handleEditPhoto(),
+                                      onPressed: () {
+                                        Get.find<HapticController>()
+                                            .selectionClick();
+                                        controller.handleEditPhoto();
+                                      },
                                       style: TextButton.styleFrom(
                                         padding: EdgeInsets.zero,
                                         minimumSize: Size.zero,
@@ -531,6 +539,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                             isSaving ? savingLabel : saveLabel,
                                         onPressed: () async {
                                           if (isSaving) return;
+                                          Get.find<HapticController>().medium();
                                           FocusScope.of(context).unfocus();
                                           debugPrint(
                                             'EditProfile: calling submitChanges',
@@ -642,7 +651,11 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                             ),
                                           ),
                                         ),
-                                        onPressed: Get.back,
+                                        onPressed: () {
+                                          Get.find<HapticController>()
+                                              .selectionClick();
+                                          Get.back();
+                                        },
                                         child: Text(
                                           cancelLabel,
                                           style:

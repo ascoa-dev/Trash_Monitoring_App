@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,8 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+
+final haptics = Get.find<HapticController>();
 
 /// A floating-label country selector that matches the styling of
 /// [FloatingLabelInputField] while leveraging the `country_picker` package
@@ -33,12 +36,16 @@ class CountryCodeSelectorField extends StatelessWidget {
 
   Future<void> _openCountryPicker(BuildContext context) async {
     if (!enabled) return;
+    haptics.selectionClick();
     final isFrench = Get.locale?.languageCode == 'fr';
     showCountryPicker(
       context: context,
       showPhoneCode: true,
       favorite: const ['CM'],
-      onSelect: onChanged,
+      onSelect: (country) {
+        haptics.light();
+        onChanged(country);
+      },
       countryListTheme: CountryListThemeData(
         bottomSheetHeight:
             MediaQuery.of(context).size.height *

@@ -1,37 +1,73 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/basic_infomation_section.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/trash_collected.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/photos_section.dart';
 import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
+import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
-import 'package:ascoa_app/shared/widgets/primary_button.dart';
 import 'package:ascoa_app/shared/widgets/app_dialog.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-class NewCleanUpScreen extends StatelessWidget {
+class NewCleanUpScreen extends StatefulWidget {
   const NewCleanUpScreen({super.key});
+
+  @override
+  State<NewCleanUpScreen> createState() => _NewCleanUpScreenState();
+}
+
+class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Open Basic Information section by default when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = Get.find<CleanupFormController>();
+      controller.setExpandedSection(AppStrings.basicInformation);
+    });
+    Get.find<HapticController>().light();
+  }
 
   Future<void> _handleSaveCleanup(BuildContext context) async {
     final controller = Get.find<CleanupFormController>();
 
-    // Re-validate all sections
-    final isBasicInfoValid = controller.validateSection('basicInfo');
-    final isTrashValid = controller.validateSection('trashCollected');
+    // Check if all sections are completed
+    if (!controller.canSubmit) {
+      Get.find<HapticController>().heavy();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.pleaseCompleteAllSections),
+          backgroundColor: AppColors.errorRed,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Re-validate all sections one final time
+    final isBasicInfoValid = controller.validateSection(
+      AppStrings.basicInformation,
+    );
+    final isTrashValid = controller.validateSection(AppStrings.trashCollected);
 
     // Manage section states based on validation
     if (!isBasicInfoValid || !isTrashValid) {
+      Get.find<HapticController>().heavy();
       // Close valid sections, expand invalid ones
       if (!isBasicInfoValid) {
-        controller.setExpandedSection('basicInfo');
+        controller.setExpandedSection(AppStrings.basicInformation);
+        controller.resetSectionCompletion(AppStrings.basicInformation);
       } else if (!isTrashValid) {
-        controller.setExpandedSection('trashCollected');
+        controller.setExpandedSection(AppStrings.trashCollected);
+        controller.resetSectionCompletion(AppStrings.trashCollected);
       }
 
       if (context.mounted) {
@@ -112,6 +148,11 @@ class NewCleanUpScreen extends StatelessWidget {
     }
 
     if (cleanupId != null) {
+      Get.find<HapticController>().medium();
+      // Check if it was saved offline or online
+      final connectivityController = Get.find<ConnectivityController>();
+      final wasOnline = connectivityController.isOnline.value;
+
       // Success - show AppDialog and navigate home when user confirms
       if (context.mounted) {
         await showDialog<void>(
@@ -119,12 +160,18 @@ class NewCleanUpScreen extends StatelessWidget {
           barrierDismissible: false,
           builder: (ctx) {
             return AppDialog(
-              title: AppStrings.cleanUpSavedDialogTitle,
+              title:
+                  wasOnline
+                      ? AppStrings.cleanUpSavedDialogTitle
+                      : 'Cleanup Saved Offline',
               decoratedHero: false,
               imageAsset: AppImages.cleanConfirm,
               imageWidth: SizeUtils.w(ctx, AppDimensions.dialogImageWidth),
               imageHeight: SizeUtils.h(ctx, AppDimensions.dialogImageHeight),
-              body: AppStrings.cleanUpSavedDialogSubtitle,
+              body:
+                  wasOnline
+                      ? AppStrings.cleanUpSavedDialogSubtitle
+                      : 'Your cleanup has been saved offline. It will be uploaded when you have internet connection. You can manage pending uploads from your profile.',
               primaryActionLabel: AppStrings.cleanUpSavedDialogButton,
               onPrimaryAction: () {
                 Navigator.of(ctx).pop();
@@ -209,7 +256,10 @@ class NewCleanUpScreen extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Get.find<HapticController>().selectionClick();
+                    Navigator.pop(context);
+                  },
                   icon: Icon(
                     Icons.arrow_back,
                     color: AppColors.buttonPrimary,
@@ -319,6 +369,7 @@ class NewCleanUpScreen extends StatelessWidget {
 
   Widget _buildFooterSection(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    final controller = Get.find<CleanupFormController>();
 
     return Stack(
       clipBehavior: Clip.none,
@@ -354,76 +405,122 @@ class NewCleanUpScreen extends StatelessWidget {
                 mediaQuery.padding.bottom +
                 SizeUtils.h(context, AppDimensions.cleanupFooterBottomExtra),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Save Button - positioned at top per design
-              SizedBox(
-                width: double.infinity,
-                child: PrimaryButton(
-                  onPressed: () => _handleSaveCleanup(context),
-                  label: AppStrings.saveCleanUp,
-                  labelStyle: AppTextStyles.saveCleanUpText(context),
-                ),
-              ),
-
-              SizedBox(
-                height: SizeUtils.h(context, AppDimensions.cleanupSpacing12),
-              ),
-
-              // Cancel Button - positioned at top per design
-              SizedBox(
-                width: double.infinity,
-                height: SizeUtils.h(
-                  context,
-                  AppDimensions.cleanupCancelButtonHeight,
-                ),
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: AppColors.buttonPrimary,
-                      width:
-                          AppDimensions.inputBorderWidth == 0
-                              ? 1
-                              : AppDimensions.inputBorderWidth,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        SizeUtils.r(
-                          context,
-                          AppDimensions.cleanupCancelButtonRadius,
+          child: ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) {
+              final canSubmit = controller.canSubmit;
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Save Button - disabled until all sections are completed
+                  SizedBox(
+                    width: double.infinity,
+                    height: SizeUtils.h(context, AppDimensions.buttonHeight),
+                    child: ElevatedButton(
+                      onPressed:
+                          canSubmit
+                              ? () {
+                                Get.find<HapticController>().medium();
+                                _handleSaveCleanup(context);
+                              }
+                              : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            canSubmit
+                                ? AppColors.buttonGreen
+                                : AppColors.buttonDisabledBackground,
+                        disabledBackgroundColor:
+                            AppColors.buttonDisabledBackground,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            SizeUtils.r(context, AppDimensions.borderRadius),
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        AppStrings.saveCleanUp,
+                        style: AppTextStyles.saveCleanUpText(context).copyWith(
+                          color:
+                              canSubmit
+                                  ? AppColors.pureWhite
+                                  : AppColors.buttonDisabledText,
                         ),
                       ),
                     ),
-                    padding: EdgeInsets.symmetric(
-                      vertical: SizeUtils.h(
-                        context,
-                        AppDimensions.cleanupCancelButtonVerticalPadding,
+                  ),
+
+                  SizedBox(
+                    height: SizeUtils.h(
+                      context,
+                      AppDimensions.cleanupSpacing12,
+                    ),
+                  ),
+
+                  // Cancel Button - positioned at top per design
+                  SizedBox(
+                    width: double.infinity,
+                    height: SizeUtils.h(
+                      context,
+                      AppDimensions.cleanupCancelButtonHeight,
+                    ),
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Get.find<HapticController>().selectionClick();
+                        Navigator.pop(context);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: AppColors.buttonPrimary,
+                          width:
+                              SizeUtils.w(
+                                        context,
+                                        AppDimensions.inputBorderWidth,
+                                      ) ==
+                                      0
+                                  ? 1
+                                  : SizeUtils.w(
+                                    context,
+                                    AppDimensions.inputBorderWidth,
+                                  ),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            SizeUtils.r(
+                              context,
+                              AppDimensions.cleanupCancelButtonRadius,
+                            ),
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: SizeUtils.h(
+                            context,
+                            AppDimensions.cleanupCancelButtonVerticalPadding,
+                          ),
+                          horizontal: SizeUtils.w(
+                            context,
+                            AppDimensions.cleanupCancelButtonHorizontalPadding,
+                          ),
+                        ),
                       ),
-                      horizontal: SizeUtils.w(
-                        context,
-                        AppDimensions.cleanupCancelButtonHorizontalPadding,
+                      child: Text(
+                        AppStrings.cancelCleanUp,
+                        style: AppTextStyles.saveCleanUpText(
+                          context,
+                        ).copyWith(color: AppColors.textDark),
                       ),
                     ),
                   ),
-                  child: Text(
-                    AppStrings.cancelCleanUp,
-                    style: AppTextStyles.saveCleanUpText(
-                      context,
-                    ).copyWith(color: AppColors.textDark),
-                  ),
-                ),
-              ),
 
-              // Additional spacing to show more of the bottom image
-              SizedBox(
-                height: SizeUtils.h(
-                  context,
-                  AppDimensions.cleanupFooterExtraSpacing,
-                ),
-              ),
-            ],
+                  // Additional spacing to show more of the bottom image
+                  SizedBox(
+                    height: SizeUtils.h(
+                      context,
+                      AppDimensions.cleanupFooterExtraSpacing,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ],
@@ -448,45 +545,41 @@ class CleanUpSection extends StatefulWidget {
 class _CleanUpSectionState extends State<CleanUpSection> {
   bool get _isExpanded => widget.controller.expandedSection == widget.title;
 
-  void _handleExpansionTap() {
-    final currentlyExpanded = _isExpanded;
+  /// Check if this section can be tapped (for viewing previously completed sections)
+  bool get _canTapHeader {
+    // Never allow tapping to close current section - only Next button does that
+    if (_isExpanded) return false;
 
-    if (currentlyExpanded) {
-      // Trying to collapse - validate first
-      final isValid = widget.controller.validateSection(widget.title);
-      if (!isValid) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.fixErrorsBeforeClosing),
-            backgroundColor: AppColors.errorRed,
-            duration: Duration(seconds: 3),
-          ),
-        );
-        return; // Don't allow collapse
-      }
-      // Validation passed, allow collapse
-      widget.controller.setExpandedSection(null);
-    } else {
-      // Trying to expand - validate currently open section first
-      if (widget.controller.expandedSection != null) {
-        // Use non-mutating check to avoid re-setting errors immediately
-        final isValid = widget.controller.checkSectionValidity(
-          widget.controller.expandedSection!,
-        );
-        if (!isValid) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.fixErrorsBeforeProceeding),
-              backgroundColor: AppColors.errorRed,
-              duration: Duration(seconds: 3),
-            ),
-          );
-          return; // Don't allow expansion
-        }
-      }
-      // Validation passed or no section open, allow expansion
-      widget.controller.setExpandedSection(widget.title);
+    // Check if this section is accessible based on the flow
+    switch (widget.title) {
+      case AppStrings.basicInformation:
+        // Basic info is always accessible (it's the first section)
+        return true;
+      case AppStrings.trashCollected:
+        // Trash collected is only accessible if basic info is completed
+        return widget.controller.basicInfoCompleted;
+      case AppStrings.photosVideosOptional:
+        // Photos is only accessible if trash collected is completed
+        return widget.controller.trashCollectedCompleted;
+      default:
+        return false;
     }
+  }
+
+  void _handleHeaderTap() {
+    // Don't allow tapping if not permitted
+    if (!_canTapHeader) return;
+
+    // Don't allow collapsing current section via header tap
+    if (_isExpanded) return;
+
+    Get.find<HapticController>().light();
+
+    // Trying to go back to a previous section - reset completion for sections after this one
+    widget.controller.resetSectionCompletion(widget.title);
+
+    // Set this section as expanded
+    widget.controller.setExpandedSection(widget.title);
   }
 
   @override
@@ -494,6 +587,8 @@ class _CleanUpSectionState extends State<CleanUpSection> {
     return ListenableBuilder(
       listenable: widget.controller,
       builder: (context, _) {
+        final isCompleted = _isSectionCompleted();
+
         return Container(
           width: SizeUtils.w(context, AppDimensions.cleanupSectionWidth),
           decoration: BoxDecoration(
@@ -533,21 +628,42 @@ class _CleanUpSectionState extends State<CleanUpSection> {
               collapsedBackgroundColor: AppColors.skeletonBase,
               backgroundColor: AppColors.accent,
               title: GestureDetector(
-                onTap: _handleExpansionTap,
+                onTap: _canTapHeader ? _handleHeaderTap : null,
                 behavior: HitTestBehavior.opaque,
-                child: Text(
-                  widget.title,
-                  style:
-                      _isExpanded
-                          ? AppTextStyles.cleanUpOptionsExpanded(context)
-                          : AppTextStyles.cleanUpOptionsCollapsed(context),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style:
+                            _isExpanded
+                                ? AppTextStyles.cleanUpOptionsExpanded(context)
+                                : AppTextStyles.cleanUpOptionsCollapsed(
+                                  context,
+                                ),
+                      ),
+                    ),
+                    // Show checkmark for completed sections
+                    if (isCompleted && !_isExpanded)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          right: SizeUtils.w(context, 8),
+                        ),
+                        child: Icon(
+                          Icons.check_circle,
+                          color: AppColors.buttonGreen,
+                          size: SizeUtils.r(context, 20),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              trailing: GestureDetector(
-                onTap: _handleExpansionTap,
-                child: Icon(
-                  _isExpanded ? Icons.expand_less : Icons.expand_more,
-                ),
+              trailing: Icon(
+                _isExpanded ? Icons.expand_less : Icons.expand_more,
+                color:
+                    _canTapHeader || _isExpanded
+                        ? AppColors.textDark
+                        : AppColors.grey400,
               ),
               children: [
                 if (widget.title == AppStrings.basicInformation)
@@ -562,5 +678,18 @@ class _CleanUpSectionState extends State<CleanUpSection> {
         );
       },
     );
+  }
+
+  bool _isSectionCompleted() {
+    switch (widget.title) {
+      case AppStrings.basicInformation:
+        return widget.controller.basicInfoCompleted;
+      case AppStrings.trashCollected:
+        return widget.controller.trashCollectedCompleted;
+      case AppStrings.photosVideosOptional:
+        return widget.controller.photosCompleted;
+      default:
+        return false;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/controllers/form_controllers.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
@@ -27,6 +28,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   late final User _user;
   late final Timer _timer;
   bool isResending = false;
+  final haptics = Get.find<HapticController>();
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     final user = _auth.currentUser!;
     if (user.emailVerified) {
       _timer.cancel();
+      haptics.medium();
       Get.snackbar(
         AppStrings.emailVerifiedSuccessTitle,
         AppStrings.emailVerifiedSuccessBody,
@@ -78,6 +81,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   void _goToLoginAndClear() async {
+    haptics.selectionClick();
     // Clear shared form controllers if available
     if (Get.isRegistered<FormControllers>()) {
       final form = Get.find<FormControllers>();

@@ -12,8 +12,9 @@ class AppColors {
     0xFF658638,
   ); // accent / highlight green
   static const Color buttonGreen = Color(0xFF419310); // button primary green
-  static const Color pureWhite = Color(
-    0xFFFFFFFF,
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  static const Color grey = Color(
+    0xFF9F9F9F,
   ); // pure white (use for icons/text on colored backgrounds)
   static const Color white70 = Colors.white70; // Flutter-provided 70% white
 
@@ -51,7 +52,8 @@ class AppColors {
 
   // Legacy / alternate text names
   static const Color textPrimary = textDark; // legacy alias
-  static const Color textBlack = textDark; // legacy alias
+  static const Color textBlack = textDark;
+  static const Color black = Color(0xFF000000); // legacy alias
   static const Color textBlack70 = Color(
     0xB3000000,
   ); // legacy muted black (design-provided hex)
@@ -95,7 +97,7 @@ class AppColors {
 
   // Error Colors
   static const Color error = Color(0xFFFBB825); // Error / validation red
-
+  static const Color pendingUploads = Color(0xFFF1BB4A); // light red bg
   // Snackbar / Feedback Colors
   static const Color success = Color(
     0xFF4CAF50,
@@ -147,6 +149,32 @@ class AppColors {
   // Cleanup / small component helpers
   static const Color cleanupCounterBg = Color(0xFFDCE9CB);
   static const Color cleanupCounterIcon = Color(0xFF5E7D3A);
+
+  // Stats Screen Colors
+  static const Color statsChartFreshwater = Color(
+    0xFF51D2BB,
+  ); // Light teal for freshwater environment
+  static const Color statsChartSaltwater = Color(
+    0xFF116985,
+  ); // Dark teal for saltwater environment
+  static const Color statsChartLand = Color(
+    0xFFC7F296,
+  ); // Light green for land/inland environment
+  static const Color statsFilterTeal = Color(
+    0xFF357187,
+  ); // Filter slider and checkbox teal
+  static const Color statsFilterGreen = Color(
+    0xFFC7E0B0,
+  ); // Filter slider green accent
+  static const Color statsActivityCardBg = Color(
+    0xFFB4D17B,
+  ); // Activity card background green
+  static const Color datePickerDotDark = Color(0xFF4A4459);
+
+  // Disabled button state colors (from design spec)
+  static const Color buttonDisabledBackground = Color(0xFFF5F5F5);
+  static const Color buttonDisabledText = Color(0xFF9E9E9E);
+
   // Prevent instantiation
   AppColors._();
 }

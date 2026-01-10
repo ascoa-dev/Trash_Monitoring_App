@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:croppy/croppy.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,6 +37,7 @@ class AvatarCropScreen extends StatefulWidget {
 class _AvatarCropScreenState extends State<AvatarCropScreen>
     with TickerProviderStateMixin {
   MaterialCroppableImageController? _controller;
+  final haptics = Get.find<HapticController>();
   bool _isFrench = false;
   bool _isLoading = true;
 
@@ -150,7 +152,10 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              haptics.selectionClick(); // 🔔 cancel navigation
+              Navigator.of(context).pop();
+            },
             child: Text(
               _isFrench
                   ? AppStrings.avatarPickerCancelFrench
@@ -159,7 +164,10 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
             ),
           ),
           IconButton(
-            onPressed: _rotateClockwise,
+            onPressed: () {
+              haptics.selectionClick(); // 🔔 tool tap
+              _rotateClockwise();
+            },
             icon: Icon(
               Icons.rotate_right,
               color: AppColors.primary,
@@ -182,6 +190,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
   }
 
   Future<void> _onSave() async {
+    haptics.light();
     final controller = _controller;
     if (controller == null) {
       _showError('Controller not ready');
@@ -216,6 +225,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
 
       // Return file to caller
       if (mounted) {
+        haptics.medium();
         Navigator.of(context).pop(file);
       }
     } catch (e) {
@@ -242,6 +252,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
   }
 
   void _showError(String details) {
+    haptics.heavy();
     Get.snackbar(
       _isFrench ? 'Erreur' : 'Error',
       _isFrench

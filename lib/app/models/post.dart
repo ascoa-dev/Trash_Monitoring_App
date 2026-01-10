@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 part 'post.g.dart';
@@ -28,10 +29,12 @@ class Post {
   String? imageUrl;
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    final link = (json['link'] as String?) ?? '';
+    debugPrint('[Blog Link] $link');
     return Post(
       id: json['id'] as int,
       title: (json['title']?['rendered'] as String?) ?? '',
-      link: (json['link'] as String?) ?? '',
+      link: link,
       featuredMedia: (json['featured_media'] as int?) ?? 0,
     );
   }

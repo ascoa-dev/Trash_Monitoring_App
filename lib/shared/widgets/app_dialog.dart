@@ -5,6 +5,8 @@ import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 
 class AppDialog extends StatelessWidget {
   final String title;
@@ -41,6 +43,7 @@ class AppDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final haptics = Get.find<HapticController>();
     final size = MediaQuery.of(context).size;
     final double effectiveHeroSize =
         heroSize ?? SizeUtils.r(context, AppDimensions.dialogHeroSize);
@@ -265,7 +268,10 @@ class AppDialog extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              onPressed: onPrimaryAction,
+                              onPressed: () {
+                                haptics.medium();
+                                onPrimaryAction();
+                              },
                               child: Text(
                                 primaryActionLabel,
                                 style: AppTextStyles.body(context).copyWith(

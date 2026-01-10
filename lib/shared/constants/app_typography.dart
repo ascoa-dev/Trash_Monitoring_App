@@ -25,6 +25,7 @@ class AppTypography {
   static const double dividerTextFontSize = 16.0;
   static const double termsBaseFontSize = 14.0;
   static const double errorTextFontSize = 12.0;
+  static const double trashErrorTextFontSize = 14.0;
   static const double buttonPrimaryFontSize = 16.0;
   static const double buttonSocialFontSize = 16.0;
   static const double inputHintFontSize = 16.0;

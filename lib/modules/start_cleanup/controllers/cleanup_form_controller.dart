@@ -1,18 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ascoa_app/app/models/cleanup_model.dart';
+import 'package:ascoa_app/app/models/pending_cleanup_model.dart';
 import 'package:ascoa_app/modules/start_cleanup/controllers/media_upload_controller.dart';
+import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:uuid/uuid.dart';
 
-/// Controller to manage cleanup form state and validation
-/// Ensures only one section is expanded at a time
 class CleanupFormController extends ChangeNotifier {
   String? _expandedSection;
 
-  // Media upload controller
   final MediaUploadController mediaUploadController = MediaUploadController();
 
-  // Pre-generated cleanup document ID for photo uploads
+  // Track which sections have been completed (validated via Next button)
+  bool _basicInfoCompleted = false;
+  bool _trashCollectedCompleted = false;
+  bool _photosCompleted = false; // Photos is optional but we track navigation
+
+  bool get basicInfoCompleted => _basicInfoCompleted;
+  bool get trashCollectedCompleted => _trashCollectedCompleted;
+  bool get photosCompleted => _photosCompleted;
+
+  /// Check if all required sections are completed for submit button
+  bool get canSubmit =>
+      _basicInfoCompleted && _trashCollectedCompleted && _photosCompleted;
+
+  /// Mark a section as completed
+  void markSectionCompleted(String sectionTitle) {
+    switch (sectionTitle) {
+      case 'Basic Information':
+        _basicInfoCompleted = true;
+        break;
+      case 'Trash Collected':
+        _trashCollectedCompleted = true;
+        break;
+      case 'Photos & Videos (Optional)':
+        _photosCompleted = true;
+        break;
+    }
+    notifyListeners();
+  }
+
+  /// Reset section completion status (used when editing)
+  void resetSectionCompletion(String sectionTitle) {
+    switch (sectionTitle) {
+      case 'Basic Information':
+        _basicInfoCompleted = false;
+        _trashCollectedCompleted = false;
+        _photosCompleted = false;
+        break;
+      case 'Trash Collected':
+        _trashCollectedCompleted = false;
+        _photosCompleted = false;
+        break;
+      case 'Photos & Videos (Optional)':
+        _photosCompleted = false;
+        break;
+    }
+    notifyListeners();
+  }
+
   String? _cleanupDocId;
   String get cleanupDocId {
     _cleanupDocId ??=
@@ -20,7 +68,6 @@ class CleanupFormController extends ChangeNotifier {
     return _cleanupDocId!;
   }
 
-  // Basic Information fields
   int peopleCount = 0;
   String groupName = '';
   String date = '';
@@ -28,7 +75,6 @@ class CleanupFormController extends ChangeNotifier {
   double? locationLatitude;
   double? locationLongitude;
 
-  // Error messages for Basic Information fields
   String? peopleCountError;
   String? groupNameError;
   String? dateError;
@@ -40,38 +86,29 @@ class CleanupFormController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Trash Collected fields
   Set<String> selectedEnvironments = {};
-  Map<String, int> trashItems = {}; // itemName -> count
+  Map<String, int> trashItems = {};
 
-  // Error messages for Trash Collected section
   String? environmentError;
   String? trashItemsError;
 
-  // Trash template data from Firestore
   List<String> categoryOrder = [];
   Map<String, TrashCategory> categories = {};
   bool isLoadingTemplate = false;
 
   String? get expandedSection => _expandedSection;
 
-  /// Set expanded section (for UI control)
   void setExpandedSection(String? section) {
     _expandedSection = section;
     notifyListeners();
   }
 
-  /// Validate a specific section and return true if valid
-  /// This is public so UI can call it before allowing section changes
   bool validateSection(String sectionTitle) {
     final isValid = _validateSection(sectionTitle);
-    notifyListeners(); // Update UI to show any errors
+    notifyListeners();
     return isValid;
   }
 
-  /// Check validity of a section without mutating error fields or notifying
-  /// Useful for pre-flight checks where we want to decide allow/deny actions
-  /// but don't want to immediately show error messages.
   bool checkSectionValidity(String sectionTitle) {
     switch (sectionTitle) {
       case 'Basic Information':
@@ -86,7 +123,6 @@ class CleanupFormController extends ChangeNotifier {
   }
 
   bool _isBasicInformationValidWithoutErrors() {
-    // Mirror the validation logic but don't set error strings
     if (peopleCount < 1) return false;
     if (groupName.trim().isEmpty) return false;
     if (date.trim().isEmpty) return false;
@@ -101,36 +137,30 @@ class CleanupFormController extends ChangeNotifier {
     return true;
   }
 
-  /// Request to expand a section
-  /// Returns true if expansion is allowed, false if validation failed
   Future<bool> requestExpand(String sectionTitle, BuildContext context) async {
-    // If same section, just expand
     if (_expandedSection == sectionTitle) {
       return true;
     }
 
-    // If another section is open, validate it first before closing
     if (_expandedSection != null) {
       final isValid = _validateSection(_expandedSection!);
       if (!isValid) {
-        notifyListeners(); // Update UI to show errors
-        return false; // Don't allow switching
+        notifyListeners();
+        return false;
       }
     }
 
-    // All good, allow expansion
     _expandedSection = sectionTitle;
     notifyListeners();
     return true;
   }
 
-  /// Collapse the current section (validate before collapsing)
   Future<bool> collapseSection(BuildContext context) async {
     if (_expandedSection != null) {
       final isValid = _validateSection(_expandedSection!);
       if (!isValid) {
-        notifyListeners(); // Update UI to show errors
-        return false; // Don't allow collapsing
+        notifyListeners();
+        return false;
       }
     }
     _expandedSection = null;
@@ -138,7 +168,6 @@ class CleanupFormController extends ChangeNotifier {
     return true;
   }
 
-  /// Clear all error messages
   void clearErrors() {
     peopleCountError = null;
     groupNameError = null;
@@ -149,7 +178,6 @@ class CleanupFormController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Clear specific field errors (call when user is editing)
   void clearFieldError(String fieldName) {
     switch (fieldName) {
       case 'peopleCount':
@@ -174,8 +202,6 @@ class CleanupFormController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Validate a specific section and set error messages
-  /// Returns true if valid, false if errors exist
   bool _validateSection(String sectionTitle) {
     switch (sectionTitle) {
       case 'Basic Information':
@@ -183,42 +209,33 @@ class CleanupFormController extends ChangeNotifier {
       case 'Trash Collected':
         return _validateTrashCollected();
       case 'Photos & Videos (Optional)':
-        return true; // Optional section, always valid
+        return true;
       default:
         return true;
     }
   }
 
-  /// Validate Basic Information section
-  /// Sets individual field errors and returns true if all valid
   bool _validateBasicInformation() {
     bool isValid = true;
-
-    // Clear previous errors
     peopleCountError = null;
     groupNameError = null;
     dateError = null;
     locationError = null;
-
-    // Validate people count
     if (peopleCount < 1) {
       peopleCountError = 'Number of people must be at least 1';
       isValid = false;
     }
 
-    // Validate group name
     if (groupName.trim().isEmpty) {
       groupNameError = 'Group name is required';
       isValid = false;
     }
 
-    // Validate date
     if (date.trim().isEmpty) {
       dateError = 'Date is required';
       isValid = false;
     }
 
-    // Validate location
     if (location.trim().isEmpty) {
       locationError = 'Location is required';
       isValid = false;
@@ -227,22 +244,17 @@ class CleanupFormController extends ChangeNotifier {
     return isValid;
   }
 
-  /// Validate Trash Collected section
-  /// Sets individual field errors and returns true if all valid
   bool _validateTrashCollected() {
     bool isValid = true;
 
-    // Clear previous errors
     environmentError = null;
     trashItemsError = null;
 
-    // Validate environment selection
     if (selectedEnvironments.isEmpty) {
       environmentError = 'Please select at least one environment';
       isValid = false;
     }
 
-    // Check if at least one item has count > 0
     final hasItems = trashItems.values.any((itemCount) => itemCount > 0);
     if (!hasItems) {
       trashItemsError = 'Please add at least one trash item';
@@ -252,13 +264,11 @@ class CleanupFormController extends ChangeNotifier {
     return isValid;
   }
 
-  /// Validate all sections before save
-  /// Returns true if all valid, false otherwise (with errors set)
   bool validateAll() {
     final basicValid = _validateBasicInformation();
     final trashValid = _validateTrashCollected();
 
-    notifyListeners(); // Update UI with any errors
+    notifyListeners();
     return basicValid && trashValid;
   }
 
@@ -296,16 +306,25 @@ class CleanupFormController extends ChangeNotifier {
     return itemCategories;
   }
 
-  /// Submit cleanup data to Firebase
+  /// Submit cleanup data to Firebase or save offline
   /// Returns cleanup document ID on success, null on error
-  /// Updates user document with cleanup ID
+  /// If offline, saves to Hive for later upload
   Future<String?> submitCleanup(String userId) async {
     try {
       // Final validation check
-      if (!checkSectionValidity('basicInfo') ||
-          !checkSectionValidity('trashCollected')) {
+      if (!checkSectionValidity('Basic Information') ||
+          !checkSectionValidity('Trash Collected')) {
         debugPrint('[SubmitCleanup] Validation failed');
         return null;
+      }
+
+      // Check connectivity
+      final connectivityController = Get.find<ConnectivityController>();
+      final isOnline = await connectivityController.checkConnectivity();
+
+      if (!isOnline) {
+        // Save offline
+        return await _saveCleanupOffline(userId);
       }
 
       // If there are uploads in progress, wait for them to complete
@@ -394,6 +413,64 @@ class CleanupFormController extends ChangeNotifier {
       return cleanupRef.id;
     } catch (e) {
       debugPrint('[SubmitCleanup] Error: $e');
+      return null;
+    }
+  }
+
+  /// Save cleanup offline to Hive for later upload
+  Future<String?> _saveCleanupOffline(String userId) async {
+    try {
+      debugPrint('[SubmitCleanup] Saving offline...');
+
+      // Get item weights from template
+      final itemWeights = _getItemWeights();
+
+      // Get item categories
+      final itemCategories = _getItemCategories();
+
+      // Get environment type (first selected or null)
+      final environmentType =
+          selectedEnvironments.isNotEmpty ? selectedEnvironments.first : null;
+
+      // Validate environment is selected
+      if (environmentType == null) {
+        debugPrint('[SubmitCleanup] No environment selected');
+        return null;
+      }
+
+      // Get local photo paths from media controller
+      final localPhotoPaths =
+          mediaUploadController.photos.map((photo) => photo.file.path).toList();
+
+      // Generate a unique local ID
+      const uuid = Uuid();
+      final localId = uuid.v4();
+
+      // Create pending cleanup model
+      final pendingCleanup = PendingCleanupModel.fromFormData(
+        localId: localId,
+        userId: userId,
+        peopleCount: peopleCount,
+        groupName: groupName,
+        date: date,
+        location: location,
+        locationLatitude: locationLatitude,
+        locationLongitude: locationLongitude,
+        environment: environmentType,
+        trashItems: trashItems,
+        itemWeights: itemWeights,
+        itemCategories: itemCategories,
+        localPhotoPaths: localPhotoPaths.isNotEmpty ? localPhotoPaths : null,
+      );
+
+      // Save to Hive
+      final box = await Hive.openBox<PendingCleanupModel>('pending_cleanups');
+      await box.put(localId, pendingCleanup);
+
+      debugPrint('[SubmitCleanup] Saved offline with ID: $localId');
+      return localId;
+    } catch (e) {
+      debugPrint('[SubmitCleanup] Error saving offline: $e');
       return null;
     }
   }

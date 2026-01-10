@@ -1,3 +1,4 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
@@ -24,6 +25,7 @@ class LoginScreenV2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final haptics = Get.find<HapticController>();
     final ScrollController scrollController = ScrollController();
     final AuthController controller = Get.find<AuthController>();
     final FormControllers formControllers = Get.find<FormControllers>();
@@ -166,6 +168,7 @@ class LoginScreenV2 extends StatelessWidget {
                                   alignment: Alignment.centerRight,
                                   child: TextButton(
                                     onPressed: () {
+                                      haptics.selectionClick();
                                       final form = Get.find<FormControllers>();
                                       final validation =
                                           Get.find<ValidationController>();
@@ -305,6 +308,7 @@ class LoginScreenV2 extends StatelessWidget {
                                             MaterialTapTargetSize.shrinkWrap,
                                       ),
                                       onPressed: () {
+                                        haptics.selectionClick();
                                         final form =
                                             Get.find<FormControllers>();
                                         final validation =

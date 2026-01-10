@@ -1,4 +1,5 @@
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
@@ -34,6 +35,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   String? _uploadedAvatarUrl;
   String? _uploadedThumbUrl;
   final AvatarPhotoHandler _avatarPhotoHandler = AvatarPhotoHandler();
+  final haptics = Get.find<HapticController>();
 
   Country _defaultCountry() {
     return Country(
@@ -61,6 +63,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   }
 
   void _handleEditPhoto() async {
+    haptics.selectionClick();
     await _avatarPhotoHandler.handleEditPhoto(
       context: context,
       onSuccess: (url) async {
@@ -68,7 +71,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         final profileData = await authController.fetchCurrentUserProfile();
         setState(() {
           _uploadedAvatarUrl = url;
-          _uploadedThumbUrl = profileData?['thumbUrl']?.toString();
+          _uploadedThumbUrl = profileData?.thumbUrl?.toString();
         });
       },
     );
@@ -102,6 +105,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     );
 
     if (result != null) {
+      haptics.medium();
       formControllers.resetProfileFields();
       validationController.clearProfileValidation();
       setState(() {

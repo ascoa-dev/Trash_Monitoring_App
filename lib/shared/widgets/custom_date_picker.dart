@@ -1,9 +1,11 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
 
 /// Custom Date Picker Widget with Material 3 Design
 ///
@@ -131,6 +133,8 @@ class _DatePickerContentState extends State<_DatePickerContent> {
 
   static const Color _textColor = AppColors.datePickerPrimary;
 
+  final haptics = Get.find<HapticController>();
+
   @override
   void initState() {
     super.initState();
@@ -165,6 +169,7 @@ class _DatePickerContentState extends State<_DatePickerContent> {
 
   void _previousMonth() {
     if (_canGoToPreviousMonth) {
+      haptics.light();
       setState(() {
         _currentMonth = DateTime(
           _currentMonth.year,
@@ -177,6 +182,7 @@ class _DatePickerContentState extends State<_DatePickerContent> {
 
   void _nextMonth() {
     if (_canGoToNextMonth) {
+      haptics.light();
       setState(() {
         _currentMonth = DateTime(
           _currentMonth.year,
@@ -226,11 +232,13 @@ class _DatePickerContentState extends State<_DatePickerContent> {
 
   void _selectDate(DateTime date) {
     if (_isDateEnabled(date)) {
+      haptics.selectionClick();
       setState(() => _selectedDate = date);
     }
   }
 
   void _confirmSelection() {
+    haptics.medium();
     widget.onDateSelected?.call(_selectedDate);
   }
 
@@ -238,13 +246,16 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   void _onHorizontalSwipe(DragEndDetails details) {
     if (details.primaryVelocity == null) return;
     if (details.primaryVelocity! < 0) {
+      haptics.light();
       _nextMonth();
     } else if (details.primaryVelocity! > 0) {
+      haptics.light();
       _previousMonth();
     }
   }
 
   void _showMonthDropdown() async {
+    haptics.selectionClick();
     _removeDropdown();
 
     final months = [
@@ -313,6 +324,7 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   }
 
   void _showYearDropdown() async {
+    haptics.selectionClick();
     _removeDropdown();
 
     final currentYear = _currentMonth.year;
@@ -567,7 +579,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                 children: [
                   _TextButton(
                     label: AppStrings.cancel,
-                    onPressed: widget.onCancel ?? () {},
+                    onPressed: () {
+                      haptics.selectionClick();
+                      widget.onCancel?.call();
+                    },
                   ),
                   SizedBox(
                     width: SizeUtils.w(context, AppDimensions.smallSpacing),

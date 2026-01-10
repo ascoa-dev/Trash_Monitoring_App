@@ -43,6 +43,55 @@ What changed recently / guidance
   - `placeholder` generic fallback
     Reference via `AppImages.<name>` instead of raw asset strings and ensure assets are declared in `pubspec.yaml`.
 
+## Stats-specific shared tokens and widgets
+
+- New Stats sizing tokens were added to `app_dimensions.dart` for the Reports/Stats screen:
+
+  - Layout: `statsPagePaddingHorizontal`, `statsPagePaddingVertical`, `statsBottomPadding`
+  - Header: `statsHeaderHeight`, `statsHeaderIconSize`, `statsHeaderIconSpacing`, `statsHeaderRefreshSpacing`
+  - Activity Cards: `statsActivityCardPadding`, `statsActivityCardSpacing`, `statsActivityCardShadowBlur`, `statsActivityUnitTopOffset`, `statsActivityValueDecimalSpacing`, `statsActivityDecimalBottomPadding`
+  - Chart: `statsCardBorderRadius`, `statsCardShadowBlur`, `statsChartPadding`, `statsChartAspectRatio`, `statsChartLabelWidth`, `statsChartBarWidth`, `statsChartLegendIconSize`
+  - Filter: `statsFilterSectionSpacing`, `statsFilterLabelSpacing`, `statsCheckboxSize`, `statsSliderHandleWidth`, `statsSliderHandleHeight`, `statsSliderTrackHeight`
+  - Map: `statsMapHeight`, `statsMarkerSize`, `statsMarkerBorderWidth`
+    Use these with `SizeUtils.h/w` in widgets (see `StatsScreen` and stats widgets).
+
+- New Stats colors in `app_colors.dart`:
+
+  - `statsChartFreshwater` (#5FB3C6) - Freshwater environment chart color
+  - `statsChartSaltwater` (#357187) - Saltwater environment chart color
+  - `statsChartLand` (#B4D17B) - Land/Inland environment chart color
+  - `statsFilterTeal` (#357187) - Filter UI teal accent
+  - `statsFilterGreen` (#C7E0B0) - Filter UI green accent
+  - `statsActivityCardBg` (#B4D17B) - Activity card background
+
+- New Stats strings in `app_strings.dart`:
+
+  - Page titles: `statsPageTitle`, `statsSubtitle`, `statsYourActivity`
+  - Chart: `statsChartTitle`, environment labels (`environmentFreshwater`, `environmentLand`, `environmentSaltwater`)
+  - Filter: `statsFilterDate`, `statsFilterEnvironment`
+  - Map: `statsMapTitle`, `statsMapSubtitle`
+  - Error messages: `statsErrorNoCachedData`, `statsErrorFailedInit`, etc.
+
+- New Stats text styles in `app_text_styles.dart`:
+
+  - `statsTitle()` - Large "Reports" heading
+  - `statsChartTitle()` - Chart and map section titles
+  - `statsActivityValue()` - Large activity card numbers (57sp)
+  - `statsActivityLabel()` - Activity card labels
+  - `statsActivityUnit()` - KGs unit text
+  - `statsFilterLabel()` - Filter section labels
+  - `statsFilterDate()` - Date picker text
+  - `statsChartLabel()` - Chart axis labels
+  - `statsChartLegend()` - Chart legend text
+  - `statsMapInfo()` - Map subtitle text
+  - `statsError()` - Error message text
+
+- Stats module widgets:
+  - `modules/stats/widgets/stats_header_widget.dart` — Reports header with title, subtitle, and refresh button
+  - `modules/stats/widgets/waste_chart_widget.dart` — 7-category stacked bar chart using fl_chart with environment-based colors
+  - `modules/stats/widgets/stats_filter_widget.dart` — Dual date slider and environment checkboxes (Figma-exact design)
+  - All widgets use shared constants exclusively (no hardcoded dimensions/colors/strings)
+
 Constants responsibilities (quick map)
 
 - `app_colors.dart` — canonical color palette and legacy aliases. Use `AppColors` for any color used in UI.
