@@ -1,3 +1,4 @@
+import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
@@ -15,10 +16,24 @@ class NewsScreen extends StatelessWidget {
         child: Container(
           color: AppColors.background,
           alignment: Alignment.center,
-          child: Text(
-            AppStrings.newsTitle,
-            style: AppTextStyles.heading1(context),
-            textAlign: TextAlign.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppStrings.newsTitle,
+                style: AppTextStyles.heading1(context),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                AppStrings.comingSoon,
+                style: AppTextStyles.label(context).copyWith(
+                  color: AppColors.black87,
+                  fontWeight: FontWeight.w500,
+                  fontSize: AppTypography.comingSoonFontSize,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),

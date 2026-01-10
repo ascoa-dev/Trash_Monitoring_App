@@ -49,6 +49,10 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
         }
+        debug {
+            // Enable debug-specific configurations here
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
 }
 

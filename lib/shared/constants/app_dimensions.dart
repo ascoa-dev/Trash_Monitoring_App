@@ -22,7 +22,7 @@ class AppDimensions {
   static const double homeScreenStartCleanupImageSize = 77.0;
   static const double homeScreenStartCleanupCardHorizontalPadding = 16.0;
   static const double homeScreenStartCleanupCardVerticalPadding = 8.0;
-  static const double homeScreenStartCleanupButtonWidth = 200.0;
+  static const double homeScreenStartCleanupButtonWidth = 208.0;
   static const double homeScreenStartCleanupButtonHeight = 40.0;
   static const double homeScreenStartCleanupButtonFontSize = 14.0;
   static const double homeScreenStartCleanupCardSpacing = 8.0;
@@ -509,8 +509,8 @@ class AppDimensions {
   static const double statsChartAspectRatio = 1.0;
   static const double statsFilterSpacing = 16.0;
   static const double statsMapHeight = 300.0;
-  static const double statsMarkerSize = 18.0;
-  static const double statsMarkerBorderWidth = 2.0;
+  static const double statsMarkerSize = 8.0;
+  static const double statsMarkerBorderWidth = 1.0;
   static const double statsSliderHandleWidth = 4.0;
   static const double statsSliderHandleHeight = 44.0;
   static const double statsSliderTrackHeight = 16.0;

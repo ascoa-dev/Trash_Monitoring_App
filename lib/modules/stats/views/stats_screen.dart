@@ -87,29 +87,44 @@ class _StatsScreenState extends State<StatsScreen>
 
   /// Create a circle bitmap descriptor
   Future<BitmapDescriptor> _createCircleMarker(Color color) async {
-    final size = SizeUtils.r(context, AppDimensions.statsMarkerSize);
-    final pictureRecorder = ui.PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-    final paint = Paint()..color = color;
-    final borderPaint =
+    final double logicalSize = SizeUtils.r(
+      context,
+      AppDimensions.statsMarkerSize,
+    );
+    final double borderWidth = SizeUtils.r(
+      context,
+      AppDimensions.statsMarkerBorderWidth,
+    );
+
+    final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    final int imageSize = (logicalSize * pixelRatio).round();
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    canvas.scale(pixelRatio);
+    final Paint fillPaint = Paint()..color = color;
+    final Paint borderPaint =
         Paint()
           ..color = AppColors.white
           ..style = PaintingStyle.stroke
-          ..strokeWidth = SizeUtils.r(
-            context,
-            AppDimensions.statsMarkerBorderWidth,
-          );
+          ..strokeWidth = borderWidth;
 
     // Draw circle with border
-    canvas.drawCircle(Offset(size / 2, size / 2), size / 2 - 1, paint);
-    canvas.drawCircle(Offset(size / 2, size / 2), size / 2 - 1, borderPaint);
+    final Offset center = Offset(logicalSize / 2, logicalSize / 2);
+    final double radius = logicalSize / 2 - borderWidth / 2;
 
-    final picture = pictureRecorder.endRecording();
-    final image = await picture.toImage(size.toInt(), size.toInt());
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List bytes = byteData!.buffer.asUint8List();
+    canvas.drawCircle(center, radius, fillPaint);
+    canvas.drawCircle(center, radius, borderPaint);
 
-    return BitmapDescriptor.bytes(bytes);
+    final ui.Image image = await recorder.endRecording().toImage(
+      imageSize,
+      imageSize,
+    );
+
+    final ByteData? byteData = await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+
+    return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
   }
 
   @override
@@ -494,6 +509,9 @@ class _StatsScreenState extends State<StatsScreen>
       mapType: MapType.normal,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: true,
+      rotateGesturesEnabled: true,
+      scrollGesturesEnabled: true,
+      zoomGesturesEnabled: true,
       markers: _buildMarkers(controller),
       onMapCreated: (GoogleMapController mapController) {
         // Map created

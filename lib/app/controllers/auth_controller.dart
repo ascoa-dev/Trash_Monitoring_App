@@ -38,6 +38,30 @@ class AuthController extends GetxController {
   }
 
   Future<void> _handleUserPostLogin(User user, String signUpMethod) async {
+    // Store the signup method for AuthGate to use
+    _pendingSignUpMethod = signUpMethod;
+
+    // Route to AuthGate - it will handle all async checks
+    Get.offAllNamed(AppRoutes.authGate);
+  }
+
+  // Store signup method temporarily for AuthGate resolution
+  String? _pendingSignUpMethod;
+
+  /// 🔒 AuthGate Resolution Logic
+  /// This method determines where the user should be routed after login.
+  /// It runs asynchronously in the AuthGate screen to prevent UI flicker.
+  Future<void> resolveAuthFlow() async {
+    final user = _auth.currentUser;
+    final signUpMethod = _pendingSignUpMethod ?? 'email';
+
+    // Guard: No user found
+    if (user == null) {
+      Get.offAllNamed(AppRoutes.login);
+      return;
+    }
+
+    // 1️⃣ Email verification check (for email signups only)
     if (!user.emailVerified && signUpMethod == 'email') {
       debugPrint('Email not verified: ${user.email}');
       try {
@@ -47,12 +71,144 @@ class AuthController extends GetxController {
           'A verification link has been sent to ${user.email}',
         );
       } catch (e) {
-        Get.snackbar('Error', 'Failed to send verification email: $e');
+        debugPrint('Failed to send verification email: $e');
       }
-      Get.toNamed(AppRoutes.emailVerification);
+      Get.offAllNamed(AppRoutes.emailVerification);
       return;
     }
-    await handleUserPostVerification(user, signUpMethod);
+
+    // 2️⃣ Try cached profile first (FAST)
+    final cached = userBox.get(user.uid);
+    if (cached != null) {
+      currentUserModel.value = cached;
+
+      // Verify signup method matches
+      if (cached.signUpMethod != signUpMethod) {
+        Get.snackbar(
+          'Login Failed',
+          'This account was registered using ${cached.signUpMethod}. Please login with that method.',
+        );
+        await _signOutAll();
+        Get.offAllNamed(AppRoutes.login);
+        return;
+      }
+
+      // Route based on cached profile
+      _routeFromProfile(cached);
+
+      // Refresh in background (don't await)
+      _refreshProfileInBackground(user.uid, signUpMethod);
+      return;
+    }
+
+    // 3️⃣ Firestore fallback (SLOW - first time or cache miss)
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+
+      if (!doc.exists || doc.data() == null) {
+        // New user - create document
+        final newDoc = {
+          'email': user.email,
+          'firstName': '',
+          'lastName': '',
+          'phoneNumber': '',
+          'city': '',
+          'countryCode': '',
+          'isProfileComplete': false,
+          'createdAt': FieldValue.serverTimestamp(),
+          'signUpMethod': signUpMethod,
+        };
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set(newDoc);
+
+        currentUserModel.value = UserModel.fromMap(
+          newDoc,
+          uidFromDoc: user.uid,
+        );
+        await userBox.put(user.uid, currentUserModel.value!);
+
+        Get.snackbar('Welcome!', 'Please complete your profile information.');
+        Get.offAllNamed(AppRoutes.completeProfile);
+        return;
+      }
+
+      // Existing user
+      final model = UserModel.fromMap(doc.data()!, uidFromDoc: user.uid);
+      currentUserModel.value = model;
+      await userBox.put(user.uid, model);
+
+      // Verify signup method matches
+      if (model.signUpMethod != signUpMethod) {
+        Get.snackbar(
+          'Login Failed',
+          'This account was registered using ${model.signUpMethod}. Please login with that method.',
+        );
+        await _signOutAll();
+        Get.offAllNamed(AppRoutes.login);
+        return;
+      }
+
+      _routeFromProfile(model);
+    } on FirebaseException catch (e) {
+      debugPrint('Firestore error during auth resolution: ${e.message}');
+
+      // Offline fallback: route to home (user is authenticated)
+      Get.snackbar(
+        'Offline Mode',
+        'Could not verify profile. Continuing in offline mode.',
+      );
+      Get.offAllNamed(AppRoutes.home);
+    } catch (e) {
+      debugPrint('Unexpected error during auth resolution: $e');
+      Get.snackbar('Error', 'An unexpected error occurred: $e');
+      Get.offAllNamed(AppRoutes.login);
+    } finally {
+      _pendingSignUpMethod = null; // Clean up
+    }
+  }
+
+  /// Helper: Route user based on profile completeness
+  void _routeFromProfile(UserModel model) {
+    if (!model.isProfileComplete) {
+      Get.snackbar(
+        'Incomplete Profile',
+        'Please complete your profile information.',
+      );
+      Get.offAllNamed(AppRoutes.completeProfile);
+    } else {
+      Get.snackbar(
+        'Login Successful',
+        'Welcome back ${model.firstName} ${model.lastName}!',
+      );
+      Get.offAllNamed(AppRoutes.home);
+    }
+  }
+
+  /// Helper: Refresh profile in background (non-blocking)
+  Future<void> _refreshProfileInBackground(
+    String uid,
+    String signUpMethod,
+  ) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (doc.exists && doc.data() != null) {
+        final model = UserModel.fromMap(doc.data()!, uidFromDoc: uid);
+        currentUserModel.value = model;
+        await userBox.put(uid, model);
+        debugPrint('Profile refreshed in background');
+      }
+    } catch (e) {
+      debugPrint('Background profile refresh failed: $e');
+      // Silent fail - user already has cached data
+    }
   }
 
   Future<void> handleUserPostVerification(

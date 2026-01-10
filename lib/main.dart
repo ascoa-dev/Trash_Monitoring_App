@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/app/controllers/pending_cleanups_controller.dart';
+import 'package:ascoa_app/modules/auth/views/auth_gate_screen.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/new_cleanup_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/views/pending_cleanups_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/bindings/pending_cleanups_binding.dart';
@@ -208,6 +209,10 @@ class MyApp extends StatelessWidget {
               name: AppRoutes.signup,
               page: () => const SignupScreen(),
               bindings: [FormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.authGate,
+              page: () => const AuthGateScreen(),
             ),
             GetPage(name: AppRoutes.home, page: () => const MainScreen()),
 

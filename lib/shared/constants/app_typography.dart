@@ -40,6 +40,7 @@ class AppTypography {
   static const double datePickerMenuItemFontSize = 14.0;
   static const double datePickerDayFontSize = 16.0;
   static const double datePickerButtonFontSize = 14.0;
+  static const double comingSoonFontSize = 20.0;
 
   AppTypography._();
 }

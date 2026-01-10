@@ -8,6 +8,13 @@ import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:get/get.dart';
 
+class _StackMeta {
+  final String label;
+  final int value;
+  final Color color;
+  const _StackMeta(this.label, this.value, this.color);
+}
+
 class WasteChartWidget extends StatefulWidget {
   final Map<String, Map<String, int>> chartData;
   const WasteChartWidget({super.key, required this.chartData});
@@ -32,6 +39,7 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
   int? _touchedGroupIndex;
   Offset? _tooltipPosition;
   bool _isHolding = false; // Track if user is holding down
+  final Map<int, List<_StackMeta>> _stackMetaByGroup = {};
 
   // fl_chart exposes the touched stack index on the touched spot, but the
   // exact field name has varied between versions. Probe a few likely names
@@ -74,6 +82,20 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
                   enabled: true,
                   handleBuiltInTouches: false,
                   touchCallback: (event, response) {
+                    // Check if this is a touch end event
+                    if (event is FlPanEndEvent ||
+                        event is FlPanCancelEvent ||
+                        event is FlTapUpEvent ||
+                        event is FlLongPressEnd) {
+                      setState(() {
+                        _isHolding = false;
+                        _touchedStackIndex = null;
+                        _touchedGroupIndex = null;
+                        _tooltipPosition = null;
+                      });
+                      return;
+                    }
+
                     final spot = response?.spot;
 
                     if (spot != null) {
@@ -86,14 +108,6 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
                         _touchedStackIndex = idx;
                         _touchedGroupIndex = spot.touchedBarGroupIndex;
                         _tooltipPosition = event.localPosition;
-                      });
-                    } else {
-                      // Only hide tooltip when there's NO spot under the finger
-                      setState(() {
-                        _isHolding = false;
-                        _touchedStackIndex = null;
-                        _touchedGroupIndex = null;
-                        _tooltipPosition = null;
                       });
                     }
                   },
@@ -189,7 +203,7 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
                 barGroups: _buildBarGroups(),
               ),
             ),
-            // Numbers overlay on bars
+            // Per-segment labels with cutoff (value >= 5)
             _buildNumbersOverlay(),
             // Legend overlay in top-right corner
             Positioned(
@@ -274,10 +288,10 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
     );
   }
 
+  // � Per-segment labels with hard cutoff (value >= 5)
   Widget _buildNumbersOverlay() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate bar positioning
         final chartWidth =
             constraints.maxWidth -
             SizeUtils.w(context, AppDimensions.statsChartLeftReservedSize);
@@ -303,12 +317,12 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
 
           void addSegmentLabel(int value, Color bgColor) {
             if (value <= 0) return;
+            if (value < 5) return; // 🥈 Hard cutoff: only show if >= 5
 
             final segmentHeight = (value / maxY) * chartHeight;
             final segmentBottom = runningTotal;
             final segmentTop = runningTotal + segmentHeight;
 
-            // Determine if segment is tall enough for text inside
             final bool showInside = segmentHeight > 20;
 
             final yPosition =
@@ -329,7 +343,7 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
                     ) +
                     index * spacing +
                     (spacing - barWidth) / 2,
-                top: yPosition - 8,
+                top: yPosition - 12,
                 width: barWidth,
                 child: Center(
                   child: Text(
@@ -358,50 +372,15 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
     final stackIndex = _touchedStackIndex!;
     final position = _tooltipPosition!;
 
-    final category = WasteChartWidget.allCategories[groupIndex];
-    final data = widget.chartData[category] ?? {};
+    // Guard against invalid stack indices
+    if (stackIndex < 0) return const SizedBox.shrink();
 
-    // Determine which segment was touched based on stack index
-    String label;
-    int value;
-
-    // Stack order: saltwater (0), freshwater (1), land (2)
-    final saltwater = data['Saltwater'] ?? 0;
-    final freshwater = data['Freshwater'] ?? 0;
-    final land = data['Land'] ?? 0;
-
-    if (stackIndex == 0 && saltwater > 0) {
-      label = AppStrings.environmentSaltwater;
-      value = saltwater;
-    } else if (stackIndex == 1 && freshwater > 0) {
-      label = AppStrings.environmentFreshwater;
-      value = freshwater;
-    } else if (stackIndex == 2 && land > 0) {
-      label = AppStrings.environmentLand;
-      value = land;
-    } else {
-      // Handle case where segment order doesn't match expected
-      final segments = [
-        if (saltwater > 0)
-          (
-            AppStrings.environmentSaltwater,
-            saltwater,
-            AppColors.statsChartSaltwater,
-          ),
-        if (freshwater > 0)
-          (
-            AppStrings.environmentFreshwater,
-            freshwater,
-            AppColors.statsChartFreshwater,
-          ),
-        if (land > 0)
-          (AppStrings.environmentLand, land, AppColors.statsChartLand),
-      ];
-      if (stackIndex >= segments.length) return const SizedBox.shrink();
-      final segment = segments[stackIndex];
-      label = segment.$1;
-      value = segment.$2;
+    final metas = _stackMetaByGroup[groupIndex];
+    if (metas == null || stackIndex >= metas.length) {
+      return const SizedBox.shrink();
     }
+
+    final meta = metas[stackIndex];
 
     return Positioned(
       left: position.dx,
@@ -422,13 +401,13 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  label,
+                  meta.label,
                   style: AppTextStyles.statsActivityTooltip(
                     context,
                   ).copyWith(color: Colors.white),
                 ),
                 Text(
-                  '$value items',
+                  '${meta.value} items',
                   style: AppTextStyles.statsActivityTooltip(
                     context,
                   ).copyWith(color: Colors.white),
@@ -451,18 +430,30 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
 
       double runningTotal = 0;
       final stackItems = <BarChartRodStackItem>[];
+      final metas = <_StackMeta>[];
 
-      void addSegment(double value, Color color) {
+      void addSegment(double value, String label, Color color) {
         if (value <= 0) return;
         stackItems.add(
           BarChartRodStackItem(runningTotal, runningTotal + value, color),
         );
+        metas.add(_StackMeta(label, value.toInt(), color));
         runningTotal += value;
       }
 
-      addSegment(saltwater, AppColors.statsChartSaltwater);
-      addSegment(freshwater, AppColors.statsChartFreshwater);
-      addSegment(land, AppColors.statsChartLand);
+      addSegment(
+        saltwater,
+        AppStrings.environmentSaltwater,
+        AppColors.statsChartSaltwater,
+      );
+      addSegment(
+        freshwater,
+        AppStrings.environmentFreshwater,
+        AppColors.statsChartFreshwater,
+      );
+      addSegment(land, AppStrings.environmentLand, AppColors.statsChartLand);
+
+      _stackMetaByGroup[index] = metas;
 
       return BarChartGroupData(
         x: index,
