@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/stats-screen-and-offline-support
 
 permissions:
   contents: write
