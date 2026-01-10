@@ -92,7 +92,6 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - .env
     - assets/Google/android_neutral_rd_na@2x.png
     - assets/Google/android_dark_rd_na@2x.png
     - assets/Google/android_light_rd_na@2x.png
