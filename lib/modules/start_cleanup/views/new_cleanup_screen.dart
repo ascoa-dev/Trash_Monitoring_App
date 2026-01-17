@@ -15,6 +15,7 @@ import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class NewCleanUpScreen extends StatefulWidget {
   const NewCleanUpScreen({super.key});
@@ -27,6 +28,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
   @override
   void initState() {
     super.initState();
+    Analytics.screenView(AnalyticsEvents.cleanupStarted);
     // Open Basic Information section by default when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = Get.find<CleanupFormController>();
@@ -142,7 +144,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
     // Submit cleanup
     final cleanupId = await controller.submitCleanup(currentUser.uid);
 
-    // Hide loading indicator
+    // Always hide loading indicator after submission completes (online or offline)
     if (context.mounted) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     }

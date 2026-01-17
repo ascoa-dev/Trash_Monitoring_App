@@ -8,6 +8,7 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:flutter/widget_previews.dart';
 
 final haptics = Get.find<HapticController>();
 
@@ -224,3 +225,11 @@ class CountryCodeSelectorField extends StatelessWidget {
     );
   }
 }
+
+@Preview(name: 'Country Code Selector Field')
+Widget preview() => CountryCodeSelectorField(
+  selectedCountry: Country.parse('US'),
+  onChanged: (country) {},
+  label: 'Country Code',
+  supportText: 'Select your country code',
+);

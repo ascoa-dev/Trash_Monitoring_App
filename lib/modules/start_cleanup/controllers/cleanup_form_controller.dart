@@ -7,6 +7,8 @@ import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:ascoa_app/app/controllers/pending_cleanups_controller.dart';
 
 class CleanupFormController extends ChangeNotifier {
   String? _expandedSection;
@@ -31,12 +33,21 @@ class CleanupFormController extends ChangeNotifier {
     switch (sectionTitle) {
       case 'Basic Information':
         _basicInfoCompleted = true;
+        Analytics.track(AnalyticsEvents.cleanupSectionCompleted, {
+          AnalyticsProps.section: CleanupSections.basicInfo,
+        });
         break;
       case 'Trash Collected':
         _trashCollectedCompleted = true;
+        Analytics.track(AnalyticsEvents.cleanupSectionCompleted, {
+          AnalyticsProps.section: CleanupSections.trashCollected,
+        });
         break;
       case 'Photos & Videos (Optional)':
         _photosCompleted = true;
+        Analytics.track(AnalyticsEvents.cleanupSectionCompleted, {
+          AnalyticsProps.section: CleanupSections.photosVideos,
+        });
         break;
     }
     notifyListeners();
@@ -236,7 +247,11 @@ class CleanupFormController extends ChangeNotifier {
       isValid = false;
     }
 
-    if (location.trim().isEmpty) {
+    final hasTextLocation = location.trim().isNotEmpty;
+    final hasCoordinates =
+        locationLatitude != null && locationLongitude != null;
+
+    if (!hasTextLocation && !hasCoordinates) {
       locationError = 'Location is required';
       isValid = false;
     }
@@ -409,9 +424,23 @@ class CleanupFormController extends ChangeNotifier {
       // Commit the batch
       await batch.commit();
 
+      // Track successful submission
+      Analytics.track(AnalyticsEvents.cleanupSubmitted, {
+        AnalyticsProps.cleanupId: cleanupRef.id,
+        AnalyticsProps.isOffline: false,
+        AnalyticsProps.photosCount: photoUrls.length,
+        AnalyticsProps.trashKg: cleanup.totalWeight,
+        AnalyticsProps.environment: environmentType,
+      });
+
       debugPrint('[SubmitCleanup] Success: ${cleanupRef.id}');
       return cleanupRef.id;
     } catch (e) {
+      Analytics.track(AnalyticsEvents.cleanupSubmitFailed, {
+        AnalyticsProps.reason: e.toString(),
+        AnalyticsProps.isOffline: false,
+      });
+      Analytics.error(e, null);
       debugPrint('[SubmitCleanup] Error: $e');
       return null;
     }
@@ -421,6 +450,7 @@ class CleanupFormController extends ChangeNotifier {
   Future<String?> _saveCleanupOffline(String userId) async {
     try {
       debugPrint('[SubmitCleanup] Saving offline...');
+      final pendingController = Get.find<PendingCleanupsController>();
 
       // Get item weights from template
       final itemWeights = _getItemWeights();
@@ -467,9 +497,25 @@ class CleanupFormController extends ChangeNotifier {
       final box = await Hive.openBox<PendingCleanupModel>('pending_cleanups');
       await box.put(localId, pendingCleanup);
 
+      // Immediately update the pending cleanups list so badge updates
+      await pendingController.loadPendingCleanups();
+
+      // Track offline submission
+      Analytics.track(AnalyticsEvents.cleanupSubmitted, {
+        AnalyticsProps.cleanupId: localId,
+        AnalyticsProps.isOffline: true,
+        AnalyticsProps.photosCount: localPhotoPaths.length,
+        AnalyticsProps.environment: environmentType,
+      });
+
       debugPrint('[SubmitCleanup] Saved offline with ID: $localId');
       return localId;
     } catch (e) {
+      Analytics.track(AnalyticsEvents.cleanupSubmitFailed, {
+        AnalyticsProps.reason: e.toString(),
+        AnalyticsProps.isOffline: true,
+      });
+      Analytics.error(e, null);
       debugPrint('[SubmitCleanup] Error saving offline: $e');
       return null;
     }

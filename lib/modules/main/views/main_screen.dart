@@ -9,6 +9,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/widgets/nav_bar.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -53,6 +54,25 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     }
+    // Track initial screen view
+    _trackScreenView(_selectedIndex);
+  }
+
+  void _trackScreenView(int index) {
+    switch (index) {
+      case 0:
+        Analytics.screenView(AnalyticsEvents.homeViewed);
+        break;
+      case 1:
+        Analytics.screenView(AnalyticsEvents.statsViewed);
+        break;
+      case 3:
+        Analytics.screenView(AnalyticsEvents.newsViewed);
+        break;
+      case 4:
+        Analytics.screenView(AnalyticsEvents.profileViewed);
+        break;
+    }
   }
 
   @override
@@ -90,6 +110,7 @@ class _MainScreenState extends State<MainScreen> {
                     _openAddReport();
                     return;
                   }
+                  _trackScreenView(index);
                   setState(() => _selectedIndex = index);
                 },
               ),
@@ -101,6 +122,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _openAddReport() {
+    Analytics.track(AnalyticsEvents.cleanupCtaClicked);
     Get.toNamed(AppRoutes.newCleanUp);
   }
 }

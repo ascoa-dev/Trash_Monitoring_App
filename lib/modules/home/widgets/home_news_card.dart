@@ -5,6 +5,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class HomeNewsCard extends StatelessWidget {
   const HomeNewsCard({
@@ -35,6 +36,10 @@ class HomeNewsCard extends StatelessWidget {
   }
 
   Future<void> _openLink() async {
+    Analytics.track(AnalyticsEvents.newsArticleClicked, {
+      AnalyticsProps.articleTitle: title,
+      AnalyticsProps.articleUrl: link,
+    });
     final Uri uri = Uri.parse(link);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       debugPrint('Could not launch $link');

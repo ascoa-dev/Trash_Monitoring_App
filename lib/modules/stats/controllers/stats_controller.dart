@@ -7,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ascoa_app/app/models/cleanup_model.dart';
 import 'package:ascoa_app/app/models/cached_cleanup_model.dart';
 import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class StatsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -185,6 +186,11 @@ class StatsController extends GetxController {
 
       allCleanups.value = fetchedCleanups;
 
+      // Track stats loaded
+      Analytics.track(AnalyticsEvents.statsLoaded, {
+        AnalyticsProps.cleanupsCount: fetchedCleanups.length,
+      });
+
       // Save to cache for offline access
       await _saveToCache(fetchedCleanups);
 
@@ -293,6 +299,10 @@ class StatsController extends GetxController {
         selectedEnvironments.add(environment);
       }
     }
+    Analytics.track(AnalyticsEvents.statsFilterApplied, {
+      AnalyticsProps.filterType: FilterTypes.environment,
+      AnalyticsProps.filterValue: environment,
+    });
     applyFilters();
   }
 
@@ -301,6 +311,10 @@ class StatsController extends GetxController {
     if (toDate.value != null && date.isAfter(toDate.value!)) {
       toDate.value = date;
     }
+    Analytics.track(AnalyticsEvents.statsFilterApplied, {
+      AnalyticsProps.filterType: FilterTypes.date,
+      AnalyticsProps.filterValue: 'from_date',
+    });
     applyFilters();
   }
 
@@ -309,6 +323,10 @@ class StatsController extends GetxController {
     if (fromDate.value != null && date.isBefore(fromDate.value!)) {
       fromDate.value = date;
     }
+    Analytics.track(AnalyticsEvents.statsFilterApplied, {
+      AnalyticsProps.filterType: FilterTypes.date,
+      AnalyticsProps.filterValue: 'to_date',
+    });
     applyFilters();
   }
 

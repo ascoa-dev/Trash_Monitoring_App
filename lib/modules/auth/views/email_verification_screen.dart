@@ -14,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/shared/widgets/circular_loader.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});
@@ -33,6 +34,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void initState() {
     super.initState();
+    Analytics.screenView(AnalyticsEvents.emailVerificationViewed);
     _user = _auth.currentUser!;
     _user.reload();
     _timer = Timer.periodic(
@@ -47,6 +49,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     if (user.emailVerified) {
       _timer.cancel();
       haptics.medium();
+      Analytics.track(AnalyticsEvents.emailVerified);
       Get.snackbar(
         AppStrings.emailVerifiedSuccessTitle,
         AppStrings.emailVerifiedSuccessBody,
@@ -61,6 +64,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     setState(() => isResending = true);
     try {
       await _user.sendEmailVerification();
+      Analytics.track(AnalyticsEvents.emailVerificationResent);
       Get.snackbar(
         AppStrings.emailVerificationSentTitle,
         AppStrings.emailVerificationSentBody.replaceFirst(

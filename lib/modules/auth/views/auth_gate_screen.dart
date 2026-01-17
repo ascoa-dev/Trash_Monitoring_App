@@ -10,18 +10,58 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 /// - Home screen (if everything is ready)
 ///
 /// This prevents the "flash" effect of routing to home and bouncing back.
-class AuthGateScreen extends StatelessWidget {
+class AuthGateScreen extends StatefulWidget {
   const AuthGateScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final AuthController authController = Get.find<AuthController>();
+  State<AuthGateScreen> createState() => _AuthGateScreenState();
+}
 
+class _AuthGateScreenState extends State<AuthGateScreen> {
+  late final Future<void> _resolveFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final AuthController authController = Get.find<AuthController>();
+    _resolveFuture = authController.resolveAuthFlow();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: FutureBuilder<void>(
-        future: authController.resolveAuthFlow(),
+        future: _resolveFuture,
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Could not start the app.',
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '${snapshot.error}',
+                      style: TextStyle(color: AppColors.textBlack),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
           // Show loader while resolving
           return Center(
             child: Column(

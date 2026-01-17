@@ -24,7 +24,7 @@ class AppDimensions {
   static const double homeScreenStartCleanupCardVerticalPadding = 8.0;
   static const double homeScreenStartCleanupButtonWidth = 208.0;
   static const double homeScreenStartCleanupButtonHeight = 40.0;
-  static const double homeScreenStartCleanupButtonFontSize = 14.0;
+  static const double homeScreenStartCleanupButtonFontSize = 15.0;
   static const double homeScreenStartCleanupCardSpacing = 8.0;
   static const double homeScreenHighlightCarouselHeight = 210.0;
   static const double homeScreenHighlightCarouselSpacing = 12.0;
@@ -285,7 +285,7 @@ class AppDimensions {
   static const double authScaleMax = 1.25;
 
   // Auth header reference sizes (base measurements, scaled in widget)
-  static const double authHeaderBaseWidth = 295.0;
+  static const double authHeaderBaseWidth = 300.0;
   static const double authHeaderBaseHeight = 127.0;
   static const double authHeaderLogoWidth = 187.0;
   static const double authHeaderLogoHeight = 80.0;
@@ -536,7 +536,7 @@ class AppDimensions {
   static const double statsFilterDateFontSize = 14.0;
   static const double statsFilterLabelFontSize = 16.0;
   static const double statsSliderDotSize = 4.0;
-  static const double statsErrorFontSize = 12.0;
+  static const double statsErrorFontSize = 24.0;
   static const double statsMapInfoFontSize = 14.0;
 
   // Stats Screen - pending section dimensions

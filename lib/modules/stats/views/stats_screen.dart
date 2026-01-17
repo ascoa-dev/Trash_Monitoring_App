@@ -141,6 +141,7 @@ class _StatsScreenState extends State<StatsScreen>
         if (controller.error.value.isNotEmpty) {
           return Center(
             child: Text(
+              textAlign: TextAlign.center,
               controller.error.value,
               style: AppTextStyles.statsError(context),
             ),

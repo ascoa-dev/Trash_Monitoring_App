@@ -9,6 +9,7 @@ Flutter app using GetX, Firebase Auth, and a shared design system.
 - Deep-link driven Reset Password screen that reuses shared validation, shows the new success dialog artwork, and routes back to Login after completion
 - **Profile module now includes a dedicated Change Password flow** with strong password validation, bilingual copy, and success/error snackbars aligned with the signup UX.
 - Forgot Password uses an overlay dialog (no separate confirmation screen)
+- **New: Firebase Analytics + Crashlytics integration** via a centralized `Analytics` wrapper (screen views, key events, non-fatal error reporting)
 - Shared `FormBinding` injects `FormControllers` and `ValidationController`
 - Consistent spacing/colors/strings via `AppDimensions`, `AppColors`, `AppStrings`
 - New: Avatar upload with crop, WebP compression, thumbnail generation, and Firebase Storage integration. Uses a shared `AvatarPhotoHandler` with caching via `cached_network_image`, plus tap-to-zoom full-screen preview.
@@ -22,6 +23,7 @@ Key docs:
 - [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) — setup, architecture, and best practices
 - [SHARED_COMPONENTS_GUIDE.md](SHARED_COMPONENTS_GUIDE.md) — shared tokens and widgets
 - [Forgot Password feature](lib/modules/auth/forgot_password.md) — flow and `AppDialog` usage
+- Analytics & Crash reporting: see the “Analytics & Crash Reporting (Firebase)” section in [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
 
 Note: The `AuthController` now loads/creates a user document in Cloud Firestore on sign-in/signup and uses a `UserModel` to represent profile data. New route `AppRoutes.completeProfile` is used when a user's profile is incomplete.
 
@@ -43,6 +45,24 @@ flutter run -d windows
 ```
 
 Initial route is determined at runtime: signed-in users go to Home; otherwise Login.
+
+## 📈 Analytics & Crash Reporting (Firebase)
+
+This app uses **Firebase Analytics** and **Firebase Crashlytics** through a single wrapper: `lib/shared/analytics/analytics_service.dart`.
+
+- In **debug** builds, analytics/crash reporting are disabled and events are printed to the console for easy verification.
+- In **profile/release** builds, events and non-fatal errors are sent to Firebase.
+
+Add new events/properties in:
+
+- `lib/shared/analytics/analytics_events.dart`
+- `lib/shared/analytics/analytics_props.dart`
+
+How to test sending real events:
+
+- `flutter run --profile` (recommended for local validation)
+
+More details (conventions, privacy rules, patterns) are in [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md).
 
 ## Recent changes
 

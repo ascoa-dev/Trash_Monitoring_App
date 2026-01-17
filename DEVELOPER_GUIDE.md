@@ -106,6 +106,70 @@ Centralized tokens to replace hard-coded values:
 4. **Design System** - Consistent UI across the app
 5. **Form Validation** - Centralized validation logic
 
+## Analytics & Crash Reporting (Firebase)
+
+This project uses **Firebase Analytics** and **Firebase Crashlytics** via a single wrapper:
+
+- Entry point: `lib/shared/analytics/analytics_service.dart` (class `Analytics`)
+- Event names: `lib/shared/analytics/analytics_events.dart` (class `AnalyticsEvents`)
+- Property keys: `lib/shared/analytics/analytics_props.dart` (class `AnalyticsProps`)
+- User identity helpers: `lib/shared/analytics/analytics_user.dart` (class `AnalyticsUser`)
+
+  Dependencies (see `pubspec.yaml`):
+
+  - `firebase_analytics`
+  - `firebase_crashlytics`
+  - `package_info_plus` (used to enrich events with app version)
+
+  ### How it works
+
+  - `Analytics.init()` is called during app startup (after `Firebase.initializeApp()` in `main.dart`).
+  - In **debug** builds (`kDebugMode`):
+    - Analytics + Crashlytics collection are disabled.
+    - Calls to `Analytics.track(...)`, `Analytics.screenView(...)`, and `Analytics.error(...)` log to console only.
+  - In **profile/release** builds:
+    - Events are sent to Firebase Analytics.
+    - Errors are recorded in Crashlytics (both fatal and non-fatal).
+
+  ### Usage patterns
+
+  - Track a user action/event:
+    - `Analytics.track(AnalyticsEvents.loginAttempted, { AnalyticsProps.method: AuthMethods.email })`
+  - Track a screen view:
+    - `Analytics.screenView('login')`
+  - Report a non-fatal error:
+    - `Analytics.error(e, stack, reason: 'news_fetch_failed')`
+
+  Important: screens/controllers should call **the wrapper** (`Analytics.*`) and not call Firebase Analytics / Crashlytics directly.
+
+  ### Event naming & properties
+
+  - Event names are **snake_case** and centralized in `AnalyticsEvents`.
+  - Reuse property keys from `AnalyticsProps` (e.g., `method`, `reason`, `source`, `environment`).
+  - Avoid high-cardinality / noisy properties (e.g., raw exception strings) unless it’s a bounded set.
+
+  ### Privacy rules (non-negotiable)
+
+  Do not send any of the following in analytics events or Crashlytics custom keys/logs:
+
+  - Passwords, tokens, secrets
+  - Email, phone number
+  - Exact GPS coordinates
+  - Full names or other direct identifiers
+
+  Use `Analytics.identify(user.uid)` after successful auth. Only set safe user properties (e.g., bucketed counts or coarse city).
+
+  ### Testing / validation
+
+  - Local verification in debug: watch the console output for `[Analytics] ...` logs.
+  - Validate real event ingestion (recommended):
+    - `flutter run --profile`
+    - Open Firebase Console → Analytics → DebugView / Events
+
+  Crashlytics notes:
+
+  - Crashlytics collection is disabled in debug, so test crash/error ingestion using profile/release builds.
+
 ## Constants Usage Guidelines
 
 ### Why Use Shared Constants?
@@ -579,3 +643,12 @@ This structure makes the app maintainable and allows team members to work indepe
 - ProfileActionTile API: The profile action tile now supports a `leading` widget in addition to the legacy `icon` parameter. This allows dropping in image assets (for example `Image.asset('assets/ASCOA/Profile_Page_Icons/policy.png')`) without affecting existing layout sizing. When authoring new tiles, prefer `leading` for custom images and `icon` for Material icons.
 
 - Tooling cleanup: the `tool/country_parser_probe.dart` script was unused and has been removed. If you depended on it for ad-hoc parsing, recreate it under `tool/` or move any reusable parts into `shared/utils/`.
+
+## Future Changes Optimistic
+
+- A mechanism for the users to look through their past clean ups and search for specific entries based on date/location/trash type/Team Name.
+- Editing past clean ups to correct mistakes or add forgotten information.
+- Expand logging, error reporting, and analytics coverage (Firebase Analytics + Crashlytics).
+- Hotspot mapping to identify areas with high trash accumulation for targeted clean-up drives.
+- CrossPlatform sharing of clean up achievements on social media to raise awareness and encourage participation.
+- Maybe an admin panel for managing users, clean up events, and viewing statistics. (But i feel a website would be better for this).

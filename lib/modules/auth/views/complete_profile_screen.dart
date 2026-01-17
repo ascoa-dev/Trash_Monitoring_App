@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   const CompleteProfileScreen({super.key});
@@ -55,6 +56,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   @override
   void initState() {
     super.initState();
+    Analytics.screenView(AnalyticsEvents.profileCompletionViewed);
     authController = Get.find<AuthController>();
     formControllers = Get.find<FormControllers>();
     validationController = Get.find<ValidationController>();
@@ -67,6 +69,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     await _avatarPhotoHandler.handleEditPhoto(
       context: context,
       onSuccess: (url) async {
+        Analytics.track(AnalyticsEvents.profilePhotoUploaded);
         // Fetch the user profile to get the thumbUrl
         final profileData = await authController.fetchCurrentUserProfile();
         setState(() {
@@ -79,6 +82,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   Future<void> _submitProfile() async {
     FocusScope.of(context).unfocus();
+    Analytics.track(AnalyticsEvents.profileCompletionStarted);
     final firstName = formControllers.firstNameController.text.trim();
     final lastName = formControllers.lastNameController.text.trim();
     final phone = formControllers.phoneNumberController.text.trim();

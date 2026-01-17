@@ -25,6 +25,7 @@ import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -43,6 +44,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   void initState() {
     super.initState();
+    Analytics.screenView(AnalyticsEvents.forgotPasswordViewed);
 
     // Initialize controllers
     controller = Get.find<AuthController>();

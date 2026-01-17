@@ -520,6 +520,12 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     // Save coordinates to controller for restoration on section reopen
     widget.controller.locationLatitude = position.latitude;
     widget.controller.locationLongitude = position.longitude;
+    if (locationController.text.trim().isEmpty) {
+      locationController.text =
+          'Lat ${position.latitude.toStringAsFixed(5)}, '
+          'Lng ${position.longitude.toStringAsFixed(5)}';
+    }
+    widget.controller.clearFieldError('location');
     debugPrint(
       '[BasicInfo] _updateMapLocation: saved coordinates lat=${position.latitude}, lng=${position.longitude}',
     );
@@ -994,9 +1000,13 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     }
 
     // Additional validation: Check if location is within Cameroon (offline-safe)
-    if (currentPosition != null && !await _isInCameroon(currentPosition!)) {
+    final connectivity = Get.find<ConnectivityController>();
+    if (currentPosition != null &&
+        connectivity.isOnline.value &&
+        !await _isInCameroon(currentPosition!)) {
       Get.find<HapticController>().light();
       widget.controller.locationError = AppStrings.selectLocationInCameroon;
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(AppStrings.selectLocationInCameroon),

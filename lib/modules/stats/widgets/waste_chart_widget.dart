@@ -317,7 +317,7 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
 
           void addSegmentLabel(int value, Color bgColor) {
             if (value <= 0) return;
-            if (value < 5) return; // 🥈 Hard cutoff: only show if >= 5
+            if (value < 3) return; // 🥈 Hard cutoff: only show if >= 5
 
             final segmentHeight = (value / maxY) * chartHeight;
             final segmentBottom = runningTotal;

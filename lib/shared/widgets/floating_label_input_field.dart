@@ -173,7 +173,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                     readOnly: widget.readOnly,
                     onTap: () {
                       haptics.selectionClick();
-                      widget.onTap!();
+                      widget.onTap?.call();
                     },
                     obscureText: widget.obscure,
                     onChanged: widget.onChanged,

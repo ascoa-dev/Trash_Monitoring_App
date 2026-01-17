@@ -6,6 +6,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class EditProfileController extends GetxController {
   late final AuthController _authController;
@@ -27,6 +28,7 @@ class EditProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    Analytics.screenView(AnalyticsEvents.editProfileViewed);
     _authController = Get.find<AuthController>();
     _formControllers = Get.find<FormControllers>();
     _validationController = Get.find<ValidationController>();
@@ -217,6 +219,12 @@ class EditProfileController extends GetxController {
       countryCode: _selectedCountry.value.countryCode,
       city: city,
     );
+
+    if (updatedModel != null) {
+      Analytics.track(AnalyticsEvents.editProfileSaved);
+    } else {
+      Analytics.track(AnalyticsEvents.editProfileFailed);
+    }
 
     return updatedModel != null;
   }

@@ -18,9 +18,21 @@ import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/widgets/auth_header.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Analytics.screenView(AnalyticsEvents.signupScreenViewed);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -351,6 +363,7 @@ class SignupScreen extends StatelessWidget {
                             if (validationController.isFormValid &&
                                 validationController.isTermsAccepted.value) {
                               Get.find<HapticController>().medium();
+                              Analytics.track(AnalyticsEvents.signupStarted);
                               controller.signup(
                                 formControllers.emailController.text,
                                 formControllers.passwordController.text,

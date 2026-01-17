@@ -5,6 +5,7 @@ import 'package:ascoa_app/modules/profile/models/change_password_status.dart';
 import 'package:ascoa_app/shared/controllers/validation_controller.dart';
 import 'package:ascoa_app/shared/utils/validators.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class ChangePasswordController extends GetxController {
   late final AuthController _authController;
@@ -74,6 +75,7 @@ class ChangePasswordController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    Analytics.screenView(AnalyticsEvents.changePasswordViewed);
     _authController = Get.find<AuthController>();
     _validationController = Get.find<ValidationController>();
     _validationController.clearPasswordValidation();

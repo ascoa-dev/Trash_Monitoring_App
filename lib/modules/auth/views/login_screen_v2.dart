@@ -17,11 +17,23 @@ import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 /// New experimental Login Screen matching Figma absolute layout
 /// while remaining responsive and using shared components.
-class LoginScreenV2 extends StatelessWidget {
+class LoginScreenV2 extends StatefulWidget {
   const LoginScreenV2({super.key});
+
+  @override
+  State<LoginScreenV2> createState() => _LoginScreenV2State();
+}
+
+class _LoginScreenV2State extends State<LoginScreenV2> {
+  @override
+  void initState() {
+    super.initState();
+    Analytics.screenView(AnalyticsEvents.loginScreenViewed);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +234,10 @@ class LoginScreenV2 extends StatelessWidget {
                                                         .text,
                                                   );
                                               if (ok) {
+                                                Analytics.track(
+                                                  AnalyticsEvents
+                                                      .loginAttempted,
+                                                );
                                                 controller.login(
                                                   formControllers
                                                       .emailController

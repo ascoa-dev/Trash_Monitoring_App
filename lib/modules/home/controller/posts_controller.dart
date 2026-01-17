@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ascoa_app/app/models/post.dart';
 import 'package:ascoa_app/modules/home/services/api_service.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
 class HomePostsController extends GetxController {
   final RxList<Post> posts = <Post>[].obs;
@@ -62,10 +63,16 @@ class HomePostsController extends GetxController {
       }
 
       posts.assignAll(fetched);
+      Analytics.track(AnalyticsEvents.newsCarouselLoaded, {
+        AnalyticsProps.cleanupsCount: fetched.length,
+      });
 
       // Cache the fetched posts
       await _cacheToHive(fetched);
     } catch (e) {
+      Analytics.track(AnalyticsEvents.newsFetchFailed, {
+        AnalyticsProps.reason: e.toString(),
+      });
       error.value = e.toString();
     } finally {
       isLoading.value = false;

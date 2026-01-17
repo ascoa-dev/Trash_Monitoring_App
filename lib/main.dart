@@ -5,6 +5,7 @@ import 'package:ascoa_app/modules/auth/views/auth_gate_screen.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/new_cleanup_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/views/pending_cleanups_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/bindings/pending_cleanups_binding.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croppy/croppy.dart' as croppy;
 import 'package:flutter/foundation.dart';
@@ -18,7 +19,6 @@ import 'app/controllers/auth_controller.dart';
 import 'shared/controllers/form_binding.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'modules/main/views/main_screen.dart';
 import 'modules/auth/views/forgot_password_screen.dart';
 import 'modules/auth/views/reset_password_screen.dart';
@@ -48,6 +48,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize Analytics & Crashlytics (after Firebase init)
+  await Analytics.init();
+
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
@@ -121,59 +125,11 @@ void _handleIncomingUri(Uri uri) {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<String> _getInitialRoute() async {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) return AppRoutes.login;
-
-    if (!user.emailVerified) {
-      try {
-        await user.sendEmailVerification();
-      } catch (e) {
-        Get.snackbar('Error', 'Failed to send verification email: $e');
-      }
-      return AppRoutes.emailVerification;
-    }
-    try {
-      // Prefer using the typed UserModel from AuthController when available
-      final authController = Get.find<AuthController>();
-      // Ensure we have a current model loaded (fetch if necessary)
-      if (authController.currentUserModel.value == null) {
-        await authController.fetchCurrentUserProfile();
-      }
-
-      final userModel = authController.currentUserModel.value;
-      if (userModel == null) {
-        // If still null, create a minimal document and force profile completion
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'email': user.email,
-          'firstName': '',
-          'lastName': '',
-          'phoneNumber': '',
-          'city': '',
-          'countryCode': '',
-          'isProfileComplete': false,
-          'createdAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
-          'signUpMethod': 'email',
-        });
-        return AppRoutes.completeProfile;
-      }
-
-      return userModel.isProfileComplete
-          ? AppRoutes.home
-          : AppRoutes.completeProfile;
-    } catch (e) {
-      debugPrint('Error fetching user data: $e');
-      return AppRoutes.login;
-    }
-  }
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: _getInitialRoute(),
+      future: Future.value(AppRoutes.authGate),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return MaterialApp(
