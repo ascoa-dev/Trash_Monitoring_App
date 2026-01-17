@@ -1,4 +1,4 @@
-name: Flutter Release Workflow
+name: Test Flutter Release Workflow
 
 on:
   push:
