@@ -2,7 +2,7 @@ name: Flutter Release Workflow
 
 on:
   push:
-    branches:
+    branches-ignore:
       - main
 
 permissions:
@@ -33,7 +33,16 @@ jobs:
         run: flutter pub run flutter_native_splash:create
 
       - name: Set Version
-        run: echo "VERSION_CODE=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV && echo "VERSION_NAME=1.0.${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+        run: |
+          VERSION_CODE=${GITHUB_RUN_NUMBER}
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          DATE=$(date +'%Y%m%d.%H%M')
+          BRANCH_NAME=${GITHUB_REF##*/}
+          VERSION_NAME="1.0.${VERSION_CODE}-${BRANCH_NAME}-${DATE}-g${SHORT_SHA}"
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
       - name: Build APK
         run: flutter build apk --release --dart-define=GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} --build-name=$VERSION_NAME --build-number=$VERSION_CODE
@@ -44,6 +53,6 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: Create Release
-        run: gh release create "$VERSION_NAME" --title "Test Release $VERSION_NAME" --notes "Automated release from CI" build/app/outputs/flutter-apk/app-release.apk
+        run: gh release create "$VERSION_NAME" --title "Test Release $VERSION_NAME" --notes "Automated release from branch $BRANCH_NAME commit $SHORT_SHA" build/app/outputs/flutter-apk/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
