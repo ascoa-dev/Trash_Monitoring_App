@@ -4,6 +4,7 @@ import 'package:ascoa_app/app/models/cleanup_model.dart';
 import 'package:ascoa_app/app/models/pending_cleanup_model.dart';
 import 'package:ascoa_app/modules/start_cleanup/controllers/media_upload_controller.dart';
 import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -352,11 +353,9 @@ class CleanupFormController extends ChangeNotifier {
           debugPrint(
             '[SubmitCleanup] Photo uploads did not complete successfully',
           );
-          Get.snackbar(
+          SnackbarService.error(
             'Upload Error',
             'Some photos failed to upload. Please try again.',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
           );
           // You might want to show an error to the user here
           // For now, we'll continue anyway with whatever uploaded

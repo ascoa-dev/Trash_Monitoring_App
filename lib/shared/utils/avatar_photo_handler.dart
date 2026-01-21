@@ -4,6 +4,7 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/services/avatar_uploader.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:ascoa_app/shared/utils/image_utils.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:ascoa_app/shared/widgets/avatar_crop_screen.dart';
@@ -154,14 +155,11 @@ class AvatarPhotoHandler {
 
       if (compressedAvatar == null) {
         Get.back(); // Close progress dialog
-        Get.snackbar(
+        SnackbarService.error(
           isFrench ? 'Erreur' : 'Error',
           isFrench
               ? AppStrings.avatarCompressionErrorFrench
               : AppStrings.avatarCompressionError,
-          backgroundColor: AppColors.error,
-          colorText: AppColors.pureWhite,
-          snackPosition: SnackPosition.TOP,
         );
         return null;
       }
@@ -175,14 +173,11 @@ class AvatarPhotoHandler {
 
       if (thumbnail == null) {
         Get.back(); // Close progress dialog
-        Get.snackbar(
+        SnackbarService.error(
           isFrench ? 'Erreur' : 'Error',
           isFrench
               ? AppStrings.avatarCompressionErrorFrench
               : AppStrings.avatarCompressionError,
-          backgroundColor: AppColors.error,
-          colorText: AppColors.pureWhite,
-          snackPosition: SnackPosition.TOP,
         );
         return null;
       }
@@ -211,14 +206,11 @@ class AvatarPhotoHandler {
       onSuccess?.call(newAvatarUrl);
 
       // Show success message
-      Get.snackbar(
+      SnackbarService.success(
         isFrench ? 'Succès' : 'Success',
         isFrench
             ? AppStrings.avatarUploadSuccessFrench
             : AppStrings.avatarUploadSuccess,
-        backgroundColor: AppColors.buttonGreen,
-        colorText: AppColors.pureWhite,
-        snackPosition: SnackPosition.TOP,
       );
 
       return newAvatarUrl;
@@ -229,14 +221,11 @@ class AvatarPhotoHandler {
       }
 
       final isFrench = Get.locale?.languageCode == 'fr';
-      Get.snackbar(
+      SnackbarService.error(
         isFrench ? 'Erreur' : 'Error',
         isFrench
             ? AppStrings.avatarUploadErrorFrench
             : AppStrings.avatarUploadError,
-        backgroundColor: AppColors.error,
-        colorText: AppColors.pureWhite,
-        snackPosition: SnackPosition.TOP,
       );
 
       return null;

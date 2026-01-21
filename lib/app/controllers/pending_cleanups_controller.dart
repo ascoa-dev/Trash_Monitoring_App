@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ascoa_app/app/models/pending_cleanup_model.dart';
 import 'package:ascoa_app/app/models/cleanup_model.dart';
 import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 
 class PendingCleanupsController extends GetxController {
   final RxList<PendingCleanupModel> pendingCleanups =
@@ -28,12 +28,7 @@ class PendingCleanupsController extends GetxController {
       pendingCleanups.value = box.values.toList();
     } catch (e) {
       debugPrint('[PendingCleanups] Error loading: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to load pending cleanups',
-        backgroundColor: AppColors.errorRed,
-        colorText: AppColors.white,
-      );
+      SnackbarService.error('Error', 'Failed to load pending cleanups');
     } finally {
       isLoading.value = false;
     }
@@ -45,11 +40,9 @@ class PendingCleanupsController extends GetxController {
       final isOnline = await connectivityController.checkConnectivity();
 
       if (!isOnline) {
-        Get.snackbar(
+        SnackbarService.warning(
           'Offline',
           'You need an internet connection to upload cleanups',
-          backgroundColor: AppColors.error,
-          colorText: AppColors.white,
         );
         return false;
       }
@@ -110,12 +103,7 @@ class PendingCleanupsController extends GetxController {
 
       await loadPendingCleanups();
 
-      Get.snackbar(
-        'Success',
-        'Cleanup uploaded successfully',
-        backgroundColor: AppColors.success,
-        colorText: AppColors.white,
-      );
+      SnackbarService.success('Success', 'Cleanup uploaded successfully');
 
       uploadingId.value = '';
       return true;
@@ -127,11 +115,9 @@ class PendingCleanupsController extends GetxController {
       await cleanup.save();
       pendingCleanups.refresh();
 
-      Get.snackbar(
+      SnackbarService.error(
         'Upload Error',
         'Failed to upload cleanup: ${e.toString()}',
-        backgroundColor: AppColors.errorRed,
-        colorText: AppColors.white,
       );
 
       uploadingId.value = '';
@@ -189,20 +175,10 @@ class PendingCleanupsController extends GetxController {
       await box.delete(cleanup.localId);
       await loadPendingCleanups();
 
-      Get.snackbar(
-        'Deleted',
-        'Cleanup deleted',
-        backgroundColor: AppColors.error,
-        colorText: AppColors.white,
-      );
+      SnackbarService.info('Deleted', 'Cleanup deleted');
     } catch (e) {
       debugPrint('[PendingCleanups] Error deleting: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to delete cleanup',
-        backgroundColor: AppColors.errorRed,
-        colorText: AppColors.white,
-      );
+      SnackbarService.error('Error', 'Failed to delete cleanup');
     }
   }
 }

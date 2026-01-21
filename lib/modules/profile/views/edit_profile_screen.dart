@@ -7,6 +7,7 @@ import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:ascoa_app/shared/widgets/country_code_selector_field.dart';
 import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
 import 'package:ascoa_app/shared/widgets/city_selector_field.dart';
@@ -609,7 +610,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                             final isFrench =
                                                 Get.locale?.languageCode ==
                                                 'fr';
-                                            Get.snackbar(
+                                            SnackbarService.error(
                                               isFrench
                                                   ? AppStrings.errorTitleFrench
                                                   : AppStrings.errorTitle,
@@ -617,9 +618,6 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                                   ? AppStrings
                                                       .editProfileErrorFrench
                                                   : AppStrings.editProfileError,
-                                              backgroundColor: AppColors.error,
-                                              colorText: AppColors.pureWhite,
-                                              snackPosition: SnackPosition.TOP,
                                             );
                                           }
                                         },

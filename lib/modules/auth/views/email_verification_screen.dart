@@ -8,6 +8,7 @@ import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,10 +51,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       _timer.cancel();
       haptics.medium();
       Analytics.track(AnalyticsEvents.emailVerified);
-      Get.snackbar(
+      SnackbarService.success(
         AppStrings.emailVerifiedSuccessTitle,
         AppStrings.emailVerifiedSuccessBody,
-        snackPosition: SnackPosition.TOP,
       );
       final AuthController controller = Get.find<AuthController>();
       controller.handleUserPostVerification(user, 'email');
@@ -65,19 +65,17 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     try {
       await _user.sendEmailVerification();
       Analytics.track(AnalyticsEvents.emailVerificationResent);
-      Get.snackbar(
+      SnackbarService.success(
         AppStrings.emailVerificationSentTitle,
         AppStrings.emailVerificationSentBody.replaceFirst(
           '%s',
           _user.email ?? '',
         ),
-        snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
-      Get.snackbar(
+      SnackbarService.error(
         AppStrings.errorTitle,
         'Failed to resend verification email: $e',
-        snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
       setState(() => isResending = false);

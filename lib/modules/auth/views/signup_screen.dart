@@ -1,5 +1,6 @@
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
 import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -292,7 +293,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                   ..onTap = () {
                                                     Get.find<HapticController>()
                                                         .selectionClick();
-                                                    Get.snackbar(
+                                                    SnackbarService.info(
                                                       AppStrings.termsLink,
                                                       AppStrings.termsNav,
                                                     );
@@ -309,7 +310,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                   ..onTap = () {
                                                     Get.find<HapticController>()
                                                         .selectionClick();
-                                                    Get.snackbar(
+                                                    SnackbarService.info(
                                                       AppStrings
                                                           .privacyPolicyLink,
                                                       AppStrings

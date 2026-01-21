@@ -6,6 +6,7 @@ import 'package:ascoa_app/shared/controllers/validation_controller.dart';
 import 'package:ascoa_app/shared/utils/validators.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 
 class ChangePasswordController extends GetxController {
   late final AuthController _authController;
@@ -34,10 +35,9 @@ class ChangePasswordController extends GetxController {
       }
       Get.back();
     }
-    Get.snackbar(
+    SnackbarService.error(
       isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
       message,
-      snackPosition: SnackPosition.TOP,
     );
     _lastSnackbarMessage = message;
   }
@@ -68,7 +68,7 @@ class ChangePasswordController extends GetxController {
       }
       Get.back();
     }
-    Get.snackbar(title, message, snackPosition: SnackPosition.TOP);
+    SnackbarService.success(title, message);
     _lastSnackbarMessage = message;
   }
 

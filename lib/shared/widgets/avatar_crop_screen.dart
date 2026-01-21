@@ -14,6 +14,7 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 /// Avatar crop screen with resizable square crop area and live circular preview
@@ -253,15 +254,11 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
 
   void _showError(String details) {
     haptics.heavy();
-    Get.snackbar(
+    SnackbarService.error(
       _isFrench ? 'Erreur' : 'Error',
       _isFrench
           ? AppStrings.avatarCropFailedFrench
           : AppStrings.avatarCropFailed,
-      backgroundColor: AppColors.error,
-      colorText: AppColors.pureWhite,
-      snackPosition: SnackPosition.TOP,
-      duration: const Duration(seconds: 4),
     );
     debugPrint('Crop error: $details');
   }

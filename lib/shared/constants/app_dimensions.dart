@@ -118,7 +118,7 @@ class AppDimensions {
   static const double halfInputSpacing = 0.003;
   // Forgot Password background image heights (relative to screen height)
   static const double forgotBgTopHeight = 0.235; // ~225px @ 956px ref
-  static const double forgotBgBottomHeight = 0.306; // ~293px @ 956px ref
+  static const double forgotBgBottomHeight = 0.303; // ~293px @ 956px ref
   static const double completeProfileBottomHeight = 0.34;
 
   // Component Heights
@@ -304,7 +304,7 @@ class AppDimensions {
 
   // Auth / Login screen spacing multipliers (relative to screen height)
   static const double authHeaderTopSpacing =
-      0.24; // large top gap before header
+      0.23; // large top gap before header
   static const double authScreenSpacerSmall = 0.025; // small vertical gaps
   static const double authScreenSpacerMedium = 0.03; // medium vertical gaps
   static const double authScreenLargeSpacer = 0.08; // larger vertical gaps
@@ -615,6 +615,19 @@ class AppDimensions {
   static const double pendingCleanupsFooterShadowBlur = 10.0;
   static const double pendingCleanupsFooterShadowOffsetY = -2.0;
   static const double pendingCleanupsInfoIconSize = 16.0;
+
+  //SnackBar
+  static const double snackBarPositionTop = 12.0;
+  static const double snackBarPositionHorizontal = 16.0;
+  static const double snackBarPadding = 16.0;
+  static const double snackBarBorderRadius = 12.0;
+  static const double snackBarBoxShadowBlur = 6.0;
+  static const double snackBarContainerWidth = 4.0;
+  static const double snackBarContainerHeight = 40.0;
+  static const double snackBarEdgeInsetTop = 2.0;
+  static const double snackBarContainerBorderRadius = 4.0;
+  static const double snackBarSpacing = 16.0;
+  static const double snackBarTextSpacing = 4.0;
 
   // Prevent instantiation
   AppDimensions._();

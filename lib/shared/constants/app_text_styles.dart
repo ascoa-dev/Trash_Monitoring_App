@@ -450,6 +450,21 @@ class AppTextStyles {
     ],
   );
 
+  static TextStyle snackBarTitle(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w700,
+    fontSize: SizeUtils.h(context, AppTypography.snackBarTitleFontSize),
+    height: 1.25,
+    letterSpacing: -0.2, // Tighter tracking
+  );
+
+  static TextStyle snacBarBody(BuildContext context) => TextStyle(
+    fontFamily: rubik,
+    fontWeight: FontWeight.w500,
+    fontSize: SizeUtils.h(context, AppTypography.snackBarBodyFontSize),
+    height: 1.5,
+  );
+
   // Prevent instantiation
   AppTextStyles._();
 }

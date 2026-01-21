@@ -11,6 +11,7 @@
 
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
 import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
@@ -154,14 +155,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   void _showErrorSnackbar(String message) {
-    Get.snackbar(
+    SnackbarService.error(
       Get.locale?.languageCode == 'fr'
           ? AppStrings.errorTitleFrench
           : AppStrings.errorTitle,
       message,
-      backgroundColor: AppColors.error,
-      colorText: AppColors.pureWhite,
-      snackPosition: SnackPosition.TOP,
     );
   }
 
@@ -223,7 +221,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   bottom: AppDimensions.zero,
                   height: viewportHeight * AppDimensions.forgotBgBottomHeight,
                   child: Image.asset(
-                    AppImages.forgotPasswordBottom,
+                    AppImages.forgotPasswordBottom2,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.bottomCenter,
@@ -315,7 +313,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: viewportHeight * AppDimensions.buttonSpacing,
+                          height: viewportHeight * AppDimensions.sectionSpacing,
                         ),
                         Obx(
                           () => PrimaryButton(

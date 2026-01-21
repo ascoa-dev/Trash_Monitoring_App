@@ -30,7 +30,10 @@ class SocialButton extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        height: SizeUtils.h(context, AppDimensions.buttonHeight),
+        height: SizeUtils.h(
+          context,
+          AppDimensions.navBarActiveIconContainerSize,
+        ),
         decoration: BoxDecoration(
           color: AppColors.background,
           border: Border.all(

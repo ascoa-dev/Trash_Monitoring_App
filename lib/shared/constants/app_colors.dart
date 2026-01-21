@@ -175,6 +175,34 @@ class AppColors {
   static const Color buttonDisabledBackground = Color(0xFFF5F5F5);
   static const Color buttonDisabledText = Color(0xFF9E9E9E);
 
+  //Snack bar Colors
+  //Success
+  static const Color snackBarSuccessBackground = Color(0xFFECFDF5);
+  static const Color snackBarSuccessBorder = Color(0xFFD1FAE5);
+  static const Color snackBarSuccessAccent = Color(0xFF10B981);
+  static const Color snackBarSuccessTitleColor = Color(0xFF065F46);
+  static const Color snackBarSuccessMessageColor = Color(0xFF047857);
+
+  //error
+  static const Color snackBarErrorBackground = Color(0xFFFFF1F2);
+  static const Color snackBarErrorBorder = Color(0xFFFFE4E6);
+  static const Color snackBarErrorAccent = Color(0xFFF43F5E);
+  static const Color snackBarErrorTitleColor = Color(0xFF9F1239);
+  static const Color snackBarErrorMessageColor = Color(0xFFBE123C);
+
+  //warning
+  static const Color snackBarWarningBackground = Color(0xFFFFFBEB);
+  static const Color snackBarWarningBorder = Color(0xFFFEF3C7);
+  static const Color snackBarWarningAccent = Color(0xFFF59E0B);
+  static const Color snackBarWarningTitleColor = Color(0xFF92400E);
+  static const Color snackBarWarningMessageColor = Color(0xFFB45309);
+
+  //info
+  static const Color snackBarInfoBackground = Color(0xFFF0F9FF);
+  static const Color snackBarInfoBorder = Color(0xFFE0F2FE);
+  static const Color snackBarInfoAccent = Color(0xFF0EA5E9);
+  static const Color snackBarInfoTitleColor = Color(0xFF075985);
+  static const Color snackBarInfoMessageColor = Color(0xFF0369A1);
   // Prevent instantiation
   AppColors._();
 }

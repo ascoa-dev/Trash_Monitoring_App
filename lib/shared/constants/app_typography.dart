@@ -42,5 +42,9 @@ class AppTypography {
   static const double datePickerButtonFontSize = 14.0;
   static const double comingSoonFontSize = 20.0;
 
+  //snackbar
+  static const double snackBarTitleFontSize = 16.0;
+  static const double snackBarBodyFontSize = 14.0;
+
   AppTypography._();
 }

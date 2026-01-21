@@ -6,6 +6,7 @@ import 'package:ascoa_app/modules/start_cleanup/views/new_cleanup_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/views/pending_cleanups_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/bindings/pending_cleanups_binding.dart';
 import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croppy/croppy.dart' as croppy;
 import 'package:flutter/foundation.dart';
@@ -125,9 +126,14 @@ void _handleIncomingUri(Uri uri) {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  /// Global navigator key for accessing overlay
+  static final navigatorKey = GlobalKey<NavigatorState>();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Initialize SnackbarService with navigator key
+    SnackbarService.init(navigatorKey);
     return FutureBuilder<String>(
       future: Future.value(AppRoutes.authGate),
       builder: (context, snapshot) {
@@ -142,6 +148,7 @@ class MyApp extends StatelessWidget {
         }
         return GetMaterialApp(
           title: 'Trash Monitoring App',
+          navigatorKey: navigatorKey,
           // Clamp global text scale to 1.0 for visual consistency across devices
           // (optional: remove if you want to respect system font scaling)
           builder: (context, child) {
@@ -151,7 +158,10 @@ class MyApp extends StatelessWidget {
                 // Replace deprecated textScaleFactor with textScaler
                 textScaler: const TextScaler.linear(1.0),
               ),
-              child: child ?? const SizedBox.shrink(),
+              // Wrap with global snackbar listener for auth messages
+              child: _GlobalSnackbarListener(
+                child: child ?? const SizedBox.shrink(),
+              ),
             );
           },
           initialRoute: snapshot.data!,
@@ -219,5 +229,54 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+/// Global snackbar listener that displays auth-related snackbars
+/// This widget wraps the entire app and listens for messages from AuthController
+class _GlobalSnackbarListener extends StatefulWidget {
+  final Widget child;
+
+  const _GlobalSnackbarListener({required this.child});
+
+  @override
+  State<_GlobalSnackbarListener> createState() =>
+      _GlobalSnackbarListenerState();
+}
+
+class _GlobalSnackbarListenerState extends State<_GlobalSnackbarListener> {
+  Worker? _snackbarWorker;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupListener();
+  }
+
+  void _setupListener() {
+    try {
+      final authController = Get.find<AuthController>();
+      _snackbarWorker = ever<SnackbarMessage?>(authController.snackbarMessage, (
+        msg,
+      ) {
+        if (msg != null) {
+          SnackbarService.show(msg);
+          authController.snackbarMessage.value = null;
+        }
+      });
+    } catch (e) {
+      debugPrint('AuthController not found for snackbar listener: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _snackbarWorker?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }

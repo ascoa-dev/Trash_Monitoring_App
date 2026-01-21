@@ -15,6 +15,7 @@ class HomePostsController extends GetxController {
   void onInit() {
     super.onInit();
     _loadFromCache();
+    loadPosts();
   }
 
   /// Load posts from cache first (instant), then fetch fresh data
@@ -36,31 +37,6 @@ class HomePostsController extends GetxController {
       isLoading.value = true;
       error.value = null;
       final fetched = await ApiService.fetchPosts(perPage: perPage);
-
-      // collect unique media ids to avoid duplicate network requests
-      final mediaIds =
-          fetched
-              .map((p) => p.featuredMedia)
-              .where((id) => id != 0)
-              .toSet()
-              .toList();
-
-      // fetch all media in parallel
-      final Map<int, String> mediaMap = {};
-      if (mediaIds.isNotEmpty) {
-        final futures = mediaIds.map((id) async {
-          final media = await ApiService.fetchMedia(id);
-          mediaMap[id] = media.sourceUrl;
-        });
-        await Future.wait(futures);
-      }
-
-      // assign imageUrl from mediaMap when available
-      for (final p in fetched) {
-        if (p.featuredMedia != 0 && mediaMap.containsKey(p.featuredMedia)) {
-          p.imageUrl = mediaMap[p.featuredMedia];
-        }
-      }
 
       posts.assignAll(fetched);
       Analytics.track(AnalyticsEvents.newsCarouselLoaded, {

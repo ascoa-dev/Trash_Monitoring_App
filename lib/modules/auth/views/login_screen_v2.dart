@@ -77,22 +77,28 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                   top: AppDimensions.zero,
                   left: AppDimensions.zero,
                   right: AppDimensions.zero,
-                  child: Image.asset(
-                    AppImages.loginTop,
-                    width: viewportWidth,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
+                  child: Hero(
+                    tag: 'authTopImage',
+                    child: Image.asset(
+                      AppImages.loginTop,
+                      width: viewportWidth,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                    ),
                   ),
                 ),
                 Positioned(
                   bottom: AppDimensions.zero,
                   left: AppDimensions.zero,
                   right: AppDimensions.zero,
-                  child: Image.asset(
-                    AppImages.loginBottom,
-                    width: viewportWidth,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.bottomCenter,
+                  child: Hero(
+                    tag: 'authBottomImage',
+                    child: Image.asset(
+                      AppImages.loginBottom,
+                      width: viewportWidth,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.bottomCenter,
+                    ),
                   ),
                 ),
                 SafeArea(
@@ -129,7 +135,13 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                       (contentHeight *
                                           AppDimensions.authHeaderTopSpacing),
                                 ),
-                                AuthHeader(scale: scale),
+                                Hero(
+                                  tag: 'authHeader',
+                                  child: Material(
+                                    type: MaterialType.transparency,
+                                    child: AuthHeader(scale: scale),
+                                  ),
+                                ),
                                 Obx(
                                   () => FloatingLabelInputField(
                                     controller: formControllers.emailController,
@@ -148,7 +160,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                 SizedBox(
                                   height:
                                       (contentHeight *
-                                          AppDimensions.buttonSpacing),
+                                          AppDimensions.titleBottomSpacing),
                                 ),
                                 Obx(
                                   () => FloatingLabelInputField(
@@ -174,7 +186,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                 SizedBox(
                                   height:
                                       (contentHeight *
-                                          AppDimensions.buttonSpacing),
+                                          AppDimensions.titleBottomSpacing),
                                 ),
                                 Align(
                                   alignment: Alignment.centerRight,
@@ -253,7 +265,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                 SizedBox(
                                   height:
                                       (contentHeight *
-                                          AppDimensions.authScreenSpacerSmall),
+                                          AppDimensions.inputSpacing),
                                 ),
                                 Row(
                                   children: [
@@ -305,7 +317,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                 SizedBox(
                                   height:
                                       (contentHeight *
-                                          AppDimensions.authScreenSpacerMedium),
+                                          AppDimensions.titleBottomSpacing),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -314,7 +326,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                       AppStrings.noAccount,
                                       style: AppTextStyles.bodySecondary(
                                         context,
-                                      ),
+                                      ).copyWith(fontWeight: FontWeight.w500),
                                     ),
                                     TextButton(
                                       style: TextButton.styleFrom(
@@ -351,7 +363,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                 SizedBox(
                                   height:
                                       (contentHeight *
-                                          AppDimensions.titleBottomSpacing),
+                                          AppDimensions.inputSpacing),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(
@@ -362,12 +374,22 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                     text: TextSpan(
                                       style: AppTextStyles.termsBase(context),
                                       children: const [
-                                        TextSpan(text: AppStrings.termsText),
+                                        TextSpan(
+                                          text: AppStrings.termsText,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                         TextSpan(
                                           text: AppStrings.termsLink,
                                           style: AppTextStyles.termsLink,
                                         ),
-                                        TextSpan(text: AppStrings.termsAnd),
+                                        TextSpan(
+                                          text: AppStrings.termsAnd,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                         TextSpan(
                                           text: AppStrings.privacyPolicyLink,
                                           style: AppTextStyles.termsLink,

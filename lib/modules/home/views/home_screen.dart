@@ -3,6 +3,7 @@ import 'package:ascoa_app/modules/stats/controllers/stats_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:ascoa_app/app/models/user.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
@@ -547,7 +548,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
                 } else {
-                  Get.snackbar(
+                  SnackbarService.warning(
                     AppStrings.news,
                     AppStrings.couldNotOpenNewsLink,
                   );
@@ -683,7 +684,10 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(radius),
           onTap: () {
             Get.find<HapticController>().selectionClick();
-            Get.snackbar(AppStrings.comingSoon, AppStrings.comingSoonMessage);
+            SnackbarService.info(
+              AppStrings.comingSoon,
+              AppStrings.comingSoonMessage,
+            );
           },
           child: Container(
             width: cardWidth,
@@ -820,12 +824,18 @@ class _HighlightCard extends StatelessWidget {
           AppDimensions.homeScreenHighlightCardSpacing,
         ),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: Image.asset(item.imageAsset, fit: BoxFit.cover),
+      child: GestureDetector(
+        onTap: () {
+          Get.find<HapticController>().selectionClick();
+          debugPrint('Highlight tapped');
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(radius),
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: Image.asset(item.imageAsset, fit: BoxFit.cover),
+          ),
         ),
       ),
     );

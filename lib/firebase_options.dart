@@ -42,17 +42,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyDIqsTxZn7b0BEJpYeeAzTdHHj31KqGdM4',
-    appId: '1:677557829420:web:9010240ece02eee770f689',
+    appId: '1:677557829420:web:1df0c93c6209ff2770f689',
     messagingSenderId: '677557829420',
     projectId: 'trash-monitoring-app-88131',
     authDomain: 'trash-monitoring-app-88131.firebaseapp.com',
     storageBucket: 'trash-monitoring-app-88131.firebasestorage.app',
-    measurementId: 'G-LND6PZK62F',
+    measurementId: 'G-KSBY9Y92VY',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBES3ugYqnsfFd-EozP0K1Sk-UofX69UAo',
-    appId: '1:677557829420:android:2eef313a096af2c370f689',
+    appId: '1:677557829420:android:7cd941434fd2bbb870f689',
     messagingSenderId: '677557829420',
     projectId: 'trash-monitoring-app-88131',
     storageBucket: 'trash-monitoring-app-88131.firebasestorage.app',
@@ -60,34 +60,34 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBxyvdi-3GsaDteGRsp6Jwn7iZ7G1LsGYw',
-    appId: '1:677557829420:ios:74650e7923d1774770f689',
+    appId: '1:677557829420:ios:922f6f495f6e9dea70f689',
     messagingSenderId: '677557829420',
     projectId: 'trash-monitoring-app-88131',
     storageBucket: 'trash-monitoring-app-88131.firebasestorage.app',
     androidClientId: '677557829420-ckmej1rg4iufigts9rq4b7i1ieevma0l.apps.googleusercontent.com',
-    iosClientId: '677557829420-e6svsfhpt6g91ai2c3opeone1hg36hug.apps.googleusercontent.com',
-    iosBundleId: 'com.example.ascoaApp',
+    iosClientId: '677557829420-m7mqbuukpoljrflq5svhhbt46r6okmcv.apps.googleusercontent.com',
+    iosBundleId: 'com.ascoa.trashmonitor',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBxyvdi-3GsaDteGRsp6Jwn7iZ7G1LsGYw',
-    appId: '1:677557829420:ios:969294d557eba1b770f689',
+    appId: '1:677557829420:ios:922f6f495f6e9dea70f689',
     messagingSenderId: '677557829420',
     projectId: 'trash-monitoring-app-88131',
     storageBucket: 'trash-monitoring-app-88131.firebasestorage.app',
-    androidClientId: '677557829420-qockvs645gge6adhhsdoeea0irv2a2th.apps.googleusercontent.com',
-    iosClientId: '677557829420-mdlmboo9hak7j8v2hmhrvd1vudjjoqm6.apps.googleusercontent.com',
-    iosBundleId: 'com.ascoa.app',
+    androidClientId: '677557829420-ckmej1rg4iufigts9rq4b7i1ieevma0l.apps.googleusercontent.com',
+    iosClientId: '677557829420-m7mqbuukpoljrflq5svhhbt46r6okmcv.apps.googleusercontent.com',
+    iosBundleId: 'com.ascoa.trashmonitor',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyDIqsTxZn7b0BEJpYeeAzTdHHj31KqGdM4',
-    appId: '1:677557829420:web:43c8c6395c4af68870f689',
+    appId: '1:677557829420:web:0e8798b94f74ae2570f689',
     messagingSenderId: '677557829420',
     projectId: 'trash-monitoring-app-88131',
     authDomain: 'trash-monitoring-app-88131.firebaseapp.com',
     storageBucket: 'trash-monitoring-app-88131.firebasestorage.app',
-    measurementId: 'G-481FH20H0L',
+    measurementId: 'G-N5506207HV',
   );
 
 }

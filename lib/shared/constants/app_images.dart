@@ -47,6 +47,8 @@ class AppImages {
       'assets/ASCOA/Forgot_Password_confirm_Icon.png';
   static const String forgotPasswordBottom =
       'assets/ASCOA/Forgot_Password_Screen_Bottom.png';
+  static const String forgotPasswordBottom2 =
+      'assets/ASCOA/Forgot_Password_Screen_Bottom2.png';
   static const String forgotPasswordIcon =
       'assets/ASCOA/ForgotPasswordIcon.png';
   static const String passwordUpdateSuccessful =

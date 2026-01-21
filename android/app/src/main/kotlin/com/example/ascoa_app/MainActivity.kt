@@ -1,4 +1,4 @@
-package com.ascoa.app
+package com.ascoa.trashmonitor
 
 import io.flutter.embedding.android.FlutterActivity
 
