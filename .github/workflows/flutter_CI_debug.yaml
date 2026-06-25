@@ -54,6 +54,6 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: Create Release
-        run: gh release create "$VERSION_NAME" --title "Test Release $VERSION_NAME" --notes "Automated release from branch $BRANCH_NAME commit $SHORT_SHA" build/app/outputs/flutter-apk/app-release.apk
+        run: gh release create "$VERSION_TAG" --title "Test Release $VERSION_NAME" --notes "Automated release from branch $BRANCH_NAME commit $SHORT_SHA" build/app/outputs/flutter-apk/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
