@@ -2,6 +2,105 @@
 
 Quick reference for reusable components, constants, and utilities in the ASCOA app.
 
+Shared folder index
+
+This guide documents the contents of `lib/shared/`. At a glance the folder contains:
+
+- `constants/` — shared design tokens and strings. Key files: `app_colors.dart`, `app_dimensions.dart`, `app_images.dart`, `app_strings.dart`, `app_text_styles.dart`, `app_typography.dart`.
+- `controllers/` — small shared controllers used across screens (form controllers, validation, etc.).
+- `widgets/` — small reusable widgets used across features (see the Widgets section below for specifics).
+- `utils/` — helper utilities (parsers, formatters) used by shared widgets and controllers.
+- `services/` — app-wide services (Firebase, caching, or config). Key files: `avatar_uploader.dart`, `cities_service.dart`.
+
+What changed recently / guidance
+
+- AppImages: image asset paths were centralized into `lib/shared/constants/app_images.dart`. When adding or using an image, add a constant to `AppImages` and reference `AppImages.<name>` from widgets instead of writing raw `'assets/...'` strings.
+- AppTypography: small, reusable typography tokens (letter spacing & line-height) were added in `app_typography.dart`. Prefer `AppTypography.letterSpacingSmall` instead of literal `0.1` values.
+- AppDimensions: several auth spacing multipliers and small helpers were added (for example `authSmallSpacerFactor`, `authXSmallSpacerFactor`, `bottomSheetHeightFactor`, and `profileCardTextWidthOffset`) to replace magic viewport multipliers and numeric offsets.
+- AppTextStyles now references `AppTypography` tokens and many widgets were updated to use these shared tokens.
+- Avatar photos: a shared `AvatarPhotoHandler` was added in `lib/shared/utils/avatar_photo_handler.dart` to standardize pick → crop → compress → upload across screens. Profile images are rendered via `CachedNetworkImage`; tap-to-zoom uses `modules/profile/widgets/full_image_overlay.dart`.
+
+## Home-specific shared tokens and widgets
+
+- New Home sizing tokens were added to `app_dimensions.dart` for precise layout control, for example:
+
+  - `homeScreenWelcomeTop`, `homeScreenHeaderTop`, `homeScreenHeaderHeight`, `homeScreenSpacer`
+  - `homeScreenStartCleanup*` (card/button/image/spacing/radius)
+  - `homeScreenHighlight*` (carousel/card sizes and spacing)
+  - `homeScreenNews*` (section spacing, card spacing, error spacing)
+  - `homeScreenBlogCard*` and `homeScreenBottomGraphicHeight`
+  - News card tokens: `newsCardImageHeight`, `newsCardTextSectionHeight`, `newsCardRadius`, `newsCardWidth`, padding
+    Use these with `SizeUtils.h/w/r` in widgets (see `HomeScreen` and `HomeNewsCard`).
+
+- New shared widgets under the Home module:
+
+  - `modules/home/widgets/home_news_card.dart` — displays a post title and image; supports asset or network image with `CachedNetworkImage`; tapping opens the link via `url_launcher`.
+  - `modules/home/widgets/news_skeleton_card.dart` — lightweight animated skeleton used while News is loading.
+
+- AppImages additions for Home:
+  - `dashboardTop` and `dashboardBottom` hero artwork
+  - `cleanup`, `blog` under `ASCOA/Dashboard_Icons/`
+  - `placeholder` generic fallback
+    Reference via `AppImages.<name>` instead of raw asset strings and ensure assets are declared in `pubspec.yaml`.
+
+## Stats-specific shared tokens and widgets
+
+- New Stats sizing tokens were added to `app_dimensions.dart` for the Reports/Stats screen:
+
+  - Layout: `statsPagePaddingHorizontal`, `statsPagePaddingVertical`, `statsBottomPadding`
+  - Header: `statsHeaderHeight`, `statsHeaderIconSize`, `statsHeaderIconSpacing`, `statsHeaderRefreshSpacing`
+  - Activity Cards: `statsActivityCardPadding`, `statsActivityCardSpacing`, `statsActivityCardShadowBlur`, `statsActivityUnitTopOffset`, `statsActivityValueDecimalSpacing`, `statsActivityDecimalBottomPadding`
+  - Chart: `statsCardBorderRadius`, `statsCardShadowBlur`, `statsChartPadding`, `statsChartAspectRatio`, `statsChartLabelWidth`, `statsChartBarWidth`, `statsChartLegendIconSize`
+  - Filter: `statsFilterSectionSpacing`, `statsFilterLabelSpacing`, `statsCheckboxSize`, `statsSliderHandleWidth`, `statsSliderHandleHeight`, `statsSliderTrackHeight`
+  - Map: `statsMapHeight`, `statsMarkerSize`, `statsMarkerBorderWidth`
+    Use these with `SizeUtils.h/w` in widgets (see `StatsScreen` and stats widgets).
+
+- New Stats colors in `app_colors.dart`:
+
+  - `statsChartFreshwater` (#5FB3C6) - Freshwater environment chart color
+  - `statsChartSaltwater` (#357187) - Saltwater environment chart color
+  - `statsChartLand` (#B4D17B) - Land/Inland environment chart color
+  - `statsFilterTeal` (#357187) - Filter UI teal accent
+  - `statsFilterGreen` (#C7E0B0) - Filter UI green accent
+  - `statsActivityCardBg` (#B4D17B) - Activity card background
+
+- New Stats strings in `app_strings.dart`:
+
+  - Page titles: `statsPageTitle`, `statsSubtitle`, `statsYourActivity`
+  - Chart: `statsChartTitle`, environment labels (`environmentFreshwater`, `environmentLand`, `environmentSaltwater`)
+  - Filter: `statsFilterDate`, `statsFilterEnvironment`
+  - Map: `statsMapTitle`, `statsMapSubtitle`
+  - Error messages: `statsErrorNoCachedData`, `statsErrorFailedInit`, etc.
+
+- New Stats text styles in `app_text_styles.dart`:
+
+  - `statsTitle()` - Large "Reports" heading
+  - `statsChartTitle()` - Chart and map section titles
+  - `statsActivityValue()` - Large activity card numbers (57sp)
+  - `statsActivityLabel()` - Activity card labels
+  - `statsActivityUnit()` - KGs unit text
+  - `statsFilterLabel()` - Filter section labels
+  - `statsFilterDate()` - Date picker text
+  - `statsChartLabel()` - Chart axis labels
+  - `statsChartLegend()` - Chart legend text
+  - `statsMapInfo()` - Map subtitle text
+  - `statsError()` - Error message text
+
+- Stats module widgets:
+  - `modules/stats/widgets/stats_header_widget.dart` — Reports header with title, subtitle, and refresh button
+  - `modules/stats/widgets/waste_chart_widget.dart` — 7-category stacked bar chart using fl_chart with environment-based colors
+  - `modules/stats/widgets/stats_filter_widget.dart` — Dual date slider and environment checkboxes (Figma-exact design)
+  - All widgets use shared constants exclusively (no hardcoded dimensions/colors/strings)
+
+Constants responsibilities (quick map)
+
+- `app_colors.dart` — canonical color palette and legacy aliases. Use `AppColors` for any color used in UI.
+- `app_dimensions.dart` — spacing, sizes, responsive multipliers, and component-specific constants (avatar sizes, nav bar, dialog sizes).
+- `app_images.dart` — centralized image asset paths (add new constants here when adding assets to `pubspec.yaml`).
+- `app_strings.dart` — app strings and localized labels used across screens.
+- `app_text_styles.dart` — cohesive TextStyle definitions used across screens; prefer using and copying these rather than inlining TextStyle literal objects.
+- `app_typography.dart` — small letter-spacing / line-height tokens used by `AppTextStyles` and widgets.
+
 ## Constants (shared/constants/)
 
 ### Colors (`app_colors.dart`)
@@ -18,7 +117,9 @@ Container(color: AppColors.primary)  // Background color (off-white)
 - `AppColors.buttonPrimary` - Button green (0xFF419310)
 - `AppColors.white` - Historical alias to background (kept for compatibility)
 - `AppColors.google` - Google blue (0xFF4285F4)
-- `AppColors.facebook` - Facebook blue (0xFF4267B2)
+- `AppColors.profileAvatarBackground` - Soft yellow circle behind avatar placeholder (0xFFFCF1AA)
+- `AppColors.profileAvatarAccent` - Accent golden highlight used for avatar glyph (0xFFFBB825)
+- `AppColors.black87` - Legacy alias used in a few places for text (0xDD000000)
 - `AppColors.error` - Error/validation color (0xFFFBB825)
 
 ### Text Styles (`app_text_styles.dart`)
@@ -38,6 +139,51 @@ Text('Welcome', style: AppTextStyles.heading1)
 - `AppTextStyles.dividerText` - Small text used in dividers ("OR")
 - `AppTextStyles.termsBase` / `termsLink` - Styles for terms text and links
 - `AppTextStyles.errorText` - Small red error text used for inline validation messages
+
+#### Typography tokens (`app_typography.dart`)
+
+Small, reusable typography tokens keep letter-spacing and line-height consistent across components. Examples:
+
+```dart
+import 'package:ascoa_app/shared/constants/app_typography.dart';
+
+Text('Label', style: AppTextStyles.body.copyWith(letterSpacing: AppTypography.letterSpacingSmall))
+```
+
+Prefer `AppTypography.letterSpacingSmall` over literal `0.1` values.
+
+### Images (`app_images.dart`)
+
+```dart
+import 'package:ascoa_app/shared/constants/app_images.dart';
+
+Image.asset(AppImages.profilePlaceholder)
+```
+
+- `AppImages` centralizes every image declared in `pubspec.yaml` so widgets never hard-code `'assets/...'` strings. This catches typos at compile time and makes asset discovery easier during refactors.
+- Constants are grouped by comment blocks to mirror the folder structure (`ASCOA/`, `ASCOA/Profile_Page_Icons/`, `ASCOA/Nav_bar_icons/`, `Google/`, etc.). Keep related assets together when adding new constants.
+
+Common categories currently exposed:
+
+- **Brand & hero artwork:** `logo`, `loginTop`, `signupTop`, `forgotPasswordTop`, `loginBottom`, `completeProfileTop`, `profileScreenBottom`, etc. These map to large PNG hero illustrations reused in auth/profile flows.
+- **Profile & settings icons:** `policy`, `faq`, `contact`, `signout` under `Profile_Page_Icons/`. Used by `ProfileActionTile` and `ProfileSignOutButton`.
+- **Navigation icons:** `navHome`, `navStats`, `navAdd`, `navNews`, `navProfile` consumed by the shared bottom navigation bar.
+- **3rd-party logos:** `googleNeutral2x` for social buttons.
+- **Forgot password assets:** `forgotConfirmIcon`, `forgotPasswordBottom`, `forgotPasswordIcon` powering the forgot-password screen and confirmation dialog.
+- **Reset password artwork:** `passwordUpdateSuccessful` used by the reset-password success dialog that returns the user to Login.
+
+Adding a new asset checklist:
+
+1. Drop the optimized PNG/SVG into the appropriate folder under `assets/` (create a subfolder if grouping is needed).
+2. Declare the asset path in `pubspec.yaml` alongside the existing entries so Flutter bundles it.
+3. Add a new `static const` to `AppImages` that points at the exact asset path. Follow the lowerCamelCase naming already in the file and add a short comment grouping if needed.
+4. Reference the new constant from widgets (`Image.asset(AppImages.myNewIcon)`, `const AssetImage(AppImages.myNewBackground)`) instead of hard-coded strings.
+
+Usage notes:
+
+- Prefer `const AssetImage(AppImages.logo)` when assigning to `DecorationImage`, `CircleAvatar`, or other widgets that accept an `ImageProvider`.
+- If you need responsive sizing, combine `AppImages` with `AppDimensions` tokens so layout adjustments stay centralized.
+- When removing an asset, delete it from `pubspec.yaml`, remove the constant from `AppImages`, and run `flutter pub get` to ensure the cache is updated before running tests.
 
 ### Spacing (`app_dimensions.dart`)
 
@@ -112,6 +258,56 @@ Padding(padding: EdgeInsets.all(AppDimensions.screenPadding))
 - `AppDimensions.dialogBodyFontSize`/`dialogBodyLineHeight` - 16 / 22
 - `AppDimensions.dialogHeroSize` - 80.0
 
+#### Date Picker (tokens used by `shared/widgets/custom_date_picker.dart`)
+
+- `AppDimensions.datePickerWidth` - 360.0 — overall dialog/card width
+- `AppDimensions.datePickerBorderRadius` - 16.0 — container corner radius
+- `AppDimensions.datePickerHeaderHeight` - 64.0 — header row height
+- `AppDimensions.datePickerHorizontalPadding` - 12.0 — left/right padding
+- `AppDimensions.datePickerVerticalPadding` - 4.0 — compact vertical gap
+- `AppDimensions.datePickerDaySize` - 40.0 — day cell width/height
+- `AppDimensions.datePickerDayFontSize` - 16.0 — day number font size
+- `AppDimensions.datePickerMenuMaxHeight` - 240.0 — dropdown max height
+- `AppDimensions.datePickerMenuItemHeight` - 48.0 — dropdown row height
+- `AppDimensions.datePickerMenuVerticalPadding` - 10.0 — dropdown item v-pad
+- `AppDimensions.datePickerMenuFontSize` - 14.0 — dropdown item font size
+- `AppDimensions.datePickerMenuIconSize` - 18.0 — chevron icon beside labels
+- `AppDimensions.datePickerHeaderIconContainerSize` - 48.0 — header icon tap target (prev/next)
+- `AppDimensions.datePickerHeaderIconSize` - 24.0 — header icon size
+- `AppDimensions.datePickerButtonHeight` - 56.0 — bottom actions container height
+- `AppDimensions.datePickerTextButtonHeight` - 40.0 — small text button height
+- `AppDimensions.datePickerTextButtonHorizontalPadding` - 16.0 — text button x-pad
+- `AppDimensions.datePickerTextButtonVerticalPadding` - 10.0 — text button y-pad
+- Menu positioning helpers for overlay menus: `datePickerMenuOffsetX1/Y1/X2/Y2`, `datePickerMenuOffsetYearX1`, `datePickerMenuOffsetYearRight`
+
+#### Location Search (tokens used by `shared/widgets/location_search_field.dart`)
+
+- `AppDimensions.locationFieldHeight` - 22.0 — base line-height used in text field
+- `AppDimensions.locationFieldLoaderPadding` - 12.0 — loader padding
+- `AppDimensions.locationFieldLoaderDimensions` - 16.0 — loader size
+- `AppDimensions.locationFieldLoaderIconSize` - 20.0 — search icon size
+- `AppDimensions.locationFieldTextSize` - 16.0 — input text size
+- `AppDimensions.locationFieldErrorPadding` - 4.0 — error top padding
+- Reuses City selector tokens for overlay: `citySelectorMaxHeight`, `citySelectorBorderRadius`, `citySelectorShadow*`, `citySelectorIconSpacing`
+
+#### Loader & Dialog Illustration Tokens
+
+- `AppDimensions.circularLoaderSize` — base diameter of circular loader
+- `AppDimensions.circularLoaderStrokeWidth` — active arc stroke width
+- `AppDimensions.smallLoaderStrokeWidth` — reduced stroke width for inline loaders
+- `AppDimensions.circularLoaderGap` — transparent gap between track and active arc (rendered via saveLayer)
+- `AppDimensions.dialogImageWidth` — default width for dialog hero images
+- `AppDimensions.dialogImageHeight` — default height for dialog hero images
+- `AppDimensions.forgotBgTopHeight` — top decorative background height factor
+- `AppDimensions.forgotBgBottomHeight` — bottom decorative background height factor
+
+Recent additions for profile/change-password flows:
+
+- `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, and `changePasswordHalfInputSpacing` — control hero spacing, illustration height, and field rhythm on the change password screen.
+- `AppDimensions.profileSignOutHeight`, `profileSignOutHorizontalPadding`, and `profileSignOutIconGap` — size the dedicated sign-out CTA so it lines up with `ProfileActionTile` cards.
+- `AppDimensions.editProfileHeightFactor` and `changePasswordInputSpacing` — shared background/field spacing reused between edit profile and change password layouts.
+- Avatar crop constants used by the cropping UI (see `AppDimensions`): `avatarCropPreviewSize`, `avatarCropOutputSize`, `avatarCropThumbSize`, `avatarCropMaxScale`, `avatarCropPadding`, `avatarCropHitTestSize`, `avatarCropLineWidth`, `avatarCropOverlayOpacity`, `avatarCropToolbarHeight`, `avatarCropHelpTextSize`, `avatarCropHelpTextPadding`.
+
 #### Dividers
 
 - `AppDimensions.dividerThickness` - 1.0
@@ -130,7 +326,42 @@ Text(AppStrings.loginTitle)  // "Login into Account"
 - `AppStrings.emailLabel` - "Email"
 - `AppStrings.continueWithGoogle` - "Continue with Google"
 
+Recent additions:
+
+- Change password copy: titles, subtitles, snackbar strings (success, wrong current password, provider mismatch) and the "new password must differ" validation message—available in English and French.
+- Email verification copy: resend, cancel, spam-note, and success messages backing the refreshed verification screen.
+- Profile utilities: `profileSignOut`, `profileChangePasswordTitle`, and related subtitles for the new profile actions.
+- Avatar flow: picker/crop/upload strings (English/French) used by `AvatarPhotoHandler` and cropping UI.
+
 ## Widgets (shared/widgets/)
+
+### Photos (StartCleanUp)
+
+This section documents the new photo upload UI and controller used by the StartCleanUp flow.
+
+- `MediaUploadController` (`lib/modules/start_cleanup/controllers/media_upload_controller.dart`)
+
+  - Responsibilities: selection, compression (flutter_image_compress), upload to Firebase Storage, progress tracking, cancellation, and cleanup of unused uploaded files.
+  - Configuration: `MediaUploadConfig.maxPhotos` controls the maximum number of images (default 5). Compression parameters are also centralized in the same class.
+  - Public API highlights: `addPhotos(List<File>)`, `compressAndUpload(photoId, cleanupDocId)`, `compressAndUploadAll(cleanupDocId)`, `waitForUploadsToComplete(timeout)`, `cleanupUnusedPhotos()`, `removePhoto(photoId)`, `uploadedPhotoUrls`.
+
+- `PhotosSection` (`lib/modules/start_cleanup/views/photos_section.dart`)
+
+  - Provides the upload button, image picker (images-only), preview grid, per-photo progress overlay and action buttons (cancel/delete).
+  - Uses `SizeUtils` + `AppDimensions` for responsive sizing and now consumes the `CircularUploadProgress` painter for progress UI.
+  - Notes: the picker uses `pickMultiImage(limit: remainingSlots)` and a manual fallback to enforce the max across platforms.
+
+- `CircularUploadProgress` (`lib/shared/widgets/circular_upload_progress.dart`)
+  - A lightweight static painter that shows progress from 0..1 without rotation and matches the app loader visuals.
+
+Tokens & strings introduced (for maintainers):
+
+- `AppDimensions.photosActionButtonSize` / `photosActionButtonIconSize`
+- `AppDimensions.photosActionButtonOffset`, `photosActionButtonShadowBlur`, `photosActionButtonShadowYOffset`
+- `AppDimensions.photosGridChildAspectRatio`, `photosOverlayOpacity`, `photosBorderRadiusMultiplier`, `photosErrorIconSizeMultiplier`
+- `AppStrings.uploadImagesButton`, `AppStrings.previewLabel`, `AppStrings.waitingForPhotoUploads`
+
+See `PHOTO_UPLOAD_IMPLEMENTATION.md` for a full developer-facing walkthrough, upload flow, and customization options.
 
 ### CustomInputField
 
@@ -145,6 +376,257 @@ CustomInputField(
 ```
 
 **Use for:** Email, password, and text inputs
+
+Widgets index (lib/shared/widgets)
+
+- `app_dialog.dart` — Reusable dialog used across auth flows and confirmations. Uses `AppDimensions.dialog*` sizes and `AppColors.dialogBackground`.
+- `auth_header.dart` — Top-of-screen auth header with logo, title and subtitle; scales based on `AppDimensions` base values.
+- `country_code_selector_field.dart` — Country picker input used alongside phone inputs; uses `AppDimensions.bottomSheetHeightFactor` for the picker.
+- `custom_input_field.dart` — Lower-level input widget used by `FloatingLabelInputField` and other places.
+- `custom_date_picker.dart` — Material-3 styled date picker overlay with month/year dropdowns.
+- `floating_label_input_field.dart` — Main input used in forms with floating label, hint and support text.
+- `image_picker_dialog.dart` — Avatar source selector (Camera/Gallery) used by the avatar flow.
+- `location_search_field.dart` — Google Places-powered location autocomplete field.
+- `nav_bar.dart` — Bottom navigation bar; uses `AppImages` for icons and `AppDimensions` for sizing.
+- `password_strength_checklist.dart` — Small helper widget that renders password requirement checklist and colors using `AppColors`.
+
+Latest changes (component review)
+
+- Circular loader (`lib/shared/widgets/circular_loader.dart`): updated to fix an AnimatedBuilder signature bug and to add a small transparent gap between the loader track and active arc. The widget now consumes `AppDimensions.circularLoaderSize`, `circularLoaderStrokeWidth` and `circularLoaderGap` plus `AppColors.loaderTrack` / `AppColors.loaderActive` tokens. The gap is implemented with a saveLayer + BlendMode.clear technique to ensure it renders crisply on different backgrounds.
+- Button sizing: To keep consistent sizing across auth flows, full-width `OutlinedButton` actions (for example "Use another email" / "Resend") should be wrapped in `SizedBox(width: double.infinity, height: SizeUtils.h(context, AppDimensions.buttonHeight))`. Primary buttons remain full-width by default via `PrimaryButton`.
+- Tokens: Several new constants were added to `app_dimensions.dart` and `app_colors.dart` to support the verification screen and loader visuals. Prefer using these instead of inlining numeric values or color hex literals.
+- Full image overlay: `modules/profile/widgets/full_image_overlay.dart` displays a fullscreen image viewer for the profile avatar. Provide a public URL and an asset placeholder.
+
+Small guidance for maintainers:
+
+- When authoring new small widgets that emulate auth-screen action rows, reuse `AppDimensions.buttonHeight` for vertical rhythm.
+- For artwork-heavy screens (auth/profile), follow the `LayoutBuilder` + `Stack` + `Positioned` pattern used in `forgot_password_screen.dart` and `email_verification_screen.dart` so hero artwork remains anchored independent of content spacing changes.
+- `primary_button.dart` — Standard full-width button used across screens; uses `AppDimensions.buttonHeight` and `AppColors.buttonGreen`.
+- `social_button.dart` — Social login button with icon slot (now using `AppImages` for logos where applicable).
+- `profile_signout_button.dart` (modules/profile/widgets) — Branded logout CTA sized with profile tokens; supply an `onPressed` that triggers `AuthController.logout()` or similar.
+
+## Controllers (lib/shared/controllers)
+
+These controllers are small, reusable Getx controllers registered via bindings and used across screens. Key controllers:
+
+- `FormControllers` (`form_controllers.dart`)
+
+  - Holds `TextEditingController` instances used across auth/profile forms:
+    - `emailController`, `passwordController`, `firstNameController`, `lastNameController`, `phoneNumberController`, `cityController`.
+  - Helpful methods:
+    - `resetAuthFields()` — clears email/password controllers.
+    - `resetProfileFields()` — clears first/last/phone/city controllers (used after profile save).
+
+- `ValidationController` (`validation_controller.dart`)
+  - Reactive validation state (Rx<String?>) for `emailError`, `passwordError`, `firstNameError`, `lastNameError`, `phoneNumberError`, `cityError` and `termsError`.
+  - Password rule observables: `hasMinLength`, `hasUppercase`, `hasLowercase`, `hasNumber`, `hasSpecial`, `showPasswordChecklist`.
+  - Key methods:
+    - `validateEmail(String)` — sets `emailError` using shared `Validators`.
+    - `validateFirstName(String)`, `validateLastName(String)`, `validateCity(String)` — basic required + regex checks.
+    - `validatePhoneNumber(String dialCode, String number)` — validates combined dial code + number; used by phone inputs.
+    - `validatePhoneNumberFull(String)` — validates a full E.164-style value.
+    - `updatePasswordRules(String)` and `handlePasswordFocus(bool)` — control password checklist state.
+    - `clearValidation()`, `clearPasswordValidation()`, `clearProfileValidation()` — convenience clearers for UI flows.
+
+These controllers are commonly obtained via `Get.find<FormControllers>()` or `Get.find<ValidationController>()` inside widgets.
+
+Other controllers in this folder:
+
+- `cities_controller.dart` — orchestrates city selection state and validation wiring for `CitySelectorField`; consumes `CitiesService` and exposes reactive lists/selection.
+- `form_binding.dart` — GetX binding that injects `FormControllers` and `ValidationController` for auth/profile routes so widgets can `Get.find()` them safely.
+
+### CitiesController (`shared/controllers/cities_controller.dart`)
+
+Provides fuzzy-search-backed suggestions and validation helpers for city inputs.
+
+Usage with an input field:
+
+```dart
+final cities = Get.find<CitiesController>();
+
+// onChanged handler
+void handleCityChanged(String value) {
+  cities.searchCities(value);
+  // cities.suggestions is an RxList<City>; bind it to your dropdown
+}
+
+final isValid = cities.isCityValid('Douala');
+final allowCustom = cities.allowCustomCities;
+```
+
+#### FormBinding (`shared/controllers/form_binding.dart`)
+
+Ensures `FormControllers` and `ValidationController` are available app-wide.
+
+Register once:
+
+```dart
+GetMaterialApp(
+  initialBinding: FormBinding(),
+  // ... routes, theme, etc.
+)
+```
+
+## Utils (lib/shared/utils)
+
+Small helper utilities used by controllers and widgets.
+
+- `validators.dart` — central validators for email, required fields, and strong password rules. `ValidationController` delegates to these functions.
+- `auth_form_utils.dart` — small helpers used by auth forms (formatting and parsing helper functions). Check these before duplicating parsing logic in screens.
+- `avatar_photo_handler.dart` — unified avatar photo pipeline (pick → crop → compress → upload → persist). Exposes a `handleEditPhoto` entrypoint from screens/controllers.
+- `avatar_utils.dart` — small helpers like URL normalization for cache-busted Firebase Storage URLs.
+- `size_utils.dart` — device-aware scaling helpers (`h`, `w`, `r`) used in build-time to apply `AppDimensions` responsively.
+- `image_utils.dart` — compression/resizing helpers (WebP) used by the avatar flow.
+- `city_search.dart` — fuzzy search utilities backing `CitySelectorField` and the Cities config feature.
+
+### SizeUtils (`shared/utils/size_utils.dart`)
+
+Responsive scaling helpers that preserve the emulator/Figma proportions across devices.
+
+API:
+
+- `SizeUtils.h(context, px)` — vertical sizes and font sizes (defaults to content-height scaling)
+- `SizeUtils.w(context, px)` — horizontal sizes, paddings, and offsets
+- `SizeUtils.r(context, px)` — general sizes/radii using an average scale
+
+Example mapping in widgets:
+
+```dart
+// From tokens to runtime sizes
+final buttonH = SizeUtils.h(context, AppDimensions.buttonHeight);
+final cardRadius = SizeUtils.r(context, AppDimensions.borderRadius);
+final sidePad = SizeUtils.w(context, AppDimensions.screenPadding);
+
+SizedBox(height: buttonH);
+Container(
+  padding: EdgeInsets.symmetric(horizontal: sidePad),
+  decoration: BoxDecoration(borderRadius: BorderRadius.circular(cardRadius)),
+)
+```
+
+Guidance:
+
+- Keep `AppDimensions` as the design source of truth; apply `SizeUtils` only at build-time in widgets.
+- Use `h` for vertical rhythm and typography, `w` for horizontal spacing, `r` for radii and icon/container sizes.
+
+### ImageUtils (`shared/utils/image_utils.dart`)
+
+Compression and thumbnail helpers for avatar flow (WebP output, EXIF stripped).
+
+API:
+
+- `compressToWebP(File file, {required int targetSizePx, int quality = 75})` → `Future<File?>`
+- `createThumbnail(File file, {int sizePx = 200, int quality = 70})` → `Future<File?>`
+- `cleanupTempFiles(List<File> files)` → `Future<void>`
+
+Usage (standalone):
+
+```dart
+final full = await ImageUtils.compressToWebP(srcFile, targetSizePx: 600, quality: 75);
+final thumb = await ImageUtils.createThumbnail(srcFile, sizePx: 200, quality: 70);
+if (full != null && thumb != null) {
+  // upload then cleanup
+  await ImageUtils.cleanupTempFiles([full, thumb]);
+}
+```
+
+Notes:
+
+- Returns `null` on failure; always handle `null` before proceeding to upload.
+- Temp files are created under the app cache directory; call `cleanupTempFiles` after successful upload.
+
+### CitySearch (`shared/utils/city_search.dart`)
+
+Fuzzy search over the Firestore-driven cities list with configurable thresholds.
+
+Key methods and getters:
+
+- `search(String query)` → `List<City>` (returns all when empty)
+- `getAllCities()` → `List<City>`
+- `allowCustomCities` → `bool`
+- `maxSuggestions` / `fuzzyThreshold`
+
+Usage:
+
+```dart
+final service = Get.find<CitiesService>();
+final cfg = service.config; // ensure CitiesService.init() ran
+if (cfg != null) {
+  final search = CitySearch(cfg);
+  final results = search.search('dou');
+  // feed results to your suggestions list
+}
+```
+
+## Services (lib/shared/services)
+
+- `avatar_uploader.dart` — encapsulates Firebase Storage uploads for avatars (main + thumbnail) and Firestore updates for `avatarUrl`, `thumbUrl`, and `avatarUpdatedAt`. Also updates `FirebaseAuth.currentUser.photoURL` when available.
+- `cities_service.dart` — GetX service that loads `config/cities` from Firestore, caches it locally (Hive), and exposes reactive config used by `cities_controller.dart` and `CitySelectorField`.
+- `google_places_service.dart` — Provides Google Places Autocomplete & Details queries (debounced) backing `LocationSearchField`; centralizes API key usage, error handling, and structured place detail parsing.
+
+### AvatarUploader (`shared/services/avatar_uploader.dart`)
+
+Uploads avatar and thumbnail to Firebase Storage and updates the user doc in Firestore, then syncs FirebaseAuth `photoURL` and refreshes `AuthController`.
+
+API:
+
+- `uploadAvatar({required File avatarFile, required File thumbnailFile, required void Function(double) onProgress})` → `Future<String>`
+- `deleteAvatar()` → `Future<void>`
+
+Usage (advanced; prefer using `AvatarPhotoHandler` which wraps this end-to-end):
+
+```dart
+final uploader = AvatarUploader();
+final progress = 0.0.obs;
+
+final url = await uploader.uploadAvatar(
+  avatarFile: full,
+  thumbnailFile: thumb,
+  onProgress: (p) => progress.value = p, // 0.0 - 1.0
+);
+
+// Later, to remove avatar
+await uploader.deleteAvatar();
+```
+
+Notes:
+
+- Storage paths: `avatars/{uid}/avatar.webp` and `avatars/{uid}/thumb.webp`.
+- Firestore fields: `avatarUrl` (cache-busted), `thumbUrl`, `avatarUpdatedAt`, `photoURL` (clean), `updatedAt`.
+- Throws if user is not authenticated; wrap in try/catch in custom flows.
+
+### CitiesService (`shared/services/cities_service.dart`)
+
+Loads and caches the `config/cities` document. Exposes the parsed `CitiesConfig` reactively via `config` getter.
+
+API:
+
+- `init()` → `Future<CitiesService>` — loads from Hive, then fetches latest from Firestore
+- `fetchAndCache()` / `loadFromLocal()` — manual refresh or local load
+- `initializeOnAppStart()` — ensures fresh data at app boot
+
+App initialization example:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final cities = Get.put(CitiesService());
+  await cities.init();
+  runApp(const App());
+}
+```
+
+Consumption:
+
+```dart
+final cities = Get.find<CitiesService>();
+final cfg = cities.config; // may be null briefly until init completes
+```
+
+Usage tips
+
+- Use `FormControllers` instead of creating local `TextEditingController` instances when working with flows that cross widgets or persist across routes.
+- Prefer `ValidationController` for form validation to keep UI reactive and DRY; it centralizes messages and regex patterns.
 
 ### PrimaryButton
 
@@ -190,11 +672,46 @@ SocialButton(
 )
 ```
 
-**Use for:** Social login buttons (Google, Facebook)
+**Use for:** Social login buttons (Google)
 
 ### New Shared Components
 
 These components were added to support recent UI/validation improvements. Use them to keep auth screens consistent.
+
+### ProfileActionTile (`modules/profile/widgets/profile_action_tile.dart`)
+
+The `ProfileActionTile` was updated to accept an optional `leading` widget alongside the existing `icon` parameter. This enables using asset images (PNGs) for leading visuals without changing the tile's sizing or spacing. Use `leading` when you need to render `Image.asset(...)`, otherwise continue to use `icon` for Material icons.
+
+Example:
+
+```dart
+ProfileActionTile(
+  leading: Image.asset(AppImages.contact,
+    width: AppDimensions.profileCardIconSize,
+    height: AppDimensions.profileCardIconSize,
+    fit: BoxFit.contain,
+  ),
+  title: AppStrings.profileContactTitle,
+  subtitle: AppStrings.profileContactSubtitle,
+)
+```
+
+Assets available under `assets/ASCOA/Profile_Page_Icons/` (declared in `pubspec.yaml`):
+
+- `contact.png`
+- `faq.png`
+- `policy.png`
+- `signout.png`
+
+Image assets guidance
+
+Image asset paths are centralized in `lib/shared/constants/app_images.dart` as `AppImages` constants. When adding or using images in widgets prefer referencing `AppImages.<name>` so paths remain discoverable and consistent across the app. Example:
+
+```dart
+import 'package:ascoa_app/shared/constants/app_images.dart';
+
+Image.asset(AppImages.policy)
+```
 
 #### AuthHeader (`shared/widgets/auth_header.dart`)
 
@@ -218,23 +735,293 @@ Related module docs:
 Migration notes: Replace local `_LogoGroup` or duplicated header widgets with
 `AuthHeader`. Use `AppDimensions` auth header base constants to compute `scale`.
 
+### Recent sizing tokens and widget updates
+
+We recently added several `AppDimensions` tokens to centralize sizes used across the auth flows. Prefer these tokens instead of raw numbers when creating or updating UI:
+
+- Avatar & profile sizes: `AppDimensions.avatarDiameter`, `avatarIconSize`, `avatarEditButtonSize`, `avatarEditIconSize`
+- Input and typography sizes: `AppDimensions.inputFontSize`, `floatingLabelFontSize`, `supportTextFontSize`, `heading2FontSize`, `subtitleFontSize`, `linkFontSize`
+- Small control sizes: `AppDimensions.flagEmojiSize`, `selectorIconSize`, `selectorSmallGap`
+- Dialog/actions/checklist: `AppDimensions.dialogActionFontSize`, `checklistFontSize`
+- Change-password layout: `AppDimensions.changePasswordTopSpacing`, `changePasswordIconSize`, `changePasswordHalfInputSpacing`, and `changePasswordInputSpacing`
+- Profile logout CTA: `AppDimensions.profileSignOutHeight`, `profileSignOutHorizontalPadding`, `profileSignOutIconGap`
+
+Widget changes to be aware of:
+
+## Recent code changes (detailed)
+
+The following is an exhaustive summary of code-level changes made under `lib/` since the last commit. These notes are written for teammates who will rely on the repo docs when reviewing or integrating features.
+
+### General pattern applied
+
+Many shared widgets were updated to use the `SizeUtils` helpers (from `lib/shared/utils/size_utils.dart`) instead of using raw `AppDimensions` literals directly in widget build code. This keeps sizing responsive while preserving the original `AppDimensions` tokens as the design source of truth. The mapping used is conservative:
+
+- `SizeUtils.h(context, px)` — vertical sizes and font sizes
+- `SizeUtils.w(context, px)` — horizontal sizes, paddings, and offsets
+- `SizeUtils.r(context, px)` — radii and icon/container sizes
+
+### Files updated to use `SizeUtils` wrappers (high-level summary)
+
+- `lib/shared/widgets/app_dialog.dart` — typography sizes, spacing, button heights, box shadows and offsets wrapped with `SizeUtils`.
+- `lib/shared/widgets/auth_header.dart` — auth header base width/height, logo offsets, and typography base sizes scaled via `SizeUtils`.
+- `lib/shared/widgets/country_code_selector_field.dart` — many paddings, heights, font sizes and icon sizes converted to `SizeUtils`.
+- `lib/shared/widgets/custom_input_field.dart` — input field height, borders, radii, shadow radii and offsets, paddings converted.
+- `lib/shared/widgets/floating_label_input_field.dart` — padding, field heights, font sizes, paddings, chip offsets, and error spacing converted.
+- `lib/shared/widgets/nav_bar.dart` — nav sizing, paddings, shadow offsets and blur radii converted.
+- `lib/shared/widgets/password_strength_checklist.dart` — checklist dot size, spacing and font sizes converted.
+- `lib/shared/widgets/primary_button.dart` — button height now scaled and border radius scaled with `SizeUtils`.
+- `lib/shared/widgets/social_button.dart` — social button height, border width, shadow radii/offsets, icon container sizes and spacings converted.
+
+### Why this matters
+
+These changes keep the existing `AppDimensions` tokens untouched as the single source of truth, but make runtime layouts responsive by applying `SizeUtils` at render-time. If you're adding a new widget that uses `AppDimensions` directly, follow the conservative mapping above and use `SizeUtils` wrappers in build-time code.
+
+### Other functional changes (profile / auth flows)
+
+- `lib/modules/auth/views/login_screen_v2.dart`
+
+  - Fixed the unintended always-scroll behavior: `SingleChildScrollView` now uses `AlwaysScrollableScrollPhysics()` when keyboard is visible and `NeverScrollableScrollPhysics()` otherwise. This prevents the page from scrolling when the keyboard is not shown.
+  - Screen continues to compute a `scale` factor for the `AuthHeader` from reference width and passes it to the header.
+
+- `lib/modules/profile/views/change_password_screen.dart` and `lib/modules/profile/views/edit_profile_screen.dart`
+  - Small layout token adjustments and use of `SizeUtils` in a number of places. These screens were updated to use the new `AppDimensions` tokens added for change-password and edit-profile flows.
+
+### Token updates
+
+- `lib/shared/constants/app_dimensions.dart`
+  - Added `forgotTitleTopSpacing` (0.12) to support a more compact layout for some forgot-password variants.
+  - Adjusted profile spacing tokens (e.g. `profileSectionSpacing` changed to 14.0 and `profileCardMinHeight` changed to 68.0) to better match Figma refinements.
+
+### Files you should review when changing layout or copy
+
+- `lib/shared/constants/app_dimensions.dart` — authoritative sizing tokens. If you change values here, verify in multiple screens and run `flutter analyze`.
+- `lib/shared/utils/size_utils.dart` — scaling helpers used across updated widgets. Do not change the function semantics without reviewing all callers.
+- Any widget that previously used raw `AppDimensions` values in `build()` — consider whether it should be wrapped with `SizeUtils` like the files listed above.
+
+If you need a full per-file diff for review, run:
+
+```powershell
+git --no-pager diff -- lib
+```
+
+- `FloatingLabelInputField` now derives its input/hint/floating-label/support font sizes from `AppDimensions` (use `topSpacing` to adjust vertical spacing between stacked fields).
+- `CountryCodeSelectorField` uses `AppDimensions.flagEmojiSize` and `selectorIconSize` to ensure consistent flag and chevron sizing.
+- `AppDialog` action text now uses `AppDimensions.dialogActionFontSize` to standardize button text across dialogs.
+- `ProfileSignOutButton` wraps the logout CTA layout used on the profile screen; reuse it (and its dimensions) when adding additional profile actions that need the same look.
+
+If you add new widgets that need specific, consistent sizing, add a new semantic token to `app_dimensions.dart` rather than using raw numbers.
+
 #### FloatingLabelInputField (`shared/widgets/floating_label_input_field.dart`)
 
 ```dart
 FloatingLabelInputField(
   controller: formControllers.emailController,
   label: AppStrings.emailLabel,
-  hintText: AppStrings.emailHint,
-  isError: validationController.emailError != null,
+  hint: AppStrings.emailHint,
+  supportText: validationController.emailError.value,
+  isError: validationController.emailError.value != null,
   onChanged: validationController.validateEmail,
+  keyboardType: TextInputType.emailAddress,
+  textInputAction: TextInputAction.next,
 )
 ```
 
-Use for: Inputs that require a floating label animation (email, password). It preserves accessibility and supports `supportText` and `isError` props. Border thickness increases on focus; error increases further per `AppDimensions.inputBorderWidthError`.
+Use for: Inputs that require a floating label animation (email, password, profile fields). It preserves accessibility and supports reactive error text through `supportText`. Border thickness increases on focus; error increases further per `AppDimensions.inputBorderWidthError`.
 
-Migration notes: `FloatingLabelInputField` wraps `CustomInputField` styling but provides the floating-label UX; prefer it for new auth forms.
+Key options:
+
+- `topSpacing` — adjust spacing when composed inside rows (e.g., alongside `CountryCodeSelectorField`).
+- `keyboardType`, `textCapitalization`, `textInputAction`, `inputFormatters` — tune keyboard/layout behavior per field.
+- `onSubmitted`/`onEditingComplete` — hook into IME actions.
+
+Migration notes: `FloatingLabelInputField` wraps `CustomInputField` styling but provides the floating-label UX; prefer it for new auth forms. Use new spacing/keyboard hooks to avoid ad-hoc wrappers.
 
 Visual feedback: Input fields now increase their border thickness when focused and increase further when showing a validation error. Use `isError`/`errorText` to trigger the error state; focus is detected automatically.
+
+#### CountryCodeSelectorField (`shared/widgets/country_code_selector_field.dart`)
+
+```dart
+CountryCodeSelectorField(
+  selectedCountry: selectedCountry,
+  onChanged: (country) => setState(() => selectedCountry = country),
+  label: AppStrings.countryCodeLabel,
+  supportText: validationController.phoneNumberError.value,
+  isError: validationController.phoneNumberError.value != null,
+)
+```
+
+Use for: Dial code + flag selection with floating label styling. Internally wraps the `country_picker` modal (full international list, with Cameroon favorited by default when using `_defaultCountry()` from the complete profile screen).
+
+Key options: `topSpacing` to align with adjacent fields, `enabled` to disable interactions when the form is submitting.
+
+#### CitySelectorField (`shared/widgets/city_selector_field.dart`)
+
+```dart
+CitySelectorField(
+  controller: formControllers.cityController,
+  label: AppStrings.cityLabel,
+  hint: AppStrings.cityHint,
+  supportText: validationController.cityError.value,
+  isError: validationController.cityError.value != null,
+  onChanged: validationController.validateCity,
+)
+```
+
+Use for: City input with fuzzy search autocomplete and Material Design 3 dropdown styling. Fetches city list from Firestore `config/cities` document, caches locally with Hive, and provides intelligent fuzzy matching across city names and alternative names.
+
+**Features:**
+
+- Fuzzy search with tokenization (e.g., "abele" matches "ab leila")
+- Smart refocus behavior: shows filtered results based on current input, or all cities if empty
+- Custom city warnings from Firestore config when no matches found
+- **Validation enforcement**: When `allowCustomCities` is false, prevents saving with cities not in the list
+- No gap between input and dropdown for seamless visual experience
+- All dimensions use `AppDimensions` constants
+- Material Design 3 shadows (`AppColors.shadowMedium`, `AppColors.shadowLight`)
+
+**Validation:**
+
+- When `allowCustomCities` is `false`: Users must select from the list. Shows error "Please select a city from the list" if validation fails.
+- When `allowCustomCities` is `true`: Users can type any city name freely.
+
+**Key options:**
+
+- `topSpacing` — adjust vertical spacing (default: `AppDimensions.fieldVerticalSpacing`)
+- `onChanged` — validation callback triggered on text change
+
+**Constants used:**
+
+- `AppDimensions.citySelectorMaxWidth` (300px)
+- `AppDimensions.citySelectorMaxHeight` (240px)
+- `AppDimensions.citySelectorItemHeight` (48px)
+- `AppDimensions.citySelectorTextSize` (18px)
+- `AppStrings.citySelectorNoCitiesFound`
+
+See `CITIES_CONFIG_IMPLEMENTATION.md` for complete architecture documentation.
+
+#### AvatarCropScreen (`shared/widgets/avatar_crop_screen.dart`)
+
+Provides the in-app avatar cropping UI used by `AvatarPhotoHandler`.
+
+- Uses the Croppy package to render a circular crop viewport sized via `AppDimensions.avatarCrop*` tokens.
+- Produces both a full-size square and a smaller thumbnail for upload via `AvatarUploader`.
+- All paddings, hit areas, and help text sizes are driven by `AppDimensions`.
+
+Usage: this screen is typically pushed by `AvatarPhotoHandler.handleEditPhoto(context, ...)` after the user picks an image. Prefer calling the handler instead of navigating to the screen directly.
+
+Direct (advanced) usage:
+
+```dart
+final file = await Get.to<File?>(() => AvatarCropScreen(imageFile: pickedFile));
+if (file != null) {
+  // compress & upload
+}
+```
+
+#### ImagePickerDialog (`shared/widgets/image_picker_dialog.dart`)
+
+Small bottom sheet that lets users choose Camera or Gallery when changing their avatar.
+
+- Labels come from `AppStrings` (English/French).
+- Button sizes and spacing derive from `AppDimensions`.
+- Consumed by `AvatarPhotoHandler` — prefer the handler instead of showing this dialog directly.
+
+Direct (advanced) usage:
+
+```dart
+// Returns ImageSource.camera or ImageSource.gallery or null
+final source = await Get.dialog<ImageSource?>(const ImagePickerDialog());
+```
+
+#### CustomDatePicker (`shared/widgets/custom_date_picker.dart`)
+
+Material 3–styled date picker used for selecting a single date within optional start/end bounds.
+
+- Month and Year selectors open overlay menus positioned relative to the header.
+- Swipe left/right to navigate months; chevrons navigate months/years bounded by `startDate`/`endDate`.
+- All sizes use `AppDimensions` with `SizeUtils` wrappers.
+
+Usage:
+
+```dart
+// Show an overlay dialog that returns a DateTime or null
+final picked = await CustomDatePicker.show(
+  context,
+  initialDate: DateTime.now(),
+  startDate: DateTime(2024, 1, 1),
+  endDate: DateTime(2024, 12, 31),
+);
+```
+
+Key tokens:
+
+- Container/layout: `datePickerWidth`, `datePickerBorderRadius`, `datePickerHorizontalPadding`, `datePickerVerticalPadding`
+- Header: `datePickerHeaderHeight`, `datePickerHeaderIconContainerSize`, `datePickerHeaderIconSize`, `datePickerMenuIconSize`
+- Grid: `datePickerDaySize`, `datePickerDayFontSize`
+- Dropdowns: `datePickerMenuItemHeight`, `datePickerMenuMaxHeight`, `datePickerMenuVerticalPadding`, `datePickerMenuFontSize`
+- Offsets: `datePickerMenuOffsetX1/Y1/X2/Y2`, `datePickerMenuOffsetYearX1`, `datePickerMenuOffsetYearRight`
+- Actions: `datePickerButtonHeight`, `datePickerTextButtonHeight`, `datePickerTextButtonHorizontalPadding`, `datePickerTextButtonVerticalPadding`
+
+Styling/text comes from `AppTextStyles.datePickerMenuItem`, `datePickerDay`, and `datePickerButton`.
+
+#### CircularLoader (`shared/widgets/circular_loader.dart`)
+
+Reusable animated circular progress indicator with a transparent inner gap for visual separation between the static track and the animated arc.
+
+Usage:
+
+```dart
+const CircularLoader(); // defaults to AppDimensions.circularLoaderSize
+```
+
+Options (if implemented as named params): `size`, `strokeWidth`, `trackColor`, `activeColor` (falls back to tokens if omitted).
+
+Features:
+
+- Gap between track and active arc (`AppDimensions.circularLoaderGap`).
+- Stroke widths from `AppDimensions.circularLoaderStrokeWidth` (normal) and `smallLoaderStrokeWidth` (compact scenarios like inline buttons).
+- Consistent colors via `AppColors.loaderTrack` and `AppColors.loaderActive` (fallback to palette if undefined).
+- Uses `AnimatedBuilder` for smooth, low-allocation rotation.
+
+Tokens used:
+
+- `circularLoaderSize`
+- `circularLoaderStrokeWidth`
+- `smallLoaderStrokeWidth`
+- `circularLoaderGap`
+
+Prefer this over ad‑hoc `CircularProgressIndicator` instances to keep sizing, stroke, and color consistent across screens.
+
+#### LocationSearchField (`shared/widgets/location_search_field.dart`)
+
+Google Places–powered location input with Material 3 style overlay suggestions.
+
+Features:
+
+- Debounced search; shows overlay when results exist; clears on blur.
+- Suggestion rows include an icon and 2-line text (main/secondary) with ellipsis.
+- Reuses city selector overlay tokens for a consistent look.
+
+Usage:
+
+```dart
+LocationSearchField(
+  controller: formControllers.cityController,
+  label: AppStrings.cityLabel,
+  hint: AppStrings.cityHint,
+  onPlaceSelected: (PlaceDetails place) {
+    // use place.formattedAddress / place.latLng
+  },
+  onChanged: (q) => validationController.validateCity(q),
+)
+```
+
+Key tokens:
+
+- Input: `inputFieldHeight`, `inputHorizontalPadding`, `inputFontSize`, `inputLineHeight`, `inputContentVerticalPadding`
+- Loader/icon: `locationFieldLoaderPadding`, `locationFieldLoaderDimensions`, `locationFieldLoaderIconSize`
+- Overlay: `citySelectorMaxHeight`, `citySelectorBorderRadius`, `citySelectorShadow*`, `citySelectorIconSpacing`
+- Typography: `mediumFontSize` (title), `smallFontSize` (secondary), `AppTextStyles.body/bodySecondary`
 
 #### PasswordStrengthChecklist (`shared/widgets/password_strength_checklist.dart`)
 
@@ -577,7 +1364,6 @@ Text(AppStrings.loginTitle) // "Login into Account"
 
 - `AppStrings.dividerOr` - "OR"
 - `AppStrings.continueWithGoogle` - "Continue with Google"
-- `AppStrings.continueWithFacebook` - "Continue with Facebook"
 
 #### **Navigation Text**
 
@@ -591,6 +1377,13 @@ Text(AppStrings.loginTitle) // "Login into Account"
 - `AppStrings.termsAnd` - " and "
 - `AppStrings.privacyPolicyLink` - "Privacy Policy"
 - `AppStrings.termsPeriod` - "."
+
+#### **Forgot Password Text**
+
+- `AppStrings.forgotPasswordTitle` - "Reset Password"
+- `AppStrings.forgotPasswordInstructions` - "Enter your email to receive password reset instructions."
+- `AppStrings.forgotPasswordSuccessMessage` - "Password reset link sent! Check your email."
+- `AppStrings.forgotPasswordErrorMessage` - "Error sending password reset email."
 
 #### **Development Messages** (For navigation placeholders)
 
@@ -714,7 +1507,7 @@ SocialButton(
 
 **When to use:**
 
-- ✅ Social login buttons (Google, Facebook, Apple)
+- ✅ Social login buttons (Google, Apple if added later)
 - ✅ Third-party integrations
 - ❌ Regular action buttons (use PrimaryButton)
 
@@ -912,9 +1705,9 @@ Container(
 
 // ❌ Avoid - Hard-coded values
 Container(
-  padding: EdgeInsets.all(24),
+  padding: EdgeInsets.all(AppDimensions.screenPadding),
   color: Color(0xFF5B92E5),
-  child: Text('Hello', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+  child: Text('Hello', style: TextStyle(fontSize: AppDimensions.heading2FontSize, fontWeight: FontWeight.bold)),
 )
 ```
 

@@ -1,9 +1,15 @@
 import 'package:get/get.dart';
 import 'package:ascoa_app/shared/utils/validators.dart';
+import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/controllers/cities_controller.dart';
 
 class ValidationController extends GetxController {
   var emailError = Rx<String?>(null);
   var passwordError = Rx<String?>(null);
+  var firstNameError = Rx<String?>(null);
+  var lastNameError = Rx<String?>(null);
+  var phoneNumberError = Rx<String?>(null);
+  var cityError = Rx<String?>(null);
 
   // Password rule states
   final hasMinLength = false.obs; // >= 8
@@ -13,6 +19,9 @@ class ValidationController extends GetxController {
   final hasSpecial = false.obs;
   final passwordText = ''.obs; // current password text
   final showPasswordChecklist = false.obs; // controls UI visibility
+
+  final nameRegex = RegExp(r"^[a-zA-Z ,.'-]+$");
+  final phoneRegex = RegExp(r'^\+?[0-9]{7,15}$');
 
   // Reactive variable to track terms acceptance
   var isTermsAccepted = false.obs;
@@ -40,6 +49,100 @@ class ValidationController extends GetxController {
 
   void validateStrongPassword(String password) {
     passwordError.value = Validators.validateStrongPassword(password);
+  }
+
+  void validateFirstName(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      firstNameError.value = '${AppStrings.firstNameError} is required';
+    } else if (!nameRegex.hasMatch(trimmed)) {
+      firstNameError.value = 'Invalid ${AppStrings.firstNameError}';
+    } else {
+      firstNameError.value = null; // valid
+    }
+  }
+
+  void validateLastName(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      lastNameError.value = '${AppStrings.lastNameError} is required';
+    } else if (!nameRegex.hasMatch(trimmed)) {
+      lastNameError.value = 'Invalid ${AppStrings.lastNameError}';
+    } else {
+      lastNameError.value = null; // valid
+    }
+  }
+
+  void validateCity(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      cityError.value = '${AppStrings.cityError} is required';
+    } else if (!nameRegex.hasMatch(trimmed)) {
+      // reuse nameRegex for city
+      cityError.value = 'Invalid ${AppStrings.cityError}';
+    } else {
+      // Check if custom cities are allowed
+      try {
+        final citiesController = Get.find<CitiesController>();
+        if (!citiesController.allowCustomCities) {
+          // If custom cities not allowed, validate against the list
+          if (!citiesController.isCityValid(trimmed)) {
+            final isFrench = Get.locale?.languageCode == 'fr';
+            cityError.value =
+                isFrench
+                    ? AppStrings.citySelectorPleaseSelectFrench
+                    : AppStrings.citySelectorPleaseSelect;
+            return;
+          }
+        }
+      } catch (e) {
+        // CitiesController not found, skip validation
+      }
+      cityError.value = null; // valid
+    }
+  }
+
+  void validatePhoneNumber(String dialCode, String number) {
+    final trimmedNumber = number.trim();
+
+    // Check required
+    final requiredResult = Validators.validateRequired(
+      trimmedNumber,
+      AppStrings.phoneNumberError,
+    );
+    if (requiredResult != null) {
+      phoneNumberError.value = requiredResult;
+      return;
+    }
+
+    // Combine dial code and number
+    final combined = '$dialCode$trimmedNumber'.replaceAll(' ', '');
+    if (!phoneRegex.hasMatch(combined)) {
+      phoneNumberError.value = 'Invalid ${AppStrings.phoneNumberError}';
+    } else {
+      phoneNumberError.value = null; // valid
+    }
+  }
+
+  void validatePhoneNumberFull(String value) {
+    final trimmed = value.trim();
+    final requiredResult = Validators.validateRequired(
+      trimmed,
+      AppStrings.phoneNumberLabel,
+    );
+    if (requiredResult != null) {
+      phoneNumberError.value = requiredResult;
+      return;
+    }
+
+    final normalized = trimmed.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+    final candidate = normalized.startsWith('+') ? normalized : '+$normalized';
+
+    if (!phoneRegex.hasMatch(candidate)) {
+      phoneNumberError.value = AppStrings.validationPhoneInvalid;
+    } else {
+      phoneNumberError.value = null;
+    }
   }
 
   void updatePasswordRules(String password) {
@@ -74,6 +177,7 @@ class ValidationController extends GetxController {
   void clearValidation() {
     emailError.value = null;
     passwordError.value = null;
+    clearProfileValidation();
     passwordText.value = '';
     hasMinLength.value = false;
     hasUppercase.value = false;
@@ -97,5 +201,19 @@ class ValidationController extends GetxController {
 
   bool get isFormValid {
     return emailError.value == null && passwordError.value == null;
+  }
+
+  bool get isProfileFormValid {
+    return firstNameError.value == null &&
+        lastNameError.value == null &&
+        phoneNumberError.value == null &&
+        cityError.value == null;
+  }
+
+  void clearProfileValidation() {
+    firstNameError.value = null;
+    lastNameError.value = null;
+    phoneNumberError.value = null;
+    cityError.value = null;
   }
 }

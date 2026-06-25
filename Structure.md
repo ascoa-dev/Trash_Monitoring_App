@@ -3,7 +3,7 @@
 This project uses a **modular architecture** with `GetX` for state management, navigation, and dependency injection.  
 The structure ensures **separation of concerns**, **reusability**, and easy scalability.
 
-```plaintext
+````plaintext
 lib/
 │
 ├── main.dart
@@ -18,47 +18,58 @@ lib/
 │       └── posts.dart
 │
 ├── modules/                 # Feature-based modules
-│   ├── auth/                # Login/Signup/Forgot Password
+│   ├── auth/                # Login/Signup/Forgot/Reset Password/Verification
 │   │   ├── views/           # Screens
 │   │   │   ├── login_screen_v2.dart
 │   │   │   ├── signup_screen.dart
-│   │   │   └── forgot_password_screen.dart
+│   │   │   ├── forgot_password_screen.dart
+│   │   │   ├── reset_password_screen.dart
+│   │   │   ├── complete_profile_screen.dart
+│   │   │   └── email_verification_screen.dart
+│   │   ├── controllers/     # Feature controllers scoped to auth flows
+│   │   │   └── reset_password_controller.dart
+│   │   ├── bindings/        # Route bindings for auth screens
+│   │   │   └── reset_password_binding.dart
+│   │   ├── models/          # Auth-specific models/enums
+│   │   │   └── reset_password_status.dart
 │   │   ├── widgets/         # Widgets used inside auth
-│   │   └── (bindings are centralized in shared/controllers/form_binding.dart)
+│   │   └── (shared FormBinding still lives in shared/controllers/form_binding.dart)
 │   │
 │   ├── home/                # Home/dashboard
 │   │   └── views/
 │   │       └── home_screen.dart
 │   │
-│   ├── profile/             # User profile
-│   │   └── views/
-│   │       └── profile_screen.dart
-│   │
-│   ├── posts/               # Posts/feed
+│   ├── profile/             # User profile management
+│   │   ├── bindings/
+│   │   │   ├── edit_profile_binding.dart
+│   │   │   └── change_password_binding.dart
+│   │   ├── controllers/
+│   │   │   ├── edit_profile_controller.dart
+│   │   │   └── change_password_controller.dart
+│   │   ├── models/
+│   │   │   └── change_password_status.dart
 │   │   ├── views/
+│   │   │   ├── profile_screen.dart
+│   │   │   ├── edit_profile_screen.dart
+│   │   │   └── change_password_screen.dart
+│   │   └── widgets/
+│   │       ├── profile_action_tile.dart
+│   │       └── profile_signout_button.dart
 │   │   │   ├── post_list_screen.dart
 │   │   │   └── post_detail_screen.dart
 │   │   └── widgets/
 │   │
 │   ├── search/              # Search feature
-│   │   └── views/
 │   │       └── search_screen.dart
 │   │
 │   └── settings/            # Settings
-│       └── views/
-│           └── settings_screen.dart
 │
-└── shared/                  # Reusable across modules
     ├── widgets/             # Buttons, text fields, loaders
     ├── constants/           # Colors, strings, sizes
     ├── utils/               # Validators, formatters, helpers
     └── themes/              # Light/dark theme, text styles
 
-```
 
-## Shared Controllers and Bindings
-
-Auth screens reuse the same form and validation state via a shared binding:
 
 ```dart
 // shared/controllers/form_binding.dart
@@ -66,43 +77,23 @@ class FormBinding extends Bindings {
   @override
   void dependencies() {
     if (!Get.isRegistered<FormControllers>()) {
-      Get.put<FormControllers>(FormControllers(), permanent: true);
-    }
-    if (!Get.isRegistered<ValidationController>()) {
       Get.put<ValidationController>(ValidationController(), permanent: true);
     }
   }
-}
-```
+````
 
 Used in routes for Login, Signup, and Forgot Password.
 
-## 📂 Folder Guide
+Latest updates
 
 A quick overview of the project structure and what goes where:
 
 ---
 
-### `main.dart`
-
-- Entry point of the app.
-- Sets up the root widget and initializes required bindings/services.
-
 ---
 
-### `app/`
-
-Core setup that holds global app logic.
-
-- **routes/** → Centralized navigation (all `GetPages` live here).
 - **controllers/** → Global state controllers (e.g. auth). And communicate with external APIs like Firebase.
 - **models/** → Shared data models used across features (e.g. `User`, `Post`).
-
----
-
-### `modules/`
-
-Feature-based folders. Each feature is self-contained with its own screens, widgets, and bindings.
 
 Typical structure inside a module:
 
@@ -114,7 +105,7 @@ Examples of modules: `auth/`, `home/`, `profile/`, `posts/`, `search/`, `setting
 
 ---
 
-### `shared/`
+## `shared/`
 
 Holds everything that can be reused across multiple modules.
 
@@ -130,13 +121,23 @@ Holds everything that can be reused across multiple modules.
 #### Auth Module
 
 - `forgot_password_screen.dart` - Handles Forgot Password flow with overlay dialog.
+- `reset_password_screen.dart` - Handles deep-link driven password resets, reusing the password checklist and showing a success dialog before returning to Login.
+- `email_verification_screen.dart` - Polls verification status, exposes resend/cancel actions, and routes verified users through `AuthController.handleUserPostVerification`.
+- `complete_profile_screen.dart` - Collects first/last name, phone, and city with country selector.
 - Shared bindings: `FormBinding` for controllers.
+- Screen-specific binding/controller/model: `reset_password_binding.dart`, `reset_password_controller.dart`, `reset_password_status.dart`.
+
+- `change_password_screen.dart` mirrors signup password validation with snackbar feedback; paired with `ChangePasswordController`, `ChangePasswordBinding`, and `ChangePasswordStatus` model.
+- `profile_signout_button.dart` provides a reusable CTA with consistent spacing/branding for logout actions.
+- `edit_profile_screen.dart` reuses shared validation/controllers and now aligns background/spacing with the change password flow.
+- Avatar editing/viewing: `edit_profile_screen.dart` and `complete_profile_screen.dart` integrate a shared `AvatarPhotoHandler` to pick/crop/compress/upload avatars. The `profile_screen.dart` shows the cached avatar (thumb preferred) and supports tap-to-zoom via `modules/profile/widgets/full_image_overlay.dart`.
 
 #### Shared Components
 
 - `app_dialog.dart` - Overlay dialog for confirmations.
 - `validation_controller.dart` - Centralized validation logic.
 - `form_binding.dart` - Shared bindings for form state management.
+- `AppLinks` integration is bootstrapped from `main.dart`, where `_initDeepLinks` listens for Firebase reset-password links and routes to `AppRoutes.resetPassword` with the out-of-band code argument.
 
 ---
 
@@ -144,6 +145,7 @@ Holds everything that can be reused across multiple modules.
 
 Bindings in GetX are a clean way to manage dependency injection. Instead of creating controllers or services directly inside your UI files, you declare them once in a Binding. When a route loads, GetX automatically initializes the required dependencies and disposes of them when the route is removed. This keeps your code organized, avoids repeating initialization logic everywhere, and makes it easier to scale when controllers need new dependencies.
 
+<!-- markdownlint-disable MD033 -->
 <details>
   <summary>📌 Example (click to expand)</summary>
 
@@ -165,3 +167,5 @@ GetPage(
   bindings: [FormBinding()],
 ),
 ```
+
+<!-- markdownlint-enable MD033 -->

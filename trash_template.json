@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "lastUpdated": "2025-11-05",
+  "units": "kg_per_item",
+  "notes": "Values are representative averages (empty items) — adjust to local samples where possible.",
+  "categoryOrder": [
+    "Most Likely Items to Find",
+    "Fishing Gear",
+    "Tiny Trash (<2.5 cm)",
+    "Packaging Materials",
+    "Personal Hygiene",
+    "Items of Local Concern",
+    "Other Trash"
+  ],
+  "categories": {
+    "mostLikelyItems": {
+      "name": "Most Likely Items to Find",
+      "items": {
+        "Grocery bags (plastic)": 0.006,
+        "Other bags (plastic)": 0.008,
+        "Brasseries bottles (glass)": 0.22,
+        "Guinness bottles (glass)": 0.25,
+        "Brasseries bottles (plastic)": 0.01,
+        "Source du Pays bottles (plastic)": 0.01,
+        "Beverage cans (Brasseries)": 0.0135,
+        "Beverage cans (Guinness)": 0.0135,
+        "Beverage sachets/pouches": 0.008,
+        "Brasseries bottle caps (metal)": 0.0022,
+        "Guinness bottle caps (metal)": 0.0022,
+        "Brasseries bottle caps (plastic)": 0.0018,
+        "Source du Pays bottle caps (plastic)": 0.0018,
+        "Cigarette butts": 0.0002,
+        "Other lids, bottles and cans": 0.015
+      }
+    },
+    "fishingGear": {
+      "name": "Fishing Gear",
+      "items": {
+        "Fishing Nets & Pieces (average piece)": 1.2,
+        "Rope (1 yard/meter = 1 piece)": 0.01
+      }
+    },
+    "otherTrash": {
+      "name": "Other Trash",
+      "items": {
+        "Appliances (typical)": 15.0,
+        "Balloons": 0.001,
+        "Cigar Tips": 0.002,
+        "Cigarette Lighters": 0.015,
+        "Construction Materials (average)": 8.0,
+        "Fireworks (single item)": 0.03,
+        "Tires (car)": 9.5,
+        "Wood pieces (per piece)": 3.0
+      }
+    },
+    "tinyTrash": {
+      "name": "Tiny Trash (<2.5 cm)",
+      "items": {
+        "Foam Pieces": 0.002,
+        "Glass Pieces": 0.003,
+        "Plastic Pieces": 0.002,
+        "Dresses (small fabric scrap)": 0.4,
+        "Paper Napkins": 0.002,
+        "Rubber Materials (small bits)": 0.1,
+        "Paper Waste (small)": 0.001,
+        "Cups, plates (foam)": 0.002,
+        "Cups, plates (paper)": 0.002,
+        "Cups, plates (plastic)": 0.002,
+        "Food containers (foam)": 0.003,
+        "Food containers (plastic)": 0.004,
+        "Food wrappers": 0.001,
+        "Lids (plastic)": 0.001,
+        "Straws/stirrers": 0.001,
+        "Utensils (plastic)": 0.002
+      }
+    },
+    "packagingMaterials": {
+      "name": "Packaging Materials",
+      "items": {
+        "6-Pack Holders": 0.004,
+        "Cartons (single flattened box)": 0.2,
+        "Sacks (empty single woven sack)": 0.35,
+        "Strapping Bands (per length/piece)": 0.005,
+        "Tooth paste containers": 0.02,
+        "Tobacco Packaging / Wrap": 0.005,
+        "Disposable cups": 0.004,
+        "Disposable plates": 0.004,
+        "Yogurt containers": 0.01,
+        "Detergent bottles": 0.06,
+        "Lotion and cream containers": 0.04,
+        "Deodorant containers": 0.05,
+        "Shampoo, conditioner and soap bottles": 0.05,
+        "Other Plastics / Foam Packaging": 0.02,
+        "Other Plastic Bottles (oil, bleach)": 0.06
+      }
+    },
+    "personalHygiene": {
+      "name": "Personal Hygiene",
+      "items": {
+        "Bathing Slippers": 0.15,
+        "Condoms (pack/individual wrapper)": 0.002,
+        "Diapers (single)": 0.2,
+        "Syringes (single)": 0.005,
+        "Tampons / Sanitary Pad": 0.01,
+        "Tooth Brush": 0.015,
+        "Bathing Brush": 0.02
+      }
+    },
+    "localConcerns": {
+      "name": "Items of Local Concern",
+      "items": {
+        "Coconut shells (single shell)": 0.25,
+        "Snail shells (single)": 0.02,
+        "Dead or Injured animal (small)": 2.0
+      }
+    }
+  }
+}

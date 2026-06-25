@@ -1,15 +1,17 @@
+import 'package:ascoa_app/shared/constants/app_strings.dart';
+
 class Validators {
   // Email validation
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppStrings.validationEmailRequired;
     }
 
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return AppStrings.validationEmailInvalid;
     }
 
     return null;
@@ -18,11 +20,11 @@ class Validators {
   // Password validation (basic for login)
   static String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppStrings.validationPasswordRequired;
     }
 
     if (value.length < 6) {
-      return 'Password must be at least 6 characters long';
+      return AppStrings.validationPasswordTooShort.replaceFirst('%d', '6');
     }
 
     return null;
@@ -31,17 +33,17 @@ class Validators {
   // Stronger password validation (for signup)
   static String? validateStrongPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppStrings.validationPasswordRequired;
     }
 
     if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
+      return AppStrings.validationPasswordTooShort.replaceFirst('%d', '8');
     }
 
     if (!RegExp(
       r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]',
     ).hasMatch(value)) {
-      return 'Password must contain at least:\n• One uppercase letter\n• One lowercase letter\n• One number\n• One special character';
+      return AppStrings.validationPasswordStrength;
     }
 
     return null;
@@ -50,11 +52,11 @@ class Validators {
   // Confirm password validation
   static String? validateConfirmPassword(String? value, String? password) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return AppStrings.validationConfirmPasswordRequired;
     }
 
     if (value != password) {
-      return 'Passwords do not match';
+      return AppStrings.validationPasswordsMismatch;
     }
 
     return null;
@@ -63,7 +65,7 @@ class Validators {
   // Generic required field validation
   static String? validateRequired(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
-      return '$fieldName is required';
+      return AppStrings.validationRequiredField.replaceFirst('%s', fieldName);
     }
     return null;
   }
@@ -76,7 +78,7 @@ class Validators {
 
     final phoneRegex = RegExp(r'^\+?[1-9]\d{1,14}$');
     if (!phoneRegex.hasMatch(value.replaceAll(RegExp(r'[\s\-\(\)]'), ''))) {
-      return 'Please enter a valid phone number';
+      return AppStrings.validationPhoneInvalid;
     }
 
     return null;

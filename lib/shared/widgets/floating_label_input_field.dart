@@ -1,7 +1,12 @@
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
 import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:get/get.dart';
 
 /// FloatingLabelInputField replicates the Figma absolute label effect:
 /// A bordered container with a small label chip overlapping the top border
@@ -13,8 +18,18 @@ class FloatingLabelInputField extends StatefulWidget {
   final bool obscure;
   final String? supportText; // error or helper
   final bool isError;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
   final ValueChanged<bool>? onFocusChange;
+  final TextInputType keyboardType;
+  final TextCapitalization textCapitalization;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onEditingComplete;
+  final double topSpacing;
 
   const FloatingLabelInputField({
     super.key,
@@ -24,8 +39,18 @@ class FloatingLabelInputField extends StatefulWidget {
     this.obscure = false,
     this.supportText,
     this.isError = false,
+    this.readOnly = false,
+    this.onTap,
+    this.suffixIcon,
     this.onChanged,
     this.onFocusChange,
+    this.keyboardType = TextInputType.text,
+    this.textCapitalization = TextCapitalization.none,
+    this.inputFormatters,
+    this.textInputAction,
+    this.onSubmitted,
+    this.onEditingComplete,
+    this.topSpacing = AppDimensions.fieldVerticalSpacing,
   });
 
   @override
@@ -68,30 +93,35 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
 
   @override
   Widget build(BuildContext context) {
+    final haptics = Get.find<HapticController>();
     // Focus node is created in initState and updates _hasFocus via listener
 
     // If controller is disposed, return a basic container to prevent crashes
     if (!_isControllerValid) {
       return Padding(
-        padding: const EdgeInsets.only(top: AppDimensions.fieldVerticalSpacing),
+        padding: EdgeInsets.only(
+          top: SizeUtils.h(context, AppDimensions.fieldVerticalSpacing),
+        ),
         child: Container(
           width: double.infinity,
-          height: AppDimensions.inputFieldHeight,
+          height: SizeUtils.h(context, AppDimensions.inputFieldHeight),
           decoration: BoxDecoration(
             color: AppColors.background,
             border: Border.all(
               color: AppColors.accentGreen,
-              width: AppDimensions.inputBorderWidth,
+              width: SizeUtils.w(context, AppDimensions.inputBorderWidth),
             ),
-            borderRadius: BorderRadius.circular(AppDimensions.smallRadius),
+            borderRadius: BorderRadius.circular(
+              SizeUtils.r(context, AppDimensions.smallRadius),
+            ),
           ),
         ),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.only(
-        top: AppDimensions.fieldVerticalSpacing,
+      padding: EdgeInsets.only(
+        top: SizeUtils.h(context, widget.topSpacing),
       ), // spacing between stacked fields
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +131,7 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
             children: [
               Container(
                 width: double.infinity,
-                height: AppDimensions.inputFieldHeight,
+                height: SizeUtils.h(context, AppDimensions.inputFieldHeight),
                 decoration: BoxDecoration(
                   color: AppColors.background,
                   border: Border.all(
@@ -111,40 +141,77 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
                             : AppColors.accentGreen,
                     width:
                         widget.isError
-                            ? AppDimensions.inputBorderWidthError
+                            ? SizeUtils.w(
+                              context,
+                              AppDimensions.inputBorderWidthError,
+                            )
                             : (_hasFocus
-                                ? AppDimensions.inputBorderWidthFocused
-                                : AppDimensions.inputBorderWidth),
+                                ? SizeUtils.w(
+                                  context,
+                                  AppDimensions.inputBorderWidthFocused,
+                                )
+                                : SizeUtils.w(
+                                  context,
+                                  AppDimensions.inputBorderWidth,
+                                )),
                   ),
                   borderRadius: BorderRadius.circular(
-                    AppDimensions.smallRadius,
+                    SizeUtils.w(context, AppDimensions.smallRadius),
                   ),
                 ),
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.inputHorizontalPadding,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeUtils.w(
+                      context,
+                      AppDimensions.inputHorizontalPadding,
+                    ),
                   ),
                   child: TextField(
                     controller: widget.controller,
                     focusNode: _focusNode,
+                    readOnly: widget.readOnly,
+                    onTap: () {
+                      haptics.selectionClick();
+                      widget.onTap?.call();
+                    },
                     obscureText: widget.obscure,
                     onChanged: widget.onChanged,
-                    style: AppTextStyles.body.copyWith(
+                    keyboardType: widget.keyboardType,
+                    textCapitalization: widget.textCapitalization,
+                    inputFormatters: widget.inputFormatters,
+                    textInputAction: widget.textInputAction,
+                    onSubmitted: widget.onSubmitted,
+                    onEditingComplete: widget.onEditingComplete,
+                    style: AppTextStyles.body(context).copyWith(
                       color: AppColors.textPrimary,
-                      fontSize: 16,
-                      height: 22 / 16,
-                      letterSpacing: 0.1,
+                      fontSize: SizeUtils.h(
+                        context,
+                        AppDimensions.inputFontSize,
+                      ),
+                      height:
+                          SizeUtils.h(context, 22) /
+                          SizeUtils.h(context, AppDimensions.inputFontSize),
+                      letterSpacing: AppTypography.letterSpacingSmall,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
-                      hintStyle: AppTextStyles.inputHint.copyWith(
-                        fontSize: 16,
-                        letterSpacing: 0.1,
+                      hintStyle: AppTextStyles.inputHint(context).copyWith(
+                        fontSize: SizeUtils.h(
+                          context,
+                          AppDimensions.inputFontSize,
+                        ),
+                        letterSpacing: AppTypography.letterSpacingSmall,
                       ),
+                      suffixIcon: widget.suffixIcon,
                       border: InputBorder.none,
                       isCollapsed: true,
-                      contentPadding: EdgeInsets.zero,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: SizeUtils.h(
+                          context,
+                          AppDimensions.inputContentVerticalPadding,
+                        ), // Center text vertically
+                      ),
                     ),
                   ),
                 ),
@@ -152,21 +219,38 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
               // Floating label chip
               Positioned(
                 left:
-                    AppDimensions.inputHorizontalPadding -
-                    AppDimensions.chipHorizontalPadding, // overlap effect
-                top: -AppDimensions.floatingLabelOffset,
+                    SizeUtils.w(context, AppDimensions.inputHorizontalPadding) -
+                    SizeUtils.w(
+                      context,
+                      AppDimensions.chipHorizontalPadding,
+                    ), // overlap effect
+                top: -SizeUtils.h(context, AppDimensions.floatingLabelOffset),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.chipHorizontalPadding,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeUtils.w(
+                      context,
+                      AppDimensions.chipHorizontalPadding,
+                    ),
                   ),
                   color: AppColors.background,
                   child: Text(
                     widget.label,
-                    style: AppTextStyles.body.copyWith(
-                      fontSize: 13,
-                      height: 16 / 13,
+                    style: AppTextStyles.body(context).copyWith(
+                      fontSize: SizeUtils.h(
+                        context,
+                        AppDimensions.floatingLabelFontSize,
+                      ),
+                      height:
+                          SizeUtils.h(
+                            context,
+                            AppDimensions.floatingLabelLineHeight,
+                          ) /
+                          SizeUtils.h(
+                            context,
+                            AppDimensions.floatingLabelFontSize,
+                          ),
                       color: AppColors.textAccent,
-                      letterSpacing: 0.1,
+                      letterSpacing: AppTypography.letterSpacingSmall,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -175,19 +259,34 @@ class _FloatingLabelInputFieldState extends State<FloatingLabelInputField> {
             ],
           ),
           if (widget.supportText != null) ...[
-            const SizedBox(height: AppDimensions.inputErrorSpacing),
+            SizedBox(
+              height: SizeUtils.h(context, AppDimensions.inputErrorSpacing),
+            ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.inputHorizontalPadding,
+              padding: EdgeInsets.symmetric(
+                horizontal: SizeUtils.w(
+                  context,
+                  AppDimensions.inputHorizontalPadding,
+                ),
               ),
               child: Text(
                 widget.supportText!,
-                style: AppTextStyles.bodySecondary.copyWith(
-                  fontSize: 13,
-                  height: 16 / 13,
+                style: AppTextStyles.bodySecondary(context).copyWith(
+                  fontSize: SizeUtils.h(
+                    context,
+                    AppDimensions.supportTextFontSize,
+                  ),
+                  height:
+                      SizeUtils.h(
+                        context,
+                        AppDimensions.supportTextLineHeight,
+                      ) /
+                      SizeUtils.h(context, AppDimensions.supportTextFontSize),
                   color:
-                      widget.isError ? AppColors.error : AppColors.textAccent,
-                  letterSpacing: 0.1,
+                      widget.isError
+                          ? AppColors.errorRed
+                          : AppColors.textAccent,
+                  letterSpacing: AppTypography.letterSpacingSmall,
                 ),
               ),
             ),

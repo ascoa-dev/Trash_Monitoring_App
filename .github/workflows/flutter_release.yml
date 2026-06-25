@@ -1,0 +1,49 @@
+name: Flutter Release Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.2"
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/key.jks
+          ls -l android/app/key.jks
+
+      - name: Generate Splash Screen
+        run: flutter pub run flutter_native_splash:create
+
+      - name: Set Version
+        run: echo "VERSION_CODE=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV && echo "VERSION_NAME=1.0.${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+
+      - name: Build APK
+        run: flutter build apk --release --dart-define=GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} --build-name=$VERSION_NAME --build-number=$VERSION_CODE
+        env:
+          KEYSTORE_FILE: key.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Create Release
+        run: gh release create "$VERSION_NAME" --title "Test Release $VERSION_NAME" --notes "Automated release from CI" build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

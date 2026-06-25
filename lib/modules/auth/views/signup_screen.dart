@@ -1,4 +1,6 @@
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -15,373 +17,461 @@ import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/widgets/social_button.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/widgets/auth_header.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:ascoa_app/shared/analytics/analytics_service.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
   @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Analytics.screenView(AnalyticsEvents.signupScreenViewed);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final ScrollController scrollController = ScrollController();
     final AuthController controller = Get.find<AuthController>();
     final FormControllers formControllers = Get.find<FormControllers>();
     final ValidationController validationController =
         Get.find<ValidationController>();
 
     // Scale for AuthHeader like Login V2
-    const double referenceWidth = 440.0;
-    final double scale = (size.width / referenceWidth).clamp(0.8, 1.25);
-
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background base color
-          Container(color: AppColors.background),
+      resizeToAvoidBottomInset: false,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final double viewportHeight = constraints.maxHeight;
+          final double viewportWidth = constraints.maxWidth;
+          final double keyboardHeight =
+              MediaQuery.of(context).viewInsets.bottom;
 
-          // Top decorative image per Figma
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Image.asset(
-              'assets/ASCOA/Signup_Screen_Top.png',
-              width: size.width,
-              fit: BoxFit.cover,
-            ),
-          ),
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (keyboardHeight == 0 && scrollController.hasClients) {
+              scrollController.jumpTo(0);
+            }
+          });
 
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.screenPadding,
-                vertical: AppDimensions.verticalPadding,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: size.height * AppDimensions.authScreenXLargeSpacer,
+          final double scale = (viewportWidth /
+                  AppDimensions.loginReferenceWidth)
+              .clamp(AppDimensions.authScaleMin, AppDimensions.authScaleMax);
+
+          return Container(
+            width: viewportWidth,
+            height: viewportHeight,
+            color: AppColors.background,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  top: AppDimensions.zero,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
+                  child: Image.asset(
+                    AppImages.signupTop,
+                    width: viewportWidth,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
                   ),
-
-                  // Auth header like Login V2
-                  AuthHeader(scale: scale),
-
-                  // Title below header per Figma
-                  const SizedBox(height: 16),
-                  const Text(
-                    AppStrings.signupTitle,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.heading2,
-                  ),
-
-                  SizedBox(
-                    height: size.height * AppDimensions.titleBottomSpacing,
-                  ),
-
-                  // Email Input (floating label like login v2)
-                  Obx(
-                    () => FloatingLabelInputField(
-                      controller: formControllers.emailController,
-                      label: AppStrings.emailLabel,
-                      hint: AppStrings.emailHint,
-                      obscure: false,
-                      supportText: validationController.emailError.value,
-                      isError: validationController.emailError.value != null,
-                      onChanged: validationController.validateEmail,
+                ),
+                SafeArea(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    physics:
+                        keyboardHeight > 0
+                            ? const AlwaysScrollableScrollPhysics()
+                            : const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left: SizeUtils.w(context, AppDimensions.screenPadding),
+                      right: SizeUtils.w(context, AppDimensions.screenPadding),
+                      top: SizeUtils.h(context, AppDimensions.verticalPadding),
+                      bottom:
+                          keyboardHeight > 0
+                              ? keyboardHeight
+                              : SizeUtils.h(
+                                context,
+                                AppDimensions.verticalPadding,
+                              ),
                     ),
-                  ),
-
-                  SizedBox(height: size.height * AppDimensions.inputSpacing),
-
-                  // Password Input + Always-visible Checklist when focused/typed (even if valid)
-                  Obx(
-                    () => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        FloatingLabelInputField(
-                          controller: formControllers.passwordController,
-                          label: AppStrings.passwordLabel,
-                          hint: AppStrings.passwordHint,
-                          obscure: true,
-                          supportText:
-                              validationController.showPasswordChecklist.value
-                                  ? null
-                                  : validationController.passwordError.value,
-                          onChanged: (val) {
-                            validationController.updatePasswordRules(val);
-                            validationController.validateStrongPassword(val);
-                            // Visibility is driven by focus; no-op here
-                          },
-                          onFocusChange: (focused) {
-                            if (focused) {
-                              validationController.showPasswordChecklist.value =
-                                  true;
-                            } else {
-                              // Hide only if text is empty to avoid flicker during quick nav
+                        SizedBox(
+                          height:
+                              viewportHeight *
+                              AppDimensions.authScreenXLargeSpacer,
+                        ),
+                        AuthHeader(scale: scale),
+                        SizedBox(
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.verticalPadding,
+                          ),
+                        ),
+                        Text(
+                          AppStrings.signupTitle,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.heading2(context),
+                        ),
+                        SizedBox(
+                          height:
+                              viewportHeight * AppDimensions.titleBottomSpacing,
+                        ),
+                        Obx(
+                          () => FloatingLabelInputField(
+                            controller: formControllers.emailController,
+                            label: AppStrings.emailLabel,
+                            hint: AppStrings.emailHint,
+                            obscure: false,
+                            supportText: validationController.emailError.value,
+                            isError:
+                                validationController.emailError.value != null,
+                            onChanged: validationController.validateEmail,
+                          ),
+                        ),
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.inputSpacing,
+                        ),
+                        Obx(
+                          () => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FloatingLabelInputField(
+                                controller: formControllers.passwordController,
+                                label: AppStrings.passwordLabel,
+                                hint: AppStrings.passwordHint,
+                                obscure: true,
+                                supportText:
+                                    validationController
+                                            .showPasswordChecklist
+                                            .value
+                                        ? null
+                                        : validationController
+                                            .passwordError
+                                            .value,
+                                onChanged: (val) {
+                                  validationController.updatePasswordRules(val);
+                                  validationController.validateStrongPassword(
+                                    val,
+                                  );
+                                },
+                                onFocusChange: (focused) {
+                                  if (focused) {
+                                    validationController
+                                        .showPasswordChecklist
+                                        .value = true;
+                                  } else {
+                                    if (validationController
+                                        .passwordText
+                                        .value
+                                        .isEmpty) {
+                                      validationController
+                                          .showPasswordChecklist
+                                          .value = false;
+                                    }
+                                  }
+                                },
+                              ),
                               if (validationController
-                                  .passwordText
-                                  .value
-                                  .isEmpty) {
-                                validationController
-                                    .showPasswordChecklist
-                                    .value = false;
-                              }
+                                  .showPasswordChecklist
+                                  .value)
+                                PasswordStrengthChecklist(
+                                  padding: EdgeInsets.only(
+                                    top: SizeUtils.h(
+                                      context,
+                                      AppDimensions.inputErrorSpacing,
+                                    ),
+                                    left: SizeUtils.w(
+                                      context,
+                                      AppDimensions.chipHorizontalPadding,
+                                    ),
+                                    right: SizeUtils.w(
+                                      context,
+                                      AppDimensions.chipHorizontalPadding,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.inputSpacing,
+                        ),
+                        Obx(
+                          () => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: SizeUtils.r(
+                                      context,
+                                      AppDimensions.checkboxSize,
+                                    ),
+                                    height: SizeUtils.r(
+                                      context,
+                                      AppDimensions.checkboxSize,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color:
+                                            validationController
+                                                        .termsError
+                                                        .value !=
+                                                    null
+                                                ? AppColors.error
+                                                : AppColors.accentGreen,
+                                        width:
+                                            validationController
+                                                        .termsError
+                                                        .value !=
+                                                    null
+                                                ? SizeUtils.w(
+                                                  context,
+                                                  AppDimensions
+                                                      .inputBorderWidthError,
+                                                )
+                                                : SizeUtils.w(
+                                                  context,
+                                                  AppDimensions.borderWidth,
+                                                ),
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        SizeUtils.r(
+                                          context,
+                                          AppDimensions.checkboxCornerRadius,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Checkbox(
+                                      value:
+                                          validationController
+                                              .isTermsAccepted
+                                              .value,
+                                      onChanged: (val) {
+                                        validationController
+                                            .isTermsAccepted
+                                            .value = val ?? false;
+                                        if (val == true) {
+                                          validationController
+                                              .termsError
+                                              .value = null;
+                                        }
+                                      },
+                                      activeColor: AppColors.accentGreen,
+                                      checkColor: AppColors.pureWhite,
+                                      side: BorderSide.none,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: SizeUtils.w(
+                                      context,
+                                      AppDimensions.tinySpacing,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: AppTextStyles.termsBase(context),
+                                        children: [
+                                          const TextSpan(
+                                            text: AppStrings.termsTextSignUp,
+                                          ),
+                                          TextSpan(
+                                            text: AppStrings.termsLink,
+                                            style: AppTextStyles.termsLink,
+                                            recognizer:
+                                                TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    Get.find<HapticController>()
+                                                        .selectionClick();
+                                                    SnackbarService.info(
+                                                      AppStrings.termsLink,
+                                                      AppStrings.termsNav,
+                                                    );
+                                                  },
+                                          ),
+                                          const TextSpan(
+                                            text: AppStrings.termsAnd,
+                                          ),
+                                          TextSpan(
+                                            text: AppStrings.privacyPolicyLink,
+                                            style: AppTextStyles.termsLink,
+                                            recognizer:
+                                                TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    Get.find<HapticController>()
+                                                        .selectionClick();
+                                                    SnackbarService.info(
+                                                      AppStrings
+                                                          .privacyPolicyLink,
+                                                      AppStrings
+                                                          .privacyPolicyNav,
+                                                    );
+                                                  },
+                                          ),
+                                          const TextSpan(
+                                            text: AppStrings.termsPeriod,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (validationController.termsError.value != null)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: SizeUtils.h(
+                                      context,
+                                      AppDimensions.smallSpacing,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    validationController.termsError.value!,
+                                    style: AppTextStyles.errorText(context),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.sectionSpacing,
+                        ),
+                        PrimaryButton(
+                          label: AppStrings.signupButton,
+                          onPressed: () {
+                            validationController.validateEmail(
+                              formControllers.emailController.text,
+                            );
+                            validationController.validateStrongPassword(
+                              formControllers.passwordController.text,
+                            );
+
+                            if (!validationController.isTermsAccepted.value) {
+                              validationController.termsError.value =
+                                  AppStrings.termsMustAccept;
+                            }
+
+                            if (validationController.isFormValid &&
+                                validationController.isTermsAccepted.value) {
+                              Get.find<HapticController>().medium();
+                              Analytics.track(AnalyticsEvents.signupStarted);
+                              controller.signup(
+                                formControllers.emailController.text,
+                                formControllers.passwordController.text,
+                              );
                             }
                           },
                         ),
-                        if (validationController.showPasswordChecklist.value)
-                          PasswordStrengthChecklist(
-                            padding: EdgeInsets.only(
-                              top: AppDimensions.inputErrorSpacing,
-                              left: AppDimensions.chipHorizontalPadding,
-                              right: AppDimensions.chipHorizontalPadding,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: size.height * AppDimensions.inputSpacing),
-
-                  // Terms and Conditions
-                  Obx(
-                    () => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.sectionSpacing,
+                        ),
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              width: AppDimensions.checkboxSize,
-                              height: AppDimensions.checkboxSize,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color:
-                                      validationController.termsError.value !=
-                                              null
-                                          ? AppColors.error
-                                          : AppColors.accentGreen,
-                                  width:
-                                      validationController.termsError.value !=
-                                              null
-                                          ? AppDimensions.inputBorderWidthError
-                                          : AppDimensions.borderWidth,
+                            Expanded(
+                              child: Container(
+                                height: SizeUtils.h(
+                                  context,
+                                  AppDimensions.dividerThickness,
                                 ),
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.checkboxCornerRadius,
-                                ),
-                              ),
-                              child: Checkbox(
-                                value:
-                                    validationController.isTermsAccepted.value,
-                                onChanged: (val) {
-                                  validationController.isTermsAccepted.value =
-                                      val ?? false;
-                                  if (val == true) {
-                                    validationController.termsError.value =
-                                        null;
-                                  }
-                                },
-                                activeColor: AppColors.accentGreen,
-                                checkColor: AppColors.pureWhite,
-                                side: BorderSide.none, // Remove black border
+                                color: AppColors.divider,
                               ),
                             ),
-                            const SizedBox(width: AppDimensions.tinySpacing),
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  style: AppTextStyles.termsBase,
-                                  children: [
-                                    const TextSpan(
-                                      text: AppStrings.termsTextSignUp,
-                                    ),
-                                    TextSpan(
-                                      text: AppStrings.termsLink,
-                                      style: AppTextStyles.termsLink,
-                                      recognizer:
-                                          TapGestureRecognizer()
-                                            ..onTap = () {
-                                              Get.snackbar(
-                                                AppStrings.termsLink,
-                                                AppStrings.termsNav,
-                                              );
-                                            },
-                                    ),
-                                    const TextSpan(text: AppStrings.termsAnd),
-                                    TextSpan(
-                                      text: AppStrings.privacyPolicyLink,
-                                      style: AppTextStyles.termsLink,
-                                      recognizer:
-                                          TapGestureRecognizer()
-                                            ..onTap = () {
-                                              Get.snackbar(
-                                                AppStrings.privacyPolicyLink,
-                                                AppStrings.privacyPolicyNav,
-                                              );
-                                            },
-                                    ),
-                                    const TextSpan(
-                                      text: AppStrings.termsPeriod,
-                                    ),
-                                  ],
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: SizeUtils.w(
+                                  context,
+                                  AppDimensions.dividerPadding,
                                 ),
+                              ),
+                              child: Text(
+                                AppStrings.otherSignUpOptions,
+                                style: AppTextStyles.dividerText(context),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: SizeUtils.h(
+                                  context,
+                                  AppDimensions.dividerThickness,
+                                ),
+                                color: AppColors.divider,
                               ),
                             ),
                           ],
                         ),
-                        if (validationController.termsError.value != null)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: AppDimensions.smallSpacing,
-                            ),
-                            child: Text(
-                              validationController.termsError.value!,
-                              style: AppTextStyles.errorText,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: size.height * AppDimensions.sectionSpacing),
-
-                  // Create Account Button
-                  PrimaryButton(
-                    label: AppStrings.signupTitle,
-                    onPressed: () {
-                      // Validate form
-                      validationController.validateEmail(
-                        formControllers.emailController.text,
-                      );
-                      validationController.validateStrongPassword(
-                        formControllers.passwordController.text,
-                      );
-
-                      if (!validationController.isTermsAccepted.value) {
-                        validationController.termsError.value =
-                            'You must accept the terms and conditions to proceed.';
-                      }
-
-                      // Only proceed if form is valid
-                      if (validationController.isFormValid &&
-                          validationController.isTermsAccepted.value) {
-                        controller.signup(
-                          formControllers.emailController.text,
-                          formControllers.passwordController.text,
-                        );
-                      }
-                    },
-                  ),
-
-                  SizedBox(height: size.height * AppDimensions.sectionSpacing),
-
-                  // Divider matching Figma (short lines and centered label)
-                  Builder(
-                    builder: (context) {
-                      final sideWidth =
-                          MediaQuery.of(context).size.width *
-                          AppDimensions.authDividerSideWidthFactor;
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: sideWidth,
-                            height: AppDimensions.dividerThickness,
-                            color: AppColors.divider,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppDimensions.dividerPadding,
-                            ),
-                            child: Text(
-                              AppStrings.otherSignUpOptions,
-                              style: AppTextStyles.dividerText,
-                            ),
-                          ),
-                          Container(
-                            width: sideWidth,
-                            height: AppDimensions.dividerThickness,
-                            color: AppColors.divider,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-
-                  SizedBox(height: size.height * AppDimensions.sectionSpacing),
-
-                  // Social buttons row (outlined, icon-only to match login V2 style)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SocialButton(
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.sectionSpacing,
+                        ),
+                        SocialButton(
                           icon: Image.asset(
-                            'assets/Google/android_neutral_rd_na@2x.png',
-                            width: AppDimensions.socialIconSize,
-                            height: AppDimensions.socialIconSize,
+                            AppImages.googleNeutral2x,
+                            width: SizeUtils.r(
+                              context,
+                              AppDimensions.socialIconSize,
+                            ),
+                            height: SizeUtils.r(
+                              context,
+                              AppDimensions.socialIconSize,
+                            ),
                           ),
                           color: AppColors.google,
                           onPressed: () => controller.loginWithGoogle(),
                         ),
-                      ),
-                      const SizedBox(width: AppDimensions.socialButtonSpacing),
-                      Expanded(
-                        child: SocialButton(
-                          icon: Image.asset(
-                            'assets/Facebook/Facebook_Logo_Primary.png',
-                            width: AppDimensions.socialIconSize,
-                            height: AppDimensions.socialIconSize,
-                          ),
-                          color: AppColors.facebook,
-                          onPressed: () => controller.loginWithFacebook(),
+                        SizedBox(
+                          height: viewportHeight * AppDimensions.sectionSpacing,
                         ),
-                      ),
-                    ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              AppStrings.haveAccount,
+                              style: AppTextStyles.bodySecondary(context),
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () {
+                                Get.find<HapticController>().selectionClick();
+                                final form = Get.find<FormControllers>();
+                                final validation =
+                                    Get.find<ValidationController>();
+                                final email = form.emailController.text;
+                                validation.clearEmailError();
+                                if (!validation.isEmailValid(email)) {
+                                  form.emailController.clear();
+                                }
+                                form.passwordController.clear();
+                                validation.clearPasswordValidation();
+                                Get.offNamed(AppRoutes.login);
+                              },
+                              child: Text(
+                                AppStrings.loginButton,
+                                style: AppTextStyles.buttonLink(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-
-                  SizedBox(height: size.height * AppDimensions.sectionSpacing),
-
-                  // Already have an account? Login link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        AppStrings.haveAccount,
-                        style: AppTextStyles.bodySecondary,
-                      ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        onPressed: () {
-                          final form = Get.find<FormControllers>();
-                          final validation = Get.find<ValidationController>();
-                          final email = form.emailController.text;
-                          // Clear email error; keep email only if valid
-                          validation.clearEmailError();
-                          if (!validation.isEmailValid(email)) {
-                            form.emailController.clear();
-                          }
-                          // Never carry password between login/signup
-                          form.passwordController.clear();
-                          // Clear password validation state to avoid leakage into Login
-                          validation.clearPasswordValidation();
-                          Get.offNamed(AppRoutes.login);
-                        },
-                        child: const Text(
-                          AppStrings.loginButton,
-                          style: AppTextStyles.buttonLink,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

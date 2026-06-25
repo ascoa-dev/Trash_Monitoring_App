@@ -116,3 +116,10 @@ coverage/
 .fake
 List.md
 Flutter-Options.md
+flutter_run_cheatsheet.md
+/docs/
+news.json
+*.jks
+*.jks.base64
+*.ps1
+*.env
