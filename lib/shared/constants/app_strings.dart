@@ -11,7 +11,6 @@ class AppStrings {
   static const String dividerOr = "OR";
   static const String otherSignUpOptions = "Other Sign Up Options";
   static const String continueWithGoogle = "Continue with Google";
-  static const String continueWithFacebook = "Continue with Facebook";
   static const String noAccount = "No Account? ";
   static const String haveAccount = "Already have an account? ";
   static const String signUp = "Sign up";
@@ -23,7 +22,6 @@ class AppStrings {
   static const String termsPeriod = ".";
   // Short labels for social buttons (optional)
   static const String googleShort = "Google";
-  static const String facebookShort = "Facebook";
 
   // Navigation Messages (for development)
   static const String forgotPasswordNav = "Navigate to Forgot Password screen";
@@ -277,14 +275,19 @@ class AppStrings {
   static const String profileChangePasswordTitle = "Change Password";
   static const String profileChangePasswordSubtitle =
       "Change your password here";
-  static const String profilePolicyTitle = "Policy";
-  static const String profilePolicySubtitle = "Review terms and privacy policy";
-  static const String profileFaqTitle = "FAQ";
-  static const String profileFaqSubtitle = "Check the most asked questions";
+  static const String profilePolicyTitle = "Terms and Conditions";
+  static const String profilePolicySubtitle = "Review terms and conditions";
+  static const String profileFaqTitle = "Privacy Policy";
+  static const String profileFaqSubtitle = "Review Privacy Policy";
   static const String profileSupportSection = "SUPPORT";
   static const String profileContactTitle = "Contact Us";
   static const String profileContactSubtitle = "Contact Us for support";
   static const String profileSignOut = "Sign Out";
+
+  // Support Links Configuration
+  static const String profileTermsUrl = "https://accounts.ascoa-cm.org/terms";
+  static const String profilePrivacyUrl = "https://accounts.ascoa-cm.org/privacy-policy";
+  static const String profileContactEmail = "devteam@ascoa-cm.org";
 
   // Common short actions
   static const String cancel = "Cancel";

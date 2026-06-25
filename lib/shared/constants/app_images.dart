@@ -39,8 +39,6 @@ class AppImages {
   // Social logos
   static const String googleNeutral2x =
       'assets/Google/android_neutral_rd_na@2x.png';
-  static const String facebookPrimary =
-      'assets/Facebook/Facebook_Logo_Primary.png';
 
   // Forgot/Confirm icons
   static const String forgotConfirmIcon =

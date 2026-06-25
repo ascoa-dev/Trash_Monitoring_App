@@ -10,12 +10,21 @@ class ApiService {
 
   /// Fetch posts with minimal fields to reduce payload.
   static Future<List<Post>> fetchPosts({int perPage = 10}) async {
-    final snap =
-        await _db
-            .collection("posts")
-            .orderBy('updatedAt', descending: true)
-            .limit(perPage)
-            .get();
+    QuerySnapshot<Map<String, dynamic>> snap;
+    try {
+      snap = await _db
+          .collection("posts")
+          .orderBy('updatedAt', descending: true)
+          .limit(perPage)
+          .get(const GetOptions(source: Source.server));
+    } catch (e) {
+      debugPrint('[ApiService] Server fetch failed, falling back to cache: $e');
+      snap = await _db
+          .collection("posts")
+          .orderBy('updatedAt', descending: true)
+          .limit(perPage)
+          .get(const GetOptions(source: Source.serverAndCache));
+    }
 
     return Future.wait(
       snap.docs.map((doc) async {

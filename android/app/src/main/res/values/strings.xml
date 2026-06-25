@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ASCOA App</string>
-    <string name="facebook_app_id">1434924138060566</string>
-    <string name="fb_login_protocol_scheme">fb1434924138060566</string>
-    <string name="facebook_client_token">7960a075fdcb9147fe4ca38aff2a2953</string>
 </resources>

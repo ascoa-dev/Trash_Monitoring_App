@@ -7,11 +7,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/modules/auth/views/forgot_password_screen.dart';
 import 'package:ascoa_app/shared/controllers/form_controllers.dart';
 import 'package:ascoa_app/shared/controllers/validation_controller.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
 import 'package:ascoa_app/shared/widgets/primary_button.dart';
 
@@ -105,7 +107,12 @@ Future<void> _pumpForgotScreen(
   if (locale != null) Get.updateLocale(locale);
 
   // Inject controllers
+  final navigatorKey = GlobalKey<NavigatorState>();
+  SnackbarService.init(navigatorKey);
   if (!Get.isRegistered<AuthController>()) Get.put<AuthController>(auth);
+  if (!Get.isRegistered<HapticController>()) {
+    Get.put<HapticController>(HapticController());
+  }
   if (!Get.isRegistered<FormControllers>()) Get.put<FormControllers>(form);
   if (!Get.isRegistered<ValidationController>()) {
     Get.put<ValidationController>(validation);
@@ -115,6 +122,7 @@ Future<void> _pumpForgotScreen(
     DefaultAssetBundle(
       bundle: _TestAssetBundle(byteData),
       child: GetMaterialApp(
+        navigatorKey: navigatorKey,
         home: const ForgotPasswordScreen(),
         getPages: [
           GetPage(name: AppRoutes.login, page: () => const Placeholder()),
@@ -264,7 +272,7 @@ void main() {
         validation: validation,
       );
 
-      Future<void> submitWith(String result) async {
+      Future<void> submitWith(String result, String expectedMessage) async {
         auth.result = result;
         await tester.enterText(
           find.byType(FloatingLabelInputField),
@@ -276,31 +284,15 @@ void main() {
         await tester.pump(const Duration(milliseconds: 300));
         // Allow snackbar animation to start
         await tester.pump(const Duration(milliseconds: 200));
+        expect(find.text(expectedMessage), findsOneWidget);
+        await tester.pump(const Duration(seconds: 3));
+        await tester.pumpAndSettle();
       }
 
-      await submitWith('user-not-found');
-      expect(Get.isSnackbarOpen, isTrue);
-      Get.closeAllSnackbars();
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
-
-      await submitWith('invalid-email');
-      expect(Get.isSnackbarOpen, isTrue);
-      Get.closeAllSnackbars();
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
-
-      await submitWith('too-many-requests');
-      expect(Get.isSnackbarOpen, isTrue);
-      Get.closeAllSnackbars();
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
-
-      await submitWith('error');
-      expect(Get.isSnackbarOpen, isTrue);
-      Get.closeAllSnackbars();
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
+      await submitWith('user-not-found', AppStrings.forgotUserNotFound);
+      await submitWith('invalid-email', AppStrings.forgotInvalidEmail);
+      await submitWith('too-many-requests', AppStrings.forgotTooManyRequests);
+      await submitWith('error', AppStrings.forgotGenericError);
       // Make sure any pending snackbar timers are drained
       await tester.pump(const Duration(seconds: 4));
       await tester.pumpAndSettle();

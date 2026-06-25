@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -169,8 +168,7 @@ class AuthController extends GetxController {
     );
 
     // 1️⃣ Email verification check (ONLY for email/password signups)
-    final isOAuth =
-        resolvedSignUpMethod == 'google' || resolvedSignUpMethod == 'facebook';
+    final isOAuth = resolvedSignUpMethod == 'google';
 
     if (!isOAuth && !user.emailVerified) {
       debugPrint('Email not verified: ${user.email}');
@@ -526,68 +524,6 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> loginWithFacebook() async {
-    try {
-      final LoginResult result = await FacebookAuth.instance.login(
-        permissions: ['email', 'public_profile'],
-      );
-
-      if (result.status == LoginStatus.cancelled) {
-        // User cancelled - don't show error
-        return;
-      }
-
-      if (result.status == LoginStatus.failed) {
-        Analytics.track(AnalyticsEvents.loginFailed, {
-          AnalyticsProps.method: AuthMethods.facebook,
-          AnalyticsProps.reason: 'login_failed',
-        });
-        _emitError('Facebook Login Failed', result.message ?? 'Unknown error');
-        return;
-      }
-      // Official example: create credential directly from tokenString
-      if (result.status == LoginStatus.success) {
-        final OAuthCredential credential = FacebookAuthProvider.credential(
-          result.accessToken!.tokenString,
-        );
-
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-        final user = _auth.currentUser;
-        if (user != null) {
-          // Reload user to ensure provider data is synced
-          await user.reload();
-
-          // Track successful Facebook login
-          Analytics.track(AnalyticsEvents.loginSuccess, {
-            AnalyticsProps.method: AuthMethods.facebook,
-          });
-          await Analytics.identify(user.uid);
-
-          await _handleUserPostLogin(user, 'facebook');
-        }
-      }
-    } on FirebaseAuthException catch (e) {
-      Analytics.track(AnalyticsEvents.loginFailed, {
-        AnalyticsProps.method: AuthMethods.facebook,
-        AnalyticsProps.reason: e.code,
-      });
-      if (e.code == 'account-exists-with-different-credential') {
-        _emitError(
-          'Account Exists',
-          'This email is already registered with another sign-in method.',
-        );
-      } else {
-        _emitError('Facebook Login Failed', e.message ?? 'Unknown error');
-      }
-      // Clean up Facebook sign-in state
-      await FacebookAuth.instance.logOut();
-    } catch (e) {
-      _emitError('Facebook Login Failed', e.toString());
-      await FacebookAuth.instance.logOut();
-    }
-  }
-
   Future<void> logout() async {
     Analytics.track(AnalyticsEvents.logoutClicked);
     await _signOutAll();
@@ -600,7 +536,6 @@ class AuthController extends GetxController {
     try {
       await _auth.signOut();
       await GoogleSignIn.instance.signOut();
-      await FacebookAuth.instance.logOut();
       await userBox.clear();
       currentUserModel.value = null;
     } catch (e) {

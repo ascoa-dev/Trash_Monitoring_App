@@ -11,5 +11,9 @@ abstract class AppRoutes {
   static const resetPassword = '/reset-password';
   static const newCleanUp = '/new-cleanup';
   static const pendingCleanups = '/pending-cleanups';
+  static const myCleanups = '/my-cleanups';
+  static const editCleanupTrash = '/edit-cleanup-trash';
+  static const reportHotspot = '/report-hotspot';
+  static const pendingHotspots = '/pending-hotspots';
   // Add more routes as needed
 }

@@ -1,8 +1,16 @@
 import 'dart:async';
 import 'package:ascoa_app/app/controllers/haptic_controller.dart';
 import 'package:ascoa_app/app/controllers/pending_cleanups_controller.dart';
+import 'package:ascoa_app/app/controllers/pending_hotspots_controller.dart';
 import 'package:ascoa_app/modules/auth/views/auth_gate_screen.dart';
+import 'package:ascoa_app/modules/hotspots/bindings/hotspot_report_binding.dart';
+import 'package:ascoa_app/modules/hotspots/views/hotspot_report_screen.dart';
+import 'package:ascoa_app/modules/my_cleanups/bindings/my_cleanups_binding.dart';
+import 'package:ascoa_app/modules/my_cleanups/views/edit_cleanup_trash_screen.dart';
+import 'package:ascoa_app/modules/my_cleanups/views/my_cleanups_screen.dart';
 import 'package:ascoa_app/modules/start_cleanup/views/new_cleanup_screen.dart';
+import 'package:ascoa_app/modules/pending_hotspots/bindings/pending_hotspots_binding.dart';
+import 'package:ascoa_app/modules/pending_hotspots/views/pending_hotspots_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/views/pending_cleanups_screen.dart';
 import 'package:ascoa_app/modules/pending_cleanups/bindings/pending_cleanups_binding.dart';
 import 'package:ascoa_app/shared/analytics/analytics_service.dart';
@@ -42,6 +50,7 @@ import 'shared/services/cities_service.dart';
 import 'shared/controllers/cities_controller.dart';
 import 'shared/controllers/connectivity_controller.dart';
 import 'app/models/pending_cleanup_model.dart';
+import 'app/models/pending_hotspot_model.dart';
 import 'app/models/cached_cleanup_model.dart';
 import 'package:app_links/app_links.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -72,6 +81,7 @@ void main() async {
   Hive.registerAdapter(PostAdapter());
   Hive.registerAdapter(UserModelAdapter());
   Hive.registerAdapter(PendingCleanupModelAdapter());
+  Hive.registerAdapter(PendingHotspotModelAdapter());
   Hive.registerAdapter(CachedCleanupModelAdapter());
   // Register AuthController globally and permanently
   if (kIsWeb) {
@@ -85,6 +95,7 @@ void main() async {
   Get.put(AuthController(), permanent: true);
   Get.put(HapticController(), permanent: true);
   Get.put(PendingCleanupsController(), permanent: true);
+  Get.put(PendingHotspotsController(), permanent: true);
   // Register and initialize CitiesService
   final citiesService = await CitiesService().init();
   Get.put<CitiesService>(citiesService, permanent: true);
@@ -220,6 +231,26 @@ class MyApp extends StatelessWidget {
               name: AppRoutes.pendingCleanups,
               page: () => const PendingCleanupsScreen(),
               bindings: [PendingCleanupsBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.myCleanups,
+              page: () => const MyCleanupsScreen(),
+              bindings: [MyCleanupsBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.editCleanupTrash,
+              page: () => const EditCleanupTrashScreen(),
+              bindings: [CleanupFormBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.reportHotspot,
+              page: () => const HotspotReportScreen(),
+              bindings: [HotspotReportBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.pendingHotspots,
+              page: () => const PendingHotspotsScreen(),
+              bindings: [PendingHotspotsBinding()],
             ),
             // Add more GetPages for other routes
           ],

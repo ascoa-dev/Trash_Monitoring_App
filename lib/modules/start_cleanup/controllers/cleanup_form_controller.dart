@@ -445,6 +445,63 @@ class CleanupFormController extends ChangeNotifier {
     }
   }
 
+  void loadTrashCollectedForEdit(CleanupModel cleanup) {
+    selectedEnvironments
+      ..clear()
+      ..add(cleanup.environment);
+    trashItems.clear();
+
+    cleanup.categories.forEach((_, items) {
+      items.forEach((itemName, item) {
+        if (item.quantity > 0) {
+          trashItems[itemName] = item.quantity;
+        }
+      });
+    });
+
+    _trashCollectedCompleted = true;
+    notifyListeners();
+  }
+
+  Future<bool> updateCleanupTrashCollected(String cleanupId) async {
+    if (!_validateTrashCollected()) {
+      notifyListeners();
+      return false;
+    }
+
+    try {
+      final environmentType =
+          selectedEnvironments.isNotEmpty ? selectedEnvironments.first : null;
+      if (environmentType == null) return false;
+
+      final cleanup = CleanupModel.fromFormData(
+        userId: '',
+        peopleCount: 1,
+        groupName: '',
+        date: '',
+        location: '',
+        environment: environmentType,
+        trashItems: trashItems,
+        itemWeights: _getItemWeights(),
+        itemCategories: _getItemCategories(),
+      );
+
+      final trashCollected = cleanup.toFirestore()['trashCollected'];
+      await FirebaseFirestore.instance
+          .collection('cleanups')
+          .doc(cleanupId)
+          .set({
+            'trashCollected': trashCollected,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+      return true;
+    } catch (e) {
+      debugPrint('[CleanupEdit] Error updating trash collected: $e');
+      return false;
+    }
+  }
+
   /// Save cleanup offline to Hive for later upload
   Future<String?> _saveCleanupOffline(String userId) async {
     try {

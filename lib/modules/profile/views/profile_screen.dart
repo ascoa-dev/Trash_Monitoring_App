@@ -15,6 +15,7 @@ import 'package:ascoa_app/modules/profile/widgets/full_image_overlay.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
 import 'package:ascoa_app/shared/widgets/app_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 
 class ProfileScreen extends StatelessWidget {
@@ -27,14 +28,13 @@ class ProfileScreen extends StatelessWidget {
         Get.find<ConnectivityController>();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final double viewportHeight = constraints.maxHeight;
           final double viewportWidth = constraints.maxWidth;
-          return Container(
-            width: viewportWidth,
-            height: viewportHeight,
-            color: AppColors.background,
+          return SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: Stack(
               children: [
                 Positioned(
@@ -66,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 SafeArea(
-                  child: SingleChildScrollView(
+                  child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: SizeUtils.w(
                         context,
@@ -295,6 +295,55 @@ class ProfileScreen extends StatelessWidget {
                               height: math.min(
                                 SizeUtils.h(
                                   context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
+                            ),
+                            ProfileActionTile(
+                              icon: Icons.history_outlined,
+                              title: 'My Clean Ups',
+                              subtitle: 'Search and edit submitted cleanups',
+                              onTap: () => Get.toNamed(AppRoutes.myCleanups),
+                            ),
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
+                            ),
+                            ProfileActionTile(
+                              icon: Icons.cloud_upload_outlined,
+                              title: AppStrings.profilePendingCleanupsTitle,
+                              subtitle:
+                                  AppStrings.profilePendingCleanupsSubtitle,
+                              onTap:
+                                  () => Get.toNamed(AppRoutes.pendingCleanups),
+                            ),
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
+                            ),
+                            ProfileActionTile(
+                              icon: Icons.report_problem_outlined,
+                              title: 'Pending Hotspots',
+                              subtitle:
+                                  'View and upload offline hotspot reports',
+                              onTap:
+                                  () => Get.toNamed(AppRoutes.pendingHotspots),
+                            ),
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
                                   AppDimensions.profileSectionSupportSpacing,
                                 ),
                                 AppDimensions.profileSectionSupportSpacing,
@@ -342,6 +391,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               title: AppStrings.profilePolicyTitle,
                               subtitle: AppStrings.profilePolicySubtitle,
+                              onTap: () => _launchURL(context, AppStrings.profileTermsUrl),
                             ),
                             SizedBox(
                               height: math.min(
@@ -367,6 +417,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               title: AppStrings.profileFaqTitle,
                               subtitle: AppStrings.profileFaqSubtitle,
+                              onTap: () => _launchURL(context, AppStrings.profilePrivacyUrl),
                             ),
                             SizedBox(
                               height: math.min(
@@ -392,6 +443,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               title: AppStrings.profileContactTitle,
                               subtitle: AppStrings.profileContactSubtitle,
+                              onTap: () => _launchURL(context, 'mailto:${AppStrings.profileContactEmail}'),
                             ),
                             SizedBox(
                               height: math.min(
@@ -412,7 +464,8 @@ class ProfileScreen extends StatelessWidget {
                             SizedBox(
                               height: SizeUtils.h(
                                 context,
-                                AppDimensions.smallSpacing,
+                                AppDimensions.homeScreenBottomGap,
+                                useContentHeight: false,
                               ),
                             ),
                           ],
@@ -474,6 +527,36 @@ class ProfileScreen extends StatelessWidget {
             title: AppStrings.profileNoInternetTitle,
             body: message,
             icon: Icons.wifi_off_rounded,
+            decoratedHero: true,
+            primaryActionLabel: 'OK',
+            onPrimaryAction: () => Get.back(),
+          ),
+    );
+  }
+
+  Future<void> _launchURL(BuildContext context, String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    try {
+      final success = await launchUrl(url, mode: LaunchMode.externalApplication);
+      if (!context.mounted) return;
+      if (!success) {
+        _showErrorDialog(context, 'Could not open link.');
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      _showErrorDialog(context, 'Error opening link: $e');
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder:
+          (_) => AppDialog(
+            title: 'Error',
+            body: message,
+            icon: Icons.error_outline_rounded,
             decoratedHero: true,
             primaryActionLabel: 'OK',
             onPrimaryAction: () => Get.back(),

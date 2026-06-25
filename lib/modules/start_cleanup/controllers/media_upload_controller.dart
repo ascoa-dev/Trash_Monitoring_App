@@ -66,6 +66,9 @@ enum PhotoUploadStatus {
 
 /// Controller to manage media uploads for cleanup
 class MediaUploadController extends ChangeNotifier {
+  MediaUploadController({this.storageFolder = 'cleanups'});
+
+  final String storageFolder;
   final Map<String, PhotoUpload> _photos = {};
   final Uuid _uuid = const Uuid();
 
@@ -342,7 +345,7 @@ class MediaUploadController extends ChangeNotifier {
     final fileName = '${_uuid.v4()}.jpg';
     final ref = FirebaseStorage.instance
         .ref()
-        .child('cleanups')
+        .child(storageFolder)
         .child(cleanupDocId)
         .child(fileName);
 

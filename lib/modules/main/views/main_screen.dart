@@ -123,6 +123,37 @@ class _MainScreenState extends State<MainScreen> {
 
   void _openAddReport() {
     Analytics.track(AnalyticsEvents.cleanupCtaClicked);
-    Get.toNamed(AppRoutes.newCleanUp);
+    Get.bottomSheet(
+      SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.cleaning_services_outlined),
+                title: const Text('Start New Cleanup'),
+                onTap: () {
+                  Get.back();
+                  Get.toNamed(AppRoutes.newCleanUp);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.report_problem_outlined),
+                title: const Text('Report Plastic Hotspot'),
+                onTap: () {
+                  Get.back();
+                  Get.toNamed(AppRoutes.reportHotspot);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

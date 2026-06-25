@@ -117,7 +117,6 @@ Container(color: AppColors.primary)  // Background color (off-white)
 - `AppColors.buttonPrimary` - Button green (0xFF419310)
 - `AppColors.white` - Historical alias to background (kept for compatibility)
 - `AppColors.google` - Google blue (0xFF4285F4)
-- `AppColors.facebook` - Facebook blue (0xFF4267B2)
 - `AppColors.profileAvatarBackground` - Soft yellow circle behind avatar placeholder (0xFFFCF1AA)
 - `AppColors.profileAvatarAccent` - Accent golden highlight used for avatar glyph (0xFFFBB825)
 - `AppColors.black87` - Legacy alias used in a few places for text (0xDD000000)
@@ -169,7 +168,7 @@ Common categories currently exposed:
 - **Brand & hero artwork:** `logo`, `loginTop`, `signupTop`, `forgotPasswordTop`, `loginBottom`, `completeProfileTop`, `profileScreenBottom`, etc. These map to large PNG hero illustrations reused in auth/profile flows.
 - **Profile & settings icons:** `policy`, `faq`, `contact`, `signout` under `Profile_Page_Icons/`. Used by `ProfileActionTile` and `ProfileSignOutButton`.
 - **Navigation icons:** `navHome`, `navStats`, `navAdd`, `navNews`, `navProfile` consumed by the shared bottom navigation bar.
-- **3rd-party logos:** `googleNeutral2x`, `facebookPrimary` for social buttons.
+- **3rd-party logos:** `googleNeutral2x` for social buttons.
 - **Forgot password assets:** `forgotConfirmIcon`, `forgotPasswordBottom`, `forgotPasswordIcon` powering the forgot-password screen and confirmation dialog.
 - **Reset password artwork:** `passwordUpdateSuccessful` used by the reset-password success dialog that returns the user to Login.
 
@@ -673,7 +672,7 @@ SocialButton(
 )
 ```
 
-**Use for:** Social login buttons (Google, Facebook)
+**Use for:** Social login buttons (Google)
 
 ### New Shared Components
 
@@ -1365,7 +1364,6 @@ Text(AppStrings.loginTitle) // "Login into Account"
 
 - `AppStrings.dividerOr` - "OR"
 - `AppStrings.continueWithGoogle` - "Continue with Google"
-- `AppStrings.continueWithFacebook` - "Continue with Facebook"
 
 #### **Navigation Text**
 
@@ -1509,7 +1507,7 @@ SocialButton(
 
 **When to use:**
 
-- ✅ Social login buttons (Google, Facebook, Apple)
+- ✅ Social login buttons (Google, Apple if added later)
 - ✅ Third-party integrations
 - ❌ Regular action buttons (use PrimaryButton)
 

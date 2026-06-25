@@ -70,7 +70,6 @@ class AppColors {
 
   // Social Login Colors
   static const Color google = Color(0xFF4285F4); // Google brand blue
-  static const Color facebook = Color(0xFF4267B2); // Facebook brand blue
   static const Color buttonText = Color(
     0xFF3A383F,
   ); // Default button text color

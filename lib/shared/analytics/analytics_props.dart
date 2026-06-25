@@ -52,7 +52,6 @@ class AuthMethods {
 
   static const String email = 'email';
   static const String google = 'google';
-  static const String facebook = 'facebook';
 }
 
 /// Cleanup section values

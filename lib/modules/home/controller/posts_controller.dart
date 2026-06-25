@@ -11,11 +11,17 @@ class HomePostsController extends GetxController {
 
   static const String _cacheBoxName = 'home_posts_cache';
 
+  bool _isNetworkFetched = false;
+
   @override
   void onInit() {
     super.onInit();
-    _loadFromCache();
-    loadPosts();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await _loadFromCache();
+    await loadPosts();
   }
 
   /// Load posts from cache first (instant), then fetch fresh data
@@ -23,7 +29,7 @@ class HomePostsController extends GetxController {
     try {
       final box = await Hive.openBox<Post>(_cacheBoxName);
       final cachedPosts = box.values.toList();
-      if (cachedPosts.isNotEmpty) {
+      if (cachedPosts.isNotEmpty && !_isNetworkFetched) {
         posts.assignAll(cachedPosts);
       }
     } catch (e) {
@@ -38,6 +44,7 @@ class HomePostsController extends GetxController {
       error.value = null;
       final fetched = await ApiService.fetchPosts(perPage: perPage);
 
+      _isNetworkFetched = true;
       posts.assignAll(fetched);
       Analytics.track(AnalyticsEvents.newsCarouselLoaded, {
         AnalyticsProps.cleanupsCount: fetched.length,

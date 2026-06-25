@@ -412,49 +412,20 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(
                           height: viewportHeight * AppDimensions.sectionSpacing,
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: SocialButton(
-                                icon: Image.asset(
-                                  AppImages.googleNeutral2x,
-                                  width: SizeUtils.r(
-                                    context,
-                                    AppDimensions.socialIconSize,
-                                  ),
-                                  height: SizeUtils.r(
-                                    context,
-                                    AppDimensions.socialIconSize,
-                                  ),
-                                ),
-                                color: AppColors.google,
-                                onPressed: () => controller.loginWithGoogle(),
-                              ),
+                        SocialButton(
+                          icon: Image.asset(
+                            AppImages.googleNeutral2x,
+                            width: SizeUtils.r(
+                              context,
+                              AppDimensions.socialIconSize,
                             ),
-                            SizedBox(
-                              width: SizeUtils.w(
-                                context,
-                                AppDimensions.socialButtonSpacing,
-                              ),
+                            height: SizeUtils.r(
+                              context,
+                              AppDimensions.socialIconSize,
                             ),
-                            Expanded(
-                              child: SocialButton(
-                                icon: Image.asset(
-                                  AppImages.facebookPrimary,
-                                  width: SizeUtils.r(
-                                    context,
-                                    AppDimensions.socialIconSize,
-                                  ),
-                                  height: SizeUtils.r(
-                                    context,
-                                    AppDimensions.socialIconSize,
-                                  ),
-                                ),
-                                color: AppColors.facebook,
-                                onPressed: () => controller.loginWithFacebook(),
-                              ),
-                            ),
-                          ],
+                          ),
+                          color: AppColors.google,
+                          onPressed: () => controller.loginWithGoogle(),
                         ),
                         SizedBox(
                           height: viewportHeight * AppDimensions.sectionSpacing,

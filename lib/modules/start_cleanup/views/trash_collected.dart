@@ -10,29 +10,33 @@ import 'package:ascoa_app/shared/constants/app_colors.dart';
 
 class TrashCollectedSection extends StatefulWidget {
   final CleanupFormController controller;
+  final bool isEditMode;
 
-  const TrashCollectedSection({super.key, required this.controller});
+  const TrashCollectedSection({
+    super.key,
+    required this.controller,
+    this.isEditMode = false,
+  });
 
   @override
   State<TrashCollectedSection> createState() => _TrashCollectedSectionState();
 }
 
 class _TrashCollectedSectionState extends State<TrashCollectedSection> {
-  String? _selectedEnvironment;
   String? _expandedCategory;
+
+  String? get _selectedEnvironment =>
+      widget.controller.selectedEnvironments.isNotEmpty
+          ? widget.controller.selectedEnvironments.first
+          : null;
 
   @override
   void initState() {
     super.initState();
-    // Sync environment selection from controller
-    if (widget.controller.selectedEnvironments.isNotEmpty) {
-      _selectedEnvironment = widget.controller.selectedEnvironments.first;
-    }
   }
 
   void _onEnvironmentChanged(String? environment) {
     Get.find<HapticController>().selectionClick();
-    setState(() => _selectedEnvironment = environment);
     widget.controller.selectedEnvironments.clear();
     if (environment != null) {
       widget.controller.selectedEnvironments.add(environment);
@@ -77,46 +81,35 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                 SizedBox(
                   height: SizeUtils.h(context, AppDimensions.cleanupSpacing4),
                 ),
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    unselectedWidgetColor:
-                        AppColors.textAccent, // 👈 unselected radio color
-                    radioTheme: RadioThemeData(
-                      fillColor: WidgetStateProperty.all(
-                        AppColors.textAccent,
-                      ), // selected color
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      ...AppStrings.environments.map((env) {
-                        // Use ListTile + Radio to avoid deprecated RadioListTile members.
-                        return ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          visualDensity: const VisualDensity(
-                            horizontal: -4.0,
-                            vertical: -4.0,
+                Column(
+                  children: [
+                    ...AppStrings.environments.map((env) {
+                      final isSelected = _selectedEnvironment == env;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: const VisualDensity(
+                          horizontal: -4.0,
+                          vertical: -4.0,
+                        ),
+                        leading: Icon(
+                          isSelected
+                              ? Icons.radio_button_checked
+                              : Icons.radio_button_unchecked,
+                          color: AppColors.textAccent,
+                        ),
+                        title: Text(
+                          env,
+                          style: AppTextStyles.trashCollectionEnvironment(
+                            context,
                           ),
-                          leading: Radio<String>(
-                            value: env,
-                            groupValue: _selectedEnvironment,
-                            onChanged: _onEnvironmentChanged,
-                            activeColor: AppColors.textAccent,
-                          ),
-                          title: Text(
-                            env,
-                            style: AppTextStyles.trashCollectionEnvironment(
-                              context,
-                            ),
-                          ),
-                          onTap: () {
-                            Get.find<HapticController>().selectionClick();
-                            _onEnvironmentChanged(env);
-                          },
-                        );
-                      }),
-                    ],
-                  ),
+                        ),
+                        onTap: () {
+                          Get.find<HapticController>().selectionClick();
+                          _onEnvironmentChanged(env);
+                        },
+                      );
+                    }),
+                  ],
                 ),
                 // Environment error message
                 if (widget.controller.environmentError != null)
@@ -638,33 +631,35 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                   ),
 
                 // Next Button
-                SizedBox(
-                  height: SizeUtils.h(context, AppDimensions.cleanupSpacing24),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: SizeUtils.h(context, AppDimensions.buttonHeight),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.find<HapticController>().medium();
-                      _handleNext(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonGreen,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          SizeUtils.r(context, AppDimensions.borderRadius),
+                if (!widget.isEditMode) ...[
+                  SizedBox(
+                    height: SizeUtils.h(context, AppDimensions.cleanupSpacing24),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: SizeUtils.h(context, AppDimensions.buttonHeight),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.find<HapticController>().medium();
+                        _handleNext(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.buttonGreen,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            SizeUtils.r(context, AppDimensions.borderRadius),
+                          ),
                         ),
                       ),
-                    ),
-                    child: Text(
-                      AppStrings.nextButton,
-                      style: AppTextStyles.saveCleanUpText(
-                        context,
-                      ).copyWith(color: AppColors.pureWhite),
+                      child: Text(
+                        AppStrings.nextButton,
+                        style: AppTextStyles.saveCleanUpText(
+                          context,
+                        ).copyWith(color: AppColors.pureWhite),
+                      ),
                     ),
                   ),
-                ),
+                ],
                 SizedBox(
                   height: SizeUtils.h(context, AppDimensions.cleanupSpacing12),
                 ),
