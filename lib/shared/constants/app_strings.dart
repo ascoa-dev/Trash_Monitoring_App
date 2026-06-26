@@ -286,7 +286,8 @@ class AppStrings {
 
   // Support Links Configuration
   static const String profileTermsUrl = "https://accounts.ascoa-cm.org/terms";
-  static const String profilePrivacyUrl = "https://accounts.ascoa-cm.org/privacy-policy";
+  static const String profilePrivacyUrl =
+      "https://accounts.ascoa-cm.org/privacy-policy";
   static const String profileContactEmail = "devteam@ascoa-cm.org";
 
   // Common short actions

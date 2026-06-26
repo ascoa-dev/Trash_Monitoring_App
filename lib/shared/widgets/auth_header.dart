@@ -30,7 +30,7 @@ class AuthHeader extends StatelessWidget {
     final double logoHeight = AppDimensions.authHeaderLogoHeight * scale;
 
     // ── Find the x-offset of the letter 'n' ──
-    final int nIndex = title.contains('n') ? title.indexOf('n') : 0;
+    final int nIndex = title.contains('M') ? title.indexOf('M') : 0;
 
     final boxes = textPainter.getBoxesForSelection(
       TextSelection(baseOffset: nIndex, extentOffset: nIndex + 1),
