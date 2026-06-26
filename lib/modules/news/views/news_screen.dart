@@ -1,40 +1,152 @@
-import 'package:ascoa_app/shared/constants/app_typography.dart';
 import 'package:flutter/material.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:ascoa_app/modules/home/widgets/home_news_card.dart';
+import 'package:ascoa_app/modules/news/controller/news_posts_controller.dart';
+import 'package:ascoa_app/shared/constants/app_dimensions.dart';
+import 'package:ascoa_app/shared/constants/app_images.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:ascoa_app/shared/services/snackbar_service.dart';
 import 'package:ascoa_app/shared/utils/size_utils.dart';
 
 class NewsScreen extends StatelessWidget {
   const NewsScreen({super.key});
 
+  Future<void> _openBlog() async {
+    Get.find<HapticController>().selectionClick();
+    final Uri url = Uri.parse(AppStrings.newslink);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      SnackbarService.warning(
+        AppStrings.newsTitle,
+        AppStrings.couldNotOpenNewsLink,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<NewsPostsController>(tag: 'news_posts');
+    final double padding = SizeUtils.w(context, AppDimensions.screenPadding);
+
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(SizeUtils.w(context, 16)),
-        child: Container(
-          color: AppColors.background,
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppStrings.newsTitle,
-                style: AppTextStyles.heading1(context),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                AppStrings.comingSoon,
-                style: AppTextStyles.label(context).copyWith(
-                  color: AppColors.black87,
-                  fontWeight: FontWeight.w500,
-                  fontSize: AppTypography.comingSoonFontSize,
+        padding: EdgeInsets.symmetric(horizontal: padding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: SizeUtils.h(context, AppDimensions.screenPadding)),
+            // Title + a link straight to the full blog page on the website.
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    AppStrings.newsTitle,
+                    style: AppTextStyles.dashboardHeading(context),
+                  ),
                 ),
-                textAlign: TextAlign.center,
+                GestureDetector(
+                  onTap: _openBlog,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        AppStrings.moreNews,
+                        style: AppTextStyles.newsCaption(context),
+                      ),
+                      SizedBox(width: SizeUtils.w(context, 4)),
+                      Icon(
+                        Icons.open_in_new,
+                        size: SizeUtils.r(context, 16),
+                        color: AppTextStyles.newsCaption(context).color,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: SizeUtils.h(
+                context,
+                AppDimensions.homeScreenNewsSectionSpacing,
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: Obx(() {
+                final posts = controller.posts;
+                final isLoading = controller.isLoading.value;
+                final hasError = controller.error.value != null;
+
+                if (isLoading && posts.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (hasError && posts.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          AppStrings.failedToLoadNews,
+                          style: AppTextStyles.newsBody(context),
+                        ),
+                        SizedBox(
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.homeScreenNewsErrorSpacing,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: controller.loadPosts,
+                          child: const Text(AppStrings.retry),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (posts.isEmpty) {
+                  return Center(
+                    child: Text(
+                      AppStrings.noNewsFound,
+                      style: AppTextStyles.newsBody(context),
+                    ),
+                  );
+                }
+
+                // ListView.builder + CachedNetworkImage (inside HomeNewsCard)
+                // build and fetch each card lazily as it scrolls into view.
+                return ListView.separated(
+                  padding: EdgeInsets.only(
+                    bottom: SizeUtils.h(context, AppDimensions.navBarHeight) * 2,
+                  ),
+                  itemCount: posts.length,
+                  separatorBuilder: (_, _) => SizedBox(
+                    height: SizeUtils.h(
+                      context,
+                      AppDimensions.homeScreenNewsCardSpacing,
+                    ),
+                  ),
+                  itemBuilder: (context, index) {
+                    final item = posts[index];
+                    final bool isAsset =
+                        item.imageUrl == null || item.imageUrl!.isEmpty;
+                    return HomeNewsCard(
+                      title: item.title,
+                      link: item.link,
+                      image: isAsset ? AppImages.placeholder : item.imageUrl!,
+                      isAssetImage: isAsset,
+                      width: double.infinity,
+                      squareImage: true,
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

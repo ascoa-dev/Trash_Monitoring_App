@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:ascoa_app/modules/home/views/home_screen.dart';
 import 'package:ascoa_app/modules/home/bindings/home_binding.dart';
 import 'package:ascoa_app/modules/news/views/news_screen.dart';
+import 'package:ascoa_app/modules/news/controller/news_posts_controller.dart';
+import 'package:ascoa_app/modules/main/controllers/main_nav_controller.dart';
 import 'package:ascoa_app/modules/profile/views/profile_screen.dart';
 import 'package:ascoa_app/modules/stats/views/stats_screen.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
@@ -19,7 +21,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
+  late final MainNavController _nav;
   // pages are built inside build() to avoid const evaluation / hot-reload
   // issues where some widgets might not be available at reload time.
 
@@ -29,33 +31,45 @@ class _MainScreenState extends State<MainScreen> {
 
     // Initialize home binding for lazy controller loading
     HomeBinding().dependencies();
+    _nav = Get.find<MainNavController>();
 
+    int initial = 0;
     final args = Get.arguments;
     if (args is Map) {
       final initialTab = args['initialTab'];
       if (initialTab is int) {
-        final safeIndex =
-            initialTab < 0 ? 0 : (initialTab > 4 ? 4 : initialTab);
-        _selectedIndex = safeIndex;
+        initial = initialTab < 0 ? 0 : (initialTab > 4 ? 4 : initialTab);
       } else if (initialTab is String) {
         switch (initialTab.toLowerCase()) {
           case 'profile':
-            _selectedIndex = 4;
+            initial = 4;
             break;
           case 'news':
-            _selectedIndex = 3;
+            initial = 3;
             break;
           case 'stats':
-            _selectedIndex = 1;
+            initial = 1;
             break;
           case 'home':
-            _selectedIndex = 0;
+            initial = 0;
             break;
         }
       }
     }
-    // Track initial screen view
-    _trackScreenView(_selectedIndex);
+    _nav.currentIndex.value = initial;
+    _onTabShown(initial);
+    // React to tab changes from anywhere (nav bar taps, "More News" link).
+    ever<int>(_nav.currentIndex, _onTabShown);
+  }
+
+  void _onTabShown(int index) {
+    _trackScreenView(index);
+    // News is lazy — fetch the feed only when the tab is actually shown.
+    if (index == 3) _loadNewsIfNeeded();
+  }
+
+  void _loadNewsIfNeeded() {
+    Get.find<NewsPostsController>(tag: 'news_posts').loadOnce();
   }
 
   void _trackScreenView(int index) {
@@ -84,39 +98,40 @@ class _MainScreenState extends State<MainScreen> {
       ProfileScreen(),
     ];
 
-    final int navIndex =
-        _selectedIndex >= 2 ? _selectedIndex - 1 : _selectedIndex;
-    final int safeIndex =
-        (navIndex >= 0 && navIndex < pages.length) ? navIndex : 0;
     return Scaffold(
       backgroundColor: AppColors.background,
       extendBody: true,
       body: SafeArea(
         top: false,
         bottom: false,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: IndexedStack(index: safeIndex, children: pages),
-            ),
-            Positioned(
-              left: AppDimensions.zero,
-              right: AppDimensions.zero,
-              bottom: AppDimensions.zero,
-              child: CustomNavBar(
-                currentIndex: _selectedIndex,
-                onTap: (index) {
-                  if (index == 2) {
-                    _openAddReport();
-                    return;
-                  }
-                  _trackScreenView(index);
-                  setState(() => _selectedIndex = index);
-                },
+        child: Obx(() {
+          final int selected = _nav.currentIndex.value;
+          final int navIndex = selected >= 2 ? selected - 1 : selected;
+          final int safeIndex =
+              (navIndex >= 0 && navIndex < pages.length) ? navIndex : 0;
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: IndexedStack(index: safeIndex, children: pages),
               ),
-            ),
-          ],
-        ),
+              Positioned(
+                left: AppDimensions.zero,
+                right: AppDimensions.zero,
+                bottom: AppDimensions.zero,
+                child: CustomNavBar(
+                  currentIndex: selected,
+                  onTap: (index) {
+                    if (index == 2) {
+                      _openAddReport();
+                      return;
+                    }
+                    _nav.goTo(index);
+                  },
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }

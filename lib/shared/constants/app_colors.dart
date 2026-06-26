@@ -140,6 +140,7 @@ class AppColors {
   static const Color loaderTrack = Color(0xFFB4D17B); // light green track
   static const Color loaderActive = Color(0xFF658638); // dark green active arc
   static const Color newsCardPlaceholder = Color(0xFFEFEFEF);
+  static const Color newsCardImageFill = Color(0xFFA7D79E); // news tab letterbox
 
   // Additional greys matching Flutter's material grey shades used across widgets
   static const Color grey300 = Color(0xFFE0E0E0);

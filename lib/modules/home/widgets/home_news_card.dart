@@ -14,12 +14,22 @@ class HomeNewsCard extends StatelessWidget {
     required this.link,
     required this.image,
     this.isAssetImage = true,
+    this.width,
+    this.squareImage = false,
   });
 
   final String title;
   final String link;
   final String image;
   final bool isAssetImage;
+
+  /// Card width. Null falls back to the fixed home-carousel width; pass
+  /// `double.infinity` for full-width stacked cards (news tab).
+  final double? width;
+
+  /// When true, the image area is a 1:1 box and the photo is shown in full
+  /// (BoxFit.contain) over the app background — nothing cropped (news tab).
+  final bool squareImage;
 
   static double estimatedHeight(BuildContext context) {
     final double imageHeight = SizeUtils.h(
@@ -46,10 +56,43 @@ class HomeNewsCard extends StatelessWidget {
     }
   }
 
+  /// Image area. News tab: shorter box, full photo (contain) on a green
+  /// letterbox fill. Home carousel: fixed-height cover crop (unchanged).
+  Widget _buildImage(BuildContext context, double imageHeight) {
+    final BoxFit fit = squareImage ? BoxFit.contain : BoxFit.cover;
+    final Widget photo =
+        isAssetImage
+            ? Image.asset(image, fit: fit)
+            : CachedNetworkImage(
+              imageUrl: image,
+              fit: fit,
+              placeholder:
+                  (c, s) => Container(color: AppColors.newsCardPlaceholder),
+              errorWidget:
+                  (c, s, e) => Container(
+                    color: AppColors.newsCardPlaceholder,
+                    child: const Icon(Icons.broken_image),
+                  ),
+            );
+
+    if (squareImage) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Container(
+          width: double.infinity,
+          color: const Color.fromARGB(255, 231, 250, 227),
+          child: photo,
+        ),
+      );
+    }
+    return SizedBox(height: imageHeight, width: double.infinity, child: photo);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double radius = SizeUtils.r(context, AppDimensions.newsCardRadius);
-    final double cardWidth = SizeUtils.w(context, AppDimensions.newsCardWidth);
+    final double cardWidth =
+        width ?? SizeUtils.w(context, AppDimensions.newsCardWidth);
     final double imageHeight = SizeUtils.h(
       context,
       AppDimensions.newsCardImageHeight,
@@ -73,32 +116,8 @@ class HomeNewsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(radius),
-                    topRight: Radius.circular(radius),
-                    bottomLeft: Radius.circular(radius),
-                    bottomRight: Radius.circular(radius),
-                  ),
-                  child: SizedBox(
-                    height: imageHeight,
-                    width: double.infinity,
-                    child:
-                        isAssetImage
-                            ? Image.asset(image, fit: BoxFit.cover)
-                            : CachedNetworkImage(
-                              imageUrl: image,
-                              fit: BoxFit.cover,
-                              placeholder:
-                                  (c, s) => Container(
-                                    color: AppColors.newsCardPlaceholder,
-                                  ),
-                              errorWidget:
-                                  (c, s, e) => Container(
-                                    color: AppColors.newsCardPlaceholder,
-                                    child: const Icon(Icons.broken_image),
-                                  ),
-                            ),
-                  ),
+                  borderRadius: BorderRadius.circular(radius),
+                  child: _buildImage(context, imageHeight),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(

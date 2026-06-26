@@ -17,10 +17,10 @@ import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/modules/home/widgets/home_news_card.dart';
 import 'package:ascoa_app/modules/home/widgets/news_skeleton_card.dart';
 import 'package:ascoa_app/modules/home/controller/posts_controller.dart';
+import 'package:ascoa_app/modules/main/controllers/main_nav_controller.dart';
 import 'package:ascoa_app/shared/services/spotlight_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ascoa_app/modules/profile/widgets/full_image_overlay.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -52,8 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // Get controller from binding (lazily initialized)
     _postsController = Get.find<HomePostsController>(tag: 'home_posts');
 
-    // Load posts once on init
-    _postsController.loadPosts(perPage: 10);
+    // Load posts once on init — home shows only the latest few.
+    _postsController.loadPosts(perPage: 4);
     _statsController = Get.find<StatsController>(tag: 'stats_controller');
 
     _loadSpotlightImages();
@@ -551,17 +551,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             GestureDetector(
-              onTap: () async {
+              onTap: () {
                 Get.find<HapticController>().selectionClick();
-                final Uri url = Uri.parse(AppStrings.newslink);
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  SnackbarService.warning(
-                    AppStrings.news,
-                    AppStrings.couldNotOpenNewsLink,
-                  );
-                }
+                // Switch to the in-app News tab (shows the full feed).
+                Get.find<MainNavController>().goTo(3);
               },
               child: Text(
                 AppStrings.moreNews,
@@ -622,7 +615,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => _postsController.loadPosts(perPage: 10),
+                      onPressed: () => _postsController.loadPosts(perPage: 4),
                       child: const Text(AppStrings.retry),
                     ),
                   ],
@@ -647,7 +640,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 scrollDirection: Axis.horizontal,
                 physics: const ClampingScrollPhysics(),
                 padding: EdgeInsets.zero,
-                itemCount: posts.length,
+                // Home shows only the latest few; full feed lives in News tab.
+                itemCount: posts.length > 4 ? 4 : posts.length,
                 separatorBuilder:
                     (_, _) => SizedBox(
                       width: SizeUtils.w(
@@ -850,14 +844,12 @@ class _HighlightCard extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Image.asset(
-                AppImages.placeholder,
-                fit: BoxFit.cover,
-              ),
-              errorWidget: (context, url, error) => Image.asset(
-                AppImages.placeholder,
-                fit: BoxFit.cover,
-              ),
+              placeholder:
+                  (context, url) =>
+                      Image.asset(AppImages.placeholder, fit: BoxFit.cover),
+              errorWidget:
+                  (context, url, error) =>
+                      Image.asset(AppImages.placeholder, fit: BoxFit.cover),
             ),
           ),
         ),

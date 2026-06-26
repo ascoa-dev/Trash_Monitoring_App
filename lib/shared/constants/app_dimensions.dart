@@ -74,7 +74,7 @@ class AppDimensions {
   static const double cleanupCategoryCounterWidth = 34.0;
   static const double cleanupCategorySpacing = 6.0;
   // Home News Card dimensions
-  static const double newsCardImageHeight = 128.0;
+  static const double newsCardImageHeight = 180.0;
   static const double newsCardTextSectionHeight = 78.0;
   static const double newsCardRadius = 30.0;
   static const double newsCardWidth = 324.0;
