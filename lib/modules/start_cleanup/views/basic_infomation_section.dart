@@ -15,7 +15,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
@@ -181,24 +180,40 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
           '[BasicInfo] _autoFetchLocation: checking if location is in Cameroon...',
         );
 
-        // Check if location is in Cameroon (rough bounds check)
-        final isInCameroon = await _isInCameroon(userLocation);
-        debugPrint(
-          '[BasicInfo] _autoFetchLocation: isInCameroon=$isInCameroon',
-        );
+        final connectivity = Get.find<ConnectivityController>();
 
-        if (!isInCameroon) {
-          if (mounted) {
-            // Set field error - will trigger FloatingLabelInputField to display error
+        if (!connectivity.isOnline.value) {
+          // Offline: validate with the bounding box, no address available.
+          if (!_isInCameroonBbox(userLocation)) {
             widget.controller.locationError =
                 AppStrings.locationOutsideCameroon;
-            debugPrint(
-              '[BasicInfo] _autoFetchLocation: locationError set -> ${widget.controller.locationError}',
-            );
-            debugPrint(
-              '[BasicInfo] _autoFetchLocation: aborting due to location outside Cameroon',
-            );
+            return;
           }
+          _updateMapLocation(userLocation);
+          widget.controller.clearFieldError('location');
+          return;
+        }
+
+        // Online: single Google reverse-geocode validates the country and
+        // supplies the address. Fail-closed: only accept when Google confirms.
+        final geo = await GooglePlacesService.reverseGeocode(
+          position.latitude,
+          position.longitude,
+        );
+        if (!mounted) return;
+
+        // Could not verify (service error) — leave silently for the auto-fetch
+        // path; the user can still set a location manually.
+        if (geo == null) {
+          debugPrint('[BasicInfo] _autoFetchLocation: geocode unavailable');
+          return;
+        }
+
+        if (!geo.isCameroon) {
+          widget.controller.locationError = AppStrings.locationOutsideCameroon;
+          debugPrint(
+            '[BasicInfo] _autoFetchLocation: outside Cameroon (country=${geo.countryCode})',
+          );
           return;
         }
 
@@ -207,42 +222,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
         );
         _updateMapLocation(userLocation);
 
-        // Reverse geocode to get address
-        try {
-          final placemarks = await placemarkFromCoordinates(
-            position.latitude,
-            position.longitude,
-          );
-          if (placemarks.isNotEmpty && mounted) {
-            final place = placemarks.first;
-            // Only accept if in Cameroon
-            if (place.isoCountryCode != 'CM') {
-              // Set field error instead of showing snackbar
-              widget.controller.locationError = AppStrings.cameroonOnlyLocation;
-              debugPrint(
-                '[BasicInfo] _autoFetchLocation: country code=${place.isoCountryCode}, not CM',
-              );
-              debugPrint(
-                '[BasicInfo] _autoFetchLocation: locationError set -> ${widget.controller.locationError}',
-              );
-              return;
-            }
-
-            final address =
-                '${place.street ?? ''}, ${place.locality ?? ''}, ${place.country ?? ''}'
-                    .replaceAll(RegExp(r'^,\s*'), '')
-                    .replaceAll(RegExp(r',\s*,'), ',');
-            _isUpdatingFromMap = true;
-            locationController.text = address.trim();
-            _isUpdatingFromMap = false;
-            widget.controller.clearFieldError('location');
-            debugPrint(
-              '[BasicInfo] _autoFetchLocation: cleared location error after reverse geocode',
-            );
-          }
-        } catch (e) {
-          debugPrint('Error reverse geocoding: $e');
-        }
+        _isUpdatingFromMap = true;
+        locationController.text = geo.formattedAddress;
+        _isUpdatingFromMap = false;
+        widget.controller.clearFieldError('location');
       }
     } catch (e) {
       debugPrint('Error auto-fetching location: $e');
@@ -250,34 +233,36 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     }
   }
 
-  /// Check if coordinates are within Cameroon bounds
-  Future<bool> _isInCameroon(LatLng location) async {
-    final connectivity = Get.find<ConnectivityController>();
-    final isOnline = connectivity.isOnline.value;
-
-    if (!isOnline) {
-      debugPrint('[GeoFence] Offline - using bounding box check only');
-      return location.latitude >= 1.72767263428 &&
-          location.latitude <= 12.8593962671 &&
-          location.longitude >= 8.48881554529 &&
-          location.longitude <= 16.0128524106;
-    }
-
-    return isInCameroonByGeocoding(location);
+  /// Rough Cameroon bounding box — used ONLY as the offline fallback, when the
+  /// Google Geocoding API is unreachable.
+  bool _isInCameroonBbox(LatLng location) {
+    return location.latitude >= 1.72767263428 &&
+        location.latitude <= 12.8593962671 &&
+        location.longitude >= 8.48881554529 &&
+        location.longitude <= 16.0128524106;
   }
 
-  Future<bool> isInCameroonByGeocoding(LatLng location) async {
-    try {
-      final placemarks = await placemarkFromCoordinates(
-        location.latitude,
-        location.longitude,
-      );
-      if (placemarks.isEmpty) return false;
-      return placemarks.first.isoCountryCode == 'CM';
-    } catch (e) {
-      debugPrint('[GeoFence] Reverse geocoding failed: $e');
+  /// Validate that coordinates fall inside Cameroon.
+  ///
+  /// Online: Google Geocoding is the source of truth (fail-closed — a non-CM
+  /// result or an unreachable service is rejected). Offline: fall back to the
+  /// bounding box, the only check available without network.
+  Future<bool> _isInCameroon(LatLng location) async {
+    final connectivity = Get.find<ConnectivityController>();
+    if (!connectivity.isOnline.value) {
+      debugPrint('[GeoFence] Offline - using bounding box fallback');
+      return _isInCameroonBbox(location);
+    }
+
+    final result = await GooglePlacesService.reverseGeocode(
+      location.latitude,
+      location.longitude,
+    );
+    if (result == null) {
+      debugPrint('[GeoFence] Reverse geocode unavailable - rejecting location');
       return false;
     }
+    return result.isCameroon;
   }
 
   void _syncPeopleCount() {
@@ -420,21 +405,50 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
         '[BasicInfo] _getLocation: checking if location is in Cameroon...',
       );
 
-      // Check if location is in Cameroon
-      final isInCameroon = await _isInCameroon(userLocation);
-      debugPrint('[BasicInfo] _getLocation: isInCameroon=$isInCameroon');
+      final connectivity = Get.find<ConnectivityController>();
 
-      if (!isInCameroon) {
+      if (!connectivity.isOnline.value) {
+        // Offline: validate with the bounding box; no address available.
         if (!mounted) return;
-        // Hide loading snackbar
+        if (!_isInCameroonBbox(userLocation)) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          widget.controller.locationError = AppStrings.locationOutsideCameroon;
+          return;
+        }
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        // Set field error instead of showing snackbar
+        _updateMapLocation(userLocation);
+        widget.controller.clearFieldError('location');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.locationSetSuccessfully),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+
+      // Online: single Google reverse-geocode validates the country and
+      // supplies the address. Fail-closed: only accept when Google confirms.
+      final geo = await GooglePlacesService.reverseGeocode(
+        position.latitude,
+        position.longitude,
+      );
+      if (!mounted) return;
+
+      if (geo == null) {
+        // Could not verify against Google — reject rather than guess.
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        widget.controller.locationError = AppStrings.locationFetchFailed;
+        debugPrint('[BasicInfo] _getLocation: geocode unavailable');
+        return;
+      }
+
+      if (!geo.isCameroon) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         widget.controller.locationError = AppStrings.locationOutsideCameroon;
         debugPrint(
-          '[BasicInfo] _getLocation: locationError set -> ${widget.controller.locationError}',
-        );
-        debugPrint(
-          '[BasicInfo] _getLocation: aborting due to location outside Cameroon',
+          '[BasicInfo] _getLocation: outside Cameroon (country=${geo.countryCode})',
         );
         return;
       }
@@ -442,39 +456,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
       debugPrint('[BasicInfo] _getLocation: location valid, updating map');
       _updateMapLocation(userLocation);
 
-      // Reverse geocode to get address
-      try {
-        final placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-        if (placemarks.isNotEmpty && mounted) {
-          final place = placemarks.first;
-
-          // Verify country is Cameroon
-          if (place.isoCountryCode != 'CM') {
-            // Hide loading snackbar
-            if (mounted) {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            }
-            // Set field error instead of showing snackbar
-            widget.controller.locationError = AppStrings.cameroonOnlyLocation;
-            return;
-          }
-
-          final address =
-              '${place.street ?? ''}, ${place.locality ?? ''}, ${place.country ?? ''}'
-                  .replaceAll(RegExp(r'^,\s*'), '')
-                  .replaceAll(RegExp(r',\s*,'), ',');
-          _isUpdatingFromMap = true;
-          locationController.text = address.trim();
-          _isUpdatingFromMap = false;
-          widget.controller.clearFieldError('location');
-          debugPrint('[BasicInfo] reverse geocode: cleared location error');
-        }
-      } catch (e) {
-        debugPrint('Error reverse geocoding: $e');
-      }
+      _isUpdatingFromMap = true;
+      locationController.text = geo.formattedAddress;
+      _isUpdatingFromMap = false;
+      widget.controller.clearFieldError('location');
 
       // Hide loading snackbar and show success
       if (mounted) {
@@ -553,62 +538,68 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
 
     widget.controller.locationLatitude = currentPosition!.latitude;
     widget.controller.locationLongitude = currentPosition!.longitude;
-    // Check if dragged location is in Cameroon
-    if (!await _isInCameroon(currentPosition!)) {
-      // Set field error instead of showing snackbar
-      widget.controller.locationError = AppStrings.selectLocationInCameroon;
-      // Reset to center of Cameroon
-      setState(() {
-        currentPosition = const LatLng(3.8480, 11.5021);
-        markers = {
-          Marker(
-            markerId: const MarkerId('selected'),
-            position: const LatLng(3.8480, 11.5021),
-          ),
-        };
-      });
-      mapController?.animateCamera(
-        CameraUpdate.newLatLng(const LatLng(3.8480, 11.5021)),
-      );
-      return;
-    }
 
-    // Debounce to avoid excessive API calls
+    // Debounce so validation runs once after the user stops moving the map.
     _debounceTimer?.cancel();
     _debounceTimer = Timer(
       Duration(milliseconds: AppDimensions.placeSearchDebounceMs),
       () async {
-        if (currentPosition == null) return;
+        final pos = currentPosition;
+        if (pos == null) return;
 
-        try {
-          final placemarks = await placemarkFromCoordinates(
-            currentPosition!.latitude,
-            currentPosition!.longitude,
+        void resetToCentre() {
+          setState(() {
+            currentPosition = const LatLng(3.8480, 11.5021);
+            markers = {
+              Marker(
+                markerId: const MarkerId('selected'),
+                position: const LatLng(3.8480, 11.5021),
+              ),
+            };
+          });
+          mapController?.animateCamera(
+            CameraUpdate.newLatLng(const LatLng(3.8480, 11.5021)),
           );
-
-          if (placemarks.isNotEmpty && mounted) {
-            final place = placemarks.first;
-
-            // Double-check country code
-            if (place.isoCountryCode != null && place.isoCountryCode != 'CM') {
-              // Set field error instead of showing snackbar
-              widget.controller.locationError = AppStrings.cameroonOnlyLocation;
-              return;
-            }
-
-            final address =
-                '${place.street ?? ''}, ${place.locality ?? ''}, ${place.country ?? ''}'
-                    .replaceAll(RegExp(r'^,\s*'), '') // Remove leading comma
-                    .replaceAll(RegExp(r',\s*,'), ','); // Remove double commas
-
-            _isUpdatingFromMap = true;
-            locationController.text = address.trim();
-            _isUpdatingFromMap = false;
-            widget.controller.clearFieldError('location');
-          }
-        } catch (e) {
-          debugPrint('Error reverse geocoding: $e');
         }
+
+        final connectivity = Get.find<ConnectivityController>();
+
+        if (!connectivity.isOnline.value) {
+          // Offline: bounding-box check only, no address available.
+          if (!mounted) return;
+          if (!_isInCameroonBbox(pos)) {
+            widget.controller.locationError =
+                AppStrings.selectLocationInCameroon;
+            resetToCentre();
+            return;
+          }
+          widget.controller.clearFieldError('location');
+          return;
+        }
+
+        // Online: single Google reverse-geocode validates + supplies address.
+        final geo = await GooglePlacesService.reverseGeocode(
+          pos.latitude,
+          pos.longitude,
+        );
+        if (!mounted) return;
+
+        // Service error — flag it, leave the pin where it is.
+        if (geo == null) {
+          widget.controller.locationError = AppStrings.selectLocationInCameroon;
+          return;
+        }
+
+        if (!geo.isCameroon) {
+          widget.controller.locationError = AppStrings.selectLocationInCameroon;
+          resetToCentre();
+          return;
+        }
+
+        _isUpdatingFromMap = true;
+        locationController.text = geo.formattedAddress;
+        _isUpdatingFromMap = false;
+        widget.controller.clearFieldError('location');
       },
     );
   }

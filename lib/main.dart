@@ -33,6 +33,7 @@ import 'modules/auth/views/forgot_password_screen.dart';
 import 'modules/auth/views/reset_password_screen.dart';
 import 'modules/auth/views/complete_profile_screen.dart';
 import 'modules/auth/views/email_verification_screen.dart';
+import 'modules/admin/views/admin_management_screen.dart';
 import 'modules/profile/views/edit_profile_screen.dart';
 import 'modules/profile/bindings/edit_profile_binding.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
@@ -251,6 +252,10 @@ class MyApp extends StatelessWidget {
               name: AppRoutes.pendingHotspots,
               page: () => const PendingHotspotsScreen(),
               bindings: [PendingHotspotsBinding()],
+            ),
+            GetPage(
+              name: AppRoutes.adminManagement,
+              page: () => const AdminManagementScreen(),
             ),
             // Add more GetPages for other routes
           ],

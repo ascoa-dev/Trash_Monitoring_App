@@ -15,5 +15,6 @@ abstract class AppRoutes {
   static const editCleanupTrash = '/edit-cleanup-trash';
   static const reportHotspot = '/report-hotspot';
   static const pendingHotspots = '/pending-hotspots';
+  static const adminManagement = '/admin-management';
   // Add more routes as needed
 }

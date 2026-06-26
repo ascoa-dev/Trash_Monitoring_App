@@ -50,6 +50,52 @@ class GooglePlacesService {
     return [];
   }
 
+  /// Reverse-geocode coordinates via the Google Geocoding API.
+  ///
+  /// Returns the country ISO code and a formatted address. Returns `null` on a
+  /// network or service error so callers can fail closed (treat the point as
+  /// unverified rather than silently accepting it).
+  static Future<GeocodeResult?> reverseGeocode(double lat, double lng) async {
+    try {
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json'
+        '?latlng=$lat,$lng&key=$_apiKey',
+      );
+
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK') {
+          final results = data['results'] as List;
+          if (results.isEmpty) return null;
+
+          String? countryCode;
+          for (final result in results) {
+            for (final component in (result['address_components'] as List)) {
+              final types = (component['types'] as List).cast<String>();
+              if (types.contains('country')) {
+                countryCode = component['short_name'] as String?;
+                break;
+              }
+            }
+            if (countryCode != null) break;
+          }
+
+          return GeocodeResult(
+            countryCode: countryCode,
+            formattedAddress: results.first['formatted_address'] as String? ?? '',
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error reverse geocoding: $e');
+    }
+
+    return null;
+  }
+
   /// Get detailed information about a place using place_id
   /// Returns coordinates (LatLng) and formatted address
   static Future<PlaceDetails?> getPlaceDetails(String placeId) async {
@@ -106,6 +152,17 @@ class PlaceSuggestion {
       secondaryText: structuredFormatting['secondary_text'] ?? '',
     );
   }
+}
+
+/// Result of a reverse-geocode lookup.
+class GeocodeResult {
+  /// ISO 3166-1 alpha-2 country code (e.g. `CM`), or null if not resolved.
+  final String? countryCode;
+  final String formattedAddress;
+
+  GeocodeResult({required this.countryCode, required this.formattedAddress});
+
+  bool get isCameroon => countryCode == 'CM';
 }
 
 /// Model for detailed place information

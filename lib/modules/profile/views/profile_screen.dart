@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ascoa_app/app/controllers/auth_controller.dart';
 import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ascoa_app/shared/constants/app_colors.dart';
 import 'package:ascoa_app/shared/constants/app_strings.dart';
 import 'package:ascoa_app/shared/constants/app_images.dart';
@@ -340,6 +342,37 @@ class ProfileScreen extends StatelessWidget {
                               onTap:
                                   () => Get.toNamed(AppRoutes.pendingHotspots),
                             ),
+                            FutureBuilder<bool>(
+                              future: _isCurrentUserAdmin(),
+                              builder: (context, snapshot) {
+                                if (snapshot.data != true) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      height: math.min(
+                                        SizeUtils.h(
+                                          context,
+                                          AppDimensions.profileCardSpacing,
+                                        ),
+                                        AppDimensions.profileCardSpacing,
+                                      ),
+                                    ),
+                                    ProfileActionTile(
+                                      icon: Icons.admin_panel_settings_outlined,
+                                      title: 'Admin Management',
+                                      subtitle:
+                                          'Add, search, and remove admins',
+                                      onTap:
+                                          () => Get.toNamed(
+                                            AppRoutes.adminManagement,
+                                          ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                             SizedBox(
                               height: math.min(
                                 SizeUtils.h(
@@ -391,7 +424,11 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               title: AppStrings.profilePolicyTitle,
                               subtitle: AppStrings.profilePolicySubtitle,
-                              onTap: () => _launchURL(context, AppStrings.profileTermsUrl),
+                              onTap:
+                                  () => _launchURL(
+                                    context,
+                                    AppStrings.profileTermsUrl,
+                                  ),
                             ),
                             SizedBox(
                               height: math.min(
@@ -417,7 +454,11 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               title: AppStrings.profileFaqTitle,
                               subtitle: AppStrings.profileFaqSubtitle,
-                              onTap: () => _launchURL(context, AppStrings.profilePrivacyUrl),
+                              onTap:
+                                  () => _launchURL(
+                                    context,
+                                    AppStrings.profilePrivacyUrl,
+                                  ),
                             ),
                             SizedBox(
                               height: math.min(
@@ -443,7 +484,11 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               title: AppStrings.profileContactTitle,
                               subtitle: AppStrings.profileContactSubtitle,
-                              onTap: () => _launchURL(context, 'mailto:${AppStrings.profileContactEmail}'),
+                              onTap:
+                                  () => _launchURL(
+                                    context,
+                                    'mailto:${AppStrings.profileContactEmail}',
+                                  ),
                             ),
                             SizedBox(
                               height: math.min(
@@ -480,6 +525,17 @@ class ProfileScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<bool> _isCurrentUserAdmin() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('admins')
+            .doc(user.uid)
+            .get();
+    return doc.exists;
   }
 
   static String _normalizeCacheBustedUrl(String url) {
@@ -537,7 +593,10 @@ class ProfileScreen extends StatelessWidget {
   Future<void> _launchURL(BuildContext context, String urlString) async {
     final Uri url = Uri.parse(urlString);
     try {
-      final success = await launchUrl(url, mode: LaunchMode.externalApplication);
+      final success = await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
       if (!context.mounted) return;
       if (!success) {
         _showErrorDialog(context, 'Could not open link.');

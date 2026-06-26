@@ -17,6 +17,7 @@ import 'package:ascoa_app/app/routes/app_routes.dart';
 import 'package:ascoa_app/modules/home/widgets/home_news_card.dart';
 import 'package:ascoa_app/modules/home/widgets/news_skeleton_card.dart';
 import 'package:ascoa_app/modules/home/controller/posts_controller.dart';
+import 'package:ascoa_app/shared/services/spotlight_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ascoa_app/modules/profile/widgets/full_image_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,11 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
   late final AuthController _authController;
   late final PageController _highlightController;
 
-  static const List<_HighlightItem> _highlightItems = [
-    _HighlightItem(imageAsset: AppImages.placeholder),
-    _HighlightItem(imageAsset: AppImages.placeholder),
-    _HighlightItem(imageAsset: AppImages.placeholder),
-  ];
+  // Spotlight images loaded from the Firebase Storage `spotlight/` folder
+  // (managed by admins on the website). Empty until loaded; if it stays empty
+  // the highlights section is not rendered.
+  List<String> _spotlightUrls = [];
 
   late final HomePostsController _postsController;
   late final StatsController _statsController;
@@ -55,6 +55,14 @@ class _HomeScreenState extends State<HomeScreen> {
     // Load posts once on init
     _postsController.loadPosts(perPage: 10);
     _statsController = Get.find<StatsController>(tag: 'stats_controller');
+
+    _loadSpotlightImages();
+  }
+
+  Future<void> _loadSpotlightImages() async {
+    final urls = await SpotlightService.fetchImageUrls();
+    if (!mounted) return;
+    setState(() => _spotlightUrls = urls);
   }
 
   @override
@@ -118,13 +126,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           AppDimensions.homeScreenStatsGap,
                         ),
                       ),
-                      _buildHighlightsSection(context),
-                      SizedBox(
-                        height: SizeUtils.h(
-                          context,
-                          AppDimensions.homeScreenCarouselGap,
+                      // Highlights section only renders when the spotlight
+                      // folder has images.
+                      if (_spotlightUrls.isNotEmpty) ...[
+                        _buildHighlightsSection(context),
+                        SizedBox(
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.homeScreenCarouselGap,
+                          ),
                         ),
-                      ),
+                      ],
                       _buildNewsSection(context),
                       SizedBox(
                         height: SizeUtils.h(
@@ -513,13 +525,10 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: _highlightController,
             padEnds: false,
             physics: const ClampingScrollPhysics(),
-            itemCount: _highlightItems.length,
-            onPageChanged: (index) {
-              if (!mounted) return;
-            },
+            // PageView.builder + CachedNetworkImage load each page lazily.
+            itemCount: _spotlightUrls.length,
             itemBuilder: (context, index) {
-              final item = _highlightItems[index];
-              return _HighlightCard(item: item);
+              return _HighlightCard(imageUrl: _spotlightUrls[index]);
             },
           ),
         ),
@@ -797,9 +806,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _HighlightCard extends StatelessWidget {
-  const _HighlightCard({required this.item});
+  const _HighlightCard({required this.imageUrl});
 
-  final _HighlightItem item;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -827,23 +836,32 @@ class _HighlightCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Get.find<HapticController>().selectionClick();
-          debugPrint('Highlight tapped');
+          FullImageOverlay.show(
+            context,
+            imageUrl: imageUrl,
+            placeholderAsset: AppImages.placeholder,
+          );
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(radius),
           child: SizedBox(
             width: width,
             height: height,
-            child: Image.asset(item.imageAsset, fit: BoxFit.cover),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Image.asset(
+                AppImages.placeholder,
+                fit: BoxFit.cover,
+              ),
+              errorWidget: (context, url, error) => Image.asset(
+                AppImages.placeholder,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
-}
-
-class _HighlightItem {
-  const _HighlightItem({required this.imageAsset});
-
-  final String imageAsset;
 }
