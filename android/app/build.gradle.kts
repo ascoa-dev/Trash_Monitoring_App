@@ -17,6 +17,13 @@ val keystoreProperties = Properties().apply {
     }
 }
 
+fun secretOrProperty(propertyName: String, envName: String): String? {
+    return keystoreProperties.getProperty(propertyName)
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+        ?: System.getenv(envName)?.trim()?.takeIf { it.isNotEmpty() }
+}
+
 android {
     namespace = "com.ascoa.wemonitor"
     compileSdk = flutter.compileSdkVersion
@@ -44,10 +51,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("key.jks")
-            storePassword = keystoreProperties.getProperty("storePassword")?.trim()
-            keyAlias = keystoreProperties.getProperty("keyAlias")?.trim()
-            keyPassword = keystoreProperties.getProperty("keyPassword")?.trim()
+            storeFile = file(secretOrProperty("storeFile", "KEYSTORE_FILE") ?: "key.jks")
+            storePassword = secretOrProperty("storePassword", "KEYSTORE_PASSWORD")
+            keyAlias = secretOrProperty("keyAlias", "KEY_ALIAS")
+            keyPassword = secretOrProperty("keyPassword", "KEY_PASSWORD")
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
