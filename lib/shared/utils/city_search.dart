@@ -1,6 +1,6 @@
 import 'package:fuzzy/fuzzy.dart';
-import 'package:ascoa_app/app/models/city_model.dart';
-import 'package:ascoa_app/app/models/cities_config.dart';
+import 'package:we_monitor/app/models/city_model.dart';
+import 'package:we_monitor/app/models/cities_config.dart';
 
 /// City search utility with fuzzy matching support
 class CitySearch {

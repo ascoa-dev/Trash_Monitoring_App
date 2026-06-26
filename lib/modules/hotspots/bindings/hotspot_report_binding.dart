@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/hotspots/controllers/hotspot_report_controller.dart';
+import 'package:we_monitor/modules/hotspots/controllers/hotspot_report_controller.dart';
 
 class HotspotReportBinding extends Bindings {
   @override

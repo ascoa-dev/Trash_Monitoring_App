@@ -6,16 +6,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
-import 'package:ascoa_app/app/controllers/haptic_controller.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
-import 'package:ascoa_app/modules/auth/views/forgot_password_screen.dart';
-import 'package:ascoa_app/shared/controllers/form_controllers.dart';
-import 'package:ascoa_app/shared/controllers/validation_controller.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
-import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
-import 'package:ascoa_app/shared/widgets/primary_button.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
+import 'package:we_monitor/app/controllers/haptic_controller.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/modules/auth/views/forgot_password_screen.dart';
+import 'package:we_monitor/shared/controllers/form_controllers.dart';
+import 'package:we_monitor/shared/controllers/validation_controller.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
+import 'package:we_monitor/shared/widgets/floating_label_input_field.dart';
+import 'package:we_monitor/shared/widgets/primary_button.dart';
 
 class _TestAssetBundle extends CachingAssetBundle {
   final ByteData imageBytes;

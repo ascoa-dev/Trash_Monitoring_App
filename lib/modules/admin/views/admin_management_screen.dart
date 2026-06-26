@@ -1,6 +1,6 @@
-import 'package:ascoa_app/modules/admin/controllers/admin_controller.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/modules/admin/controllers/admin_controller.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

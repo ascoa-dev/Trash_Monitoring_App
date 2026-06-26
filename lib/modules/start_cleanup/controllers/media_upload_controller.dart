@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 /// Configuration for maximum number of photos allowed
 class MediaUploadConfig {

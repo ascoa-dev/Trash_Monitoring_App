@@ -1,8 +1,8 @@
-import 'package:ascoa_app/modules/stats/controllers/stats_controller.dart';
+import 'package:we_monitor/modules/stats/controllers/stats_controller.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/home/controller/posts_controller.dart';
-import 'package:ascoa_app/modules/news/controller/news_posts_controller.dart';
-import 'package:ascoa_app/modules/main/controllers/main_nav_controller.dart';
+import 'package:we_monitor/modules/home/controller/posts_controller.dart';
+import 'package:we_monitor/modules/news/controller/news_posts_controller.dart';
+import 'package:we_monitor/modules/main/controllers/main_nav_controller.dart';
 
 class HomeBinding extends Bindings {
   @override

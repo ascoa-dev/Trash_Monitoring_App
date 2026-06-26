@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/models/cleanup_model.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
-import 'package:ascoa_app/modules/my_cleanups/controllers/my_cleanups_controller.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
-import 'package:ascoa_app/shared/widgets/custom_date_picker.dart';
-import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
+import 'package:we_monitor/app/models/cleanup_model.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/modules/my_cleanups/controllers/my_cleanups_controller.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/widgets/custom_date_picker.dart';
+import 'package:we_monitor/shared/widgets/floating_label_input_field.dart';
 
 class MyCleanupsScreen extends StatefulWidget {
   const MyCleanupsScreen({super.key});

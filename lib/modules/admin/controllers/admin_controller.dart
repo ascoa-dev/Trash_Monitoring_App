@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ascoa_app/app/models/user.dart';
+import 'package:we_monitor/app/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:ascoa_app/app/controllers/haptic_controller.dart';
-import 'package:ascoa_app/modules/home/widgets/home_news_card.dart';
-import 'package:ascoa_app/modules/news/controller/news_posts_controller.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_images.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:we_monitor/app/controllers/haptic_controller.dart';
+import 'package:we_monitor/modules/home/widgets/home_news_card.dart';
+import 'package:we_monitor/modules/news/controller/news_posts_controller.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
 
 class NewsScreen extends StatelessWidget {
   const NewsScreen({super.key});

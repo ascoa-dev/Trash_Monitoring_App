@@ -1,17 +1,17 @@
 import 'dart:io';
-import 'package:ascoa_app/app/controllers/haptic_controller.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:we_monitor/app/controllers/haptic_controller.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/start_cleanup/controllers/media_upload_controller.dart';
-import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
-import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
-import 'package:ascoa_app/shared/widgets/circular_upload_progress.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_form_controller.dart';
+import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/widgets/circular_upload_progress.dart';
 
 class PhotosSection extends StatefulWidget {
   final CleanupFormController formController;

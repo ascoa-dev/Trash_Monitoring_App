@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/pending_cleanups_controller.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/widgets/primary_button.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
-import 'package:ascoa_app/shared/constants/app_typography.dart';
+import 'package:we_monitor/app/controllers/pending_cleanups_controller.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/widgets/primary_button.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/constants/app_typography.dart';
 
 class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
   const PendingCleanupsScreen({super.key});

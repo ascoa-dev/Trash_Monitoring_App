@@ -372,7 +372,7 @@ class AppStrings {
   static const String passwordRuleSpecial = 'Special character (@, !, %, etc.)';
 
   // Auth header texts
-  static const String authHeaderTitle = 'Clean Earth';
+  static const String authHeaderTitle = 'We Monitor';
   static const String authHeaderBy = 'by';
 
   // Dashboard Texts

@@ -1,21 +1,21 @@
 import 'dart:async';
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
-import 'package:ascoa_app/app/controllers/haptic_controller.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
-import 'package:ascoa_app/shared/controllers/form_controllers.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/constants/app_images.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
-import 'package:ascoa_app/shared/widgets/primary_button.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
+import 'package:we_monitor/app/controllers/haptic_controller.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/shared/controllers/form_controllers.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/widgets/primary_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/shared/widgets/circular_loader.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/widgets/circular_loader.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});

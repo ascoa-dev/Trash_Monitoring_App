@@ -4,10 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ascoa_app/app/models/pending_cleanup_model.dart';
-import 'package:ascoa_app/app/models/cleanup_model.dart';
-import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
+import 'package:we_monitor/app/models/pending_cleanup_model.dart';
+import 'package:we_monitor/app/models/cleanup_model.dart';
+import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
 
 class PendingCleanupsController extends GetxController {
   final RxList<PendingCleanupModel> pendingCleanups =

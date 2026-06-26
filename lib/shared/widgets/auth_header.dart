@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_images.dart';
 
 class AuthHeader extends StatelessWidget {
   final double scale;
@@ -11,7 +11,7 @@ class AuthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = AppStrings.authHeaderTitle; // "Clean Earth"
+    final title = AppStrings.authHeaderTitle; // "We Monitor"
 
     final titleStyle = AppTextStyles.heading1(context).copyWith(
       fontSize: AppDimensions.authHeaderTitleFontSizeBase * scale,
@@ -45,7 +45,7 @@ class AuthHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Clean Earth ──
+            // ── We Monitor ──
             Text(title, style: titleStyle, textAlign: TextAlign.left),
             Transform.translate(
               offset: Offset(0, -logoHeight * 0.22),

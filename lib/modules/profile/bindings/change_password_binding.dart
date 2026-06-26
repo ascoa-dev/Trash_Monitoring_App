@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/profile/controllers/change_password_controller.dart';
+import 'package:we_monitor/modules/profile/controllers/change_password_controller.dart';
 
 class ChangePasswordBinding extends Bindings {
   @override

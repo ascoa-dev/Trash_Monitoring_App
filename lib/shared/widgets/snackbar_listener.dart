@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
 
 /// Mixin that provides snackbar listening capability for GetX widgets.
 ///

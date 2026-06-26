@@ -7,12 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:677557829420:android:7cd941434fd2bbb870f689",
+        "mobilesdk_app_id": "1:677557829420:android:1544b281da3f363770f689",
         "android_client_info": {
-          "package_name": "com.ascoa.trashmonitor"
+          "package_name": "com.ascoa.wemonitor"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "677557829420-ll3o0n08fuqlit15emd2knrfpmvv891n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ascoa.wemonitor",
+            "certificate_hash": "79cfcc86632f9071a1b5cb2a63ee68eb4fb82de8"
+          }
+        },
+        {
+          "client_id": "677557829420-nf3lkj8r60v6muqeusi4k8c56314trqi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ascoa.wemonitor",
+            "certificate_hash": "238e0283783beff8cf10e3263c0439d2893a4733"
+          }
+        },
         {
           "client_id": "677557829420-gp8j8k67or2nbkv9f9u310scfe48mb89.apps.googleusercontent.com",
           "client_type": 3
@@ -31,10 +47,10 @@
               "client_type": 3
             },
             {
-              "client_id": "677557829420-e6svsfhpt6g91ai2c3opeone1hg36hug.apps.googleusercontent.com",
+              "client_id": "677557829420-628kv2basf4ba8uh2s1875uk1rhgejjt.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.ascoa.trashmonitor"
+                "bundle_id": "com.ascoa.wemonitor"
               }
             }
           ]

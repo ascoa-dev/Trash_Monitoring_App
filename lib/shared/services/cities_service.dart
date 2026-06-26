@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:ascoa_app/app/models/cities_config.dart';
+import 'package:we_monitor/app/models/cities_config.dart';
 
 class CitiesService extends GetxService {
   static const _boxName = 'config_cities';

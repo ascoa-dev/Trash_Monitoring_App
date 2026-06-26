@@ -1,12 +1,12 @@
-import 'package:ascoa_app/shared/widgets/circular_loader.dart';
+import 'package:we_monitor/shared/widgets/circular_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
-import 'package:ascoa_app/shared/widgets/auth_header.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_images.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
+import 'package:we_monitor/shared/widgets/auth_header.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
 
 class AuthGateScreen extends StatefulWidget {
   const AuthGateScreen({super.key});

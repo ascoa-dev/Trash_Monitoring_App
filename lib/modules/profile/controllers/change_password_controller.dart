@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
-import 'package:ascoa_app/modules/profile/models/change_password_status.dart';
-import 'package:ascoa_app/shared/controllers/validation_controller.dart';
-import 'package:ascoa_app/shared/utils/validators.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
+import 'package:we_monitor/modules/profile/models/change_password_status.dart';
+import 'package:we_monitor/shared/controllers/validation_controller.dart';
+import 'package:we_monitor/shared/utils/validators.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
 
 class ChangePasswordController extends GetxController {
   late final AuthController _authController;

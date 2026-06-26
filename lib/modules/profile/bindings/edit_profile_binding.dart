@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/profile/controllers/edit_profile_controller.dart';
+import 'package:we_monitor/modules/profile/controllers/edit_profile_controller.dart';
 
 class EditProfileBinding extends Bindings {
   @override

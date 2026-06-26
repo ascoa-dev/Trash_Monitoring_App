@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/shared/utils/validators.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/controllers/cities_controller.dart';
+import 'package:we_monitor/shared/utils/validators.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/controllers/cities_controller.dart';
 
 class ValidationController extends GetxController {
   var emailError = Rx<String?>(null);

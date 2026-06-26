@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:ascoa_app/app/models/cleanup_model.dart';
+import 'package:we_monitor/app/models/cleanup_model.dart';
 
 part 'cached_cleanup_model.g.dart';
 

@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
-import 'package:ascoa_app/app/controllers/pending_hotspots_controller.dart';
-import 'package:ascoa_app/app/models/pending_hotspot_model.dart';
-import 'package:ascoa_app/modules/start_cleanup/controllers/media_upload_controller.dart';
-import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
+import 'package:we_monitor/app/models/pending_hotspot_model.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
+import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 
 class HotspotReportController extends ChangeNotifier {
   final MediaUploadController mediaUploadController = MediaUploadController(

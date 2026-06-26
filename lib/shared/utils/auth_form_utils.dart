@@ -1,4 +1,4 @@
-import 'package:ascoa_app/shared/controllers/validation_controller.dart';
+import 'package:we_monitor/shared/controllers/validation_controller.dart';
 /// Helper utilities for wiring auth forms (login/signup) to the ValidationController.
 class AuthFormUtils {
   /// Validate basic login fields (email + required password) and return whether the form is valid.

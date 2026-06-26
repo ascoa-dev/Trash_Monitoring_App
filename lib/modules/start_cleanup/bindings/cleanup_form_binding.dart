@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_form_controller.dart';
 
 /// Binding for cleanup form screen
 /// Initializes and manages CleanupFormController lifecycle

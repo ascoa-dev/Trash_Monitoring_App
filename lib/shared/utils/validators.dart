@@ -1,4 +1,4 @@
-import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 
 class Validators {
   // Email validation

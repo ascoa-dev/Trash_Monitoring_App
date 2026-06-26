@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/pending_cleanups_controller.dart';
+import 'package:we_monitor/app/controllers/pending_cleanups_controller.dart';
 
 class PendingCleanupsBinding extends Bindings {
   @override

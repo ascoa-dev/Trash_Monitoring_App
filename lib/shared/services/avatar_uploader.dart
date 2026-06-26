@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
 
 /// Service for uploading avatar images to Firebase Storage and updating Firestore
 /// Uses UserModel for type-safe updates and syncs with AuthController

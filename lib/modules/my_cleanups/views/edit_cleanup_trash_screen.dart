@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/models/cleanup_model.dart';
-import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
-import 'package:ascoa_app/modules/start_cleanup/views/trash_collected.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
+import 'package:we_monitor/app/models/cleanup_model.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_form_controller.dart';
+import 'package:we_monitor/modules/start_cleanup/views/trash_collected.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
 
 class EditCleanupTrashScreen extends StatefulWidget {
   const EditCleanupTrashScreen({super.key});

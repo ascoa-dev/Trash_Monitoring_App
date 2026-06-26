@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ascoa_app/app/models/cleanup_model.dart';
-import 'package:ascoa_app/app/models/cached_cleanup_model.dart';
-import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/app/models/cleanup_model.dart';
+import 'package:we_monitor/app/models/cached_cleanup_model.dart';
+import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 class StatsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

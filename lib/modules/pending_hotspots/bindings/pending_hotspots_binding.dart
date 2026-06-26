@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/pending_hotspots_controller.dart';
+import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
 
 class PendingHotspotsBinding extends Bindings {
   @override

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/auth/controllers/reset_password_controller.dart';
+import 'package:we_monitor/modules/auth/controllers/reset_password_controller.dart';
 
 class ResetPasswordBinding extends Bindings {
   @override

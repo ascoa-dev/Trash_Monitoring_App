@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/modules/home/views/home_screen.dart';
-import 'package:ascoa_app/modules/home/bindings/home_binding.dart';
-import 'package:ascoa_app/modules/news/views/news_screen.dart';
-import 'package:ascoa_app/modules/news/controller/news_posts_controller.dart';
-import 'package:ascoa_app/modules/main/controllers/main_nav_controller.dart';
-import 'package:ascoa_app/modules/profile/views/profile_screen.dart';
-import 'package:ascoa_app/modules/stats/views/stats_screen.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/widgets/nav_bar.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/modules/home/views/home_screen.dart';
+import 'package:we_monitor/modules/home/bindings/home_binding.dart';
+import 'package:we_monitor/modules/news/views/news_screen.dart';
+import 'package:we_monitor/modules/news/controller/news_posts_controller.dart';
+import 'package:we_monitor/modules/main/controllers/main_nav_controller.dart';
+import 'package:we_monitor/modules/profile/views/profile_screen.dart';
+import 'package:we_monitor/modules/stats/views/stats_screen.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/widgets/nav_bar.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

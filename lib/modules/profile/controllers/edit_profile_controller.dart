@@ -1,12 +1,12 @@
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
-import 'package:ascoa_app/shared/controllers/form_controllers.dart';
-import 'package:ascoa_app/shared/controllers/validation_controller.dart';
-import 'package:ascoa_app/shared/utils/avatar_photo_handler.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
+import 'package:we_monitor/shared/controllers/form_controllers.dart';
+import 'package:we_monitor/shared/controllers/validation_controller.dart';
+import 'package:we_monitor/shared/utils/avatar_photo_handler.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 class EditProfileController extends GetxController {
   late final AuthController _authController;

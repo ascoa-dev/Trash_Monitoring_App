@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ascoa_app/modules/profile/models/change_password_status.dart';
-import 'package:ascoa_app/modules/auth/models/reset_password_status.dart';
-import 'package:ascoa_app/app/models/user.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
+import 'package:we_monitor/modules/profile/models/change_password_status.dart';
+import 'package:we_monitor/modules/auth/models/reset_password_status.dart';
+import 'package:we_monitor/app/models/user.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:hive/hive.dart';
 
 class AuthController extends GetxController {
@@ -948,10 +948,10 @@ class AuthController extends GetxController {
       ActionCodeSettings actionCodeSettings = ActionCodeSettings(
         url: 'https://accounts.ascoa-cm.org/reset',
         handleCodeInApp: true,
-        androidPackageName: 'com.ascoa.trashmonitor',
+        androidPackageName: 'com.ascoa.wemonitor',
         androidInstallApp: false,
         androidMinimumVersion: '0',
-        iOSBundleId: 'org.ascoa.trashmonitor',
+        iOSBundleId: 'com.ascoa.wemonitor',
       );
 
       await _auth.sendPasswordResetEmail(

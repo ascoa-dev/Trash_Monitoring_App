@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
-import 'package:ascoa_app/modules/auth/models/reset_password_status.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/controllers/validation_controller.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
+import 'package:we_monitor/modules/auth/models/reset_password_status.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/controllers/validation_controller.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
 
 class ResetPasswordController extends GetxController {
   ResetPasswordController({required this.oobCode});

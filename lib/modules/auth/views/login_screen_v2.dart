@@ -1,23 +1,23 @@
-import 'package:ascoa_app/app/controllers/haptic_controller.dart';
+import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/controllers/auth_controller.dart';
-import 'package:ascoa_app/shared/controllers/form_controllers.dart';
-import 'package:ascoa_app/shared/controllers/validation_controller.dart';
+import 'package:we_monitor/app/controllers/auth_controller.dart';
+import 'package:we_monitor/shared/controllers/form_controllers.dart';
+import 'package:we_monitor/shared/controllers/validation_controller.dart';
 // import removed: legacy CustomInputField no longer used in V2
-import 'package:ascoa_app/shared/widgets/floating_label_input_field.dart';
-import 'package:ascoa_app/shared/widgets/auth_header.dart';
-import 'package:ascoa_app/shared/utils/auth_form_utils.dart';
-import 'package:ascoa_app/shared/widgets/primary_button.dart';
-import 'package:ascoa_app/shared/widgets/social_button.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
-import 'package:ascoa_app/shared/constants/app_images.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/widgets/floating_label_input_field.dart';
+import 'package:we_monitor/shared/widgets/auth_header.dart';
+import 'package:we_monitor/shared/utils/auth_form_utils.dart';
+import 'package:we_monitor/shared/widgets/primary_button.dart';
+import 'package:we_monitor/shared/widgets/social_button.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 /// New experimental Login Screen matching Figma absolute layout
 /// while remaining responsive and using shared components.

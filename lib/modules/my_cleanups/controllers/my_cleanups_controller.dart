@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/app/models/cleanup_model.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
+import 'package:we_monitor/app/models/cleanup_model.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
 
 class MyCleanupsController extends GetxController {
   final RxList<CleanupModel> allCleanups = <CleanupModel>[].obs;

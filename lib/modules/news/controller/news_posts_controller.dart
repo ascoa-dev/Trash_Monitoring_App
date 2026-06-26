@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ascoa_app/app/models/post.dart';
-import 'package:ascoa_app/modules/home/services/api_service.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/app/models/post.dart';
+import 'package:we_monitor/modules/home/services/api_service.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 /// Backs the News tab: the full blog feed, vertically stacked.
 ///

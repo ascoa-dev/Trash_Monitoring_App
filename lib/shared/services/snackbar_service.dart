@@ -1,7 +1,7 @@
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
 
 /// Enum representing different types of snackbar messages
 enum SnackbarType { success, error, warning, info }

@@ -5,9 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ascoa_app/app/models/pending_hotspot_model.dart';
-import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
-import 'package:ascoa_app/shared/services/snackbar_service.dart';
+import 'package:we_monitor/app/models/pending_hotspot_model.dart';
+import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/services/snackbar_service.dart';
 
 class PendingHotspotsController extends GetxController {
   final RxList<PendingHotspotModel> pendingHotspots =

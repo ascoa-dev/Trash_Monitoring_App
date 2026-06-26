@@ -1,21 +1,21 @@
-import 'package:ascoa_app/app/controllers/haptic_controller.dart';
-import 'package:ascoa_app/modules/start_cleanup/views/basic_infomation_section.dart';
-import 'package:ascoa_app/modules/start_cleanup/views/trash_collected.dart';
-import 'package:ascoa_app/modules/start_cleanup/views/photos_section.dart';
-import 'package:ascoa_app/modules/start_cleanup/controllers/cleanup_form_controller.dart';
-import 'package:ascoa_app/shared/controllers/connectivity_controller.dart';
-import 'package:ascoa_app/shared/constants/app_colors.dart';
-import 'package:ascoa_app/shared/constants/app_dimensions.dart';
-import 'package:ascoa_app/shared/constants/app_images.dart';
-import 'package:ascoa_app/shared/constants/app_strings.dart';
-import 'package:ascoa_app/shared/constants/app_text_styles.dart';
-import 'package:ascoa_app/shared/utils/size_utils.dart';
-import 'package:ascoa_app/shared/widgets/app_dialog.dart';
-import 'package:ascoa_app/app/routes/app_routes.dart';
+import 'package:we_monitor/app/controllers/haptic_controller.dart';
+import 'package:we_monitor/modules/start_cleanup/views/basic_infomation_section.dart';
+import 'package:we_monitor/modules/start_cleanup/views/trash_collected.dart';
+import 'package:we_monitor/modules/start_cleanup/views/photos_section.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_form_controller.dart';
+import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/widgets/app_dialog.dart';
+import 'package:we_monitor/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:ascoa_app/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 class NewCleanUpScreen extends StatefulWidget {
   const NewCleanUpScreen({super.key});
