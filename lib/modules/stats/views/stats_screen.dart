@@ -30,6 +30,23 @@ class _StatsScreenState extends State<StatsScreen>
   late final PendingCleanupsController pendingCleanupsController;
   final Map<String, BitmapDescriptor> _circleMarkers = {};
 
+  GoogleMapController? _mapController;
+
+  // Native marker clustering: groups nearby dots, de-merges as you zoom, and
+  // tapping a cluster zooms to its bounds — revealing sub-clusters recursively.
+  static const ClusterManagerId _clusterManagerId = ClusterManagerId(
+    'cleanups',
+  );
+  late final ClusterManager _clusterManager = ClusterManager(
+    clusterManagerId: _clusterManagerId,
+    onClusterTap: (Cluster cluster) {
+      Get.find<HapticController>().selectionClick();
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngBounds(cluster.bounds, 50),
+      );
+    },
+  );
+
   @override
   void initState() {
     super.initState();
@@ -514,8 +531,9 @@ class _StatsScreenState extends State<StatsScreen>
       scrollGesturesEnabled: true,
       zoomGesturesEnabled: true,
       markers: _buildMarkers(controller),
+      clusterManagers: {_clusterManager},
       onMapCreated: (GoogleMapController mapController) {
-        // Map created
+        _mapController = mapController;
       },
     );
   }
@@ -545,6 +563,7 @@ class _StatsScreenState extends State<StatsScreen>
       markers.add(
         Marker(
           markerId: MarkerId('cleanup_$i'),
+          clusterManagerId: _clusterManagerId,
           position: LatLng(location.latitude, location.longitude),
           icon: markerIcon,
           onTap: () {
