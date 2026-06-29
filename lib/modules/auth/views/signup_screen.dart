@@ -81,6 +81,17 @@ class _SignupScreenState extends State<SignupScreen> {
                     alignment: Alignment.topCenter,
                   ),
                 ),
+                Positioned(
+                  bottom: AppDimensions.zero,
+                  left: AppDimensions.zero,
+                  right: AppDimensions.zero,
+                  child: Image.asset(
+                    AppImages.loginBottom,
+                    width: viewportWidth,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                  ),
+                ),
                 SafeArea(
                   child: SingleChildScrollView(
                     controller: scrollController,

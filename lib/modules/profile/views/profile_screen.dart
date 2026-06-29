@@ -47,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                       viewportHeight *
                       AppDimensions.profileTopBackgroundHeightFactor,
                   child: Image.asset(
-                    AppImages.signupTop,
+                    AppImages.profileTop,
                     width: viewportWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,

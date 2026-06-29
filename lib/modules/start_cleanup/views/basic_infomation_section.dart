@@ -161,19 +161,41 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
       // Only fetch if permission already granted
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
+        Position? position;
+        try {
+          debugPrint('[BasicInfo] _autoFetchLocation: checking getLastKnownPosition');
+          position = await Geolocator.getLastKnownPosition();
+          if (position != null) {
+            final userLocation = LatLng(position.latitude, position.longitude);
+            _updateMapLocation(userLocation);
+          }
+        } catch (e) {
+          debugPrint('Error getting last known position in autoFetch: $e');
+        }
+
         // Get current position with proper settings
         debugPrint(
           '[BasicInfo] _autoFetchLocation: attempting getCurrentPosition',
         );
-        final position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-            timeLimit: Duration(seconds: 10),
-          ),
-        );
-        debugPrint(
-          '[BasicInfo] _autoFetchLocation: got position lat=${position.latitude}, lng=${position.longitude}',
-        );
+        try {
+          final currentPositionResult = await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.high,
+            ),
+          ).timeout(
+            const Duration(seconds: 8),
+          );
+          debugPrint(
+            '[BasicInfo] _autoFetchLocation: got position lat=${currentPositionResult.latitude}, lng=${currentPositionResult.longitude}',
+          );
+          position = currentPositionResult;
+        } on TimeoutException {
+          debugPrint('[BasicInfo] _autoFetchLocation: getCurrentPosition timed out');
+          if (position == null) return;
+        } catch (e) {
+          debugPrint('[BasicInfo] _autoFetchLocation: getCurrentPosition error: $e');
+          if (position == null) return;
+        }
 
         final userLocation = LatLng(position.latitude, position.longitude);
         debugPrint(
@@ -189,6 +211,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
                 AppStrings.locationOutsideCameroon;
             return;
           }
+          _isUpdatingFromMap = true;
+          locationController.text =
+              'Lat ${userLocation.latitude.toStringAsFixed(5)}, Lng ${userLocation.longitude.toStringAsFixed(5)}';
+          _isUpdatingFromMap = false;
           _updateMapLocation(userLocation);
           widget.controller.clearFieldError('location');
           return;
@@ -202,10 +228,18 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
         );
         if (!mounted) return;
 
-        // Could not verify (service error) — leave silently for the auto-fetch
-        // path; the user can still set a location manually.
         if (geo == null) {
-          debugPrint('[BasicInfo] _autoFetchLocation: geocode unavailable');
+          debugPrint('[BasicInfo] _autoFetchLocation: geocode unavailable, falling back to Bbox');
+          if (!_isInCameroonBbox(userLocation)) {
+            widget.controller.locationError = AppStrings.locationOutsideCameroon;
+            return;
+          }
+          _updateMapLocation(userLocation);
+          _isUpdatingFromMap = true;
+          locationController.text =
+              'Lat ${userLocation.latitude.toStringAsFixed(5)}, Lng ${userLocation.longitude.toStringAsFixed(5)}';
+          _isUpdatingFromMap = false;
+          widget.controller.clearFieldError('location');
           return;
         }
 
@@ -322,8 +356,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
       // Check location permission
       LocationPermission permission = await Geolocator.checkPermission();
       debugPrint('[BasicInfo] _getLocation: current permission=$permission');
+      bool permissionRequested = false;
       if (permission == LocationPermission.denied) {
         debugPrint('[BasicInfo] _getLocation: requesting permission');
+        permissionRequested = true;
         permission = await Geolocator.requestPermission();
         debugPrint(
           '[BasicInfo] _getLocation: permission after request=$permission',
@@ -354,6 +390,11 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
         return;
       }
 
+      // Add a small delay if permission was just requested to allow layout/focus transitions to complete on Android
+      if (permissionRequested) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
       // Show loading snackbar
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -381,24 +422,47 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
         );
       }
 
+      Position? position;
+      try {
+        debugPrint('[BasicInfo] _getLocation: checking getLastKnownPosition');
+        position = await Geolocator.getLastKnownPosition();
+        if (position != null) {
+          debugPrint(
+            '[BasicInfo] _getLocation: got last known position lat=${position.latitude}, lng=${position.longitude}',
+          );
+          // Let's update the map and controller coordinates immediately using the last known position
+          final userLocation = LatLng(position.latitude, position.longitude);
+          _updateMapLocation(userLocation);
+        }
+      } catch (e) {
+        debugPrint('Error getting last known position: $e');
+      }
+
       // Get current position with timeout
       debugPrint('[BasicInfo] _getLocation: calling getCurrentPosition');
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 10),
-        ),
-      ).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () {
-          debugPrint('[BasicInfo] _getLocation: getCurrentPosition timed out');
-          throw Exception('Location request timed out');
-        },
-      );
-
-      debugPrint(
-        '[BasicInfo] _getLocation: position received lat=${position.latitude}, lng=${position.longitude}',
-      );
+      try {
+        final currentPositionResult = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).timeout(
+          const Duration(seconds: 8),
+        );
+        debugPrint(
+          '[BasicInfo] _getLocation: position received lat=${currentPositionResult.latitude}, lng=${currentPositionResult.longitude}',
+        );
+        position = currentPositionResult;
+      } on TimeoutException {
+        debugPrint('[BasicInfo] _getLocation: getCurrentPosition timed out');
+        if (position == null) {
+          throw TimeoutException('Location request timed out');
+        }
+      } catch (e) {
+        debugPrint('[BasicInfo] _getLocation: getCurrentPosition error: $e');
+        if (position == null) {
+          rethrow;
+        }
+      }
 
       final userLocation = LatLng(position.latitude, position.longitude);
       debugPrint(
@@ -416,6 +480,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
           return;
         }
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        _isUpdatingFromMap = true;
+        locationController.text =
+            'Lat ${userLocation.latitude.toStringAsFixed(5)}, Lng ${userLocation.longitude.toStringAsFixed(5)}';
+        _isUpdatingFromMap = false;
         _updateMapLocation(userLocation);
         widget.controller.clearFieldError('location');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -437,10 +505,27 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
       if (!mounted) return;
 
       if (geo == null) {
-        // Could not verify against Google — reject rather than guess.
+        // Could not verify against Google — let's fall back to bounding box check
+        if (!_isInCameroonBbox(userLocation)) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          widget.controller.locationError = AppStrings.locationOutsideCameroon;
+          debugPrint('[BasicInfo] _getLocation: geocode unavailable and outside Cameroon Bbox');
+          return;
+        }
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        widget.controller.locationError = AppStrings.locationFetchFailed;
-        debugPrint('[BasicInfo] _getLocation: geocode unavailable');
+        _isUpdatingFromMap = true;
+        locationController.text =
+            'Lat ${userLocation.latitude.toStringAsFixed(5)}, Lng ${userLocation.longitude.toStringAsFixed(5)}';
+        _isUpdatingFromMap = false;
+        _updateMapLocation(userLocation);
+        widget.controller.clearFieldError('location');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.locationSetSuccessfully),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
         return;
       }
 
@@ -573,6 +658,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
             resetToCentre();
             return;
           }
+          _isUpdatingFromMap = true;
+          locationController.text =
+              'Lat ${pos.latitude.toStringAsFixed(5)}, Lng ${pos.longitude.toStringAsFixed(5)}';
+          _isUpdatingFromMap = false;
           widget.controller.clearFieldError('location');
           return;
         }
@@ -586,7 +675,17 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
 
         // Service error — flag it, leave the pin where it is.
         if (geo == null) {
-          widget.controller.locationError = AppStrings.selectLocationInCameroon;
+          // Fallback to bounding box check even if online, so the app remains usable when API key is missing or fails.
+          if (!_isInCameroonBbox(pos)) {
+            widget.controller.locationError = AppStrings.selectLocationInCameroon;
+            resetToCentre();
+            return;
+          }
+          _isUpdatingFromMap = true;
+          locationController.text =
+              'Lat ${pos.latitude.toStringAsFixed(5)}, Lng ${pos.longitude.toStringAsFixed(5)}';
+          _isUpdatingFromMap = false;
+          widget.controller.clearFieldError('location');
           return;
         }
 

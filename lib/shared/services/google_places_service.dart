@@ -8,9 +8,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 /// Handles autocomplete search and place details
 class GooglePlacesService {
   // This should ideally come from environment variables or secure config
-  static final String _apiKey =
-      dotenv.env['GOOGLE_MAPS_API_KEY'] ??
-      const String.fromEnvironment('GOOGLE_MAPS_API_KEY', defaultValue: '');
+  static final String _apiKey = () {
+    try {
+      return dotenv.env['GOOGLE_MAPS_API_KEY'] ??
+          const String.fromEnvironment('GOOGLE_MAPS_API_KEY', defaultValue: '');
+    } catch (_) {
+      return const String.fromEnvironment('GOOGLE_MAPS_API_KEY', defaultValue: '');
+    }
+  }();
 
   static const String _baseUrl = 'https://maps.googleapis.com/maps/api/place';
 

@@ -39,7 +39,7 @@ class AppDimensions {
   static const double homeScreenBlogCardSpacing = 16.0;
   static const double homeScreenBottomGraphicHeight = 293.0;
   // Cleanup screen specific dimensions (kept separate so other screens don't change)
-  static const double cleanupTopImageHeight = 287.0;
+  static const double cleanupTopImageHeight = 218.5;
   static const double cleanupCleanImageHeight = 100.0;
   static const double cleanupHeaderBackLeft = 15.0;
   static const double cleanupHeaderBackTopInset = 16.0;
@@ -490,7 +490,7 @@ class AppDimensions {
   static const double homeScreenStatsGap = 16.0;
   static const double homeScreenCarouselGap = 24.0;
   static const double homeScreenButtonGap = 32.0;
-  static const double homeScreenBottomGap = 140.0;
+  static const double homeScreenBottomGap = 160.0;
   static const double homeScreenSpacer = 12.0;
 
   static const double locationFieldHeight = 22.0;

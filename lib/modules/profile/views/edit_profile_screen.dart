@@ -109,7 +109,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                     height:
                         viewportHeight * AppDimensions.editProfileHeightFactor,
                     child: Image.asset(
-                      AppImages.editProfileBottom,
+                      AppImages.editProfileScreenBottom,
                       width: viewportWidth,
                       fit: BoxFit.cover,
                       alignment: Alignment.bottomCenter,

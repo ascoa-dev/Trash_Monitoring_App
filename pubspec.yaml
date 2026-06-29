@@ -4,7 +4,7 @@ description: "We Monitor Flutter app."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.0+5
 
 environment:
   sdk: ^3.7.2
@@ -60,6 +60,7 @@ dev_dependencies:
   hive_generator: ^2.0.0
   analyzer: ^6.4.1
   rename: ^3.1.0
+  flutter_launcher_icons: ^0.14.3
 
 dependency_overrides:
   # Force 0.2.0 to fix NDKLocator null crash on Windows (0.1.0 bug)
@@ -68,6 +69,7 @@ dependency_overrides:
 flutter:
   uses-material-design: true
   assets:
+    - .env
     - assets/Google/android_neutral_rd_na@2x.png
     - assets/Google/android_dark_rd_na@2x.png
     - assets/Google/android_light_rd_na@2x.png
@@ -122,6 +124,9 @@ flutter:
     - assets/ASCOA/placeholder.png
     - assets/ASCOA/Dashboard_Icons/new_cleanup_icon.png
     - assets/ASCOA/clean_confirm.png
+    - assets/ASCOA/Dashboard_Bottom.png
+    - assets/ASCOA/New_Cleanup_Top.png
+    - assets/ASCOA/Profile_Screen_Top.png
 
 flutter_native_splash:
   color: "#FBFFF4"
@@ -134,3 +139,8 @@ flutter_native_splash:
     image: assets/ASCOA/ASCOA_LOGO.png
     icon_background_color: "#FBFFF4"
     icon_background_color_dark: "#000000"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/ASCOA/ASCOA_LOGO.png"

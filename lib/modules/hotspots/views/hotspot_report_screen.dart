@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -54,7 +55,9 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
       }
 
       var permission = await Geolocator.checkPermission();
+      bool permissionRequested = false;
       if (permission == LocationPermission.denied) {
+        permissionRequested = true;
         permission = await Geolocator.requestPermission();
       }
       if (permission == LocationPermission.denied ||
@@ -63,27 +66,72 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 10),
-        ),
-      );
+      if (permissionRequested) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
+      Position? position;
+      try {
+        debugPrint('[HotspotReport] checking getLastKnownPosition');
+        position = await Geolocator.getLastKnownPosition();
+        if (position != null) {
+          debugPrint('[HotspotReport] got last known position lat=${position.latitude}, lng=${position.longitude}');
+          controller.setCoordinates(position.latitude, position.longitude);
+          _locationController.text =
+              'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';
+        }
+      } catch (e) {
+        debugPrint('Error getting last known position in hotspot: $e');
+      }
+
+      debugPrint('[HotspotReport] calling getCurrentPosition');
+      try {
+        final currentPos = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).timeout(const Duration(seconds: 8));
+        debugPrint('[HotspotReport] got position lat=${currentPos.latitude}, lng=${currentPos.longitude}');
+        position = currentPos;
+      } on TimeoutException {
+        debugPrint('[HotspotReport] getCurrentPosition timed out');
+        if (position == null) {
+          throw TimeoutException('Location request timed out');
+        }
+      } catch (e) {
+        debugPrint('[HotspotReport] getCurrentPosition error: $e');
+        if (position == null) {
+          rethrow;
+        }
+      }
 
       controller.setCoordinates(position.latitude, position.longitude);
-      final placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        final address = [
-          place.street,
-          place.locality,
-          place.administrativeArea,
-          place.country,
-        ].where((part) => part != null && part.trim().isNotEmpty).join(', ');
-        _locationController.text = address;
+
+      final connectivity = Get.find<ConnectivityController>();
+      if (connectivity.isOnline.value) {
+        try {
+          final placemarks = await placemarkFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          if (placemarks.isNotEmpty) {
+            final place = placemarks.first;
+            final address = [
+              place.street,
+              place.locality,
+              place.administrativeArea,
+              place.country,
+            ].where((part) => part != null && part.trim().isNotEmpty).join(', ');
+            _locationController.text = address;
+          } else {
+            _locationController.text =
+                'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';
+          }
+        } catch (e) {
+          debugPrint('Geocoding error in hotspot: $e');
+          _locationController.text =
+              'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';
+        }
       } else {
         _locationController.text =
             'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';

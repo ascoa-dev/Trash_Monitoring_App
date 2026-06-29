@@ -203,26 +203,38 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        physics: const ScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header Section (scrolls with page)
-            _buildHeaderSection(context),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: const ScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header Section (scrolls with page)
+                    _buildHeaderSection(context),
 
-            // Expandable Sections (grows/shrinks dynamically)
-            _buildExpandableSections(context),
-            SizedBox(
-              height: SizeUtils.h(
-                context,
-                AppDimensions.cleanupSectionGapLarge,
+                    // Expandable Sections (grows/shrinks dynamically)
+                    _buildExpandableSections(context),
+
+                    const Spacer(),
+
+                    SizedBox(
+                      height: SizeUtils.h(
+                        context,
+                        AppDimensions.cleanupSectionGapLarge,
+                      ),
+                    ),
+                    // Footer Section (scrolls with page, always at bottom)
+                    _buildFooterSection(context),
+                  ],
+                ),
               ),
             ),
-            // Footer Section (scrolls with page, always at bottom)
-            _buildFooterSection(context),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -235,7 +247,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
         // Top Decorative Image - height: 287px from CSS
         Image.asset(
           AppImages.cleanupTop,
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
           width: double.infinity,
           height: SizeUtils.h(context, AppDimensions.cleanupTopImageHeight),
         ),
@@ -380,13 +392,13 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
         Positioned(
           left: AppDimensions.zero,
           right: AppDimensions.zero,
-          top: AppDimensions.zero, // Overlap amount - adjust based on design
+          bottom: AppDimensions.zero,
           child: IgnorePointer(
             child: Image.asset(
               AppImages.cleanupBottom,
               fit: BoxFit.cover,
               width: double.infinity,
-              alignment: Alignment.topCenter,
+              alignment: Alignment.bottomCenter,
             ),
           ),
         ),
@@ -544,14 +556,53 @@ class CleanUpSection extends StatefulWidget {
   State<CleanUpSection> createState() => _CleanUpSectionState();
 }
 
-class _CleanUpSectionState extends State<CleanUpSection> {
+class _CleanUpSectionState extends State<CleanUpSection>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _expandAnimation;
+  late final Animation<double> _chevronRotationAnimation;
+
   bool get _isExpanded => widget.controller.expandedSection == widget.title;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+    _chevronRotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.5,
+    ).animate(_expandAnimation);
+
+    if (_isExpanded) {
+      _animationController.value = 1.0;
+    }
+  }
+
+  @override
+  void didUpdateWidget(CleanUpSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_isExpanded) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   /// Check if this section can be tapped (for viewing previously completed sections)
   bool get _canTapHeader {
-    // Never allow tapping to close current section - only Next button does that
-    if (_isExpanded) return false;
-
     // Check if this section is accessible based on the flow
     switch (widget.title) {
       case AppStrings.basicInformation:
@@ -569,19 +620,46 @@ class _CleanUpSectionState extends State<CleanUpSection> {
   }
 
   void _handleHeaderTap() {
-    // Don't allow tapping if not permitted
-    if (!_canTapHeader) return;
+    // 1. If it's the currently expanded section, try to close it.
+    if (_isExpanded) {
+      Get.find<HapticController>().light();
+      final isValid = widget.controller.validateSection(widget.title);
+      if (isValid) {
+        widget.controller.markSectionCompleted(widget.title);
+        widget.controller.setExpandedSection(null);
+      } else {
+        // Trigger errors visually by notifying listeners
+        Get.find<HapticController>().heavy();
+      }
+      return;
+    }
 
-    // Don't allow collapsing current section via header tap
-    if (_isExpanded) return;
+    // 2. If it's a closed section:
+    // First validate the currently open section if there is one.
+    final currentExpanded = widget.controller.expandedSection;
+    if (currentExpanded != null) {
+      final isCurrentValid = widget.controller.validateSection(currentExpanded);
+      if (!isCurrentValid) {
+        // Current section is invalid, don't switch! Show errors on current section.
+        Get.find<HapticController>().heavy();
+        return;
+      }
+      // Current section is valid, mark it as completed
+      widget.controller.markSectionCompleted(currentExpanded);
+    }
 
-    Get.find<HapticController>().light();
+    // Now check if the target section is accessible.
+    if (_canTapHeader) {
+      Get.find<HapticController>().light();
 
-    // Trying to go back to a previous section - reset completion for sections after this one
-    widget.controller.resetSectionCompletion(widget.title);
+      // If we are moving back to a previous section, reset completion for sections after it
+      widget.controller.resetSectionCompletion(widget.title);
 
-    // Set this section as expanded
-    widget.controller.setExpandedSection(widget.title);
+      widget.controller.setExpandedSection(widget.title);
+    } else {
+      // Not accessible yet
+      Get.find<HapticController>().heavy();
+    }
   }
 
   @override
@@ -594,6 +672,7 @@ class _CleanUpSectionState extends State<CleanUpSection> {
         return Container(
           width: SizeUtils.w(context, AppDimensions.cleanupSectionWidth),
           decoration: BoxDecoration(
+            color: _isExpanded ? AppColors.accent : AppColors.skeletonBase,
             borderRadius: BorderRadius.circular(
               SizeUtils.r(context, AppDimensions.cleanupSectionRadius),
             ),
@@ -613,67 +692,77 @@ class _CleanUpSectionState extends State<CleanUpSection> {
             borderRadius: BorderRadius.circular(
               SizeUtils.r(context, AppDimensions.cleanupSectionRadius),
             ),
-            child: ExpansionTile(
-              key: ValueKey('${widget.title}_$_isExpanded'),
-              initiallyExpanded: _isExpanded,
-              enabled: false, // Disable default tap behavior
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  SizeUtils.r(context, AppDimensions.cleanupSectionRadius),
-                ),
-              ),
-              collapsedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  SizeUtils.r(context, AppDimensions.cleanupSectionRadius),
-                ),
-              ),
-              collapsedBackgroundColor: AppColors.skeletonBase,
-              backgroundColor: AppColors.accent,
-              title: GestureDetector(
-                onTap: _canTapHeader ? _handleHeaderTap : null,
-                behavior: HitTestBehavior.opaque,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.title,
-                        style:
-                            _isExpanded
-                                ? AppTextStyles.cleanUpOptionsExpanded(context)
-                                : AppTextStyles.cleanUpOptionsCollapsed(
-                                  context,
-                                ),
-                      ),
-                    ),
-                    // Show checkmark for completed sections
-                    if (isCompleted && !_isExpanded)
-                      Padding(
-                        padding: EdgeInsets.only(
-                          right: SizeUtils.w(context, 8),
-                        ),
-                        child: Icon(
-                          Icons.check_circle,
-                          color: AppColors.buttonGreen,
-                          size: SizeUtils.r(context, 20),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              trailing: Icon(
-                _isExpanded ? Icons.expand_less : Icons.expand_more,
-                color:
-                    _canTapHeader || _isExpanded
-                        ? AppColors.textDark
-                        : AppColors.grey400,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (widget.title == AppStrings.basicInformation)
-                  BasicInformationSection(controller: widget.controller)
-                else if (widget.title == AppStrings.trashCollected)
-                  TrashCollectedSection(controller: widget.controller)
-                else if (widget.title == AppStrings.photosVideosOptional)
-                  PhotosSection(formController: widget.controller),
+                // Header (Clickable full-width tap target)
+                GestureDetector(
+                  onTap: _handleHeaderTap,
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: SizeUtils.w(context, 16),
+                      vertical: SizeUtils.h(
+                        context,
+                        14,
+                      ), // Unexpanded state height adjustment
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            widget.title,
+                            style:
+                                _isExpanded
+                                    ? AppTextStyles.cleanUpOptionsExpanded(
+                                      context,
+                                    )
+                                    : AppTextStyles.cleanUpOptionsCollapsed(
+                                      context,
+                                    ),
+                          ),
+                        ),
+                        // Show checkmark for completed sections
+                        if (isCompleted && !_isExpanded)
+                          Padding(
+                            padding: EdgeInsets.only(
+                              right: SizeUtils.w(context, 8),
+                            ),
+                            child: Icon(
+                              Icons.check_circle,
+                              color: AppColors.buttonGreen,
+                              size: SizeUtils.r(context, 20),
+                            ),
+                          ),
+                        RotationTransition(
+                          turns: _chevronRotationAnimation,
+                          child: Icon(
+                            Icons.expand_more,
+                            color:
+                                _canTapHeader || _isExpanded
+                                    ? AppColors.textDark
+                                    : AppColors.grey400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Expanded Content
+                SizeTransition(
+                  sizeFactor: _expandAnimation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (widget.title == AppStrings.basicInformation)
+                        BasicInformationSection(controller: widget.controller)
+                      else if (widget.title == AppStrings.trashCollected)
+                        TrashCollectedSection(controller: widget.controller)
+                      else if (widget.title == AppStrings.photosVideosOptional)
+                        PhotosSection(formController: widget.controller),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

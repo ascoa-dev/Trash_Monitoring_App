@@ -108,7 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 _buildHeroSection(context),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  padding: EdgeInsets.symmetric(
+                    vertical: horizontalPadding,
+                    horizontal: horizontalPadding,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

@@ -6,17 +6,19 @@ class AppImages {
   static const String logo = 'assets/ASCOA/ASCOA_LOGO.png';
   static const String signupTop = 'assets/ASCOA/Signup_Screen_Top.png';
   static const String loginTop = 'assets/ASCOA/Login_Top.png';
-  static const String forgotPasswordTop =
-      'assets/ASCOA/Forgot_Password_Screen_Top.png';
+  static const String forgotPasswordTop = 'assets/ASCOA/Signup_Screen_Top.png';
   static const String editProfileBottom =
       'assets/ASCOA/Edit_Profile_Screen_Bottom.png';
+  static const String editProfileScreenBottom =
+      'assets/ASCOA/Profile_Screen_Bottom.png';
   static const String verifyEmailIcon = 'assets/ASCOA/verify_email_icon.png';
   static const String profilePlaceholder =
       'assets/ASCOA/profileplaceholder.png';
   static const String profileScreenBottom =
       'assets/ASCOA/Profile_Screen_Bottom.png';
   static const String dashboardTop = 'assets/ASCOA/Dashboard_Top1.png';
-  static const String dashboardBottom = forgotPasswordBottom;
+  static const String dashboardBottom = 'assets/ASCOA/Dashboard_Bottom.png';
+  static const String profileTop = 'assets/ASCOA/Profile_Screen_Top.png';
 
   // Profile page icons
   static const String policy = 'assets/ASCOA/Profile_Page_Icons/policy.png';
@@ -44,7 +46,7 @@ class AppImages {
   static const String forgotConfirmIcon =
       'assets/ASCOA/Forgot_Password_confirm_Icon.png';
   static const String forgotPasswordBottom =
-      'assets/ASCOA/Forgot_Password_Screen_Bottom.png';
+      'assets/ASCOA/Forgot_Password_Screen_Bottom2.png';
   static const String forgotPasswordBottom2 =
       'assets/ASCOA/Forgot_Password_Screen_Bottom2.png';
   static const String forgotPasswordIcon =
@@ -62,8 +64,8 @@ class AppImages {
       'assets/ASCOA/Complete_Profile_Top.png';
 
   // CleanUp Screen
-  static const String cleanupBottom = profileScreenBottom;
-  static const String cleanupTop = signupTop;
+  static const String cleanupBottom = editProfileBottom;
+  static const String cleanupTop = 'assets/ASCOA/New_Cleanup_Top.png';
   static const String placeholder = 'assets/ASCOA/placeholder.png';
   static const String cleanConfirm = 'assets/ASCOA/clean_confirm.png';
 

@@ -159,7 +159,8 @@ class MyApp extends StatelessWidget {
           );
         }
         return GetMaterialApp(
-          title: 'Trash Monitoring App',
+          debugShowCheckedModeBanner: false,
+          title: 'We Monitor',
           navigatorKey: navigatorKey,
           // Clamp global text scale to 1.0 for visual consistency across devices
           // (optional: remove if you want to respect system font scaling)
