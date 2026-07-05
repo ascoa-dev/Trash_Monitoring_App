@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/modules/achievements/achievements_controller.dart';
 import 'package:we_monitor/modules/hotspots/controllers/hotspot_report_controller.dart';
 import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
@@ -15,6 +18,7 @@ import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/services/google_places_service.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/circular_upload_progress.dart';
 import 'package:we_monitor/shared/widgets/location_search_field.dart';
@@ -30,6 +34,13 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
   final TextEditingController _locationController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
+  GoogleMapController? _mapController;
+  LatLng? _currentPosition;
+  Set<Marker> _markers = {};
+  Timer? _debounceTimer;
+  bool _isUpdatingFromMap = false;
+  late final Worker _connectivityWorker;
+
   HotspotReportController get controller => Get.find<HotspotReportController>();
 
   @override
@@ -38,12 +49,178 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
     _locationController.addListener(() {
       controller.setLocation(_locationController.text);
     });
+
+    final connectivity = Get.find<ConnectivityController>();
+    _connectivityWorker = ever<bool>(connectivity.isOnline, (isOnline) async {
+      if (!isOnline) return;
+      if (_currentPosition == null) return;
+      final pos = _currentPosition!;
+      final isValid = await _isInCameroon(pos);
+      if (!mounted) return;
+      if (!isValid) {
+        controller.setLocationError(AppStrings.selectLocationInCameroon);
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoFetchLocation();
+    });
   }
 
   @override
   void dispose() {
+    _connectivityWorker.dispose();
+    _debounceTimer?.cancel();
     _locationController.dispose();
     super.dispose();
+  }
+
+  bool _isInCameroonBbox(LatLng location) {
+    return location.latitude >= 1.72767263428 &&
+        location.latitude <= 12.8593962671 &&
+        location.longitude >= 8.48881554529 &&
+        location.longitude <= 16.0128524106;
+  }
+
+  Future<bool> _isInCameroon(LatLng location) async {
+    final connectivity = Get.find<ConnectivityController>();
+    if (!connectivity.isOnline.value) {
+      return _isInCameroonBbox(location);
+    }
+    final result = await GooglePlacesService.reverseGeocode(
+      location.latitude,
+      location.longitude,
+    );
+    if (result == null) return false;
+    return result.isCameroon;
+  }
+
+  void _updateMapPosition(LatLng position) {
+    setState(() {
+      _currentPosition = position;
+      _markers = {
+        Marker(
+          markerId: const MarkerId('selected'),
+          position: position,
+        ),
+      };
+    });
+    _mapController?.animateCamera(CameraUpdate.newLatLng(position));
+  }
+
+  Future<void> _autoFetchLocation() async {
+    if (_locationController.text.isNotEmpty) return;
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission != LocationPermission.always &&
+          permission != LocationPermission.whileInUse) {
+        return;
+      }
+
+      Position? position;
+      try {
+        position = await Geolocator.getLastKnownPosition();
+        if (position != null) {
+          _updateMapPosition(LatLng(position.latitude, position.longitude));
+        }
+      } catch (_) {}
+
+      try {
+        final current = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        ).timeout(const Duration(seconds: 8));
+        position = current;
+      } on TimeoutException {
+        if (position == null) return;
+      } catch (_) {
+        if (position == null) return;
+      }
+
+      final userLocation = LatLng(position.latitude, position.longitude);
+      final connectivity = Get.find<ConnectivityController>();
+
+      if (!connectivity.isOnline.value) {
+        if (!_isInCameroonBbox(userLocation)) return;
+        _updateMapPosition(userLocation);
+        controller.setCoordinates(userLocation.latitude, userLocation.longitude);
+        _isUpdatingFromMap = true;
+        _locationController.text =
+            'Lat ${userLocation.latitude.toStringAsFixed(5)}, Lng ${userLocation.longitude.toStringAsFixed(5)}';
+        _isUpdatingFromMap = false;
+        return;
+      }
+
+      final geo = await GooglePlacesService.reverseGeocode(
+        position.latitude,
+        position.longitude,
+      );
+      if (!mounted) return;
+      if (geo == null || !geo.isCameroon) return;
+
+      _updateMapPosition(userLocation);
+      controller.setCoordinates(userLocation.latitude, userLocation.longitude);
+      _isUpdatingFromMap = true;
+      _locationController.text = geo.formattedAddress;
+      _isUpdatingFromMap = false;
+    } catch (e) {
+      debugPrint('[HotspotReport] _autoFetchLocation error: $e');
+    }
+  }
+
+  void _onMapDragEnd() {
+    if (_currentPosition == null || _isUpdatingFromMap) return;
+    controller.setCoordinates(
+      _currentPosition!.latitude,
+      _currentPosition!.longitude,
+    );
+
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(
+      Duration(milliseconds: AppDimensions.placeSearchDebounceMs),
+      () async {
+        final pos = _currentPosition;
+        if (pos == null) return;
+
+        void resetToCentre() {
+          const yaounde = LatLng(3.8480, 11.5021);
+          setState(() {
+            _currentPosition = yaounde;
+            _markers = {const Marker(markerId: MarkerId('selected'), position: yaounde)};
+          });
+          _mapController?.animateCamera(CameraUpdate.newLatLng(yaounde));
+        }
+
+        final connectivity = Get.find<ConnectivityController>();
+        if (!connectivity.isOnline.value) {
+          if (!mounted) return;
+          if (!_isInCameroonBbox(pos)) {
+            controller.setLocationError(AppStrings.selectLocationInCameroon);
+            resetToCentre();
+            return;
+          }
+          _isUpdatingFromMap = true;
+          _locationController.text =
+              'Lat ${pos.latitude.toStringAsFixed(5)}, Lng ${pos.longitude.toStringAsFixed(5)}';
+          _isUpdatingFromMap = false;
+          controller.setLocationError(null);
+          return;
+        }
+
+        final geo = await GooglePlacesService.reverseGeocode(pos.latitude, pos.longitude);
+        if (!mounted) return;
+        if (geo == null || !geo.isCameroon) {
+          controller.setLocationError(AppStrings.selectLocationInCameroon);
+          resetToCentre();
+          return;
+        }
+        _isUpdatingFromMap = true;
+        _locationController.text = geo.formattedAddress;
+        _isUpdatingFromMap = false;
+        controller.setLocationError(null);
+      },
+    );
   }
 
   Future<void> _useCurrentLocation() async {
@@ -72,69 +249,65 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
 
       Position? position;
       try {
-        debugPrint('[HotspotReport] checking getLastKnownPosition');
         position = await Geolocator.getLastKnownPosition();
         if (position != null) {
-          debugPrint('[HotspotReport] got last known position lat=${position.latitude}, lng=${position.longitude}');
           controller.setCoordinates(position.latitude, position.longitude);
+          _updateMapPosition(LatLng(position.latitude, position.longitude));
+          _isUpdatingFromMap = true;
           _locationController.text =
               'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';
+          _isUpdatingFromMap = false;
         }
       } catch (e) {
         debugPrint('Error getting last known position in hotspot: $e');
       }
 
-      debugPrint('[HotspotReport] calling getCurrentPosition');
       try {
         final currentPos = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-          ),
+          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
         ).timeout(const Duration(seconds: 8));
-        debugPrint('[HotspotReport] got position lat=${currentPos.latitude}, lng=${currentPos.longitude}');
         position = currentPos;
       } on TimeoutException {
-        debugPrint('[HotspotReport] getCurrentPosition timed out');
         if (position == null) {
           throw TimeoutException('Location request timed out');
         }
       } catch (e) {
-        debugPrint('[HotspotReport] getCurrentPosition error: $e');
-        if (position == null) {
-          rethrow;
-        }
+        if (position == null) rethrow;
       }
 
       controller.setCoordinates(position.latitude, position.longitude);
+      _updateMapPosition(LatLng(position.latitude, position.longitude));
 
       final connectivity = Get.find<ConnectivityController>();
       if (connectivity.isOnline.value) {
         try {
-          final placemarks = await placemarkFromCoordinates(
+          final geo = await GooglePlacesService.reverseGeocode(
             position.latitude,
             position.longitude,
           );
-          if (placemarks.isNotEmpty) {
-            final place = placemarks.first;
-            final address = [
-              place.street,
-              place.locality,
-              place.administrativeArea,
-              place.country,
-            ].where((part) => part != null && part.trim().isNotEmpty).join(', ');
-            _locationController.text = address;
+          if (!mounted) return;
+          if (geo != null) {
+            _isUpdatingFromMap = true;
+            _locationController.text = geo.formattedAddress;
+            _isUpdatingFromMap = false;
           } else {
+            _isUpdatingFromMap = true;
             _locationController.text =
                 'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';
+            _isUpdatingFromMap = false;
           }
         } catch (e) {
           debugPrint('Geocoding error in hotspot: $e');
+          _isUpdatingFromMap = true;
           _locationController.text =
               'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';
+          _isUpdatingFromMap = false;
         }
       } else {
+        _isUpdatingFromMap = true;
         _locationController.text =
             'Lat ${position.latitude.toStringAsFixed(5)}, Lng ${position.longitude.toStringAsFixed(5)}';
+        _isUpdatingFromMap = false;
       }
     } catch (e) {
       _showSnack(AppStrings.locationFetchFailed, AppColors.errorRed);
@@ -198,6 +371,9 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
       AppColors.success,
     );
     Get.offAllNamed(AppRoutes.home);
+    if (wasOnline) {
+      AchievementsController.checkAfterActivity();
+    }
   }
 
   void _showSnack(String message, Color color) {
@@ -274,14 +450,86 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
                     label: AppStrings.locationLabel,
                     hint: AppStrings.searchForLocation,
                     onPlaceSelected: (details) {
-                      controller.setCoordinates(
-                        details.latLng.latitude,
-                        details.latLng.longitude,
-                      );
+                      final lat = details.latLng.latitude;
+                      final lng = details.latLng.longitude;
+                      controller.setCoordinates(lat, lng);
+                      _updateMapPosition(LatLng(lat, lng));
                     },
                     supportText: controller.locationError,
                     isError: controller.locationError != null,
                     onChanged: controller.setLocation,
+                  ),
+                  SizedBox(height: SizeUtils.h(context, 4)),
+                  Text(
+                    AppStrings.searchOrDragMapHint,
+                    style: AppTextStyles.bodySecondary(context).copyWith(
+                      fontSize: SizeUtils.h(
+                        context,
+                        AppDimensions.smallFontSize,
+                      ),
+                      color: AppColors.textHint,
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeUtils.h(
+                      context,
+                      AppDimensions.cleanupSpacing12,
+                    ),
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(SizeUtils.r(context, 10)),
+                    child: SizedBox(
+                      height: SizeUtils.h(
+                        context,
+                        AppDimensions.mapPreviewHeight,
+                        useContentHeight: false,
+                      ),
+                      width: double.infinity,
+                      child: GoogleMap(
+                        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                          Factory<OneSequenceGestureRecognizer>(
+                            () => EagerGestureRecognizer(),
+                          ),
+                        },
+                        onMapCreated: (ctrl) {
+                          _mapController = ctrl;
+                          if (_currentPosition != null) {
+                            ctrl.animateCamera(
+                              CameraUpdate.newLatLng(_currentPosition!),
+                            );
+                          }
+                        },
+                        initialCameraPosition: const CameraPosition(
+                          target: LatLng(3.8480, 11.5021),
+                          zoom: 6,
+                        ),
+                        minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
+                        cameraTargetBounds: CameraTargetBounds(
+                          LatLngBounds(
+                            southwest: const LatLng(1.65, 8.49),
+                            northeast: const LatLng(13.08, 16.19),
+                          ),
+                        ),
+                        markers: _markers,
+                        zoomControlsEnabled: false,
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: false,
+                        onCameraMove: (position) {
+                          if (!_isUpdatingFromMap) {
+                            setState(() {
+                              _currentPosition = position.target;
+                              _markers = {
+                                Marker(
+                                  markerId: const MarkerId('selected'),
+                                  position: position.target,
+                                ),
+                              };
+                            });
+                          }
+                        },
+                        onCameraIdle: _onMapDragEnd,
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: SizeUtils.h(

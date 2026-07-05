@@ -8,6 +8,7 @@ import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
+import 'package:we_monitor/shared/widgets/floating_label_input_field.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 
 class EditCleanupTrashScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class EditCleanupTrashScreen extends StatefulWidget {
 class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
   late final CleanupModel cleanup;
   late final CleanupFormController controller;
+  late final TextEditingController _groupNameController;
   bool _isSaving = false;
 
   @override
@@ -27,13 +29,25 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
     super.initState();
     cleanup = Get.arguments as CleanupModel;
     controller = Get.find<CleanupFormController>();
+    _groupNameController = TextEditingController(text: cleanup.groupName);
+    controller.groupName = cleanup.groupName;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadTrashCollectedForEdit(cleanup);
       controller.setExpandedSection(AppStrings.trashCollected);
     });
   }
 
+  @override
+  void dispose() {
+    _groupNameController.dispose();
+    super.dispose();
+  }
+
   Future<void> _save() async {
+    if (_groupNameController.text.trim().isEmpty) {
+      SnackbarService.error('Validation Error', 'Team/Group name is required');
+      return;
+    }
     setState(() => _isSaving = true);
     final success = await controller.updateCleanupTrashCollected(cleanup.id!);
     if (!mounted) return;
@@ -70,8 +84,19 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              FloatingLabelInputField(
+                controller: _groupNameController,
+                label: 'Team / Group Name',
+                hint: 'Enter team name',
+                onChanged: (val) {
+                  controller.groupName = val;
+                },
+              ),
+              SizedBox(
+                height: SizeUtils.h(context, AppDimensions.cleanupSpacing16),
+              ),
               Text(
-                '${cleanup.groupName} • ${cleanup.date}',
+                'Date: ${cleanup.date}',
                 style: AppTextStyles.bodySecondary(context),
               ),
               SizedBox(

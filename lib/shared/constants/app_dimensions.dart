@@ -26,7 +26,7 @@ class AppDimensions {
   static const double homeScreenStartCleanupButtonHeight = 40.0;
   static const double homeScreenStartCleanupButtonFontSize = 15.0;
   static const double homeScreenStartCleanupCardSpacing = 8.0;
-  static const double homeScreenHighlightCarouselHeight = 210.0;
+  static const double homeScreenHighlightCarouselHeight = 265.0;
   static const double homeScreenHighlightCarouselSpacing = 12.0;
   static const double homeScreenHighlightCardRadius = 28.0;
   static const double homeScreenHighlightCardWidth = 316.0;
@@ -79,7 +79,9 @@ class AppDimensions {
   static const double newsCardRadius = 30.0;
   static const double newsCardWidth = 324.0;
   static const double newsCardHorizontalPadding = 16.0;
+  static const double otherCardHorizontalPadding = 16.0;
   static const double newsCardVerticalPadding = 13.0;
+  static const double otherCardVerticalPadding = 8.0;
   static const double zero = 0.0;
   static const double one = 1.0;
   // Padding & Margins

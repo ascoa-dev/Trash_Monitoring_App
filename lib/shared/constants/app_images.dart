@@ -68,6 +68,7 @@ class AppImages {
   static const String cleanupTop = 'assets/ASCOA/New_Cleanup_Top.png';
   static const String placeholder = 'assets/ASCOA/placeholder.png';
   static const String cleanConfirm = 'assets/ASCOA/clean_confirm.png';
+  static const String hotspotPlaceholder = 'assets/ASCOA/logo.png';
 
   AppImages._();
 }

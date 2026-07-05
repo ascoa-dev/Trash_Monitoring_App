@@ -163,6 +163,7 @@ class StatsController extends GetxController {
       final fetchedCleanups =
           querySnapshot.docs
               .map((doc) => CleanupModel.fromFirestore(doc))
+              .where((cleanup) => !cleanup.flagged)
               .toList()
             ..sort((a, b) {
               // Parse dates for comparison (dd/mm/yyyy format)
@@ -173,7 +174,7 @@ class StatsController extends GetxController {
                   int.parse(partsA[2]),
                   int.parse(partsA[1]),
                   int.parse(partsA[0]),
-                );
+                  );
                 final dateB = DateTime(
                   int.parse(partsB[2]),
                   int.parse(partsB[1]),

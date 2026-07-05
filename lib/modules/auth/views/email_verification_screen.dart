@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:we_monitor/app/controllers/auth_controller.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/app/routes/app_routes.dart';
@@ -30,6 +31,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   late final User _user;
   late final Timer _timer;
   bool isResending = false;
+  int _consecutiveErrors = 0;
+  // After ~30 s of network failures, show one warning snackbar.
+  static const int _errorWarningThreshold = 6;
   final haptics = Get.find<HapticController>();
 
   @override
@@ -37,7 +41,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     super.initState();
     Analytics.screenView(AnalyticsEvents.emailVerificationViewed);
     _user = _auth.currentUser!;
-    _user.reload();
+    // Fire-and-forget initial reload; timer will retry if this fails.
+    _user.reload().catchError((_) {});
     _timer = Timer.periodic(
       const Duration(seconds: 5),
       (_) => _checkVerification(),
@@ -45,25 +50,55 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   Future<void> _checkVerification() async {
-    await _auth.currentUser?.reload();
-    final user = _auth.currentUser!;
-    if (user.emailVerified) {
-      _timer.cancel();
-      haptics.medium();
-      Analytics.track(AnalyticsEvents.emailVerified);
-      SnackbarService.success(
-        AppStrings.emailVerifiedSuccessTitle,
-        AppStrings.emailVerifiedSuccessBody,
+    try {
+      await _auth.currentUser?.reload();
+      _consecutiveErrors = 0;
+      final user = _auth.currentUser;
+      if (user == null) return;
+      if (user.emailVerified) {
+        _timer.cancel();
+        haptics.medium();
+        Analytics.track(AnalyticsEvents.emailVerified);
+        SnackbarService.success(
+          AppStrings.emailVerifiedSuccessTitle,
+          AppStrings.emailVerifiedSuccessBody,
+        );
+        final AuthController controller = Get.find<AuthController>();
+        controller.handleUserPostVerification(user, 'email');
+      }
+    } on FirebaseAuthException catch (e) {
+      _handleTransientError(isNetwork: _isNetworkCode(e.code));
+    } on SocketException {
+      _handleTransientError(isNetwork: true);
+    } on IOException {
+      _handleTransientError(isNetwork: true);
+    } catch (_) {
+      // Unknown error — swallow so the timer keeps running.
+    }
+  }
+
+  bool _isNetworkCode(String? code) {
+    const networkCodes = {'network-request-failed', 'too-many-requests', 'unknown'};
+    return networkCodes.contains(code);
+  }
+
+  void _handleTransientError({required bool isNetwork}) {
+    if (!isNetwork) return; // non-network Firebase errors: skip silently
+    _consecutiveErrors++;
+    if (_consecutiveErrors == _errorWarningThreshold) {
+      SnackbarService.error(
+        'Connection issue',
+        'Having trouble reaching the server. We\'ll keep trying once you\'re back online.',
       );
-      final AuthController controller = Get.find<AuthController>();
-      controller.handleUserPostVerification(user, 'email');
     }
   }
 
   Future<void> _resendEmail() async {
     setState(() => isResending = true);
     try {
-      await _user.sendEmailVerification();
+      await _user.sendEmailVerification(
+        AuthController.emailVerificationSettings,
+      );
       Analytics.track(AnalyticsEvents.emailVerificationResent);
       SnackbarService.success(
         AppStrings.emailVerificationSentTitle,

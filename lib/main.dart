@@ -4,7 +4,12 @@ import 'package:we_monitor/app/controllers/pending_cleanups_controller.dart';
 import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
 import 'package:we_monitor/modules/auth/views/auth_gate_screen.dart';
 import 'package:we_monitor/modules/hotspots/bindings/hotspot_report_binding.dart';
+import 'package:we_monitor/modules/hotspots/views/hotspot_detail_screen.dart';
 import 'package:we_monitor/modules/hotspots/views/hotspot_report_screen.dart';
+import 'package:we_monitor/modules/home/views/cleanup_detail_screen.dart';
+import 'package:we_monitor/modules/home/views/cleanup_list_screen.dart';
+import 'package:we_monitor/modules/achievements/achievements_screen.dart';
+import 'package:we_monitor/modules/home/views/hotspot_list_screen.dart';
 import 'package:we_monitor/modules/my_cleanups/bindings/my_cleanups_binding.dart';
 import 'package:we_monitor/modules/my_cleanups/views/edit_cleanup_trash_screen.dart';
 import 'package:we_monitor/modules/my_cleanups/views/my_cleanups_screen.dart';
@@ -257,6 +262,26 @@ class MyApp extends StatelessWidget {
             GetPage(
               name: AppRoutes.adminManagement,
               page: () => const AdminManagementScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.hotspotDetail,
+              page: () => const HotspotDetailScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.hotspotList,
+              page: () => const HotspotListScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.cleanupDetail,
+              page: () => const CleanupDetailScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.cleanupList,
+              page: () => const CleanupListScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.achievements,
+              page: () => const AchievementsScreen(),
             ),
             // Add more GetPages for other routes
           ],

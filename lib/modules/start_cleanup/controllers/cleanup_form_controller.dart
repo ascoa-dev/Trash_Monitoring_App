@@ -446,6 +446,7 @@ class CleanupFormController extends ChangeNotifier {
   }
 
   void loadTrashCollectedForEdit(CleanupModel cleanup) {
+    groupName = cleanup.groupName;
     selectedEnvironments
       ..clear()
       ..add(cleanup.environment);
@@ -464,6 +465,10 @@ class CleanupFormController extends ChangeNotifier {
   }
 
   Future<bool> updateCleanupTrashCollected(String cleanupId) async {
+    if (groupName.trim().isEmpty) {
+      notifyListeners();
+      return false;
+    }
     if (!_validateTrashCollected()) {
       notifyListeners();
       return false;
@@ -477,7 +482,7 @@ class CleanupFormController extends ChangeNotifier {
       final cleanup = CleanupModel.fromFormData(
         userId: '',
         peopleCount: 1,
-        groupName: '',
+        groupName: groupName,
         date: '',
         location: '',
         environment: environmentType,
@@ -490,10 +495,11 @@ class CleanupFormController extends ChangeNotifier {
       await FirebaseFirestore.instance
           .collection('cleanups')
           .doc(cleanupId)
-          .set({
+          .update({
             'trashCollected': trashCollected,
+            'basicInfo.groupName': groupName,
             'updatedAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
+          });
 
       return true;
     } catch (e) {

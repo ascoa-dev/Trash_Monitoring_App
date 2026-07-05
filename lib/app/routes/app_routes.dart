@@ -16,5 +16,9 @@ abstract class AppRoutes {
   static const reportHotspot = '/report-hotspot';
   static const pendingHotspots = '/pending-hotspots';
   static const adminManagement = '/admin-management';
-  // Add more routes as needed
+  static const hotspotDetail = '/hotspot-detail';
+  static const hotspotList = '/hotspot-list';
+  static const cleanupDetail = '/cleanup-detail';
+  static const cleanupList = '/cleanup-list';
+  static const achievements = '/achievements';
 }

@@ -49,6 +49,7 @@ dependencies:
   firebase_crashlytics: ^5.0.0
   package_info_plus: ^8.1.3
   top_snackbar_flutter: ^3.3.0
+  confetti: ^0.8.0
 
 dev_dependencies:
   flutter_test:
@@ -127,20 +128,22 @@ flutter:
     - assets/ASCOA/Dashboard_Bottom.png
     - assets/ASCOA/New_Cleanup_Top.png
     - assets/ASCOA/Profile_Screen_Top.png
+    - assets/ASCOA/logo.png
+    - assets/ASCOA/Icon.png
 
 flutter_native_splash:
   color: "#FBFFF4"
-  image: assets/ASCOA/ASCOA_LOGO.png
+  image: assets/ASCOA/Icon.png
   android: true
   ios: true
   web: false
   color_dark: "#000000"
   android_12:
-    image: assets/ASCOA/ASCOA_LOGO.png
+    image: assets/ASCOA/Icon.png
     icon_background_color: "#FBFFF4"
     icon_background_color_dark: "#000000"
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/ASCOA/ASCOA_LOGO.png"
+  image_path: "assets/ASCOA/Icon.png"

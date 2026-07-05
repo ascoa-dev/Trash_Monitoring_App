@@ -13,6 +13,15 @@ import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:hive/hive.dart';
 
 class AuthController extends GetxController {
+  /// Single Firebase email action handler URL (verification, reset, email
+  /// change, MFA notice) — matches the Firebase Auth template action URL.
+  static const String authActionUrl = 'https://accounts.ascoa-cm.org/action';
+
+  /// Settings for email verification links. Handled on the web (not in app),
+  /// so [handleCodeInApp] is false and no app identifiers are supplied.
+  static ActionCodeSettings get emailVerificationSettings =>
+      ActionCodeSettings(url: authActionUrl, handleCodeInApp: false);
+
   late final FirebaseAuth _auth;
   late Box<UserModel> userBox;
   late final Future<void> _hiveReady;
@@ -173,7 +182,7 @@ class AuthController extends GetxController {
     if (!isOAuth && !user.emailVerified) {
       debugPrint('Email not verified: ${user.email}');
       try {
-        await user.sendEmailVerification();
+        await user.sendEmailVerification(emailVerificationSettings);
         _emitInfo(
           'Email Sent',
           'A verification link has been sent to ${user.email}',
@@ -946,7 +955,7 @@ class AuthController extends GetxController {
     Analytics.track(AnalyticsEvents.passwordResetRequested);
     try {
       ActionCodeSettings actionCodeSettings = ActionCodeSettings(
-        url: 'https://accounts.ascoa-cm.org/reset',
+        url: authActionUrl,
         handleCodeInApp: true,
         androidPackageName: 'com.ascoa.wemonitor',
         androidInstallApp: false,

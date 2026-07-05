@@ -134,6 +134,11 @@ class HotspotReportController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLocationError(String? error) {
+    locationError = error;
+    notifyListeners();
+  }
+
   Future<void> addPhotos(List<File> files) async {
     await mediaUploadController.addPhotos(files);
     photosError = null;

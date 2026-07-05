@@ -12,6 +12,7 @@ import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/app_dialog.dart';
 import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/modules/achievements/achievements_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -179,6 +180,11 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
                 Navigator.of(ctx).pop();
                 // Navigate to home and clear stack
                 Get.offAllNamed(AppRoutes.home);
+                // Re-evaluate achievements and celebrate any new unlocks over
+                // the home screen. Only online submissions are in Firestore.
+                if (wasOnline) {
+                  AchievementsController.checkAfterActivity();
+                }
               },
             );
           },

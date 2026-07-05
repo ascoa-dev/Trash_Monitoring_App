@@ -28,8 +28,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Your Firebase-hosted subdomain and reset path -->
-                <data android:scheme="https" android:host="accounts.ascoa-cm.org" android:pathPrefix="/reset" />
+                <!-- Firebase email action handler (password reset deep link) -->
+                <data android:scheme="https" android:host="accounts.ascoa-cm.org" android:pathPrefix="/action" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

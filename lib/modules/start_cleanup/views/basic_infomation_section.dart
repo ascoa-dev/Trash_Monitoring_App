@@ -867,7 +867,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
                     context,
                     initialDate: DateTime.now(),
                     startDate: DateTime(2023),
-                    endDate: DateTime(2030),
+                    endDate: DateTime.now(),
                   );
                   if (!mounted) return;
                   if (picked != null) {

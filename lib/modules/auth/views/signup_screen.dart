@@ -1,6 +1,5 @@
 import 'package:we_monitor/app/controllers/auth_controller.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
-import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -19,6 +18,7 @@ import 'package:we_monitor/app/routes/app_routes.dart';
 import 'package:we_monitor/shared/widgets/auth_header.dart';
 import 'package:we_monitor/shared/constants/app_images.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/utils/link_utils.dart';
 import 'package:we_monitor/shared/analytics/analytics_service.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -304,9 +304,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                   ..onTap = () {
                                                     Get.find<HapticController>()
                                                         .selectionClick();
-                                                    SnackbarService.info(
-                                                      AppStrings.termsLink,
-                                                      AppStrings.termsNav,
+                                                    openExternalUrl(
+                                                      AppStrings.profileTermsUrl,
                                                     );
                                                   },
                                           ),
@@ -321,11 +320,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                                   ..onTap = () {
                                                     Get.find<HapticController>()
                                                         .selectionClick();
-                                                    SnackbarService.info(
+                                                    openExternalUrl(
                                                       AppStrings
-                                                          .privacyPolicyLink,
-                                                      AppStrings
-                                                          .privacyPolicyNav,
+                                                          .profilePrivacyUrl,
                                                     );
                                                   },
                                           ),

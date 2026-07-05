@@ -1,6 +1,8 @@
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
+import 'package:we_monitor/shared/utils/link_utils.dart';
 import 'package:we_monitor/app/controllers/auth_controller.dart';
 import 'package:we_monitor/shared/controllers/form_controllers.dart';
 import 'package:we_monitor/shared/controllers/validation_controller.dart';
@@ -341,8 +343,8 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                     textAlign: TextAlign.center,
                                     text: TextSpan(
                                       style: AppTextStyles.termsBase(context),
-                                      children: const [
-                                        TextSpan(
+                                      children: [
+                                        const TextSpan(
                                           text: AppStrings.termsText,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
@@ -351,8 +353,17 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                         TextSpan(
                                           text: AppStrings.termsLink,
                                           style: AppTextStyles.termsLink,
+                                          recognizer:
+                                              TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  Get.find<HapticController>()
+                                                      .selectionClick();
+                                                  openExternalUrl(
+                                                    AppStrings.profileTermsUrl,
+                                                  );
+                                                },
                                         ),
-                                        TextSpan(
+                                        const TextSpan(
                                           text: AppStrings.termsAnd,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
@@ -361,8 +372,19 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                         TextSpan(
                                           text: AppStrings.privacyPolicyLink,
                                           style: AppTextStyles.termsLink,
+                                          recognizer:
+                                              TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  Get.find<HapticController>()
+                                                      .selectionClick();
+                                                  openExternalUrl(
+                                                    AppStrings.profilePrivacyUrl,
+                                                  );
+                                                },
                                         ),
-                                        TextSpan(text: AppStrings.termsPeriod),
+                                        const TextSpan(
+                                          text: AppStrings.termsPeriod,
+                                        ),
                                       ],
                                     ),
                                   ),

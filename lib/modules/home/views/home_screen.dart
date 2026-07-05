@@ -14,11 +14,16 @@ import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/auth_header.dart';
 import 'package:we_monitor/shared/widgets/primary_button.dart';
 import 'package:we_monitor/app/routes/app_routes.dart';
+import 'package:we_monitor/app/models/cleanup_model.dart';
+import 'package:we_monitor/app/models/hotspot_model.dart';
+import 'package:we_monitor/modules/home/widgets/cleanup_card.dart';
 import 'package:we_monitor/modules/home/widgets/home_news_card.dart';
+import 'package:we_monitor/modules/hotspots/widgets/hotspot_card.dart';
+import 'package:we_monitor/shared/services/cleanup_public_service.dart';
+import 'package:we_monitor/shared/services/hotspot_service.dart';
 import 'package:we_monitor/modules/home/widgets/news_skeleton_card.dart';
 import 'package:we_monitor/modules/home/controller/posts_controller.dart';
 import 'package:we_monitor/modules/main/controllers/main_nav_controller.dart';
-import 'package:we_monitor/shared/services/spotlight_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:we_monitor/modules/profile/widgets/full_image_overlay.dart';
 
@@ -31,12 +36,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final AuthController _authController;
-  late final PageController _highlightController;
 
-  // Spotlight images loaded from the Firebase Storage `spotlight/` folder
-  // (managed by admins on the website). Empty until loaded; if it stays empty
-  // the highlights section is not rendered.
-  List<String> _spotlightUrls = [];
+  List<HotspotModel> _hotspots = [];
+  List<CleanupModel> _cleanups = [];
+  late final PageController _hotspotController;
+  late final PageController _cleanupController;
 
   late final HomePostsController _postsController;
   late final StatsController _statsController;
@@ -45,7 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _authController = Get.find<AuthController>();
-    _highlightController = PageController(
+
+    _hotspotController = PageController(
+      viewportFraction: AppDimensions.homeScreenHighlightViewportFraction,
+    );
+    _cleanupController = PageController(
       viewportFraction: AppDimensions.homeScreenHighlightViewportFraction,
     );
 
@@ -56,18 +64,26 @@ class _HomeScreenState extends State<HomeScreen> {
     _postsController.loadPosts(perPage: 4);
     _statsController = Get.find<StatsController>(tag: 'stats_controller');
 
-    _loadSpotlightImages();
+    _loadHotspots();
+    _loadCleanups();
   }
 
-  Future<void> _loadSpotlightImages() async {
-    final urls = await SpotlightService.fetchImageUrls();
+  Future<void> _loadHotspots() async {
+    final results = await HotspotService.fetchUnresolved();
     if (!mounted) return;
-    setState(() => _spotlightUrls = urls);
+    setState(() => _hotspots = results);
+  }
+
+  Future<void> _loadCleanups() async {
+    final results = await CleanupPublicService.fetchPublic();
+    if (!mounted) return;
+    setState(() => _cleanups = results);
   }
 
   @override
   void dispose() {
-    _highlightController.dispose();
+    _hotspotController.dispose();
+    _cleanupController.dispose();
     super.dispose();
   }
 
@@ -129,10 +145,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           AppDimensions.homeScreenStatsGap,
                         ),
                       ),
-                      // Highlights section only renders when the spotlight
-                      // folder has images.
-                      if (_spotlightUrls.isNotEmpty) ...[
-                        _buildHighlightsSection(context),
+                      if (_hotspots.isNotEmpty) ...[
+                        _buildHotspotsSection(context),
+                        SizedBox(
+                          height: SizeUtils.h(
+                            context,
+                            AppDimensions.homeScreenCarouselGap,
+                          ),
+                        ),
+                      ],
+                      if (_cleanups.isNotEmpty) ...[
+                        _buildCleanupsSection(context),
                         SizedBox(
                           height: SizeUtils.h(
                             context,
@@ -502,7 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget _buildHighlightsSection(BuildContext context) {
+  Widget _buildHotspotsSection(BuildContext context) {
     final double carouselHeight = SizeUtils.h(
       context,
       AppDimensions.homeScreenHighlightCarouselHeight,
@@ -512,9 +535,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppStrings.highlights,
-          style: AppTextStyles.dashboardHeading(context),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Hotspot Reports',
+                style: AppTextStyles.dashboardHeading(context),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Get.find<HapticController>().selectionClick();
+                Get.toNamed(AppRoutes.hotspotList);
+              },
+              child: Text(
+                'View All',
+                style: AppTextStyles.newsCaption(context),
+              ),
+            ),
+          ],
         ),
         SizedBox(
           height: SizeUtils.h(
@@ -525,13 +564,94 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(
           height: carouselHeight,
           child: PageView.builder(
-            controller: _highlightController,
+            controller: _hotspotController,
             padEnds: false,
             physics: const ClampingScrollPhysics(),
-            // PageView.builder + CachedNetworkImage load each page lazily.
-            itemCount: _spotlightUrls.length,
+            itemCount: _hotspots.length,
             itemBuilder: (context, index) {
-              return _HighlightCard(imageUrl: _spotlightUrls[index]);
+              final h = _hotspots[index];
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: SizeUtils.w(
+                    context,
+                    AppDimensions.homeScreenHighlightCardSpacing,
+                  ),
+                ),
+                child: HotspotCard(
+                  hotspot: h,
+                  onTap: () => Get.toNamed(
+                    AppRoutes.hotspotDetail,
+                    arguments: h,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCleanupsSection(BuildContext context) {
+    final double carouselHeight = SizeUtils.h(
+      context,
+      AppDimensions.homeScreenHighlightCarouselHeight,
+      useContentHeight: false,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Community Cleanups',
+                style: AppTextStyles.dashboardHeading(context),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Get.find<HapticController>().selectionClick();
+                Get.toNamed(AppRoutes.cleanupList);
+              },
+              child: Text(
+                'View All',
+                style: AppTextStyles.newsCaption(context),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: SizeUtils.h(
+            context,
+            AppDimensions.homeScreenHighlightCarouselSpacing,
+          ),
+        ),
+        SizedBox(
+          height: carouselHeight,
+          child: PageView.builder(
+            controller: _cleanupController,
+            padEnds: false,
+            physics: const ClampingScrollPhysics(),
+            itemCount: _cleanups.length,
+            itemBuilder: (context, index) {
+              final c = _cleanups[index];
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: SizeUtils.w(
+                    context,
+                    AppDimensions.homeScreenHighlightCardSpacing,
+                  ),
+                ),
+                child: CleanupCard(
+                  cleanup: c,
+                  onTap: () => Get.toNamed(
+                    AppRoutes.cleanupDetail,
+                    arguments: c,
+                  ),
+                ),
+              );
             },
           ),
         ),
@@ -802,61 +922,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _HighlightCard extends StatelessWidget {
-  const _HighlightCard({required this.imageUrl});
-
-  final String imageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    final double radius = SizeUtils.r(
-      context,
-      AppDimensions.homeScreenHighlightCardRadius,
-    );
-    final double width = SizeUtils.w(
-      context,
-      AppDimensions.homeScreenHighlightCardWidth,
-    );
-    final double height = SizeUtils.h(
-      context,
-      AppDimensions.homeScreenHighlightCardHeight,
-      useContentHeight: false,
-    );
-
-    return Padding(
-      padding: EdgeInsets.only(
-        right: SizeUtils.w(
-          context,
-          AppDimensions.homeScreenHighlightCardSpacing,
-        ),
-      ),
-      child: GestureDetector(
-        onTap: () {
-          Get.find<HapticController>().selectionClick();
-          FullImageOverlay.show(
-            context,
-            imageUrl: imageUrl,
-            placeholderAsset: AppImages.placeholder,
-          );
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
-          child: SizedBox(
-            width: width,
-            height: height,
-            child: CachedNetworkImage(
-              imageUrl: imageUrl,
-              fit: BoxFit.cover,
-              placeholder:
-                  (context, url) =>
-                      Image.asset(AppImages.placeholder, fit: BoxFit.cover),
-              errorWidget:
-                  (context, url, error) =>
-                      Image.asset(AppImages.placeholder, fit: BoxFit.cover),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

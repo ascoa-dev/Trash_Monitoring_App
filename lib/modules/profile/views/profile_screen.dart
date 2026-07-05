@@ -303,6 +303,21 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             ProfileActionTile(
+                              icon: Icons.emoji_events_outlined,
+                              title: 'Achievements',
+                              subtitle: 'Track milestones and unlock rewards',
+                              onTap: () => Get.toNamed(AppRoutes.achievements),
+                            ),
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
+                            ),
+                            ProfileActionTile(
                               icon: Icons.history_outlined,
                               title: 'My Clean Ups',
                               subtitle: 'Search and edit submitted cleanups',

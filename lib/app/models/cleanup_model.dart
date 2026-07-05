@@ -24,6 +24,9 @@ class CleanupModel {
   final String? notes;
   final List<String>? photoUrls;
 
+  // Admin flagging
+  final bool flagged;
+
   CleanupModel({
     this.id,
     required this.userId,
@@ -39,6 +42,7 @@ class CleanupModel {
     required this.totalWeight,
     this.notes,
     this.photoUrls,
+    this.flagged = false,
   });
 
   /// Create from form controller data
@@ -131,6 +135,7 @@ class CleanupModel {
         'totalWeight': totalWeight,
       },
       'metadata': {'notes': notes, 'photoUrls': photoUrls ?? []},
+      'flagged': flagged,
     };
   }
 
@@ -177,6 +182,7 @@ class CleanupModel {
       totalWeight: (trashCollected['totalWeight'] as num).toDouble(),
       notes: metadata['notes'] as String?,
       photoUrls: (metadata['photoUrls'] as List<dynamic>?)?.cast<String>(),
+      flagged: data['flagged'] == true,
     );
   }
 
@@ -196,6 +202,7 @@ class CleanupModel {
     double? totalWeight,
     String? notes,
     List<String>? photoUrls,
+    bool? flagged,
   }) {
     return CleanupModel(
       id: id ?? this.id,
@@ -212,6 +219,7 @@ class CleanupModel {
       totalWeight: totalWeight ?? this.totalWeight,
       notes: notes ?? this.notes,
       photoUrls: photoUrls ?? this.photoUrls,
+      flagged: flagged ?? this.flagged,
     );
   }
 }
