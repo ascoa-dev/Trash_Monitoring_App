@@ -29,7 +29,7 @@ class UserByline extends StatelessWidget {
               radius: avatarSize / 2,
               backgroundColor: AppColors.cardBackground,
               backgroundImage: avatarUrl != null
-                  ? CachedNetworkImageProvider(avatarUrl)
+                  ? CachedNetworkImageProvider(avatarUrl, maxWidth: 60, maxHeight: 60)
                   : null,
               child: avatarUrl == null
                   ? Text(

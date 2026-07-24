@@ -14,7 +14,7 @@ class AppStrings {
   static const String noAccount = "No Account? ";
   static const String haveAccount = "Already have an account? ";
   static const String signUp = "Sign up";
-  static const String termsText = "By using ASCOA, you agree to the \n";
+  static const String termsText = "By using We Monitor, you agree to the \n";
   static const String termsTextSignUp = "By clicking here, you agree to the ";
   static const String termsLink = "Terms";
   static const String termsAnd = " and ";
@@ -285,9 +285,9 @@ class AppStrings {
   static const String profileSignOut = "Sign Out";
 
   // Support Links Configuration
-  static const String profileTermsUrl = "https://accounts.ascoa-cm.org/terms";
+  static const String profileTermsUrl = "https://app.ascoa-cm.org/terms";
   static const String profilePrivacyUrl =
-      "https://accounts.ascoa-cm.org/privacy-policy";
+      "https://app.ascoa-cm.org/privacy-policy";
   static const String profileContactEmail = "devteam@ascoa-cm.org";
 
   // Common short actions

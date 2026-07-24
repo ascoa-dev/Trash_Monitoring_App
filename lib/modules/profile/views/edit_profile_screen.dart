@@ -247,6 +247,8 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                                               .value!,
                                                         ),
                                                     fit: BoxFit.cover,
+                                                    memCacheWidth: 300,
+                                                    memCacheHeight: 300,
                                                     placeholder:
                                                         (
                                                           context,

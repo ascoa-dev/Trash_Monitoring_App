@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:we_monitor/app/controllers/auth_controller.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
@@ -435,6 +436,24 @@ class _SignupScreenState extends State<SignupScreen> {
                           color: AppColors.google,
                           onPressed: () => controller.loginWithGoogle(),
                         ),
+                        if (Platform.isIOS) ...[
+                          SizedBox(
+                            height:
+                                viewportHeight * AppDimensions.sectionSpacing,
+                          ),
+                          SocialButton(
+                            icon: Icon(
+                              Icons.apple,
+                              color: Colors.white,
+                              size: SizeUtils.r(
+                                context,
+                                AppDimensions.socialIconSize,
+                              ),
+                            ),
+                            color: Colors.black,
+                            onPressed: () => controller.loginWithApple(),
+                          ),
+                        ],
                         SizedBox(
                           height: viewportHeight * AppDimensions.sectionSpacing,
                         ),

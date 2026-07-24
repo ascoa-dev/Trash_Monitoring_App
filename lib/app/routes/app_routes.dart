@@ -21,4 +21,5 @@ abstract class AppRoutes {
   static const cleanupDetail = '/cleanup-detail';
   static const cleanupList = '/cleanup-list';
   static const achievements = '/achievements';
+  static const deleteRequest = '/delete-request';
 }

@@ -68,6 +68,8 @@ class CleanupCard extends StatelessWidget {
                             ? CachedNetworkImage(
                               imageUrl: cleanup.photoUrls!.first,
                               fit: BoxFit.cover,
+                              memCacheWidth: 600,
+                              memCacheHeight: 400,
                               placeholder: (c, s) => _placeholder(),
                               errorWidget: (c, s, e) => _placeholder(),
                             )

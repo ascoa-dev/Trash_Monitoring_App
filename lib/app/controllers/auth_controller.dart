@@ -11,11 +11,12 @@ import 'package:we_monitor/app/models/user.dart';
 import 'package:we_monitor/shared/analytics/analytics_service.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:hive/hive.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthController extends GetxController {
   /// Single Firebase email action handler URL (verification, reset, email
   /// change, MFA notice) — matches the Firebase Auth template action URL.
-  static const String authActionUrl = 'https://accounts.ascoa-cm.org/action';
+  static const String authActionUrl = 'https://app.ascoa-cm.org/action';
 
   /// Settings for email verification links. Handled on the web (not in app),
   /// so [handleCodeInApp] is false and no app identifiers are supplied.
@@ -529,6 +530,57 @@ class AuthController extends GetxController {
       });
       debugPrint('Google login error: $e');
       _emitError('Google Login Failed', e.toString());
+      await _signOutAll();
+    }
+  }
+
+  Future<void> loginWithApple() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
+      final AuthCredential authCredential = oAuthProvider.credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+
+      final userCredential = await _auth.signInWithCredential(authCredential);
+      final user = userCredential.user;
+      if (user == null) throw Exception('No user found after Apple sign-in.');
+
+      await user.reload();
+
+      // Track successful Apple login
+      Analytics.track(AnalyticsEvents.loginSuccess, {
+        AnalyticsProps.method: AuthMethods.apple,
+      });
+      await Analytics.identify(user.uid);
+
+      await _handleUserPostLogin(user, 'apple');
+    } on FirebaseAuthException catch (e) {
+      Analytics.track(AnalyticsEvents.loginFailed, {
+        AnalyticsProps.method: AuthMethods.apple,
+        AnalyticsProps.reason: e.code,
+      });
+      _emitError('Apple Login Failed', e.message ?? 'Unknown error');
+      await _signOutAll();
+    } catch (e) {
+      Analytics.track(AnalyticsEvents.loginFailed, {
+        AnalyticsProps.method: AuthMethods.apple,
+        AnalyticsProps.reason: 'unknown_error',
+      });
+      debugPrint('Apple login error: $e');
+      if (e is SignInWithAppleAuthorizationException &&
+          e.code == AuthorizationErrorCode.canceled) {
+        // User cancelled, do not emit error
+        return;
+      }
+      _emitError('Apple Login Failed', e.toString());
       await _signOutAll();
     }
   }

@@ -12,6 +12,7 @@ import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/circular_upload_progress.dart';
+import 'package:we_monitor/shared/widgets/image_picker_dialog.dart';
 
 class PhotosSection extends StatefulWidget {
   final CleanupFormController formController;
@@ -51,11 +52,27 @@ class _PhotosSectionState extends State<PhotosSection> {
       final remainingSlots =
           MediaUploadConfig.maxPhotos - controller.photoCount;
 
-      // Pick multiple images with limit (note: limit may not work on all platforms)
-      final pickedFiles = await _picker.pickMultiImage(
-        imageQuality: 100, // We'll compress later
-        limit: remainingSlots,
+      // Show source selector dialog (Camera or Gallery)
+      final ImageSource? source = await Get.dialog<ImageSource?>(
+        const ImagePickerDialog(),
       );
+      if (source == null) return;
+
+      List<XFile> pickedFiles = [];
+      if (source == ImageSource.camera) {
+        final XFile? file = await _picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 100,
+        );
+        if (file != null) {
+          pickedFiles = [file];
+        }
+      } else {
+        pickedFiles = await _picker.pickMultiImage(
+          imageQuality: 100,
+          limit: remainingSlots,
+        );
+      }
 
       if (pickedFiles.isEmpty) return;
       Get.find<HapticController>().selectionClick();
@@ -331,7 +348,7 @@ class _PhotosSectionState extends State<PhotosSection> {
             ),
             color: AppColors.grey300,
             image: DecorationImage(
-              image: FileImage(photo.file),
+              image: ResizeImage(FileImage(photo.file), width: 300),
               fit: BoxFit.cover,
             ),
           ),

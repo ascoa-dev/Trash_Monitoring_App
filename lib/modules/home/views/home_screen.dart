@@ -305,6 +305,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? CachedNetworkImage(
                       imageUrl: _normalizeCacheBustedUrl(previewUrl),
                       fit: BoxFit.cover,
+                      memCacheWidth: 200,
+                      memCacheHeight: 200,
                       placeholder:
                           (context, url) => Container(
                             color: AppColors.profileAvatarBackground,

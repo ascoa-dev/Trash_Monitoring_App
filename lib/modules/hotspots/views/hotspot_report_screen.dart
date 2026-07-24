@@ -22,6 +22,7 @@ import 'package:we_monitor/shared/services/google_places_service.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/circular_upload_progress.dart';
 import 'package:we_monitor/shared/widgets/location_search_field.dart';
+import 'package:we_monitor/shared/widgets/image_picker_dialog.dart';
 
 class HotspotReportScreen extends StatefulWidget {
   const HotspotReportScreen({super.key});
@@ -325,10 +326,26 @@ class _HotspotReportScreenState extends State<HotspotReportScreen> {
     }
 
     final remaining = MediaUploadConfig.maxPhotos - media.photoCount;
-    final picked = await _picker.pickMultiImage(
-      imageQuality: 100,
-      limit: remaining,
+    final ImageSource? source = await Get.dialog<ImageSource?>(
+      const ImagePickerDialog(),
     );
+    if (source == null) return;
+
+    List<XFile> picked = [];
+    if (source == ImageSource.camera) {
+      final XFile? file = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 100,
+      );
+      if (file != null) {
+        picked = [file];
+      }
+    } else {
+      picked = await _picker.pickMultiImage(
+        imageQuality: 100,
+        limit: remaining,
+      );
+    }
     if (picked.isEmpty) return;
 
     final files =
@@ -633,7 +650,7 @@ class _PhotoGrid extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(SizeUtils.r(context, 8)),
-                  child: Image.file(photo.file, fit: BoxFit.cover),
+                  child: Image.file(photo.file, fit: BoxFit.cover, cacheWidth: 300),
                 ),
                 if (photo.status == PhotoUploadStatus.compressing ||
                     photo.status == PhotoUploadStatus.uploading)

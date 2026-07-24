@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "677557829420-ab612qliodrsgkbvp1d6134nt3qhlcgt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ascoa.wemonitor",
+            "certificate_hash": "485cb3ba3ffef80413de3957cc966b1b911ee386"
+          }
+        },
+        {
           "client_id": "677557829420-ll3o0n08fuqlit15emd2knrfpmvv891n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

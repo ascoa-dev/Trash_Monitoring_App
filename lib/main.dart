@@ -41,6 +41,7 @@ import 'modules/auth/views/email_verification_screen.dart';
 import 'modules/admin/views/admin_management_screen.dart';
 import 'modules/profile/views/edit_profile_screen.dart';
 import 'modules/profile/bindings/edit_profile_binding.dart';
+import 'modules/profile/views/delete_request_screen.dart';
 import 'package:we_monitor/shared/constants/app_images.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'modules/profile/views/change_password_screen.dart';
@@ -132,11 +133,18 @@ Future<void> _initDeepLinks() async {
 void _handleIncomingUri(Uri uri) {
   debugPrint('Received deep link: $uri');
 
+  final host = uri.host;
   final mode = uri.queryParameters['mode'];
   final oobCode = uri.queryParameters['oobCode'];
 
-  if (mode == 'resetPassword' && oobCode != null) {
+  if (host == 'app.ascoa-cm.org' &&
+      mode == 'resetPassword' &&
+      oobCode != null &&
+      oobCode.trim().isNotEmpty) {
     Get.offAllNamed(AppRoutes.resetPassword, arguments: {'oobCode': oobCode});
+  } else {
+    debugPrint('Invalid deep link parameters. Redirecting to home.');
+    Get.offAllNamed(AppRoutes.authGate);
   }
 }
 
@@ -282,6 +290,10 @@ class MyApp extends StatelessWidget {
             GetPage(
               name: AppRoutes.achievements,
               page: () => const AchievementsScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.deleteRequest,
+              page: () => const DeleteRequestScreen(),
             ),
             // Add more GetPages for other routes
           ],

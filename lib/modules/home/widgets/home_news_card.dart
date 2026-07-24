@@ -66,6 +66,7 @@ class HomeNewsCard extends StatelessWidget {
             : CachedNetworkImage(
               imageUrl: image,
               fit: fit,
+              memCacheWidth: 600,
               placeholder:
                   (c, s) => Container(color: AppColors.newsCardPlaceholder),
               errorWidget:

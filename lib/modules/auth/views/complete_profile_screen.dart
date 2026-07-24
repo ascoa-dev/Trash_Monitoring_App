@@ -135,6 +135,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                           // Use thumbnail for preview, fallback to full avatar
                           imageUrl: _uploadedThumbUrl ?? _uploadedAvatarUrl!,
                           fit: BoxFit.cover,
+                          memCacheWidth: 300,
+                          memCacheHeight: 300,
                           placeholder:
                               (context, url) => Container(
                                 color: AppColors.profileAvatarBackground,

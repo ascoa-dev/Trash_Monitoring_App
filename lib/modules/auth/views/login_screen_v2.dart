@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -284,6 +285,25 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                   color: AppColors.google,
                                   onPressed: () => controller.loginWithGoogle(),
                                 ),
+                                if (Platform.isIOS) ...[
+                                  SizedBox(
+                                    height:
+                                        (contentHeight *
+                                            AppDimensions.titleBottomSpacing),
+                                  ),
+                                  SocialButton(
+                                    icon: Icon(
+                                      Icons.apple,
+                                      color: Colors.white,
+                                      size: SizeUtils.r(
+                                        context,
+                                        AppDimensions.socialIconSize,
+                                      ),
+                                    ),
+                                    color: Colors.black,
+                                    onPressed: () => controller.loginWithApple(),
+                                  ),
+                                ],
                                 SizedBox(
                                   height:
                                       (contentHeight *

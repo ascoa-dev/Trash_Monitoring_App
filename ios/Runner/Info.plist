@@ -22,14 +22,41 @@
 		<string>$(FLUTTER_BUILD_NAME)</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.677557829420-628kv2basf4ba8uh2s1875uk1rhgejjt</string>
+				</array>
+			</dict>
+		</array>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>https</string>
+			<string>http</string>
+			<string>mailto</string>
+			<string>tel</string>
+			<string>sms</string>
+			<string>comgooglemaps</string>
+			<string>maps</string>
+		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>NSCameraUsageDescription</key>
+		<string>We Monitor needs access to your camera to take photos of cleanups and update your profile picture.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>ASCOA needs access to your location to mark cleanup sites on the map</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>ASCOA needs access to your location to mark cleanup sites on the map</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>We Monitor needs access to your microphone if capturing video reports.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We Monitor needs access to your photo library to select photos for cleanups and profile pictures.</string>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
 			<key>UIApplicationSupportsMultipleScenes</key>

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -12,7 +13,7 @@ import 'package:we_monitor/shared/constants/app_images.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/user_byline.dart';
-import 'package:we_monitor/modules/profile/widgets/full_image_overlay.dart';
+import 'package:we_monitor/shared/widgets/fullscreen_image_viewer.dart';
 
 class HotspotDetailScreen extends StatefulWidget {
   const HotspotDetailScreen({super.key});
@@ -43,9 +44,14 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
     final lat = hotspot.latitude;
     final lng = hotspot.longitude;
     if (lat == null || lng == null) return;
-    final geoUri = Uri.parse('geo:$lat,$lng?q=$lat,$lng');
-    if (await canLaunchUrl(geoUri)) {
-      await launchUrl(geoUri);
+    final Uri mapUri;
+    if (Platform.isIOS) {
+      mapUri = Uri.parse('https://maps.apple.com/?q=$lat,$lng');
+    } else {
+      mapUri = Uri.parse('geo:$lat,$lng?q=$lat,$lng');
+    }
+    if (await canLaunchUrl(mapUri)) {
+      await launchUrl(mapUri);
     } else {
       await launchUrl(
         Uri.parse('https://www.google.com/maps?q=$lat,$lng'),
@@ -215,7 +221,7 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
                           ),
                         ),
                         child: GestureDetector(
-                          onTap: () => FullImageOverlay.show(
+                          onTap: () => FullscreenImageViewer.show(
                             context,
                             imageUrl: hotspot.photoUrls[index],
                             placeholderAsset: AppImages.hotspotPlaceholder,
@@ -223,6 +229,7 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
                           child: CachedNetworkImage(
                             imageUrl: hotspot.photoUrls[index],
                             fit: BoxFit.cover,
+                            memCacheWidth: 1080,
                             placeholder: (c, s) => Container(
                               color: AppColors.cardBackground,
                             ),

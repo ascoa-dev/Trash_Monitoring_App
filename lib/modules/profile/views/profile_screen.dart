@@ -166,6 +166,8 @@ class ProfileScreen extends StatelessWidget {
                                                     previewUrl,
                                                   ),
                                               fit: BoxFit.cover,
+                                              memCacheWidth: 300,
+                                              memCacheHeight: 300,
                                               placeholder:
                                                   (context, url) => Container(
                                                     color:
@@ -504,6 +506,113 @@ class ProfileScreen extends StatelessWidget {
                                     context,
                                     'mailto:${AppStrings.profileContactEmail}',
                                   ),
+                            ),
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
+                                  AppDimensions.profileSectionSupportSpacing,
+                                ),
+                                AppDimensions.profileSectionSupportSpacing,
+                              ),
+                            ),
+                            SizedBox(
+                              width:
+                                  SizeUtils.w(
+                                    context,
+                                    AppDimensions.profileCardWidth,
+                                  ) -
+                                  SizeUtils.w(
+                                    context,
+                                    AppDimensions.profileCardTextWidthOffset,
+                                  ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'DANGER ZONE',
+                                    style: AppTextStyles.profileCaption(context).copyWith(
+                                      color: const Color(0xFFBE123C),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  OutlinedButton.icon(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFFFF1F2),
+                                      foregroundColor: const Color(0xFFBE123C),
+                                      side: BorderSide(
+                                        color: const Color(0xFFBE123C).withValues(alpha: 0.2),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Get.find<HapticController>().selectionClick();
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext ctx) => AlertDialog(
+                                          backgroundColor: AppColors.background,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          title: Text(
+                                            'Confirm Request',
+                                            style: AppTextStyles.heading2(ctx).copyWith(fontSize: 18),
+                                          ),
+                                          content: Text(
+                                            'Do you really wish to proceed to the Account & Data Deletion screen?',
+                                            style: AppTextStyles.body(ctx),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(ctx).pop(),
+                                              child: Text(
+                                                'Cancel',
+                                                style: AppTextStyles.body(ctx).copyWith(color: Colors.grey),
+                                              ),
+                                            ),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: const Color(0xFFBE123C),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                                Get.toNamed(AppRoutes.deleteRequest);
+                                              },
+                                              child: Text(
+                                                'Confirm',
+                                                style: AppTextStyles.body(ctx).copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.warning_amber_rounded,
+                                      size: 16,
+                                    ),
+                                    label: const Text(
+                                      'Delete Account & Data',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             SizedBox(
                               height: math.min(
