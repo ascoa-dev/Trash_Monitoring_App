@@ -271,6 +271,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                           AppDimensions.inputSpacing),
                                 ),
                                 SocialButton(
+                                  label: "Sign in with Google",
                                   icon: Image.asset(
                                     AppImages.googleNeutral2x,
                                     width: SizeUtils.r(
@@ -289,19 +290,21 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                   SizedBox(
                                     height:
                                         (contentHeight *
-                                            AppDimensions.titleBottomSpacing),
+                                            AppDimensions.inputSpacing),
                                   ),
                                   SocialButton(
+                                    label: "Sign in with Apple",
                                     icon: Icon(
                                       Icons.apple,
-                                      color: Colors.white,
+                                      color: AppColors.black,
                                       size: SizeUtils.r(
                                         context,
                                         AppDimensions.socialIconSize,
                                       ),
                                     ),
-                                    color: Colors.black,
-                                    onPressed: () => controller.loginWithApple(),
+                                    color: AppColors.black,
+                                    onPressed:
+                                        () => controller.loginWithApple(),
                                   ),
                                 ],
                                 SizedBox(
@@ -398,7 +401,8 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                                   Get.find<HapticController>()
                                                       .selectionClick();
                                                   openExternalUrl(
-                                                    AppStrings.profilePrivacyUrl,
+                                                    AppStrings
+                                                        .profilePrivacyUrl,
                                                   );
                                                 },
                                         ),

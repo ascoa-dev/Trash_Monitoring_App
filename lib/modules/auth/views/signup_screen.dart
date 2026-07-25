@@ -306,7 +306,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                     Get.find<HapticController>()
                                                         .selectionClick();
                                                     openExternalUrl(
-                                                      AppStrings.profileTermsUrl,
+                                                      AppStrings
+                                                          .profileTermsUrl,
                                                     );
                                                   },
                                           ),
@@ -422,6 +423,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           height: viewportHeight * AppDimensions.sectionSpacing,
                         ),
                         SocialButton(
+                          label: "Continue with Google",
                           icon: Image.asset(
                             AppImages.googleNeutral2x,
                             width: SizeUtils.r(
@@ -442,15 +444,16 @@ class _SignupScreenState extends State<SignupScreen> {
                                 viewportHeight * AppDimensions.sectionSpacing,
                           ),
                           SocialButton(
+                            label: "Sign up with Apple",
                             icon: Icon(
                               Icons.apple,
-                              color: Colors.white,
+                              color: AppColors.black,
                               size: SizeUtils.r(
                                 context,
                                 AppDimensions.socialIconSize,
                               ),
                             ),
-                            color: Colors.black,
+                            color: AppColors.black,
                             onPressed: () => controller.loginWithApple(),
                           ),
                         ],

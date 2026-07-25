@@ -79,6 +79,19 @@ class SocialButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Flexible(
+                      child: Text(
+                        label!,
+                        style: AppTextStyles.buttonSocialText(context),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(
+                      width: SizeUtils.w(
+                        context,
+                        AppDimensions.socialContentSpacing / 4,
+                      ),
+                    ),
                     SizedBox(
                       width: SizeUtils.r(
                         context,
@@ -89,19 +102,6 @@ class SocialButton extends StatelessWidget {
                         AppDimensions.socialIconContainerSize,
                       ),
                       child: icon,
-                    ),
-                    SizedBox(
-                      width: SizeUtils.w(
-                        context,
-                        AppDimensions.socialContentSpacing,
-                      ),
-                    ),
-                    Flexible(
-                      child: Text(
-                        label!,
-                        style: AppTextStyles.buttonSocialText(context),
-                        overflow: TextOverflow.ellipsis,
-                      ),
                     ),
                   ],
                 ),
