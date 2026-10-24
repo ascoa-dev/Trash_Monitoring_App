@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/app_dates.dart';
+import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:we_monitor/app/models/hotspot_model.dart';
@@ -37,12 +39,7 @@ class HotspotCard extends StatelessWidget {
   String _formatDate() {
     final dt = hotspot.createdAt;
     if (dt == null) return '';
-    final now = DateTime.now();
-    final diff = now.difference(dt);
-    if (diff.inDays == 0) return 'Today';
-    if (diff.inDays == 1) return 'Yesterday';
-    if (diff.inDays < 7) return '${diff.inDays} days ago';
-    return '${dt.day}/${dt.month}/${dt.year}';
+    return AppDates.relative(dt);
   }
 
   @override
@@ -114,7 +111,7 @@ class HotspotCard extends StatelessWidget {
                       Text(
                         hotspot.locationName.isNotEmpty
                             ? hotspot.locationName
-                            : 'Unknown location',
+                            : 'hotspot.unknownLocation'.tr,
                         style: AppTextStyles.newsBody(context).copyWith(
                           color: AppColors.textDark,
                           fontWeight: FontWeight.w600,

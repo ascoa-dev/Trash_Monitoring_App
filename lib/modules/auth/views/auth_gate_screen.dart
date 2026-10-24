@@ -140,7 +140,7 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
                                         ),
                                         const SizedBox(height: 16),
                                         Text(
-                                          'Could not verify account.',
+                                          'auth.couldNotVerifyAccount'.tr,
                                           style: TextStyle(
                                             color: AppColors.textPrimary,
                                             fontSize: 16,
@@ -169,7 +169,7 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
                                       const CircularInfiniteLoader(),
                                       const SizedBox(height: 24),
                                       Text(
-                                        'Verifying...',
+                                        'auth.verifying'.tr,
                                         style: TextStyle(
                                           color: AppColors.textBlack70,
                                           fontSize: 16,

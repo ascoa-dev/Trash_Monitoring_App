@@ -259,7 +259,7 @@ class CleanupShareCard extends StatelessWidget {
           ),
         ],
         const SizedBox(height: 14),
-        const _Footer(AppStrings.shareCardFooter),
+        _Footer(AppStrings.shareCardFooter),
       ],
     );
   }
@@ -321,7 +321,7 @@ class HotspotShareCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        const _Footer(AppStrings.shareCardFooter),
+        _Footer(AppStrings.shareCardFooter),
       ],
     );
   }
@@ -425,7 +425,7 @@ class AchievementShareCard extends StatelessWidget {
                     style: _t(14, FontWeight.w400, c: AppColors.textWhite70),
                   ),
                   const Spacer(),
-                  const _Footer(AppStrings.shareCardAchievementFooter),
+                  _Footer(AppStrings.shareCardAchievementFooter),
                 ],
               ),
             ),

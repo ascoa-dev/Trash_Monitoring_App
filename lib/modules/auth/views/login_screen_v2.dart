@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/widgets/language_switcher.dart';
 import 'dart:io';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
@@ -271,7 +272,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                           AppDimensions.inputSpacing),
                                 ),
                                 SocialButton(
-                                  label: "Sign in with Google",
+                                  label: 'auth.signInWithGoogle'.tr,
                                   icon: Image.asset(
                                     AppImages.googleNeutral2x,
                                     width: SizeUtils.r(
@@ -293,7 +294,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                             AppDimensions.inputSpacing),
                                   ),
                                   SocialButton(
-                                    label: "Sign in with Apple",
+                                    label: 'auth.signInWithApple'.tr,
                                     icon: Icon(
                                       Icons.apple,
                                       color: AppColors.black,
@@ -367,7 +368,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                     text: TextSpan(
                                       style: AppTextStyles.termsBase(context),
                                       children: [
-                                        const TextSpan(
+                                        TextSpan(
                                           text: AppStrings.termsText,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
@@ -386,7 +387,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                                   );
                                                 },
                                         ),
-                                        const TextSpan(
+                                        TextSpan(
                                           text: AppStrings.termsAnd,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
@@ -406,7 +407,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                                                   );
                                                 },
                                         ),
-                                        const TextSpan(
+                                        TextSpan(
                                           text: AppStrings.termsPeriod,
                                         ),
                                       ],
@@ -420,6 +421,11 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                       ),
                     ),
                   ),
+                ),
+                              Positioned(
+                  top: 0,
+                  right: 12,
+                  child: SafeArea(child: LanguageToggle()),
                 ),
               ],
             ),

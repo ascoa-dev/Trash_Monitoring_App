@@ -1,4 +1,6 @@
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_section_ids.dart';
 import 'package:flutter/material.dart';
+import 'package:we_monitor/shared/services/pending_upload_service.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_monitor/app/models/cleanup_model.dart';
@@ -36,19 +38,19 @@ class CleanupFormController extends ChangeNotifier {
   /// Mark a section as completed
   void markSectionCompleted(String sectionTitle) {
     switch (sectionTitle) {
-      case 'Basic Information':
+      case CleanupSectionIds.basicInformation:
         _basicInfoCompleted = true;
         Analytics.track(AnalyticsEvents.cleanupSectionCompleted, {
           AnalyticsProps.section: CleanupSections.basicInfo,
         });
         break;
-      case 'Trash Collected':
+      case CleanupSectionIds.trashCollected:
         _trashCollectedCompleted = true;
         Analytics.track(AnalyticsEvents.cleanupSectionCompleted, {
           AnalyticsProps.section: CleanupSections.trashCollected,
         });
         break;
-      case 'Photos & Videos (Optional)':
+      case CleanupSectionIds.photosVideosOptional:
         _photosCompleted = true;
         Analytics.track(AnalyticsEvents.cleanupSectionCompleted, {
           AnalyticsProps.section: CleanupSections.photosVideos,
@@ -61,16 +63,16 @@ class CleanupFormController extends ChangeNotifier {
   /// Reset section completion status (used when editing)
   void resetSectionCompletion(String sectionTitle) {
     switch (sectionTitle) {
-      case 'Basic Information':
+      case CleanupSectionIds.basicInformation:
         _basicInfoCompleted = false;
         _trashCollectedCompleted = false;
         _photosCompleted = false;
         break;
-      case 'Trash Collected':
+      case CleanupSectionIds.trashCollected:
         _trashCollectedCompleted = false;
         _photosCompleted = false;
         break;
-      case 'Photos & Videos (Optional)':
+      case CleanupSectionIds.photosVideosOptional:
         _photosCompleted = false;
         break;
     }
@@ -197,11 +199,11 @@ class CleanupFormController extends ChangeNotifier {
 
   bool checkSectionValidity(String sectionTitle) {
     switch (sectionTitle) {
-      case 'Basic Information':
+      case CleanupSectionIds.basicInformation:
         return _isBasicInformationValidWithoutErrors();
-      case 'Trash Collected':
+      case CleanupSectionIds.trashCollected:
         return _isTrashCollectedValidWithoutErrors();
-      case 'Photos & Videos (Optional)':
+      case CleanupSectionIds.photosVideosOptional:
         return true;
       default:
         return true;
@@ -290,11 +292,11 @@ class CleanupFormController extends ChangeNotifier {
 
   bool _validateSection(String sectionTitle) {
     switch (sectionTitle) {
-      case 'Basic Information':
+      case CleanupSectionIds.basicInformation:
         return _validateBasicInformation();
-      case 'Trash Collected':
+      case CleanupSectionIds.trashCollected:
         return _validateTrashCollected();
-      case 'Photos & Videos (Optional)':
+      case CleanupSectionIds.photosVideosOptional:
         return true;
       default:
         return true;
@@ -308,17 +310,17 @@ class CleanupFormController extends ChangeNotifier {
     dateError = null;
     locationError = null;
     if (peopleCount < 1) {
-      peopleCountError = 'Number of people must be at least 1';
+      peopleCountError = 'cleanup.errPeopleMin'.tr;
       isValid = false;
     }
 
     if (groupName.trim().isEmpty) {
-      groupNameError = 'Group name is required';
+      groupNameError = 'cleanup.errGroupRequired'.tr;
       isValid = false;
     }
 
     if (date.trim().isEmpty) {
-      dateError = 'Date is required';
+      dateError = 'cleanup.errDateRequired'.tr;
       isValid = false;
     }
 
@@ -338,13 +340,13 @@ class CleanupFormController extends ChangeNotifier {
     trashItemsError = null;
 
     if (selectedEnvironments.isEmpty) {
-      environmentError = 'Please select at least one environment';
+      environmentError = 'cleanup.errEnvironment'.tr;
       isValid = false;
     }
 
     final hasItems = trashItems.values.any((itemCount) => itemCount > 0);
     if (!hasItems) {
-      trashItemsError = 'Please add at least one trash item';
+      trashItemsError = 'cleanup.errTrashItem'.tr;
       isValid = false;
     }
 
@@ -399,8 +401,8 @@ class CleanupFormController extends ChangeNotifier {
   Future<String?> submitCleanup(String userId) async {
     try {
       // Final validation check
-      if (!checkSectionValidity('Basic Information') ||
-          !checkSectionValidity('Trash Collected')) {
+      if (!checkSectionValidity(CleanupSectionIds.basicInformation) ||
+          !checkSectionValidity(CleanupSectionIds.trashCollected)) {
         debugPrint('[SubmitCleanup] Validation failed');
         return null;
       }
@@ -425,8 +427,8 @@ class CleanupFormController extends ChangeNotifier {
             '[SubmitCleanup] Photo uploads did not complete successfully',
           );
           SnackbarService.error(
-            'Upload Error',
-            'Some photos failed to upload. Please try again.',
+            'cleanup.uploadErrorTitle'.tr,
+            'cleanup.uploadErrorBody'.tr,
           );
           // You might want to show an error to the user here
           // For now, we'll continue anyway with whatever uploaded
@@ -630,12 +632,21 @@ class CleanupFormController extends ChangeNotifier {
         localPhotoPaths: localPhotoPaths.isNotEmpty ? localPhotoPaths : null,
       );
 
+      // Same doc id as the form, so photos it already uploaded land in the
+      // same Storage folder and are reused rather than uploaded again.
+      final uploaded = alreadyUploaded(mediaUploadController.photos);
+      pendingCleanup
+        ..docId = cleanupDocId
+        ..uploadedFull = uploaded.full
+        ..uploadedThumb = uploaded.thumb;
+
       // Save to Hive
       final box = await Hive.openBox<PendingCleanupModel>('pending_cleanups');
       await box.put(localId, pendingCleanup);
 
       // Immediately update the pending cleanups list so badge updates
       await pendingController.loadPendingCleanups();
+      PendingUploadService.instance.kick();
 
       // Track offline submission
       Analytics.track(AnalyticsEvents.cleanupSubmitted, {

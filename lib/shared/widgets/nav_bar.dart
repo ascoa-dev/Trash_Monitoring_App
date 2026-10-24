@@ -21,7 +21,7 @@ class CustomNavBar extends StatelessWidget {
     this.noOfPending = 0,
   });
 
-  static const List<_NavItemData> _items = [
+  static List<_NavItemData> get _items => [
     _NavItemData(
       assetPath: AppImages.navHome,
       semanticLabel: AppStrings.homeTitle,

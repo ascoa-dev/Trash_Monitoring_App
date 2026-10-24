@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:we_monitor/shared/services/pending_upload_service.dart';
 import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
 import 'package:we_monitor/app/models/pending_hotspot_model.dart';
 import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
@@ -58,7 +59,7 @@ class HotspotReportController extends ChangeNotifier {
     }
 
     if (!mediaUploadController.hasPhotos) {
-      photosError = 'Add at least one hotspot photo';
+      photosError = 'hotspot.photoRequired'.tr;
       isValid = false;
     }
 
@@ -130,10 +131,17 @@ class HotspotReportController extends ChangeNotifier {
       createdAt: DateTime.now(),
       savedAt: DateTime.now(),
     );
+    // Same doc id as the form, so already-uploaded photos are reused.
+    final uploaded = alreadyUploaded(mediaUploadController.photos);
+    pending
+      ..docId = hotspotDocId
+      ..uploadedFull = uploaded.full
+      ..uploadedThumb = uploaded.thumb;
 
     final box = await Hive.openBox<PendingHotspotModel>('pending_hotspots');
     await box.put(localId, pending);
     await Get.find<PendingHotspotsController>().loadPendingHotspots();
+    PendingUploadService.instance.kick();
     return localId;
   }
 

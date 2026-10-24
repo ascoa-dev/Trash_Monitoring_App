@@ -4,7 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/app/models/achievement.dart';
 import 'package:we_monitor/app/models/score.dart';
+import 'package:we_monitor/app/controllers/pending_cleanups_controller.dart';
+import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
 import 'package:we_monitor/modules/achievements/achievement_celebration_dialog.dart';
+import 'package:we_monitor/modules/streak/streak_prompt.dart';
 
 /// A level that was just unlocked, awaiting its celebration.
 class UnlockedEvent {
@@ -41,6 +44,9 @@ class AchievementsController extends GetxController {
   final RxInt monthScore = 0.obs;
 
   bool _celebrating = false;
+
+  /// Users whose streak was already considered for display this session.
+  final Set<String> _streakChecked = {};
   final List<UnlockedEvent> _queue = [];
 
   /// Progress rows in catalogue order, for the screen.
@@ -101,7 +107,18 @@ class AchievementsController extends GetxController {
       final hotspotDocs = (results[1] as QuerySnapshot).docs;
       final userSnap = results[2] as DocumentSnapshot;
 
-      final computed = _computeStats(cleanupDocs, hotspotDocs.length);
+      // Offline entries load from Hive at startup; wait so they count.
+      await Future.wait([
+        if (Get.isRegistered<PendingCleanupsController>())
+          Get.find<PendingCleanupsController>().ready,
+        if (Get.isRegistered<PendingHotspotsController>())
+          Get.find<PendingHotspotsController>().ready,
+      ]);
+      final computed = _computeStats(
+        cleanupDocs,
+        hotspotDocs,
+        extraActivity: _pendingActivity(uid),
+      );
       stats.value = computed;
 
       final now = DateTime.now();
@@ -124,7 +141,7 @@ class AchievementsController extends GetxController {
                 now,
               ),
             )
-            .length,
+            .toList(),
       );
       allTimeScore.value = Score.allTime(computed);
       monthScore.value = Score.monthly(monthStats);
@@ -171,11 +188,27 @@ class AchievementsController extends GetxController {
           newSeen.entries.any((e) => (storedSeen[e.key] ?? 0) != e.value);
       if (changed) await _persistLevels(db, uid, newLevel, newSeen);
 
-      if (events.isNotEmpty) {
+      void celebrate() {
+        if (events.isEmpty) return;
         _queue
           ..clear()
           ..addAll(events);
         _drainQueue(db, uid);
+      }
+
+      // First evaluation this session: the streak card goes first, then any
+      // unlock celebrations once it is closed.
+      if (_streakChecked.add(uid)) {
+        StreakPrompt.maybeShow(
+          uid: uid,
+          streak: computed.currentStreak,
+          activeThisWeek: computed.activeThisWeek,
+          trusted:
+              !(results[0] as QuerySnapshot).metadata.isFromCache &&
+              !(results[1] as QuerySnapshot).metadata.isFromCache,
+        ).whenComplete(celebrate);
+      } else {
+        celebrate();
       }
     } catch (e) {
       debugPrint('[Achievements] evaluate error: $e');
@@ -240,10 +273,22 @@ class AchievementsController extends GetxController {
     );
   }
 
+  /// Dates of entries saved offline and not uploaded yet. They count toward
+  /// the streak now, since they will be uploaded with these dates anyway.
+  List<DateTime> _pendingActivity(String uid) => [
+    if (Get.isRegistered<PendingCleanupsController>())
+      for (final c in Get.find<PendingCleanupsController>().pendingCleanups)
+        if (c.userId == uid) c.createdAt,
+    if (Get.isRegistered<PendingHotspotsController>())
+      for (final h in Get.find<PendingHotspotsController>().pendingHotspots)
+        if (h.userId == uid) h.createdAt,
+  ];
+
   AchievementStats _computeStats(
     List<QueryDocumentSnapshot> cleanups,
-    int hotspotCount,
-  ) {
+    List<QueryDocumentSnapshot> hotspots, {
+    List<DateTime> extraActivity = const [],
+  }) {
     final unflaggedCleanups =
         cleanups.where((doc) {
           final data = doc.data() as Map<String, dynamic>?;
@@ -256,6 +301,8 @@ class AchievementsController extends GetxController {
     final environments = <String>{};
     final locations = <String>{};
     final days = <DateTime>{};
+    // Weeks with any activity: cleanups and hotspot reports both count.
+    final weeks = <DateTime>{};
 
     for (final doc in unflaggedCleanups) {
       final data = doc.data() as Map<String, dynamic>;
@@ -290,45 +337,32 @@ class AchievementsController extends GetxController {
       } else {
         d = _parseDdMmYyyy(basic['date'] as String?);
       }
-      if (d != null) days.add(DateTime(d.year, d.month, d.day));
+      if (d != null) {
+        days.add(DateTime(d.year, d.month, d.day));
+        weeks.add(WeekStreak.weekStart(d));
+      }
     }
+    for (final doc in hotspots) {
+      final d = _timestampDate((doc.data() as Map<String, dynamic>?)?['createdAt']);
+      if (d != null) weeks.add(WeekStreak.weekStart(d));
+    }
+    for (final d in extraActivity) {
+      weeks.add(WeekStreak.weekStart(d));
+    }
+    final now = DateTime.now();
 
     return AchievementStats(
       totalWeight: totalWeight,
       totalItems: totalItems,
       cleanups: unflaggedCleanups.length,
-      hotspots: hotspotCount,
+      hotspots: hotspots.length,
       volunteers: volunteers,
       environments: environments.length,
       locations: locations.length,
       activeDays: days.length,
-      currentStreak: _currentStreak(days),
+      currentStreak: WeekStreak.current(weeks, now),
+      activeThisWeek: weeks.contains(WeekStreak.weekStart(now)),
     );
-  }
-
-  /// Consecutive days ending today (or yesterday, so an in-progress streak
-  /// still counts). Returns 0 once the streak is broken.
-  static int _currentStreak(Set<DateTime> days) {
-    if (days.isEmpty) return 0;
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    DateTime cursor;
-    if (days.contains(today)) {
-      cursor = today;
-    } else if (days.contains(yesterday)) {
-      cursor = yesterday;
-    } else {
-      return 0;
-    }
-
-    int streak = 0;
-    while (days.contains(cursor)) {
-      streak++;
-      cursor = cursor.subtract(const Duration(days: 1));
-    }
-    return streak;
   }
 
   static DateTime? _timestampDate(dynamic v) =>

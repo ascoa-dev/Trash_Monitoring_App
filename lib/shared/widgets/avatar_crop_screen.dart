@@ -39,13 +39,11 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
     with TickerProviderStateMixin {
   MaterialCroppableImageController? _controller;
   final haptics = Get.find<HapticController>();
-  bool _isFrench = false;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _isFrench = Get.locale?.languageCode == 'fr';
     _prepareController();
   }
 
@@ -158,9 +156,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
               Navigator.of(context).pop();
             },
             child: Text(
-              _isFrench
-                  ? AppStrings.avatarPickerCancelFrench
-                  : AppStrings.avatarPickerCancel,
+              AppStrings.avatarPickerCancel,
               style: buttonStyle.copyWith(color: AppColors.primary),
             ),
           ),
@@ -174,14 +170,12 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
               color: AppColors.primary,
               size: SizeUtils.r(context, AppDimensions.avatarEditButtonSize),
             ),
-            tooltip: _isFrench ? 'Pivoter' : 'Rotate',
+            tooltip: 'shared.rotate'.tr,
           ),
           TextButton(
             onPressed: _onSave,
             child: Text(
-              _isFrench
-                  ? AppStrings.avatarCropSaveFrench
-                  : AppStrings.avatarCropSave,
+              AppStrings.avatarCropSave,
               style: buttonStyle.copyWith(color: AppColors.primary),
             ),
           ),
@@ -255,10 +249,8 @@ class _AvatarCropScreenState extends State<AvatarCropScreen>
   void _showError(String details) {
     haptics.heavy();
     SnackbarService.error(
-      _isFrench ? 'Erreur' : 'Error',
-      _isFrench
-          ? AppStrings.avatarCropFailedFrench
-          : AppStrings.avatarCropFailed,
+      AppStrings.errorTitle,
+      AppStrings.avatarCropFailed,
     );
     debugPrint('Crop error: $details');
   }

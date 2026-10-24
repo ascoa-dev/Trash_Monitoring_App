@@ -42,7 +42,7 @@ class _CleanupListScreenState extends State<CleanupListScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: Text(
-          'Community Cleanups',
+          'home.communityCleanups'.tr,
           style: AppTextStyles.heading2(context),
         ),
         leading: BackButton(
@@ -55,7 +55,7 @@ class _CleanupListScreenState extends State<CleanupListScreen> {
           : _cleanups.isEmpty
               ? Center(
                   child: Text(
-                    'No community cleanups yet.',
+                    'home.noCommunityCleanups'.tr,
                     style: AppTextStyles.body(context),
                   ),
                 )

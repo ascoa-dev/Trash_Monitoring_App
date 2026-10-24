@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/achievement_names.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -112,13 +113,13 @@ class ShareService {
     int level,
   ) {
     final message = AppStrings.shareAchievementMessage
-        .replaceAll('{title}', def.title)
+        .replaceAll('{title}', AchievementNames.title(def))
         .replaceAll('{level}', '$level')
         .replaceAll('{download}', appDownloadUrl);
     final description = AppStrings.shareCardAchievementDescription
         .replaceAll('{threshold}', '${def.thresholds[level - 1]}')
         .replaceAll('{unit}', def.unit.isEmpty ? '' : ' ${def.unit}')
-        .replaceAll('{metric}', def.metric);
+        .replaceAll('{metric}', AchievementNames.metric(def));
     return _share(
       context,
       type: 'achievement',
@@ -126,7 +127,7 @@ class ShareService {
       photoUrls: const [],
       build:
           (_) => AchievementShareCard(
-            title: def.title,
+            title: AchievementNames.title(def),
             level: level,
             icon: def.icon,
             color: def.color,
@@ -211,7 +212,7 @@ class ShareService {
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation(
                               AppColors.buttonGreen,

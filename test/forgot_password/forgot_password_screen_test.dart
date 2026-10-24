@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/app_translations.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -104,7 +105,6 @@ Future<void> _pumpForgotScreen(
   final byteData = ByteData.view(Uint8List.fromList(bytes).buffer);
 
   Get.testMode = true;
-  if (locale != null) Get.updateLocale(locale);
 
   // Inject controllers
   final navigatorKey = GlobalKey<NavigatorState>();
@@ -122,6 +122,9 @@ Future<void> _pumpForgotScreen(
     DefaultAssetBundle(
       bundle: _TestAssetBundle(byteData),
       child: GetMaterialApp(
+        translations: AppTranslations(),
+        locale: locale ?? const Locale('en', 'US'),
+        fallbackLocale: const Locale('en', 'US'),
         navigatorKey: navigatorKey,
         home: const ForgotPasswordScreen(),
         getPages: [
@@ -303,13 +306,13 @@ void main() {
     ) async {
       await _pumpForgotScreen(
         tester,
-        locale: const Locale('fr'),
+        locale: const Locale('fr', 'FR'),
         auth: auth,
         form: form,
         validation: validation,
       );
 
-      expect(find.text(AppStrings.forgotPasswordTitleFrench), findsOneWidget);
+      expect(find.text('Mot de passe oublié'), findsOneWidget);
 
       // Trigger success to show dialog
       await tester.enterText(
@@ -320,7 +323,7 @@ void main() {
       await tester.tap(find.byType(PrimaryButton));
       await tester.pumpAndSettle();
 
-      expect(find.text(AppStrings.forgotDialogButtonFrench), findsOneWidget);
+      expect(find.text('Retour à la connexion'), findsOneWidget);
     });
   });
 }

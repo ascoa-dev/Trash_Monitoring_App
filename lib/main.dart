@@ -24,6 +24,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croppy/croppy.dart' as croppy;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:country_picker/country_picker.dart' show CountryLocalizations;
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:we_monitor/shared/i18n/app_translations.dart';
+import 'package:we_monitor/shared/i18n/locale_service.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'app/routes/app_routes.dart';
@@ -60,6 +64,7 @@ import 'app/models/pending_cleanup_model.dart';
 import 'app/models/pending_hotspot_model.dart';
 import 'app/models/cached_cleanup_model.dart';
 import 'package:we_monitor/shared/services/deep_link_service.dart';
+import 'package:we_monitor/shared/services/pending_upload_service.dart';
 import 'package:we_monitor/modules/home/views/shared_link_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -84,6 +89,7 @@ void main() async {
   }
   // Initialize Hive and register adapters for cities config
   await Hive.initFlutter();
+  await LocaleService.init();
   Hive.registerAdapter(CityAdapter());
   Hive.registerAdapter(CitiesConfigAdapter());
   Hive.registerAdapter(PostAdapter());
@@ -110,6 +116,7 @@ void main() async {
   Get.put(CitiesController());
   // Register ConnectivityController
   Get.put(ConnectivityController(), permanent: true);
+  PendingUploadService.instance.start();
   DeepLinkService.init();
   runApp(const MyApp());
   WidgetsBinding.instance.addPostFrameCallback(
@@ -143,6 +150,16 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'We Monitor',
+          translations: AppTranslations(),
+          locale: LocaleService.initial,
+          fallbackLocale: LocaleService.en,
+          supportedLocales: LocaleService.supported,
+          localizationsDelegates: const [
+            CountryLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           navigatorKey: navigatorKey,
           // Clamp global text scale to 1.0 for visual consistency across devices
           // (optional: remove if you want to respect system font scaling)

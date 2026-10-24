@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:we_monitor/app/controllers/auth_controller.dart';
@@ -87,8 +88,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     _consecutiveErrors++;
     if (_consecutiveErrors == _errorWarningThreshold) {
       SnackbarService.error(
-        'Connection issue',
-        'Having trouble reaching the server. We\'ll keep trying once you\'re back online.',
+        'auth.connectionIssueTitle'.tr,
+        'auth.connectionIssueBody'.tr,
       );
     }
   }
@@ -110,7 +111,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     } catch (e) {
       SnackbarService.error(
         AppStrings.errorTitle,
-        'Failed to resend verification email: $e',
+        'auth.resendFailed'.trp({'error': e}),
       );
     } finally {
       setState(() => isResending = false);
@@ -143,7 +144,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isFrench = Get.locale?.languageCode == 'fr';
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -240,9 +240,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         ),
                         // Heading
                         Text(
-                          isFrench
-                              ? AppStrings.emailVerificationTitleFrench
-                              : AppStrings.emailVerificationTitle,
+                          AppStrings.emailVerificationTitle,
                           style: AppTextStyles.heading2(context).copyWith(
                             fontWeight: FontWeight.w600,
                             fontSize: SizeUtils.h(
@@ -272,9 +270,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         ),
                         // Subheading
                         Text(
-                          (isFrench
-                                  ? AppStrings.emailVerificationBodyFrench
-                                  : AppStrings.emailVerificationBody)
+                          (AppStrings.emailVerificationBody)
                               .replaceFirst('%s', _user.email ?? ''),
                           style: AppTextStyles.body(context).copyWith(
                             fontFamily: AppTextStyles.rubik,
@@ -318,9 +314,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                           ),
                         ),
                         Text(
-                          isFrench
-                              ? AppStrings.emailVerificationSpamNoteFrench
-                              : AppStrings.emailVerificationSpamNote,
+                          AppStrings.emailVerificationSpamNote,
                           style: AppTextStyles.body(context).copyWith(
                             fontFamily: AppTextStyles.rubik,
                             fontWeight: FontWeight.w400,
@@ -353,14 +347,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         PrimaryButton(
                           label:
                               isResending
-                                  ? (isFrench
-                                      ? AppStrings
-                                          .emailVerificationResendingFrench
-                                      : AppStrings.emailVerificationResending)
-                                  : (isFrench
-                                      ? AppStrings
-                                          .emailVerificationResendLinkFrench
-                                      : AppStrings.emailVerificationResendLink),
+                                  ? (AppStrings
+                                          .emailVerificationResending)
+                                  : (AppStrings
+                                          .emailVerificationResendLink),
                           onPressed: () {
                             if (!isResending) _resendEmail();
                           },
@@ -394,9 +384,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                               ),
                             ),
                             child: Text(
-                              isFrench
-                                  ? AppStrings.emailVerificationUseAnotherFrench
-                                  : AppStrings.emailVerificationUseAnother,
+                              AppStrings.emailVerificationUseAnother,
                               style: AppTextStyles.buttonPrimaryText(
                                 context,
                               ).copyWith(color: AppColors.textDark),

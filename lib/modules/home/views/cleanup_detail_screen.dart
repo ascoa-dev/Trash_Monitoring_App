@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/strings_trash.dart';
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -83,7 +85,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: Text(
-          'Community Cleanup',
+          'home.communityCleanup'.tr,
           style: AppTextStyles.heading2(context),
         ),
         leading: BackButton(
@@ -139,7 +141,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                       const Icon(Icons.people_outline, size: 16),
                       SizedBox(width: SizeUtils.w(context, 4)),
                       Text(
-                        '${cleanup.peopleCount} people',
+                        'shared.peopleCount'.trp({'n': cleanup.peopleCount}),
                         style: AppTextStyles.bodySecondary(context),
                       ),
                       SizedBox(width: SizeUtils.w(context, 16)),
@@ -214,7 +216,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                 child: OutlinedButton.icon(
                   onPressed: _openInGoogleMaps,
                   icon: const Icon(Icons.map_outlined, size: 16),
-                  label: const Text('Open in Google Maps'),
+                  label: Text('shared.openInMaps'.tr),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.buttonPrimary,
                     side: BorderSide(color: AppColors.buttonPrimary),
@@ -238,7 +240,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                       child: _summaryTile(
                         context,
                         '${cleanup.totalWeight.toStringAsFixed(2)} kg',
-                        'Total weight',
+                        'home.totalWeight'.tr,
                         Icons.scale_outlined,
                       ),
                     ),
@@ -247,7 +249,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                       child: _summaryTile(
                         context,
                         '$_totalItems',
-                        'Items collected',
+                        'home.itemsCollected'.tr,
                         Icons.recycling_outlined,
                       ),
                     ),
@@ -255,8 +257,8 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                     Expanded(
                       child: _summaryTile(
                         context,
-                        cleanup.environment,
-                        'Environment',
+                        EnvironmentNames.display(cleanup.environment),
+                        'home.environment'.tr,
                         Icons.terrain_outlined,
                       ),
                     ),
@@ -271,7 +273,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: pad),
                 child: Text(
-                  'Items Collected',
+                  'home.itemsCollectedTitle'.tr,
                   style: AppTextStyles.body(
                     context,
                   ).copyWith(fontWeight: FontWeight.bold),
@@ -293,7 +295,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Notes',
+                      'shared.notes'.tr,
                       style: AppTextStyles.body(
                         context,
                       ).copyWith(fontWeight: FontWeight.bold),
@@ -314,7 +316,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: pad),
                 child: Text(
-                  'Photos',
+                  'home.photos'.tr,
                   style: AppTextStyles.body(
                     context,
                   ).copyWith(fontWeight: FontWeight.bold),
@@ -500,13 +502,13 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            category,
+                            TrashNames.display(category),
                             style: AppTextStyles.body(
                               context,
                             ).copyWith(fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            '${items.length} items · ${catTotal.toStringAsFixed(2)} kg',
+                            'home.itemsAndWeight'.trp({'items': items.length, 'kg': catTotal.toStringAsFixed(2)}),
                             style: AppTextStyles.bodySecondary(context),
                           ),
                         ],
@@ -532,7 +534,7 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          e.key,
+                          TrashNames.display(e.key),
                           style: AppTextStyles.bodySecondary(context),
                         ),
                       ),

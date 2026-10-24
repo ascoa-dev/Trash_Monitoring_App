@@ -101,7 +101,7 @@ class NewsScreen extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: controller.loadPosts,
-                          child: const Text(AppStrings.retry),
+                          child: Text(AppStrings.retry),
                         ),
                       ],
                     ),

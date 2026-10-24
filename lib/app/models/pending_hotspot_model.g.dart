@@ -23,13 +23,17 @@ class PendingHotspotModelAdapter extends TypeAdapter<PendingHotspotModel> {
       savedAt: fields[7] as DateTime,
       isUploading: fields[8] as bool,
       uploadError: fields[9] as String?,
+      docId: fields[10] as String?,
+      uploadedFull: (fields[11] as Map?)?.cast<String, String>(),
+      uploadedThumb: (fields[12] as Map?)?.cast<String, String>(),
+      missingPhotos: (fields[13] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, PendingHotspotModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.localId)
       ..writeByte(1)
@@ -49,7 +53,15 @@ class PendingHotspotModelAdapter extends TypeAdapter<PendingHotspotModel> {
       ..writeByte(8)
       ..write(obj.isUploading)
       ..writeByte(9)
-      ..write(obj.uploadError);
+      ..write(obj.uploadError)
+      ..writeByte(10)
+      ..write(obj.docId)
+      ..writeByte(11)
+      ..write(obj.uploadedFull)
+      ..writeByte(12)
+      ..write(obj.uploadedThumb)
+      ..writeByte(13)
+      ..write(obj.missingPhotos);
   }
 
   @override

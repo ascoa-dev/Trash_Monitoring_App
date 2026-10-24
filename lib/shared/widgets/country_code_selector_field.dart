@@ -38,7 +38,6 @@ class CountryCodeSelectorField extends StatelessWidget {
   Future<void> _openCountryPicker(BuildContext context) async {
     if (!enabled) return;
     haptics.selectionClick();
-    final isFrench = Get.locale?.languageCode == 'fr';
     showCountryPicker(
       context: context,
       showPhoneCode: true,
@@ -58,9 +57,7 @@ class CountryCodeSelectorField extends StatelessWidget {
         ),
         inputDecoration: InputDecoration(
           labelText:
-              isFrench
-                  ? AppStrings.countrySearchLabelFrench
-                  : AppStrings.countrySearchLabel,
+              AppStrings.countrySearchLabel,
           labelStyle: AppTextStyles.bodySecondary(
             context,
           ).copyWith(color: AppColors.textAccent),
@@ -230,6 +227,6 @@ class CountryCodeSelectorField extends StatelessWidget {
 Widget preview() => CountryCodeSelectorField(
   selectedCountry: Country.parse('US'),
   onChanged: (country) {},
-  label: 'Country Code',
-  supportText: 'Select your country code',
+  label: 'shared.countryCode'.tr,
+  supportText: 'shared.selectCountryCode'.tr,
 );

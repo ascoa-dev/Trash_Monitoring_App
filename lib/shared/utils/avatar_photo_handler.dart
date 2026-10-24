@@ -52,7 +52,6 @@ class AvatarPhotoHandler {
     BuildContext? context,
     void Function(String url)? onSuccess,
   }) async {
-    final isFrench = Get.locale?.languageCode == 'fr';
 
     // Capture context-dependent values at the START before any await
     final ctx = context ?? Get.context;
@@ -115,9 +114,7 @@ class AvatarPhotoHandler {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isFrench
-                        ? AppStrings.avatarUploadProgressFrench
-                        : AppStrings.avatarUploadProgress,
+                    AppStrings.avatarUploadProgress,
                     style: headingStyle,
                     textAlign: TextAlign.center,
                   ),
@@ -156,10 +153,8 @@ class AvatarPhotoHandler {
       if (compressedAvatar == null) {
         Get.back(); // Close progress dialog
         SnackbarService.error(
-          isFrench ? 'Erreur' : 'Error',
-          isFrench
-              ? AppStrings.avatarCompressionErrorFrench
-              : AppStrings.avatarCompressionError,
+          AppStrings.errorTitle,
+          AppStrings.avatarCompressionError,
         );
         return null;
       }
@@ -174,10 +169,8 @@ class AvatarPhotoHandler {
       if (thumbnail == null) {
         Get.back(); // Close progress dialog
         SnackbarService.error(
-          isFrench ? 'Erreur' : 'Error',
-          isFrench
-              ? AppStrings.avatarCompressionErrorFrench
-              : AppStrings.avatarCompressionError,
+          AppStrings.errorTitle,
+          AppStrings.avatarCompressionError,
         );
         return null;
       }
@@ -207,10 +200,8 @@ class AvatarPhotoHandler {
 
       // Show success message
       SnackbarService.success(
-        isFrench ? 'Succès' : 'Success',
-        isFrench
-            ? AppStrings.avatarUploadSuccessFrench
-            : AppStrings.avatarUploadSuccess,
+        'shared.successTitle'.tr,
+        AppStrings.avatarUploadSuccess,
       );
 
       return newAvatarUrl;
@@ -220,12 +211,9 @@ class AvatarPhotoHandler {
         Get.back();
       }
 
-      final isFrench = Get.locale?.languageCode == 'fr';
       SnackbarService.error(
-        isFrench ? 'Erreur' : 'Error',
-        isFrench
-            ? AppStrings.avatarUploadErrorFrench
-            : AppStrings.avatarUploadError,
+        AppStrings.errorTitle,
+        AppStrings.avatarUploadError,
       );
 
       return null;

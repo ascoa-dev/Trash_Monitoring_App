@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/app/models/cleanup_model.dart';
@@ -52,14 +53,14 @@ class _MyCleanupsScreenState extends State<MyCleanupsScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        title: Text('My Clean Ups', style: AppTextStyles.heading2(context)),
+        title: Text('cleanup.myTitle'.tr, style: AppTextStyles.heading2(context)),
         leading: BackButton(
           color: AppColors.black87,
           onPressed: () => Get.back(),
         ),
         actions: [
           IconButton(
-            tooltip: 'Refresh',
+            tooltip: 'cleanup.refresh'.tr,
             onPressed: controller.loadCleanups,
             icon: const Icon(Icons.refresh, color: AppColors.black87),
           ),
@@ -75,8 +76,8 @@ class _MyCleanupsScreenState extends State<MyCleanupsScreen> {
             children: [
               FloatingLabelInputField(
                 controller: _searchController,
-                label: 'Search',
-                hint: 'Date, location, or group name',
+                label: 'cleanup.search'.tr,
+                hint: 'cleanup.searchHint'.tr,
                 suffixIcon: const Icon(Icons.search, color: AppColors.textHint),
                 onChanged: controller.setSearchQuery,
               ),
@@ -93,7 +94,7 @@ class _MyCleanupsScreenState extends State<MyCleanupsScreen> {
                     _FilterChipButton(
                       label:
                           !hasFromDate
-                              ? 'From Date'
+                              ? 'cleanup.fromDate'.tr
                               : _formatDate(controller.fromDate.value!),
                       icon: Icons.calendar_month_outlined,
                       isActive: hasFromDate,
@@ -102,7 +103,7 @@ class _MyCleanupsScreenState extends State<MyCleanupsScreen> {
                     _FilterChipButton(
                       label:
                           !hasToDate
-                              ? 'To Date'
+                              ? 'cleanup.toDate'.tr
                               : _formatDate(controller.toDate.value!),
                       icon: Icons.calendar_month_outlined,
                       isActive: hasToDate,
@@ -112,7 +113,7 @@ class _MyCleanupsScreenState extends State<MyCleanupsScreen> {
                         hasToDate ||
                         controller.searchQuery.value.isNotEmpty)
                       _FilterChipButton(
-                        label: 'Clear',
+                        label: 'cleanup.clear'.tr,
                         icon: Icons.filter_alt_off_outlined,
                         isActive: false,
                         onTap: () {
@@ -135,7 +136,7 @@ class _MyCleanupsScreenState extends State<MyCleanupsScreen> {
                   if (cleanups.isEmpty) {
                     return Center(
                       child: Text(
-                        'No cleanups match your filters.',
+                        'cleanup.noMatch'.tr,
                         style: AppTextStyles.body(context),
                       ),
                     );
@@ -264,8 +265,8 @@ class _CleanupCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: Colors.red.shade200),
                             ),
-                            child: const Text(
-                              'Flagged',
+                            child: Text(
+                              'cleanup.flagged'.tr,
                               style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 10,
@@ -305,7 +306,7 @@ class _CleanupCard extends StatelessWidget {
               _InfoRow(
                 icon: Icons.delete_outline,
                 text:
-                    '$items items, ${cleanup.totalWeight.toStringAsFixed(3)} KG',
+                    'cleanup.itemsKg'.trp({'items': items, 'kg': cleanup.totalWeight.toStringAsFixed(3)}),
               ),
               const SizedBox(height: 8),
               Row(
@@ -320,8 +321,8 @@ class _CleanupCard extends StatelessWidget {
                       size: 16,
                       color: AppColors.pureWhite,
                     ),
-                    label: const Text(
-                      'View',
+                    label: Text(
+                      'cleanup.view'.tr,
                       style: TextStyle(color: AppColors.pureWhite),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -353,8 +354,8 @@ class _CleanupCard extends StatelessWidget {
                       size: 16,
                       color: AppColors.pureWhite,
                     ),
-                    label: const Text(
-                      'Edit Trash',
+                    label: Text(
+                      'cleanup.editTrash'.tr,
                       style: TextStyle(color: AppColors.pureWhite),
                     ),
                     style: ElevatedButton.styleFrom(

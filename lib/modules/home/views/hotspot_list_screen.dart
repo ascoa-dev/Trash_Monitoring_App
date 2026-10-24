@@ -42,7 +42,7 @@ class _HotspotListScreenState extends State<HotspotListScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title:
-            Text('Hotspot Reports', style: AppTextStyles.heading2(context)),
+            Text('home.hotspotReports'.tr, style: AppTextStyles.heading2(context)),
         leading: BackButton(
           color: AppColors.black87,
           onPressed: () => Get.back(),
@@ -53,7 +53,7 @@ class _HotspotListScreenState extends State<HotspotListScreen> {
           : _hotspots.isEmpty
               ? Center(
                   child: Text(
-                    'No hotspot reports yet.',
+                    'home.noHotspotReports'.tr,
                     style: AppTextStyles.body(context),
                   ),
                 )

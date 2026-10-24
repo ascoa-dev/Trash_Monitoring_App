@@ -67,28 +67,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   // Show confirmation overlay dialog
   void _showConfirmationOverlay() {
-    final isFrench = Get.locale?.languageCode == 'fr';
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (ctx) {
         return AppDialog(
           title:
-              isFrench
-                  ? AppStrings.forgotDialogTitleFrench
-                  : AppStrings.forgotDialogTitle,
+              AppStrings.forgotDialogTitle,
           body:
-              isFrench
-                  ? AppStrings.forgotDialogBodyFrench
-                  : AppStrings.forgotDialogBody,
+              AppStrings.forgotDialogBody,
           decoratedHero: false,
           imageAsset: AppImages.forgotConfirmIcon,
           imageWidth: SizeUtils.w(context, AppDimensions.dialogImageWidth),
           imageHeight: SizeUtils.h(context, AppDimensions.dialogImageHeight),
           primaryActionLabel:
-              isFrench
-                  ? AppStrings.forgotDialogButtonFrench
-                  : AppStrings.forgotDialogButton,
+              AppStrings.forgotDialogButton,
           onPrimaryAction: () {
             Get.back();
             _navigateBackToLoginClearingForm();
@@ -100,7 +93,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   // Handle forgot password operation
   void _handleForgotPassword() {
-    final isFrench = Get.locale?.languageCode == 'fr';
 
     // Validate email before sending
     validationController.validateEmail(formControllers.emailController.text);
@@ -117,38 +109,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 break;
               case 'user-not-found':
                 _showErrorSnackbar(
-                  isFrench
-                      ? AppStrings.forgotUserNotFoundFrench
-                      : AppStrings.forgotUserNotFound,
+                  AppStrings.forgotUserNotFound,
                 );
                 break;
               case 'invalid-email':
                 _showErrorSnackbar(
-                  isFrench
-                      ? AppStrings.forgotInvalidEmailFrench
-                      : AppStrings.forgotInvalidEmail,
+                  AppStrings.forgotInvalidEmail,
                 );
                 break;
               case 'too-many-requests':
                 _showErrorSnackbar(
-                  isFrench
-                      ? AppStrings.forgotTooManyRequestsFrench
-                      : AppStrings.forgotTooManyRequests,
+                  AppStrings.forgotTooManyRequests,
                 );
                 break;
               default:
                 _showErrorSnackbar(
-                  isFrench
-                      ? AppStrings.forgotGenericErrorFrench
-                      : AppStrings.forgotGenericError,
+                  AppStrings.forgotGenericError,
                 );
             }
           })
           .catchError((error) {
             _showErrorSnackbar(
-              isFrench
-                  ? AppStrings.forgotGenericErrorFrench
-                  : AppStrings.forgotGenericError,
+              AppStrings.forgotGenericError,
             );
           });
     }
@@ -156,9 +138,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void _showErrorSnackbar(String message) {
     SnackbarService.error(
-      Get.locale?.languageCode == 'fr'
-          ? AppStrings.errorTitleFrench
-          : AppStrings.errorTitle,
+      AppStrings.errorTitle,
       message,
     );
   }
@@ -179,7 +159,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
-    final isFrench = Get.locale?.languageCode == 'fr';
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -279,9 +258,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         //   height: viewportHeight * AppDimensions.inputSpacing,
                         // ),
                         Text(
-                          isFrench
-                              ? AppStrings.forgotPasswordTitleFrench
-                              : AppStrings.forgotPasswordTitle,
+                          AppStrings.forgotPasswordTitle,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.heading2(context),
                         ),
@@ -290,9 +267,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               viewportHeight * AppDimensions.halfInputSpacing,
                         ),
                         Text(
-                          isFrench
-                              ? AppStrings.forgotPasswordTextFrench
-                              : AppStrings.forgotPasswordText,
+                          AppStrings.forgotPasswordText,
                           style: AppTextStyles.bodySecondary(context),
                           textAlign: TextAlign.center,
                         ),
@@ -319,12 +294,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           () => PrimaryButton(
                             label:
                                 controller.isLoadingForgotPassword.value
-                                    ? (isFrench
-                                        ? AppStrings.sendingResetLinkFrench
-                                        : AppStrings.sendingResetLink)
-                                    : (isFrench
-                                        ? AppStrings.sendResetLinkFrench
-                                        : AppStrings.sendResetLink),
+                                    ? (AppStrings.sendingResetLink)
+                                    : (AppStrings.sendResetLink),
                             onPressed:
                                 controller.isLoadingForgotPassword.value
                                     ? () {}
@@ -359,9 +330,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             ),
                             onPressed: _navigateBackToLoginClearingForm,
                             child: Text(
-                              isFrench
-                                  ? AppStrings.editProfileCancelFrench
-                                  : AppStrings.editProfileCancel,
+                              AppStrings.editProfileCancel,
                               style: AppTextStyles.buttonPrimaryText(
                                 context,
                               ).copyWith(color: AppColors.textDark),

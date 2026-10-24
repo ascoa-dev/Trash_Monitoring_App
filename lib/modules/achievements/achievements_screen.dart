@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/achievement_names.dart';
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/app/models/achievement.dart';
@@ -22,8 +24,8 @@ class AchievementsScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         foregroundColor: AppColors.textDark,
-        title: const Text(
-          'Achievements',
+        title: Text(
+          'achievements.title'.tr,
           style: TextStyle(
             color: AppColors.textDark,
             fontWeight: FontWeight.w700,
@@ -120,9 +122,9 @@ class _SummaryCard extends StatelessWidget {
                 size: 30,
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Your progress',
+                  'achievements.yourProgress'.tr,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -162,7 +164,7 @@ class _SummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '${(pct * 100).round()}% of all levels earned',
+            'achievements.percentEarned'.trp({'pct': (pct * 100).round()}),
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.9),
               fontSize: 13,
@@ -223,7 +225,7 @@ class _AchievementCard extends StatelessWidget {
 
     final String progressLabel;
     if (maxed) {
-      progressLabel = 'Maxed out · ${_fmt(progress.value)}$unitSuffix';
+      progressLabel = 'achievements.maxedOut'.trp({'value': _fmt(progress.value), 'unit': unitSuffix});
     } else {
       progressLabel =
           '${_fmt(progress.value)} / ${_fmt(progress.nextThreshold!)}$unitSuffix';
@@ -235,7 +237,7 @@ class _AchievementCard extends StatelessWidget {
         color: AppColors.pureWhite,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: maxed ? def.color.withValues(alpha: 0.5) : AppColors.divider,
+          color: maxed ? def.color.withValues(alpha: 0.5) : AppColors.grey300,
           width: maxed ? 1.5 : 1,
         ),
         boxShadow: const [
@@ -257,7 +259,7 @@ class _AchievementCard extends StatelessWidget {
               shape: BoxShape.circle,
               color:
                   locked
-                      ? AppColors.divider
+                      ? AppColors.grey300
                       : def.color.withValues(alpha: 0.15),
             ),
             child: Icon(
@@ -278,7 +280,7 @@ class _AchievementCard extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              def.title,
+                              AchievementNames.title(def),
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: AppColors.textDark,
@@ -298,8 +300,8 @@ class _AchievementCard extends StatelessWidget {
                                 color: const Color(0xFFFBB825),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text(
-                                'NEW',
+                              child: Text(
+                                'achievements.new'.tr,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w800,
@@ -343,7 +345,7 @@ class _AchievementCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  def.metric,
+                  AchievementNames.metric(def),
                   style: TextStyle(
                     color: AppColors.textDark.withValues(alpha: 0.6),
                     fontSize: 12.5,
@@ -355,7 +357,9 @@ class _AchievementCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progress.fraction,
                     minHeight: 7,
-                    backgroundColor: AppColors.divider,
+                    // Light tint of the achievement colour: AppColors.divider
+                    // is the same teal as Weight Warrior, so empty looked full.
+                    backgroundColor: def.color.withValues(alpha: 0.14),
                     valueColor: AlwaysStoppedAnimation<Color>(def.color),
                   ),
                 ),
@@ -373,7 +377,7 @@ class _AchievementCard extends StatelessWidget {
                     ),
                     if (!maxed)
                       Text(
-                        'Next: Lv ${progress.unlockedLevel + 1}',
+                        'achievements.nextLevel'.trp({'level': progress.unlockedLevel + 1}),
                         style: TextStyle(
                           color: def.color,
                           fontSize: 11.5,
@@ -407,11 +411,11 @@ class _LevelChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
       decoration: BoxDecoration(
-        color: locked ? AppColors.divider : color.withValues(alpha: 0.15),
+        color: locked ? AppColors.grey300 : color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        locked ? 'Locked' : 'Lv $level / $maxLevel',
+        locked ? 'achievements.locked'.tr : 'achievements.levelOf'.trp({'level': level, 'max': maxLevel}),
         style: TextStyle(
           color: locked ? AppColors.textHint : color,
           fontWeight: FontWeight.w700,

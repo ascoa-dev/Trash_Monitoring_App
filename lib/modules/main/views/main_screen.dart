@@ -164,7 +164,7 @@ class _MainScreenState extends State<MainScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.cleaning_services_outlined),
-                title: const Text('Start New Cleanup'),
+                title: Text('home.menuStartCleanup'.tr),
                 onTap: () {
                   Get.back();
                   Get.toNamed(AppRoutes.newCleanUp);
@@ -172,7 +172,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.report_problem_outlined),
-                title: const Text('Report Plastic Hotspot'),
+                title: Text('home.menuReportHotspot'.tr),
                 onTap: () {
                   Get.back();
                   Get.toNamed(AppRoutes.reportHotspot);

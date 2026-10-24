@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/strings_trash.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_section_ids.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_form_controller.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
@@ -98,7 +100,7 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                           color: AppColors.textAccent,
                         ),
                         title: Text(
-                          env,
+                          EnvironmentNames.display(env),
                           style: AppTextStyles.trashCollectionEnvironment(
                             context,
                           ),
@@ -286,7 +288,7 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            category.name,
+                                            TrashNames.display(category.name),
                                             style:
                                                 AppTextStyles.trashCollectionDropdownCategory(
                                                   context,
@@ -372,7 +374,7 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        itemName,
+                                                        TrashNames.display(itemName),
                                                         style:
                                                             AppTextStyles.trashCollectionDropdownCategory(
                                                               context,
@@ -674,7 +676,7 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
   void _handleNext(BuildContext context) {
     // Validate all fields in this section
     final isValid = widget.controller.validateSection(
-      AppStrings.trashCollected,
+      CleanupSectionIds.trashCollected,
     );
 
     if (!isValid) {
@@ -699,9 +701,9 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
     }
     Get.find<HapticController>().medium();
     // Mark section as completed
-    widget.controller.markSectionCompleted(AppStrings.trashCollected);
+    widget.controller.markSectionCompleted(CleanupSectionIds.trashCollected);
 
     // Move to next section (Photos)
-    widget.controller.setExpandedSection(AppStrings.photosVideosOptional);
+    widget.controller.setExpandedSection(CleanupSectionIds.photosVideosOptional);
   }
 }

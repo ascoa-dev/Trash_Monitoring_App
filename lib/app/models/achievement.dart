@@ -6,7 +6,7 @@ enum AchievementKind {
   /// The level is recomputed each time, so deleting a cleanup can lower it.
   cumulative,
 
-  /// Value can drop (current day streak). Unlocked levels stay, but the live
+  /// Value can drop (current week streak). Unlocked levels stay, but the live
   /// progress bar resets when the streak breaks and must be rebuilt.
   streak,
 }
@@ -76,7 +76,13 @@ class AchievementStats {
   final int environments;
   final int locations;
   final int activeDays;
+
+  /// Consecutive weeks with a cleanup or hotspot report (see [WeekStreak]).
   final int currentStreak;
+
+  /// Whether this week already has activity (the streak is safe until next
+  /// Monday) or still needs some to continue.
+  final bool activeThisWeek;
 
   const AchievementStats({
     required this.totalWeight,
@@ -88,6 +94,7 @@ class AchievementStats {
     required this.locations,
     required this.activeDays,
     required this.currentStreak,
+    this.activeThisWeek = false,
   });
 
   static const empty = AchievementStats(
@@ -129,6 +136,32 @@ class AchievementStats {
   }
 }
 
+/// Weekly streak maths. Weeks start Monday 00:00 local time.
+class WeekStreak {
+  WeekStreak._();
+
+  /// Monday of the week containing [d] (date only, so DST can't shift it).
+  static DateTime weekStart(DateTime d) =>
+      DateTime(d.year, d.month, d.day - (d.weekday - 1));
+
+  /// Consecutive active weeks ending this week, or last week: a streak stays
+  /// alive through the current week and breaks only once a whole week passes
+  /// with no activity. [activeWeeks] holds [weekStart] values.
+  static int current(Set<DateTime> activeWeeks, DateTime now) {
+    var cursor = weekStart(now);
+    if (!activeWeeks.contains(cursor)) {
+      cursor = DateTime(cursor.year, cursor.month, cursor.day - 7);
+      if (!activeWeeks.contains(cursor)) return 0;
+    }
+    var streak = 0;
+    while (activeWeeks.contains(cursor)) {
+      streak++;
+      cursor = DateTime(cursor.year, cursor.month, cursor.day - 7);
+    }
+    return streak;
+  }
+}
+
 /// A definition combined with the user's current progress, for the UI.
 class AchievementProgress {
   final AchievementDef def;
@@ -150,19 +183,13 @@ class AchievementProgress {
   /// Threshold of the next level, or null when maxed.
   num? get nextThreshold => isMaxed ? null : def.thresholds[unlockedLevel];
 
-  /// Threshold of the level currently in progress' floor (previous unlocked).
-  num get currentFloor =>
-      unlockedLevel == 0 ? 0 : def.thresholds[unlockedLevel - 1];
-
-  /// 0..1 progress toward the next level (1.0 when maxed).
+  /// 0..1 progress toward the next level (1.0 when maxed). Measured from 0 so
+  /// the bar matches the "6.1 / 25 kg" label shown under it.
   double get fraction {
     if (isMaxed) return 1;
-    final floor = currentFloor;
     final target = nextThreshold!;
-    final span = (target - floor);
-    if (span <= 0) return 0;
-    final p = (value - floor) / span;
-    return p.clamp(0, 1).toDouble();
+    if (target <= 0) return 0;
+    return (value / target).clamp(0, 1).toDouble();
   }
 }
 
@@ -224,12 +251,13 @@ class Achievements {
     AchievementDef(
       id: 'streak_master',
       title: 'Streak Master',
-      metric: 'day streak',
+      metric: 'week streak',
       unit: '',
       icon: Icons.bolt_rounded,
       color: Color(0xFFFBB825),
       kind: AchievementKind.streak,
-      thresholds: [3, 5, 7, 14, 30],
+      // Weeks in a row with a cleanup or hotspot report.
+      thresholds: [2, 4, 8, 12, 26, 52],
     ),
     AchievementDef(
       id: 'mobilizer',

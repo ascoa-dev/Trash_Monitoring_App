@@ -22,39 +22,22 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
   @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
-    final isFrench = Get.locale?.languageCode == 'fr';
     final title =
-        isFrench
-            ? AppStrings.changePasswordTitleFrench
-            : AppStrings.changePasswordTitle;
+        AppStrings.changePasswordTitle;
     final subtitle =
-        isFrench
-            ? AppStrings.changePasswordSubtitleFrench
-            : AppStrings.changePasswordSubtitle;
+        AppStrings.changePasswordSubtitle;
     final currentPasswordLabel =
-        isFrench
-            ? AppStrings.currentPasswordLabelFrench
-            : AppStrings.currentPasswordLabel;
+        AppStrings.currentPasswordLabel;
     final newPasswordLabel =
-        isFrench
-            ? AppStrings.newPasswordLabelFrench
-            : AppStrings.newPasswordLabel;
+        AppStrings.newPasswordLabel;
     final confirmPasswordLabel =
-        isFrench
-            ? AppStrings.confirmPasswordLabelFrench
-            : AppStrings.confirmPasswordLabel;
+        AppStrings.confirmPasswordLabel;
     final submitLabel =
-        isFrench
-            ? AppStrings.changePasswordButtonFrench
-            : AppStrings.changePasswordButton;
+        AppStrings.changePasswordButton;
     final submittingLabel =
-        isFrench
-            ? AppStrings.changePasswordSavingFrench
-            : AppStrings.changePasswordSaving;
+        AppStrings.changePasswordSaving;
     final cancelLabel =
-        isFrench
-            ? AppStrings.changePasswordCancelFrench
-            : AppStrings.changePasswordCancel;
+        AppStrings.changePasswordCancel;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -334,14 +317,9 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                                         context: context,
                                         barrierDismissible: false,
                                         builder: (ctx) {
-                                          final isFrenchInner =
-                                              Get.locale?.languageCode == 'fr';
                                           return AppDialog(
                                             title:
-                                                isFrenchInner
-                                                    ? AppStrings
-                                                        .changePasswordSuccessDialogTitleFrench
-                                                    : AppStrings
+                                                AppStrings
                                                         .changePasswordSuccessDialogTitle,
                                             decoratedHero: false,
                                             imageAsset:
@@ -357,10 +335,7 @@ class ChangePasswordScreen extends GetWidget<ChangePasswordController> {
                                             ),
                                             body: null,
                                             primaryActionLabel:
-                                                isFrenchInner
-                                                    ? AppStrings
-                                                        .changePasswordSuccessDialogButtonFrench
-                                                    : AppStrings
+                                                AppStrings
                                                         .changePasswordSuccessDialogButton,
                                             onPrimaryAction: () {
                                               Navigator.of(ctx).pop();

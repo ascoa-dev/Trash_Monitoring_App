@@ -202,9 +202,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         GestureDetector(
           onTap: _handleEditPhoto,
           child: Text(
-            isFrench
-                ? AppStrings.editPhotoLabelFrench
-                : AppStrings.editPhotoLabel,
+            AppStrings.editPhotoLabel,
             style: AppTextStyles.body(context).copyWith(
               fontSize: SizeUtils.h(context, AppDimensions.linkFontSize),
               fontWeight: FontWeight.w500,
@@ -223,35 +221,23 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     final ScrollController scrollController = ScrollController();
     final isFrench = Get.locale?.languageCode == 'fr';
     final title =
-        isFrench
-            ? AppStrings.completeProfileTitleFrench
-            : AppStrings.completeProfileTitle;
+        AppStrings.completeProfileTitle;
     final subtitle =
-        isFrench
-            ? AppStrings.completeProfileSubtitleFrench
-            : AppStrings.completeProfileSubtitle;
+        AppStrings.completeProfileSubtitle;
     final firstNameLabel =
-        isFrench ? AppStrings.firstNameLabelFrench : AppStrings.firstNameLabel;
+        AppStrings.firstNameLabel;
     final lastNameLabel =
-        isFrench ? AppStrings.lastNameLabelFrench : AppStrings.lastNameLabel;
+        AppStrings.lastNameLabel;
     final phoneLabel =
-        isFrench
-            ? AppStrings.phoneNumberLabelFrench
-            : AppStrings.phoneNumberLabel;
+        AppStrings.phoneNumberLabel;
     final cityLabel =
-        isFrench ? AppStrings.cityLabelFrench : AppStrings.cityLabel;
+        AppStrings.cityLabel;
     final countryLabel =
-        isFrench
-            ? AppStrings.countryCodeLabelFrench
-            : AppStrings.countryCodeLabel;
+        AppStrings.countryCodeLabel;
     final buttonLabel =
-        isFrench
-            ? AppStrings.completeProfileButtonFrench
-            : AppStrings.completeProfileButton;
+        AppStrings.completeProfileButton;
     final savingLabel =
-        isFrench
-            ? AppStrings.completeProfileSavingFrench
-            : AppStrings.completeProfileSaving;
+        AppStrings.completeProfileSaving;
 
     return Scaffold(
       backgroundColor: AppColors.background,

@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/achievement_names.dart';
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'dart:math' as math;
 
 import 'package:confetti/confetti.dart';
@@ -141,7 +143,7 @@ class _CelebrationDialogState extends State<_CelebrationDialog> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '🎉  ACHIEVEMENT UNLOCKED',
+                      'achievements.unlockedKicker'.tr,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: def.color,
@@ -174,7 +176,7 @@ class _CelebrationDialogState extends State<_CelebrationDialog> {
                     ),
                     const SizedBox(height: 18),
                     Text(
-                      def.title,
+                      AchievementNames.title(def),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: AppColors.textDark,
@@ -191,7 +193,7 @@ class _CelebrationDialogState extends State<_CelebrationDialog> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        maxed ? 'MAX LEVEL $level' : 'LEVEL $level',
+                        maxed ? 'achievements.maxLevel'.trp({'level': level}) : 'achievements.level'.trp({'level': level}),
                         style: TextStyle(
                           color: def.color,
                           fontWeight: FontWeight.w700,
@@ -202,7 +204,7 @@ class _CelebrationDialogState extends State<_CelebrationDialog> {
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      'You reached $threshold$unitSuffix ${def.metric}.',
+                      'achievements.youReached'.trp({'threshold': threshold, 'unit': unitSuffix, 'metric': AchievementNames.metric(def)}),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: AppColors.textDark,
@@ -267,8 +269,8 @@ class _CelebrationDialogState extends State<_CelebrationDialog> {
                           } catch (_) {}
                           Get.back();
                         },
-                        child: const Text(
-                          'Awesome!',
+                        child: Text(
+                          'achievements.awesome'.tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,

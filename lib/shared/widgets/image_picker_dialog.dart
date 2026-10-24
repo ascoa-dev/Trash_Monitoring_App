@@ -16,7 +16,6 @@ class ImagePickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isFrench = Get.locale?.languageCode == 'fr';
     final haptics = Get.find<HapticController>();
 
     return Dialog(
@@ -38,9 +37,7 @@ class ImagePickerDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              isFrench
-                  ? AppStrings.avatarPickerTitleFrench
-                  : AppStrings.avatarPickerTitle,
+              AppStrings.avatarPickerTitle,
               style: AppTextStyles.heading2(context).copyWith(
                 fontSize: SizeUtils.h(
                   context,
@@ -75,9 +72,7 @@ class ImagePickerDialog extends StatelessWidget {
                   size: SizeUtils.r(context, AppDimensions.smallIconSize),
                 ),
                 label: Text(
-                  isFrench
-                      ? AppStrings.avatarPickerCameraFrench
-                      : AppStrings.avatarPickerCamera,
+                  AppStrings.avatarPickerCamera,
                   style: AppTextStyles.buttonPrimaryText(
                     context,
                   ).copyWith(color: AppColors.pureWhite),
@@ -112,9 +107,7 @@ class ImagePickerDialog extends StatelessWidget {
                   size: SizeUtils.r(context, AppDimensions.smallIconSize),
                 ),
                 label: Text(
-                  isFrench
-                      ? AppStrings.avatarPickerGalleryFrench
-                      : AppStrings.avatarPickerGallery,
+                  AppStrings.avatarPickerGallery,
                   style: AppTextStyles.buttonPrimaryText(
                     context,
                   ).copyWith(color: AppColors.textDark),
@@ -126,9 +119,7 @@ class ImagePickerDialog extends StatelessWidget {
             TextButton(
               onPressed: () => {haptics.light(), Navigator.of(context).pop()},
               child: Text(
-                isFrench
-                    ? AppStrings.avatarPickerCancelFrench
-                    : AppStrings.avatarPickerCancel,
+                AppStrings.avatarPickerCancel,
                 style: AppTextStyles.body(
                   context,
                 ).copyWith(color: AppColors.textBlack70),

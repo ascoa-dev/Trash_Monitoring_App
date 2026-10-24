@@ -1,35 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:we_monitor/app/models/achievement.dart';
 
-// Replica of AchievementsController._currentStreak (private) so the streak
-// rule is covered by a runnable check without pulling in Firebase.
-int currentStreak(Set<DateTime> days) {
-  if (days.isEmpty) return 0;
-  final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
-  final yesterday = today.subtract(const Duration(days: 1));
-  DateTime cursor;
-  if (days.contains(today)) {
-    cursor = today;
-  } else if (days.contains(yesterday)) {
-    cursor = yesterday;
-  } else {
-    return 0;
-  }
-  int streak = 0;
-  while (days.contains(cursor)) {
-    streak++;
-    cursor = cursor.subtract(const Duration(days: 1));
-  }
-  return streak;
-}
-
-DateTime day(int daysAgo) {
-  final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
-  return today.subtract(Duration(days: daysAgo));
-}
-
 void main() {
   final weight = Achievements.byId('weight_warrior'); // [5,25,50,100,250,500]
 
@@ -41,11 +12,11 @@ void main() {
     expect(weight.levelFor(9999), weight.maxLevel);
   });
 
-  test('progress fraction is relative to the current level band', () {
-    // unlocked lvl 1 (>=5), value 15, next threshold 25, floor 5 -> 10/20 = .5
-    final p = AchievementProgress(def: weight, unlockedLevel: 1, value: 15);
+  test('progress fraction matches the value / next threshold label', () {
+    // unlocked lvl 1 (>=5), value 6.1, next threshold 25 -> 6.1/25
+    final p = AchievementProgress(def: weight, unlockedLevel: 1, value: 6.1);
     expect(p.nextThreshold, 25);
-    expect(p.fraction, closeTo(0.5, 1e-9));
+    expect(p.fraction, closeTo(0.244, 1e-9));
     expect(p.isMaxed, false);
   });
 
@@ -60,19 +31,42 @@ void main() {
     expect(p.fraction, 1);
   });
 
-  test('current streak counts consecutive days up to today', () {
-    expect(currentStreak({day(0), day(1), day(2)}), 3);
-  });
+  group('WeekStreak', () {
+    // Wednesday 2026-10-21; its week starts Monday 2026-10-19.
+    final now = DateTime(2026, 10, 21, 15);
+    DateTime weeksAgo(int n) => DateTime(2026, 10, 19 - 7 * n);
 
-  test('current streak still counts if last activity was yesterday', () {
-    expect(currentStreak({day(1), day(2)}), 2);
-  });
+    test('weekStart is the Monday of the week', () {
+      expect(WeekStreak.weekStart(now), DateTime(2026, 10, 19));
+      expect(WeekStreak.weekStart(DateTime(2026, 10, 25, 23)), DateTime(2026, 10, 19));
+      expect(WeekStreak.weekStart(DateTime(2026, 10, 26)), DateTime(2026, 10, 26));
+    });
 
-  test('current streak resets to 0 when the chain is broken', () {
-    // gap at day 1 -> streak from today/yesterday cannot reach older days
-    expect(currentStreak({day(0), day(3), day(4)}), 1);
-    // last activity 3 days ago -> broken
-    expect(currentStreak({day(3), day(4), day(5)}), 0);
+    test('counts consecutive weeks up to this week', () {
+      expect(WeekStreak.current({weeksAgo(0), weeksAgo(1), weeksAgo(2)}, now), 3);
+    });
+
+    test('stays alive through the current week if last week was active', () {
+      expect(WeekStreak.current({weeksAgo(1), weeksAgo(2)}, now), 2);
+    });
+
+    test('breaks after a whole week without activity', () {
+      expect(WeekStreak.current({weeksAgo(2), weeksAgo(3)}, now), 0);
+      expect(WeekStreak.current({weeksAgo(0), weeksAgo(2)}, now), 1);
+      expect(WeekStreak.current({}, now), 0);
+    });
+
+    test('crosses month and year boundaries', () {
+      final jan = DateTime(2027, 1, 6); // Wednesday; week starts Mon Jan 4
+      expect(
+        WeekStreak.current({
+          DateTime(2027, 1, 4),
+          DateTime(2026, 12, 28),
+          DateTime(2026, 12, 21),
+        }, jan),
+        3,
+      );
+    });
   });
 
   test('stats.valueFor maps ids to metrics', () {
@@ -94,7 +88,7 @@ void main() {
 
   test('cumulative level can drop, streak level never regresses', () {
     final champ = Achievements.byId('cleanup_champion'); // [1,5,...]
-    final streak = Achievements.byId('streak_master'); // [3,5,...]
+    final streak = Achievements.byId('streak_master'); // [2,4,...]
     expect(champ.resolveLevel(4, 2), 1);
     expect(champ.resolveLevel(0, 1), 0);
     expect(streak.resolveLevel(0, 2), 2);

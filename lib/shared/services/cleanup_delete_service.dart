@@ -58,12 +58,12 @@ class CleanupDeleteService {
       await batch.commit();
     } catch (e) {
       debugPrint('[CleanupDelete] failed: $e');
-      SnackbarService.error('Error', AppStrings.deleteCleanupFailed);
+      SnackbarService.error(AppStrings.errorTitle, AppStrings.deleteCleanupFailed);
       return false;
     }
 
     await _clearLocal(id);
-    SnackbarService.success('Deleted', AppStrings.deleteCleanupSuccess);
+    SnackbarService.success('shared.deleted'.tr, AppStrings.deleteCleanupSuccess);
     // Recalculate achievements/score from the remaining data.
     AchievementsController.checkAfterActivity();
     return true;

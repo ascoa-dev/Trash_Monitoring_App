@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_section_ids.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/app/models/cleanup_model.dart';
@@ -34,7 +36,7 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
     controller.groupName = cleanup.groupName;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadTrashCollectedForEdit(cleanup);
-      controller.setExpandedSection(AppStrings.trashCollected);
+      controller.setExpandedSection(CleanupSectionIds.trashCollected);
     });
   }
 
@@ -46,7 +48,7 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
 
   Future<void> _save() async {
     if (_groupNameController.text.trim().isEmpty) {
-      SnackbarService.error('Validation Error', 'Team/Group name is required');
+      SnackbarService.error('cleanup.validationErrorTitle'.tr, 'cleanup.teamNameRequired'.tr);
       return;
     }
     setState(() => _isSaving = true);
@@ -55,10 +57,10 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
     setState(() => _isSaving = false);
 
     if (success) {
-      SnackbarService.success('Saved', 'Cleanup was updated');
+      SnackbarService.success('cleanup.savedTitle'.tr, 'cleanup.updatedBody'.tr);
       Get.back();
     } else {
-      SnackbarService.error('Error', 'Failed to update cleanup');
+      SnackbarService.error(AppStrings.errorTitle, 'cleanup.updateFailed'.tr);
     }
   }
 
@@ -77,7 +79,7 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: Text(
-          'Edit Cleanup',
+          'cleanup.editTitle'.tr,
           style: AppTextStyles.heading2(context),
         ),
         leading: BackButton(
@@ -95,8 +97,8 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
             children: [
               FloatingLabelInputField(
                 controller: _groupNameController,
-                label: 'Team / Group Name',
-                hint: 'Enter team name',
+                label: 'cleanup.teamGroupName'.tr,
+                hint: 'cleanup.enterTeamName'.tr,
                 onChanged: (val) {
                   controller.groupName = val;
                 },
@@ -105,7 +107,7 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
                 height: SizeUtils.h(context, AppDimensions.cleanupSpacing16),
               ),
               Text(
-                'Date: ${cleanup.date}',
+                'cleanup.dateLine'.trp({'date': cleanup.date}),
                 style: AppTextStyles.bodySecondary(context),
               ),
               SizedBox(
@@ -122,7 +124,7 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
                   disabledBackgroundColor: AppColors.grey400,
                 ),
                 child: Text(
-                  _isSaving ? 'SAVING...' : 'SAVE CHANGES',
+                  _isSaving ? 'cleanup.saving'.tr : 'cleanup.saveChanges'.tr,
                   style: AppTextStyles.saveCleanUpText(
                     context,
                   ).copyWith(color: AppColors.pureWhite),

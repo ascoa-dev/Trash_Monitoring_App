@@ -31,9 +31,8 @@ class ResetPasswordController extends GetxController {
       return;
     }
 
-    final isFrench = Get.locale?.languageCode == 'fr';
     final title =
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle;
+        AppStrings.errorTitle;
 
     if (Get.isSnackbarOpen) {
       Get.back();
@@ -52,11 +51,8 @@ class ResetPasswordController extends GetxController {
 
     if (oobCode.isEmpty) {
       Future.microtask(() {
-        final isFrench = Get.locale?.languageCode == 'fr';
         _showSnackbar(
-          isFrench
-              ? AppStrings.resetPasswordInvalidLinkFrench
-              : AppStrings.resetPasswordInvalidLink,
+          AppStrings.resetPasswordInvalidLink,
         );
         Get.offAllNamed(AppRoutes.login);
       });
@@ -132,11 +128,8 @@ class ResetPasswordController extends GetxController {
     }
 
     if (oobCode.isEmpty) {
-      final isFrench = Get.locale?.languageCode == 'fr';
       _showSnackbar(
-        isFrench
-            ? AppStrings.resetPasswordInvalidLinkFrench
-            : AppStrings.resetPasswordInvalidLink,
+        AppStrings.resetPasswordInvalidLink,
       );
       return ResetPasswordStatus.error;
     }
@@ -155,27 +148,20 @@ class ResetPasswordController extends GetxController {
         _validationController.clearPasswordValidation();
         _lastSnackbarMessage = null;
       } else {
-        final isFrench = Get.locale?.languageCode == 'fr';
         switch (status) {
           case ResetPasswordStatus.invalidCode:
             _showSnackbar(
-              isFrench
-                  ? AppStrings.resetPasswordInvalidCodeFrench
-                  : AppStrings.resetPasswordInvalidCode,
+              AppStrings.resetPasswordInvalidCode,
             );
             break;
           case ResetPasswordStatus.expired:
             _showSnackbar(
-              isFrench
-                  ? AppStrings.resetPasswordExpiredFrench
-                  : AppStrings.resetPasswordExpired,
+              AppStrings.resetPasswordExpired,
             );
             break;
           case ResetPasswordStatus.error:
             _showSnackbar(
-              isFrench
-                  ? AppStrings.resetPasswordGenericErrorFrench
-                  : AppStrings.resetPasswordGenericError,
+              AppStrings.resetPasswordGenericError,
             );
             break;
           case ResetPasswordStatus.validationError:

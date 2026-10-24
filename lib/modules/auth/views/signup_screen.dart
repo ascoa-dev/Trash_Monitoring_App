@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/widgets/language_switcher.dart';
 import 'dart:io';
 import 'package:we_monitor/app/controllers/auth_controller.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
@@ -294,7 +295,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                       text: TextSpan(
                                         style: AppTextStyles.termsBase(context),
                                         children: [
-                                          const TextSpan(
+                                          TextSpan(
                                             text: AppStrings.termsTextSignUp,
                                           ),
                                           TextSpan(
@@ -311,7 +312,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                     );
                                                   },
                                           ),
-                                          const TextSpan(
+                                          TextSpan(
                                             text: AppStrings.termsAnd,
                                           ),
                                           TextSpan(
@@ -328,7 +329,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                     );
                                                   },
                                           ),
-                                          const TextSpan(
+                                          TextSpan(
                                             text: AppStrings.termsPeriod,
                                           ),
                                         ],
@@ -423,7 +424,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           height: viewportHeight * AppDimensions.sectionSpacing,
                         ),
                         SocialButton(
-                          label: "Continue with Google",
+                          label: AppStrings.continueWithGoogle,
                           icon: Image.asset(
                             AppImages.googleNeutral2x,
                             width: SizeUtils.r(
@@ -444,7 +445,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 viewportHeight * AppDimensions.sectionSpacing,
                           ),
                           SocialButton(
-                            label: "Sign up with Apple",
+                            label: 'auth.signUpWithApple'.tr,
                             icon: Icon(
                               Icons.apple,
                               color: AppColors.black,
@@ -497,6 +498,11 @@ class _SignupScreenState extends State<SignupScreen> {
                       ],
                     ),
                   ),
+                ),
+                              Positioned(
+                  top: 0,
+                  right: 12,
+                  child: SafeArea(child: LanguageToggle()),
                 ),
               ],
             ),

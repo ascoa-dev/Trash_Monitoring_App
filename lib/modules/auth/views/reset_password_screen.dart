@@ -22,25 +22,20 @@ class ResetPasswordScreen extends GetWidget<ResetPasswordController> {
   const ResetPasswordScreen({super.key});
 
   Future<void> _showSuccessDialog(BuildContext context) async {
-    final isFrench = Get.locale?.languageCode == 'fr';
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) {
         return AppDialog(
           title:
-              isFrench
-                  ? AppStrings.resetPasswordSuccessTitleFrench
-                  : AppStrings.resetPasswordSuccessTitle,
+              AppStrings.resetPasswordSuccessTitle,
           decoratedHero: false,
           imageAsset: AppImages.passwordUpdateSuccessful,
           imageWidth: SizeUtils.w(ctx, AppDimensions.dialogImageWidth),
           imageHeight: SizeUtils.h(ctx, AppDimensions.dialogImageHeight),
           body: null,
           primaryActionLabel:
-              isFrench
-                  ? AppStrings.resetPasswordSuccessButtonFrench
-                  : AppStrings.resetPasswordSuccessButton,
+              AppStrings.resetPasswordSuccessButton,
           onPrimaryAction: () {
             Navigator.of(ctx).pop();
             _navigateToLogin();
@@ -75,35 +70,20 @@ class ResetPasswordScreen extends GetWidget<ResetPasswordController> {
   @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
-    final isFrench = Get.locale?.languageCode == 'fr';
     final title =
-        isFrench
-            ? AppStrings.resetPasswordTitleFrench
-            : AppStrings.resetPasswordTitle;
+        AppStrings.resetPasswordTitle;
     final subtitle =
-        isFrench
-            ? AppStrings.resetPasswordSubtitleFrench
-            : AppStrings.resetPasswordSubtitle;
+        AppStrings.resetPasswordSubtitle;
     final newPasswordLabel =
-        isFrench
-            ? AppStrings.newPasswordLabelFrench
-            : AppStrings.newPasswordLabel;
+        AppStrings.newPasswordLabel;
     final confirmPasswordLabel =
-        isFrench
-            ? AppStrings.confirmPasswordLabelFrench
-            : AppStrings.confirmPasswordLabel;
+        AppStrings.confirmPasswordLabel;
     final submitLabel =
-        isFrench
-            ? AppStrings.resetPasswordButtonFrench
-            : AppStrings.resetPasswordButton;
+        AppStrings.resetPasswordButton;
     final submittingLabel =
-        isFrench
-            ? AppStrings.resetPasswordSavingFrench
-            : AppStrings.resetPasswordSaving;
+        AppStrings.resetPasswordSaving;
     final cancelLabel =
-        isFrench
-            ? AppStrings.changePasswordCancelFrench
-            : AppStrings.changePasswordCancel;
+        AppStrings.changePasswordCancel;
 
     return Scaffold(
       backgroundColor: AppColors.background,

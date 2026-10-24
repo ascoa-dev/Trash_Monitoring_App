@@ -34,13 +34,17 @@ class PendingCleanupModelAdapter extends TypeAdapter<PendingCleanupModel> {
       savedAt: fields[14] as DateTime,
       isUploading: fields[15] as bool,
       uploadError: fields[16] as String?,
+      docId: fields[17] as String?,
+      uploadedFull: (fields[18] as Map?)?.cast<String, String>(),
+      uploadedThumb: (fields[19] as Map?)?.cast<String, String>(),
+      missingPhotos: (fields[20] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, PendingCleanupModel obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.localId)
       ..writeByte(1)
@@ -74,7 +78,15 @@ class PendingCleanupModelAdapter extends TypeAdapter<PendingCleanupModel> {
       ..writeByte(15)
       ..write(obj.isUploading)
       ..writeByte(16)
-      ..write(obj.uploadError);
+      ..write(obj.uploadError)
+      ..writeByte(17)
+      ..write(obj.docId)
+      ..writeByte(18)
+      ..write(obj.uploadedFull)
+      ..writeByte(19)
+      ..write(obj.uploadedThumb)
+      ..writeByte(20)
+      ..write(obj.missingPhotos);
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_section_ids.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
@@ -330,7 +331,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     Get.find<HapticController>().medium();
     // Validate all fields in this section
     final isValid = widget.controller.validateSection(
-      AppStrings.basicInformation,
+      CleanupSectionIds.basicInformation,
     );
 
     if (!isValid) {
@@ -356,10 +357,10 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
 
     Get.find<HapticController>().light();
     // Mark section as completed
-    widget.controller.markSectionCompleted(AppStrings.basicInformation);
+    widget.controller.markSectionCompleted(CleanupSectionIds.basicInformation);
 
     // Move to next section (Trash Collected)
-    widget.controller.setExpandedSection(AppStrings.trashCollected);
+    widget.controller.setExpandedSection(CleanupSectionIds.trashCollected);
   }
 
   void _showError(String message) {

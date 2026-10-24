@@ -28,7 +28,6 @@ class ChangePasswordController extends GetxController {
     if (!force && Get.isSnackbarOpen && _lastSnackbarMessage == message) {
       return;
     }
-    final isFrench = Get.locale?.languageCode == 'fr';
     if (Get.isSnackbarOpen) {
       if (!force && _lastSnackbarMessage == message) {
         return;
@@ -36,7 +35,7 @@ class ChangePasswordController extends GetxController {
       Get.back();
     }
     SnackbarService.error(
-      isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
+      AppStrings.errorTitle,
       message,
     );
     _lastSnackbarMessage = message;
@@ -53,15 +52,10 @@ class ChangePasswordController extends GetxController {
   }
 
   void _showSuccessSnackbar() {
-    final isFrench = Get.locale?.languageCode == 'fr';
     final title =
-        isFrench
-            ? AppStrings.changePasswordTitleFrench
-            : AppStrings.changePasswordTitle;
+        AppStrings.changePasswordTitle;
     final message =
-        isFrench
-            ? AppStrings.changePasswordSuccessFrench
-            : AppStrings.changePasswordSuccess;
+        AppStrings.changePasswordSuccess;
     if (Get.isSnackbarOpen) {
       if (_lastSnackbarMessage == message) {
         return;
@@ -94,12 +88,9 @@ class ChangePasswordController extends GetxController {
 
   void validateCurrentPassword(String value) {
     final trimmed = value.trim();
-    final isFrench = Get.locale?.languageCode == 'fr';
     final result = Validators.validateRequired(
       trimmed,
-      isFrench
-          ? AppStrings.currentPasswordLabelFrench
-          : AppStrings.currentPasswordLabel,
+      AppStrings.currentPasswordLabel,
     );
     currentPasswordError.value = result;
   }
@@ -107,11 +98,8 @@ class ChangePasswordController extends GetxController {
   void validateNewPassword(String value) {
     final trimmed = value.trim();
     final currentTrimmed = currentPasswordController.text.trim();
-    final isFrench = Get.locale?.languageCode == 'fr';
     final samePasswordMessage =
-        isFrench
-            ? AppStrings.changePasswordSameAsCurrentFrench
-            : AppStrings.changePasswordSameAsCurrent;
+        AppStrings.changePasswordSameAsCurrent;
 
     _validationController.updatePasswordRules(value);
 
@@ -192,18 +180,12 @@ class ChangePasswordController extends GetxController {
         _lastSnackbarMessage = null;
         _showSuccessSnackbar();
       } else if (status == ChangePasswordStatus.wrongPassword) {
-        final isFrench = Get.locale?.languageCode == 'fr';
         currentPasswordError.value =
-            isFrench
-                ? AppStrings.changePasswordWrongCurrentFrench
-                : AppStrings.changePasswordWrongCurrent;
+            AppStrings.changePasswordWrongCurrent;
         _showErrorSnackbar(currentPasswordError.value!, force: true);
       } else if (status == ChangePasswordStatus.error && !Get.isSnackbarOpen) {
-        final isFrench = Get.locale?.languageCode == 'fr';
         _showErrorSnackbar(
-          isFrench
-              ? AppStrings.changePasswordGenericErrorFrench
-              : AppStrings.changePasswordGenericError,
+          AppStrings.changePasswordGenericError,
         );
       } else if (status == ChangePasswordStatus.validationError) {
         _showValidationSnackbar();

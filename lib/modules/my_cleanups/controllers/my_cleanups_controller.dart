@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class MyCleanupsController extends GetxController {
       applyFilters();
     } catch (e) {
       debugPrint('[MyCleanups] Error loading cleanups: $e');
-      SnackbarService.error('Error', 'Failed to load your cleanups');
+      SnackbarService.error(AppStrings.errorTitle, 'cleanup.loadFailed'.tr);
     } finally {
       isLoading.value = false;
     }

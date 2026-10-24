@@ -56,6 +56,24 @@ class PendingCleanupModel extends HiveObject {
   @HiveField(16)
   String? uploadError;
 
+  // Resume state. Written after every step, so a retry continues where the
+  // last attempt stopped instead of starting over.
+
+  /// Firestore doc id, fixed on the first attempt (also the Storage folder).
+  @HiveField(17)
+  String? docId;
+
+  /// Local photo path -> uploaded full / thumb URL.
+  @HiveField(18)
+  Map<String, String>? uploadedFull;
+
+  @HiveField(19)
+  Map<String, String>? uploadedThumb;
+
+  /// Local photos that were gone from disk and had to be skipped.
+  @HiveField(20)
+  List<String>? missingPhotos;
+
   PendingCleanupModel({
     required this.localId,
     required this.userId,
@@ -74,6 +92,10 @@ class PendingCleanupModel extends HiveObject {
     required this.savedAt,
     this.isUploading = false,
     this.uploadError,
+    this.docId,
+    this.uploadedFull,
+    this.uploadedThumb,
+    this.missingPhotos,
   });
 
   factory PendingCleanupModel.fromFormData({

@@ -21,9 +21,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: Text(
-          isFrench
-              ? AppStrings.pendingCleanupsTitleFrench
-              : AppStrings.pendingCleanupsTitle,
+          AppStrings.pendingCleanupsTitle,
           style: AppTextStyles.heading2(
             context,
           ).copyWith(color: AppColors.black87),
@@ -62,9 +60,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                     ),
                   ),
                   Text(
-                    isFrench
-                        ? AppStrings.pendingCleanupsNoneFrench
-                        : AppStrings.pendingCleanupsNone,
+                    AppStrings.pendingCleanupsNone,
                     style: AppTextStyles.heading2(context),
                     textAlign: TextAlign.center,
                   ),
@@ -75,9 +71,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                     ),
                   ),
                   Text(
-                    isFrench
-                        ? AppStrings.pendingCleanupsAllUploadedFrench
-                        : AppStrings.pendingCleanupsAllUploaded,
+                    AppStrings.pendingCleanupsAllUploaded,
                     style: AppTextStyles.body(context),
                     textAlign: TextAlign.center,
                   ),
@@ -213,7 +207,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                           _buildInfoRow(
                             context,
                             Icons.people,
-                            '${cleanup.peopleCount} ${isFrench ? AppStrings.pendingCleanupsPeopleFrench : AppStrings.pendingCleanupsPeople}',
+                            '${cleanup.peopleCount} ${AppStrings.pendingCleanupsPeople}',
                           ),
                           SizedBox(
                             height: SizeUtils.h(
@@ -224,7 +218,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                           _buildInfoRow(
                             context,
                             Icons.delete_outline,
-                            '${cleanup.trashItems.values.fold(0, (sum, count) => sum + count)} ${isFrench ? AppStrings.pendingCleanupsItemsFrench : AppStrings.pendingCleanupsItems}',
+                            '${cleanup.trashItems.values.fold(0, (sum, count) => sum + count)} ${AppStrings.pendingCleanupsItems}',
                           ),
                           if (cleanup.localPhotoPaths != null &&
                               cleanup.localPhotoPaths!.isNotEmpty) ...[
@@ -237,7 +231,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                             _buildInfoRow(
                               context,
                               Icons.photo_library,
-                              '${cleanup.localPhotoPaths!.length} ${isFrench ? AppStrings.pendingCleanupsPhotos : AppStrings.pendingCleanupsPhotos}',
+                              '${cleanup.localPhotoPaths!.length} ${AppStrings.pendingCleanupsPhotos}',
                             ),
                           ],
                           SizedBox(
@@ -247,9 +241,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                             ),
                           ),
                           Text(
-                            isFrench
-                                ? '${AppStrings.pendingCleanupsSavedFrench}: ${cleanup.savedAt.day}/${cleanup.savedAt.month}/${cleanup.savedAt.year} ${cleanup.savedAt.hour}:${cleanup.savedAt.minute.toString().padLeft(2, '0')}'
-                                : '${AppStrings.pendingCleanupsSaved}: ${cleanup.savedAt.day}/${cleanup.savedAt.month}/${cleanup.savedAt.year} ${cleanup.savedAt.hour}:${cleanup.savedAt.minute.toString().padLeft(2, '0')}',
+                            '${AppStrings.pendingCleanupsSaved}: ${cleanup.savedAt.day}/${cleanup.savedAt.month}/${cleanup.savedAt.year} ${cleanup.savedAt.hour}:${cleanup.savedAt.minute.toString().padLeft(2, '0')}',
                             style: AppTextStyles.bodySecondary(
                               context,
                             ).copyWith(
@@ -268,7 +260,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                               ),
                             ),
                             Text(
-                              '${isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle}: ${cleanup.uploadError}',
+                              '${AppStrings.errorTitle}: ${cleanup.uploadError}',
                               style: AppTextStyles.bodySecondary(
                                 context,
                               ).copyWith(
@@ -300,9 +292,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                                           ),
                                   icon: const Icon(Icons.delete_outline),
                                   label: Text(
-                                    isFrench
-                                        ? AppStrings.pendingCleanupsDeleteFrench
-                                        : AppStrings.pendingCleanupsDelete,
+                                    AppStrings.pendingCleanupsDelete,
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: AppColors.errorRed,
@@ -327,9 +317,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                                               controller.uploadCleanup(cleanup),
                                   icon: const Icon(Icons.cloud_upload),
                                   label: Text(
-                                    isFrench
-                                        ? AppStrings.pendingCleanupsUploadFrench
-                                        : AppStrings.pendingCleanupsUpload,
+                                    AppStrings.pendingCleanupsUpload,
                                   ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.buttonGreen,
@@ -377,9 +365,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                   width: double.infinity,
                   child: PrimaryButton(
                     label:
-                        isFrench
-                            ? '${AppStrings.pendingCleanupsUploadAllFrench} (${controller.pendingCleanups.length})'
-                            : '${AppStrings.pendingCleanupsUploadAll} (${controller.pendingCleanups.length})',
+                        '${AppStrings.pendingCleanupsUploadAll} (${controller.pendingCleanups.length})',
                     onPressed: () {
                       if (controller.uploadingId.value.isEmpty) {
                         _showUploadAllConfirmation(context, isFrench);
@@ -417,22 +403,16 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
       builder:
           (ctx) => AlertDialog(
             title: Text(
-              isFrench
-                  ? AppStrings.pendingCleanupsDeleteTitleFrench
-                  : AppStrings.pendingCleanupsDeleteTitle,
+              AppStrings.pendingCleanupsDeleteTitle,
             ),
             content: Text(
-              isFrench
-                  ? AppStrings.pendingCleanupsDeleteMessageFrench
-                  : AppStrings.pendingCleanupsDeleteMessage,
+              AppStrings.pendingCleanupsDeleteMessage,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
                 child: Text(
-                  isFrench
-                      ? AppStrings.avatarPickerCancelFrench
-                      : AppStrings.pendingCleanupsCancel,
+                  AppStrings.cancel,
                 ),
               ),
               TextButton(
@@ -444,9 +424,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                   foregroundColor: AppColors.errorRed,
                 ),
                 child: Text(
-                  isFrench
-                      ? AppStrings.pendingCleanupsDeleteFrench
-                      : AppStrings.pendingCleanupsDelete,
+                  AppStrings.pendingCleanupsDelete,
                 ),
               ),
             ],
@@ -460,22 +438,16 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
       builder:
           (ctx) => AlertDialog(
             title: Text(
-              isFrench
-                  ? AppStrings.pendingCleanupsUploadAllFrench
-                  : AppStrings.pendingCleanupsUploadAllTitle,
+              AppStrings.pendingCleanupsUploadAllTitle,
             ),
             content: Text(
-              isFrench
-                  ? AppStrings.pendingCleanupsUploadAllMessageFrench
-                  : AppStrings.pendingCleanupsUploadAllMessage,
+              AppStrings.pendingCleanupsUploadAllMessage,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
                 child: Text(
-                  isFrench
-                      ? AppStrings.avatarPickerCancelFrench
-                      : AppStrings.pendingCleanupsCancel,
+                  AppStrings.cancel,
                 ),
               ),
               TextButton(
@@ -484,9 +456,7 @@ class PendingCleanupsScreen extends GetView<PendingCleanupsController> {
                   controller.uploadAll();
                 },
                 child: Text(
-                  isFrench
-                      ? AppStrings.pendingCleanupsUploadFrench
-                      : AppStrings.pendingCleanupsUpload,
+                  AppStrings.pendingCleanupsUpload,
                 ),
               ),
             ],

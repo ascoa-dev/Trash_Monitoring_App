@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ Future<String> compressJpeg(File file, int maxEdge, int quality) async {
   );
 
   if (result == null) {
-    throw Exception('Failed to compress image');
+    throw Exception('cleanup.compressFailed'.tr);
   }
 
   return result.path;
@@ -68,15 +69,18 @@ Future<({String full, String thumb})> compressJpegPair(File source) async {
   return (full: full, thumb: thumb);
 }
 
-/// Uploads `<folderPath>/<uuid>.jpg` and `<uuid>_thumb.jpg` with the
+/// Uploads `<folderPath>/<base>.jpg` and `<base>_thumb.jpg` with the
 /// cache/ownership metadata the Storage rules expect. Returns download URLs.
+/// [baseName] defaults to a fresh uuid; pass a stable one so a retried upload
+/// overwrites its own earlier attempt instead of leaving an orphan.
 Future<({String full, String thumb})> uploadJpegPair({
   required String folderPath,
   required String fullPath,
   required String thumbPath,
+  String? baseName,
   void Function(UploadTask task)? onFullTask,
 }) async {
-  final base = const Uuid().v4();
+  final base = baseName ?? const Uuid().v4();
   final folder = FirebaseStorage.instance.ref().child(folderPath);
   final metadata = SettableMetadata(
     contentType: 'image/jpeg',

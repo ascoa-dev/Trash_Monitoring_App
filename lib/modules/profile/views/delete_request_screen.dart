@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,7 +41,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
 
   Future<void> _submitRequest() async {
     if (_requestType == null) {
-      SnackbarService.error('Error', 'Please select a request type.');
+      SnackbarService.error(AppStrings.errorTitle, 'profile.selectRequestTypeError'.tr);
       return;
     }
 
@@ -51,7 +52,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        throw Exception('User is not authenticated.');
+        throw Exception('profile.notAuthenticated'.tr);
       }
 
       await FirebaseFirestore.instance.collection('delete_requests').add({
@@ -64,8 +65,8 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
 
       Get.find<HapticController>().medium();
       SnackbarService.success(
-        'Request Submitted',
-        'Your request for $_requestType has been successfully registered.',
+        'profile.requestSubmittedTitle'.tr,
+        'profile.requestSubmittedBody'.trp({'type': _requestType == 'Account Deletion' ? 'profile.accountDeletionName'.tr : 'profile.dataDeletionName'.tr}),
       );
 
       // Go back to the profile screen
@@ -74,8 +75,8 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
       Get.find<HapticController>().heavy();
       debugPrint('Error submitting delete request: $e');
       SnackbarService.error(
-        'Submission Failed',
-        'Could not submit request. Please try again later.',
+        'profile.submissionFailedTitle'.tr,
+        'profile.submissionFailedBody'.tr,
       );
     } finally {
       if (mounted) {
@@ -97,7 +98,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         title: Text(
-          'Delete Account / Data',
+          'profile.deleteScreenTitle'.tr,
           style: AppTextStyles.heading2(context),
         ),
         leading: BackButton(
@@ -135,7 +136,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
 
                   // Heading
                   Text(
-                    'Account & Data Deletion',
+                    'profile.deleteHeading'.tr,
                     style: AppTextStyles.heading2(
                       context,
                     ).copyWith(fontSize: SizeUtils.h(context, 20)),
@@ -145,7 +146,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
 
                   // Description
                   Text(
-                    'Submit a request to permanently delete your ASCOA account or associated trash monitoring records.',
+                    'profile.deleteIntro'.tr,
                     style: AppTextStyles.bodySecondary(context),
                     textAlign: TextAlign.center,
                   ),
@@ -155,7 +156,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Your Email Address',
+                      'profile.yourEmail'.tr,
                       style: AppTextStyles.body(context).copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.black87,
@@ -189,7 +190,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Request Type *',
+                      'profile.requestTypeLabel'.tr,
                       style: AppTextStyles.body(context).copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.black87,
@@ -205,19 +206,17 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      hintText: 'Select request type...',
+                      hintText: 'profile.selectRequestType'.tr,
                       hintStyle: AppTextStyles.bodySecondary(context),
                     ),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
                         value: 'Account Deletion',
-                        child: Text(
-                          'Account Deletion (Delete credentials & profile)',
-                        ),
+                        child: Text('profile.accountDeletionOption'.tr),
                       ),
                       DropdownMenuItem(
                         value: 'Data Deletion',
-                        child: Text('Data Deletion (Delete cleanups & stats)'),
+                        child: Text('profile.dataDeletionOption'.tr),
                       ),
                     ],
                     onChanged: (val) {
@@ -227,7 +226,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                     },
                     validator:
                         (val) =>
-                            val == null ? 'Please select a request type' : null,
+                            val == null ? 'profile.selectRequestTypeValidator'.tr : null,
                   ),
                   const SizedBox(height: 24),
 
@@ -255,7 +254,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'WARNING: ACTION CANNOT BE UNDONE',
+                                'profile.warningTitle'.tr,
                                 style: AppTextStyles.body(context).copyWith(
                                   color: const Color(0xFFBE123C),
                                   fontWeight: FontWeight.bold,
@@ -265,7 +264,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Processing this request will result in permanent loss of your data. Once completed, you will not be able to recover your account history, cleanups, or stats.',
+                                'profile.warningBody'.tr,
                                 style: AppTextStyles.bodySecondary(
                                   context,
                                 ).copyWith(
@@ -286,7 +285,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : PrimaryButton(
-                        label: 'Submit Deletion Request',
+                        label: 'profile.submitDeletion'.tr,
                         onPressed: _submitRequest,
                       ),
                 ],

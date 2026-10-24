@@ -34,6 +34,24 @@ class PendingHotspotModel extends HiveObject {
   @HiveField(9)
   String? uploadError;
 
+  // Resume state. Written after every step, so a retry continues where the
+  // last attempt stopped instead of starting over.
+
+  /// Firestore doc id, fixed on the first attempt (also the Storage folder).
+  @HiveField(10)
+  String? docId;
+
+  /// Local photo path -> uploaded full / thumb URL.
+  @HiveField(11)
+  Map<String, String>? uploadedFull;
+
+  @HiveField(12)
+  Map<String, String>? uploadedThumb;
+
+  /// Local photos that were gone from disk and had to be skipped.
+  @HiveField(13)
+  List<String>? missingPhotos;
+
   PendingHotspotModel({
     required this.localId,
     required this.userId,
@@ -45,6 +63,10 @@ class PendingHotspotModel extends HiveObject {
     required this.savedAt,
     this.isUploading = false,
     this.uploadError,
+    this.docId,
+    this.uploadedFull,
+    this.uploadedThumb,
+    this.missingPhotos,
   });
 
   Map<String, dynamic> toFirestore({

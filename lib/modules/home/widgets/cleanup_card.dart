@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/app_dates.dart';
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:we_monitor/app/models/cleanup_model.dart';
@@ -22,13 +24,7 @@ class CleanupCard extends StatelessWidget {
   final double? width;
 
   String _formatDate() {
-    final dt = cleanup.createdAt;
-    final now = DateTime.now();
-    final diff = now.difference(dt);
-    if (diff.inDays == 0) return 'Today';
-    if (diff.inDays == 1) return 'Yesterday';
-    if (diff.inDays < 7) return '${diff.inDays} days ago';
-    return '${dt.day}/${dt.month}/${dt.year}';
+    return AppDates.relative(cleanup.createdAt);
   }
 
   @override
@@ -107,7 +103,7 @@ class CleanupCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${cleanup.peopleCount} people · ${cleanup.totalWeight.toStringAsFixed(1)} kg . ${_formatDate()}',
+                        'home.cardSummary'.trp({'people': cleanup.peopleCount, 'kg': cleanup.totalWeight.toStringAsFixed(1), 'date': _formatDate()}),
                         style: AppTextStyles.bodySecondary(context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

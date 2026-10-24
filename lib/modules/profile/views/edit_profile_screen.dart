@@ -25,43 +25,28 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
   @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
-    final isFrench = Get.locale?.languageCode == 'fr';
     final title =
-        isFrench
-            ? AppStrings.editProfileTitleFrench
-            : AppStrings.editProfileTitle;
+        AppStrings.editProfileTitle;
     final subtitle =
-        isFrench
-            ? AppStrings.editProfileSubtitleFrench
-            : AppStrings.editProfileSubtitle;
+        AppStrings.editProfileSubtitle;
     final firstNameLabel =
-        isFrench ? AppStrings.firstNameLabelFrench : AppStrings.firstNameLabel;
+        AppStrings.firstNameLabel;
     final lastNameLabel =
-        isFrench ? AppStrings.lastNameLabelFrench : AppStrings.lastNameLabel;
+        AppStrings.lastNameLabel;
     final phoneLabel =
-        isFrench
-            ? AppStrings.phoneNumberLabelFrench
-            : AppStrings.phoneNumberLabel;
+        AppStrings.phoneNumberLabel;
     final countryLabel =
-        isFrench
-            ? AppStrings.countryCodeLabelFrench
-            : AppStrings.countryCodeLabel;
+        AppStrings.countryCodeLabel;
     final cityLabel =
-        isFrench ? AppStrings.cityLabelFrench : AppStrings.cityLabel;
+        AppStrings.cityLabel;
     final saveLabel =
-        isFrench
-            ? AppStrings.editProfileSaveButtonFrench
-            : AppStrings.editProfileSaveButton;
+        AppStrings.editProfileSaveButton;
     final savingLabel =
-        isFrench
-            ? AppStrings.editProfileSavingFrench
-            : AppStrings.editProfileSaving;
+        AppStrings.editProfileSaving;
     final cancelLabel =
-        isFrench
-            ? AppStrings.editProfileCancelFrench
-            : AppStrings.editProfileCancel;
+        AppStrings.editProfileCancel;
     final editPhotoLabel =
-        isFrench ? AppStrings.editPhotoLabelFrench : AppStrings.editPhotoLabel;
+        AppStrings.editPhotoLabel;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -565,15 +550,9 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                               context: context,
                                               barrierDismissible: false,
                                               builder: (ctx) {
-                                                final isFrench =
-                                                    Get.locale?.languageCode ==
-                                                    'fr';
                                                 return AppDialog(
                                                   title:
-                                                      isFrench
-                                                          ? AppStrings
-                                                              .editProfileSuccessDialogTitle
-                                                          : AppStrings
+                                                      AppStrings
                                                               .editProfileSuccessDialogTitle,
                                                   decoratedHero: false,
                                                   imageAsset:
@@ -591,10 +570,7 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                                   ),
                                                   body: null,
                                                   primaryActionLabel:
-                                                      isFrench
-                                                          ? AppStrings
-                                                              .editProfileSuccessDialogButton
-                                                          : AppStrings
+                                                      AppStrings
                                                               .editProfileSuccessDialogButton,
                                                   onPrimaryAction: () {
                                                     Navigator.of(ctx).pop();
@@ -609,17 +585,10 @@ class EditProfileScreen extends GetWidget<EditProfileController> {
                                               },
                                             );
                                           } else {
-                                            final isFrench =
-                                                Get.locale?.languageCode ==
-                                                'fr';
                                             SnackbarService.error(
-                                              isFrench
-                                                  ? AppStrings.errorTitleFrench
-                                                  : AppStrings.errorTitle,
-                                              isFrench
-                                                  ? AppStrings
-                                                      .editProfileErrorFrench
-                                                  : AppStrings.editProfileError,
+                                              AppStrings.errorTitle,
+                                              AppStrings
+                                                      .editProfileError,
                                             );
                                           }
                                         },

@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/app_dates.dart';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
@@ -66,26 +67,8 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
   String _formatDate() {
     final dt = hotspot.createdAt;
     if (dt == null) return '';
-    return '${dt.day.toString().padLeft(2, '0')} '
-        '${_monthName(dt.month)} ${dt.year}';
+    return AppDates.medium(dt);
   }
-
-  String _monthName(int m) =>
-      const [
-        '',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ][m];
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +79,7 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        title: Text('Hotspot Report', style: AppTextStyles.heading2(context)),
+        title: Text('hotspot.detailTitle'.tr, style: AppTextStyles.heading2(context)),
         leading: BackButton(
           color: AppColors.black87,
           onPressed: () => Get.back(),
@@ -141,7 +124,7 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
                         title:
                             hotspot.locationName.isNotEmpty
                                 ? hotspot.locationName
-                                : 'Hotspot',
+                                : 'hotspot.hotspotFallback'.tr,
                       ),
                     ),
                   },
@@ -158,7 +141,7 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
                 child: OutlinedButton.icon(
                   onPressed: _openInGoogleMaps,
                   icon: const Icon(Icons.map_outlined, size: 16),
-                  label: const Text('Open in Google Maps'),
+                  label: Text('shared.openInMaps'.tr),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.buttonPrimary,
                     side: BorderSide(color: AppColors.buttonPrimary),
@@ -193,7 +176,7 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
                   if (hotspot.notes != null && hotspot.notes!.isNotEmpty) ...[
                     SizedBox(height: SizeUtils.h(context, 12)),
                     Text(
-                      'Notes',
+                      'shared.notes'.tr,
                       style: AppTextStyles.body(
                         context,
                       ).copyWith(fontWeight: FontWeight.bold),

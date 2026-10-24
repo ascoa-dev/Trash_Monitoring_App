@@ -211,7 +211,7 @@ class _StatsScreenState extends State<StatsScreen>
                               2,
                               '0',
                             ),
-                            label: 'Cleanups',
+                            label: AppStrings.statsCleanups,
                           ),
                         ),
                         SizedBox(
@@ -223,8 +223,8 @@ class _StatsScreenState extends State<StatsScreen>
                         Expanded(
                           child: _ActivityCard(
                             value: controller.totalTrashKg.toString(),
-                            label: 'Trash collected',
-                            unit: 'KGs',
+                            label: AppStrings.statsTrashCollected,
+                            unit: AppStrings.statsKgs,
                           ),
                         ),
                       ],
@@ -477,7 +477,7 @@ class _StatsScreenState extends State<StatsScreen>
                     ),
                   ),
                   Text(
-                    'Pending Uploads',
+                    'stats.pendingUploads'.tr,
                     style: AppTextStyles.inputHint(
                       context,
                     ).copyWith(color: AppColors.white),
@@ -493,7 +493,7 @@ class _StatsScreenState extends State<StatsScreen>
               // Button BELOW the title
               PrimaryButton(
                 backgroundColor: AppColors.statsActivityCardBg,
-                label: 'Upload pending cleanups',
+                label: 'stats.uploadPending'.tr,
                 labelStyle: AppTextStyles.statsActivityLabelSmall(
                   context,
                 ).copyWith(
@@ -571,7 +571,7 @@ class _StatsScreenState extends State<StatsScreen>
           },
           infoWindow: InfoWindow(
             title: '${location.date} - ${location.groupName}',
-            snippet: '${location.trashKg.toStringAsFixed(3)} KGs collected',
+            snippet: '${location.trashKg.toStringAsFixed(3)} ${AppStrings.statsMapInfoCollected}',
           ),
         ),
       );

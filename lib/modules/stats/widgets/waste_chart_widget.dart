@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -407,7 +408,7 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
                   ).copyWith(color: Colors.white),
                 ),
                 Text(
-                  '${meta.value} items',
+                  'shared.itemsCount'.trp({'n': meta.value}),
                   style: AppTextStyles.statsActivityTooltip(
                     context,
                   ).copyWith(color: Colors.white),
@@ -508,19 +509,19 @@ class _WasteChartWidgetState extends State<WasteChartWidget> {
     // Break category names into multiple lines for better display
     switch (category) {
       case 'Most Likely Items to Find':
-        return 'Most\nLikely';
+        return 'stats.abbrMostLikely'.tr;
       case 'Fishing Gear':
-        return 'Fishing\nGear';
+        return 'stats.abbrFishing'.tr;
       case 'Tiny Trash (<2.5 cm)':
-        return 'Tiny\nTrash';
+        return 'stats.abbrTiny'.tr;
       case 'Packaging Materials':
-        return 'Packaging';
+        return 'stats.abbrPackaging'.tr;
       case 'Personal Hygiene':
-        return 'Personal\nHygiene';
+        return 'stats.abbrHygiene'.tr;
       case 'Items of Local Concern':
-        return 'Local\nConcern';
+        return 'stats.abbrLocal'.tr;
       case 'Other Trash':
-        return 'Other\nTrash';
+        return 'stats.abbrOther'.tr;
       default:
         return category;
     }

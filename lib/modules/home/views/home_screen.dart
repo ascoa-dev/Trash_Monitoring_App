@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/modules/stats/controllers/stats_controller.dart';
 import 'package:flutter/material.dart';
@@ -248,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'Welcome back, $displayName!',
+                          'home.welcomeBack'.trp({'name': displayName}),
                           style: AppTextStyles.dashboardGreeting(context),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -476,12 +477,12 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Please Wait...',
+                'home.pleaseWait'.tr,
                 style: AppTextStyles.cleanUpSubtitle(context),
                 textAlign: TextAlign.center,
               ),
               Text(
-                'Loading your stats',
+                'home.loadingStats'.tr,
                 style: AppTextStyles.cleanUpSubtitle(context),
                 textAlign: TextAlign.center,
               ),
@@ -543,7 +544,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               child: Text(
-                'Hotspot Reports',
+                'home.hotspotReports'.tr,
                 style: AppTextStyles.dashboardHeading(context),
               ),
             ),
@@ -553,7 +554,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Get.toNamed(AppRoutes.hotspotList);
               },
               child: Text(
-                'View All',
+                'shared.viewAll'.tr,
                 style: AppTextStyles.newsCaption(context),
               ),
             ),
@@ -608,7 +609,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               child: Text(
-                'Community Cleanups',
+                'home.communityCleanups'.tr,
                 style: AppTextStyles.dashboardHeading(context),
               ),
             ),
@@ -618,7 +619,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Get.toNamed(AppRoutes.cleanupList);
               },
               child: Text(
-                'View All',
+                'shared.viewAll'.tr,
                 style: AppTextStyles.newsCaption(context),
               ),
             ),
@@ -739,7 +740,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     TextButton(
                       onPressed: () => _postsController.loadPosts(perPage: 4),
-                      child: const Text(AppStrings.retry),
+                      child: Text(AppStrings.retry),
                     ),
                   ],
                 ),

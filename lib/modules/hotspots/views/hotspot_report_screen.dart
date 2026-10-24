@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -115,7 +116,7 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
     final media = controller.mediaUploadController;
     if (!media.canAddMore) {
       _showSnack(
-        'Maximum ${MediaUploadConfig.maxPhotos} photos allowed',
+        'shared.maxPhotos'.trp({'max': MediaUploadConfig.maxPhotos}),
         AppColors.errorRed,
       );
       return;
@@ -168,8 +169,8 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
 
     _showSnack(
       isOnline
-          ? '${files.length} photo(s) uploading...'
-          : '${files.length} photo(s) saved for offline upload.',
+          ? 'hotspot.photosUploading'.trp({'n': files.length})
+          : 'hotspot.photosSavedOffline'.trp({'n': files.length}),
       AppColors.info,
     );
   }
@@ -191,7 +192,7 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
     if (!mounted) return;
     if (id == null) {
       _showSnack(
-        'Failed to save hotspot report. Please check the form.',
+        'hotspot.saveFailed'.tr,
         AppColors.errorRed,
       );
       return;
@@ -200,8 +201,8 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
     final wasOnline = Get.find<ConnectivityController>().isOnline.value;
     _showSnack(
       wasOnline
-          ? 'Hotspot report saved.'
-          : 'Hotspot saved offline. It will upload when you are online.',
+          ? 'hotspot.saved'.tr
+          : 'hotspot.savedOffline'.tr,
       AppColors.success,
     );
     // Offline-saved hotspots still reference the draft's photo copies.
@@ -234,7 +235,7 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
         appBar: AppBar(
           backgroundColor: AppColors.background,
           title: Text(
-            'Report Plastic Hotspot',
+            'hotspot.reportTitle'.tr,
             style: AppTextStyles.heading2(context),
           ),
           leading: BackButton(color: AppColors.black87, onPressed: _handleExit),
@@ -252,7 +253,7 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Add the hotspot location and up to ${MediaUploadConfig.maxPhotos} photos.',
+                      'hotspot.reportSubtitle'.trp({'max': MediaUploadConfig.maxPhotos}),
                       style: AppTextStyles.body(context),
                     ),
                     SizedBox(
@@ -321,7 +322,7 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
                         disabledBackgroundColor: AppColors.grey400,
                       ),
                       child: Text(
-                        controller.isSubmitting ? 'SAVING...' : 'SAVE HOTSPOT',
+                        controller.isSubmitting ? 'hotspot.saving'.tr : 'hotspot.saveHotspot'.tr,
                         style: AppTextStyles.saveCleanUpText(
                           context,
                         ).copyWith(color: AppColors.pureWhite),

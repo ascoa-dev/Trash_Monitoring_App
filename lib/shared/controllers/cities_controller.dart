@@ -17,7 +17,7 @@ class CitiesController extends GetxController {
 
   String get customCitiesWarning =>
       config?.customCitiesWarning ??
-      'This city is not officially recognized. Please double-check.';
+      'shared.cityUnofficial'.tr;
 
   List<String> cityNames() => config?.cities.map((c) => c.name).toList() ?? [];
 

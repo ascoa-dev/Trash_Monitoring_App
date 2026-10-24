@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
+import 'package:we_monitor/shared/widgets/language_switcher.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -309,17 +311,16 @@ class ProfileScreen extends StatelessWidget {
                                   final c = Get.find<AchievementsController>();
                                   return ProfileActionTile(
                                     icon: Icons.emoji_events_outlined,
-                                    title: 'Achievements',
-                                    subtitle:
-                                        'Score ${c.allTimeScore.value} - ${c.monthScore.value} this month',
+                                    title: 'profile.achievements'.tr,
+                                    subtitle: 'profile.scoreSummary'.trp({'all': c.allTimeScore.value, 'month': c.monthScore.value}),
                                     onTap:
                                         () => Get.toNamed(AppRoutes.achievements),
                                   );
                                 })
                                 : ProfileActionTile(
                                   icon: Icons.emoji_events_outlined,
-                                  title: 'Achievements',
-                                  subtitle: 'Track milestones and unlock rewards',
+                                  title: 'profile.achievements'.tr,
+                                  subtitle: 'profile.achievementsSubtitle'.tr,
                                   onTap:
                                       () => Get.toNamed(AppRoutes.achievements),
                                 ),
@@ -334,8 +335,8 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             ProfileActionTile(
                               icon: Icons.history_outlined,
-                              title: 'My Clean Ups',
-                              subtitle: 'Search and edit submitted cleanups',
+                              title: 'cleanup.myTitle'.tr,
+                              subtitle: 'profile.myCleanupsSubtitle'.tr,
                               onTap: () => Get.toNamed(AppRoutes.myCleanups),
                             ),
                             SizedBox(
@@ -366,9 +367,9 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             ProfileActionTile(
                               icon: Icons.report_problem_outlined,
-                              title: 'Pending Hotspots',
+                              title: 'profile.pendingHotspots'.tr,
                               subtitle:
-                                  'View and upload offline hotspot reports',
+                                  'profile.pendingHotspotsSubtitle'.tr,
                               onTap:
                                   () => Get.toNamed(AppRoutes.pendingHotspots),
                             ),
@@ -391,9 +392,9 @@ class ProfileScreen extends StatelessWidget {
                                     ),
                                     ProfileActionTile(
                                       icon: Icons.admin_panel_settings_outlined,
-                                      title: 'Admin Management',
+                                      title: 'profile.adminManagement'.tr,
                                       subtitle:
-                                          'Add, search, and remove admins',
+                                          'profile.adminManagementSubtitle'.tr,
                                       onTap:
                                           () => Get.toNamed(
                                             AppRoutes.adminManagement,
@@ -524,6 +525,21 @@ class ProfileScreen extends StatelessWidget {
                               height: math.min(
                                 SizeUtils.h(
                                   context,
+                                  AppDimensions.profileCardSpacing,
+                                ),
+                                AppDimensions.profileCardSpacing,
+                              ),
+                            ),
+                            ProfileActionTile(
+                              icon: Icons.language,
+                              title: 'shared.language'.tr,
+                              subtitle: currentLanguageName(),
+                              onTap: () => showLanguageChooser(context),
+                            ),
+                            SizedBox(
+                              height: math.min(
+                                SizeUtils.h(
+                                  context,
                                   AppDimensions.profileSectionSupportSpacing,
                                 ),
                                 AppDimensions.profileSectionSupportSpacing,
@@ -543,7 +559,7 @@ class ProfileScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'DANGER ZONE',
+                                    'profile.dangerZone'.tr,
                                     style: AppTextStyles.profileCaption(
                                       context,
                                     ).copyWith(color: const Color(0xFFBE123C)),
@@ -580,13 +596,13 @@ class ProfileScreen extends StatelessWidget {
                                                     BorderRadius.circular(16),
                                               ),
                                               title: Text(
-                                                'Confirm Request',
+                                                'profile.confirmRequestTitle'.tr,
                                                 style: AppTextStyles.heading2(
                                                   ctx,
                                                 ).copyWith(fontSize: 18),
                                               ),
                                               content: Text(
-                                                'Do you really wish to proceed to the Account & Data Deletion screen?',
+                                                'profile.confirmRequestBody'.tr,
                                                 style: AppTextStyles.body(ctx),
                                               ),
                                               actions: [
@@ -597,7 +613,7 @@ class ProfileScreen extends StatelessWidget {
                                                             ctx,
                                                           ).pop(),
                                                   child: Text(
-                                                    'Cancel',
+                                                    AppStrings.cancel,
                                                     style: AppTextStyles.body(
                                                       ctx,
                                                     ).copyWith(
@@ -623,7 +639,7 @@ class ProfileScreen extends StatelessWidget {
                                                     );
                                                   },
                                                   child: Text(
-                                                    'Confirm',
+                                                    'shared.confirm'.tr,
                                                     style: AppTextStyles.body(
                                                       ctx,
                                                     ).copyWith(
@@ -641,8 +657,8 @@ class ProfileScreen extends StatelessWidget {
                                       Icons.warning_amber_rounded,
                                       size: 16,
                                     ),
-                                    label: const Text(
-                                      'Delete Account & Data',
+                                    label: Text(
+                                      'profile.deleteAccountData'.tr,
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
@@ -750,11 +766,11 @@ class ProfileScreen extends StatelessWidget {
       );
       if (!context.mounted) return;
       if (!success) {
-        _showErrorDialog(context, 'Could not open link.');
+        _showErrorDialog(context, 'shared.couldNotOpenLink'.tr);
       }
     } catch (e) {
       if (!context.mounted) return;
-      _showErrorDialog(context, 'Error opening link: $e');
+      _showErrorDialog(context, 'shared.errorOpeningLink'.trp({'error': e}));
     }
   }
 
@@ -764,7 +780,7 @@ class ProfileScreen extends StatelessWidget {
       barrierDismissible: true,
       builder:
           (_) => AppDialog(
-            title: 'Error',
+            title: AppStrings.errorTitle,
             body: message,
             icon: Icons.error_outline_rounded,
             decoratedHero: true,

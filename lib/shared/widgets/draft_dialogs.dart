@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
+import 'package:we_monitor/shared/i18n/locale_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
@@ -14,10 +16,10 @@ Future<bool> showDraftRestoreDialog(
   final isCleanup = draft.kind == FormDraft.kindCleanup;
   final parts = <String>[
     if (draft.groupName.trim().isNotEmpty) draft.groupName.trim(),
-    if (draft.itemCount > 0) '${draft.itemCount} items',
-    if (draft.photos.isNotEmpty) '${draft.photos.length} photos',
+    if (draft.itemCount > 0) 'shared.draftSummaryItems'.trp({'n': draft.itemCount}),
+    if (draft.photos.isNotEmpty) 'shared.draftSummaryPhotos'.trp({'n': draft.photos.length}),
   ];
-  final edited = DateFormat('d MMM yyyy, HH:mm').format(draft.savedAt);
+  final edited = DateFormat('d MMM yyyy, HH:mm', LocaleService.code).format(draft.savedAt);
   final body = [
     '${AppStrings.draftLastEdited}: $edited',
     if (parts.isNotEmpty) parts.join(' · '),

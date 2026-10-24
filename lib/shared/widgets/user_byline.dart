@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,7 @@ class UserByline extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              'By $name',
+              'shared.byName'.trp({'name': name}),
               style: AppTextStyles.bodySecondary(context),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

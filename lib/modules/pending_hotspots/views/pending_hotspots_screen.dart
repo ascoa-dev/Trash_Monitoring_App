@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
@@ -16,7 +17,7 @@ class PendingHotspotsScreen extends GetView<PendingHotspotsController> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        title: Text('Pending Hotspots', style: AppTextStyles.heading2(context)),
+        title: Text('hotspot.pendingTitle'.tr, style: AppTextStyles.heading2(context)),
         leading: BackButton(
           color: AppColors.black87,
           onPressed: () => Get.back(),
@@ -29,7 +30,7 @@ class PendingHotspotsScreen extends GetView<PendingHotspotsController> {
         if (controller.pendingHotspots.isEmpty) {
           return Center(
             child: Text(
-              'No pending hotspot reports',
+              'hotspot.noPending'.tr,
               style: AppTextStyles.body(context),
             ),
           );
@@ -66,7 +67,7 @@ class PendingHotspotsScreen extends GetView<PendingHotspotsController> {
                     onPressed: controller.uploadAll,
                     icon: const Icon(Icons.cloud_upload),
                     label: Text(
-                      'Upload All (${controller.pendingHotspots.length})',
+                      'hotspot.uploadAll'.trp({'n': controller.pendingHotspots.length}),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.buttonGreen,
@@ -104,7 +105,7 @@ class _HotspotCard extends StatelessWidget {
             Text(hotspot.location, style: AppTextStyles.heading2(context)),
             SizedBox(height: SizeUtils.h(context, AppDimensions.smallSpacing)),
             Text(
-              '${hotspot.localPhotoPaths.length} photos • Saved ${hotspot.savedAt.day}/${hotspot.savedAt.month}/${hotspot.savedAt.year}',
+              'hotspot.pendingSummary'.trp({'photos': hotspot.localPhotoPaths.length, 'date': '${hotspot.savedAt.day}/${hotspot.savedAt.month}/${hotspot.savedAt.year}'}),
               style: AppTextStyles.body(context),
             ),
             if (hotspot.uploadError != null)
@@ -126,7 +127,7 @@ class _HotspotCard extends StatelessWidget {
                             ? null
                             : () => controller.deleteHotspot(hotspot),
                     icon: const Icon(Icons.delete_outline),
-                    label: const Text('Delete'),
+                    label: Text('shared.delete'.tr),
                   ),
                 ),
                 SizedBox(
@@ -146,7 +147,7 @@ class _HotspotCard extends StatelessWidget {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                             : const Icon(Icons.cloud_upload),
-                    label: const Text('Upload'),
+                    label: Text('shared.upload'.tr),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.buttonGreen,
                       foregroundColor: AppColors.pureWhite,

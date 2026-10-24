@@ -1,693 +1,364 @@
+import 'package:get/get.dart';
+
+/// Central strings. Each getter resolves against the current locale.
+/// Text lives in lib/shared/i18n/strings_core.dart.
 class AppStrings {
-  // Login Screen
-  static const String loginTitle = "Login into Account";
-  static const String emailLabel = "Email *";
-  static const String emailHint = "example@gmail.com";
-  static const String passwordLabel = "Password *";
-  static const String passwordHint = "Enter Password";
-  static const String loginButton = "LOG IN";
-  static const String loggingIn = "LOGGING IN...";
-  static const String forgotPassword = "Forgot Password?";
-  static const String dividerOr = "OR";
-  static const String otherSignUpOptions = "Other Sign Up Options";
-  static const String continueWithGoogle = "Continue with Google";
-  static const String noAccount = "No Account? ";
-  static const String haveAccount = "Already have an account? ";
-  static const String signUp = "Sign up";
-  static const String termsText = "By using We Monitor, you agree to the \n";
-  static const String termsTextSignUp = "By clicking here, you agree to the ";
-  static const String termsLink = "Terms";
-  static const String termsAnd = " and ";
-  static const String privacyPolicyLink = "Privacy Policy";
-  static const String termsPeriod = ".";
-  // Short labels for social buttons (optional)
-  static const String googleShort = "Google";
+  AppStrings._();
 
-  // Navigation Messages (for development)
-  static const String forgotPasswordNav = "Navigate to Forgot Password screen";
-  static const String signUpNav = "Navigate to Sign Up screen";
-  static const String termsNav = "Navigate to Terms screen";
-  static const String privacyPolicyNav = "Navigate to Privacy Policy screen";
+  static String get loginTitle => 'core.loginTitle'.tr;
+  static String get emailLabel => 'core.emailLabel'.tr;
+  static String get emailHint => 'core.emailHint'.tr;
+  static String get passwordLabel => 'core.passwordLabel'.tr;
+  static String get passwordHint => 'core.passwordHint'.tr;
+  static String get loginButton => 'core.loginButton'.tr;
+  static String get loggingIn => 'core.loggingIn'.tr;
+  static String get forgotPassword => 'core.forgotPassword'.tr;
+  static String get dividerOr => 'core.dividerOr'.tr;
+  static String get otherSignUpOptions => 'core.otherSignUpOptions'.tr;
+  static String get continueWithGoogle => 'core.continueWithGoogle'.tr;
+  static String get noAccount => 'core.noAccount'.tr;
+  static String get haveAccount => 'core.haveAccount'.tr;
+  static String get signUp => 'core.signUp'.tr;
+  static String get termsText => 'core.termsText'.tr;
+  static String get termsTextSignUp => 'core.termsTextSignUp'.tr;
+  static String get termsLink => 'core.termsLink'.tr;
+  static String get termsAnd => 'core.termsAnd'.tr;
+  static String get privacyPolicyLink => 'core.privacyPolicyLink'.tr;
+  static String get termsPeriod => 'core.termsPeriod'.tr;
+  static String get googleShort => 'core.googleShort'.tr;
+  static String get forgotPasswordNav => 'core.forgotPasswordNav'.tr;
+  static String get signUpNav => 'core.signUpNav'.tr;
+  static String get termsNav => 'core.termsNav'.tr;
+  static String get privacyPolicyNav => 'core.privacyPolicyNav'.tr;
+  static String get signupTitle => 'core.signupTitle'.tr;
+  static String get signupButton => 'core.signupButton'.tr;
+  static String get completeProfileTitle => 'core.completeProfileTitle'.tr;
+  static String get completeProfileSubtitle => 'core.completeProfileSubtitle'.tr;
+  static String get firstNameLabel => 'core.firstNameLabel'.tr;
+  static String get firstNameError => 'core.firstNameError'.tr;
+  static String get firstNameHint => 'core.firstNameHint'.tr;
+  static String get lastNameLabel => 'core.lastNameLabel'.tr;
+  static String get lastNameError => 'core.lastNameError'.tr;
+  static String get lastNameHint => 'core.lastNameHint'.tr;
+  static String get phoneNumberLabel => 'core.phoneNumberLabel'.tr;
+  static String get phoneNumberError => 'core.phoneNumberError'.tr;
+  static String get phoneNumberHint => 'core.phoneNumberHint'.tr;
+  static String get cityLabel => 'core.cityLabel'.tr;
+  static String get cityError => 'core.cityError'.tr;
+  static String get cityHint => 'core.cityHint'.tr;
+  static String get countryCodeLabel => 'core.countryCodeLabel'.tr;
+  static String get countrySearchLabel => 'core.countrySearchLabel'.tr;
+  static String get citySelectorNoCitiesFound => 'core.citySelectorNoCitiesFound'.tr;
+  static String get citySelectorPleaseSelect => 'core.citySelectorPleaseSelect'.tr;
+  static String get editPhotoLabel => 'core.editPhotoLabel'.tr;
+  static String get completeProfileButton => 'core.completeProfileButton'.tr;
+  static String get completeProfileSaving => 'core.completeProfileSaving'.tr;
+  static String get completeProfileSuccess => 'core.completeProfileSuccess'.tr;
+  static String get completeProfileError => 'core.completeProfileError'.tr;
+  static String get editPhotoComingSoon => 'core.editPhotoComingSoon'.tr;
+  static String get avatarPickerTitle => 'core.avatarPickerTitle'.tr;
+  static String get avatarPickerCamera => 'core.avatarPickerCamera'.tr;
+  static String get avatarPickerGallery => 'core.avatarPickerGallery'.tr;
+  static String get avatarPickerCancel => 'core.avatarPickerCancel'.tr;
+  static String get avatarCropTitle => 'core.avatarCropTitle'.tr;
+  static String get avatarCropSave => 'core.avatarCropSave'.tr;
+  static String get avatarCropHelp => 'core.avatarCropHelp'.tr;
+  static String get avatarCropFailed => 'core.avatarCropFailed'.tr;
+  static String get avatarUploadProgress => 'core.avatarUploadProgress'.tr;
+  static String get avatarUploadSuccess => 'core.avatarUploadSuccess'.tr;
+  static String get avatarUploadError => 'core.avatarUploadError'.tr;
+  static String get avatarCompressionError => 'core.avatarCompressionError'.tr;
+  static String get avatarPermissionDenied => 'core.avatarPermissionDenied'.tr;
+  static String get editProfileTitle => 'core.editProfileTitle'.tr;
+  static String get editProfileSubtitle => 'core.editProfileSubtitle'.tr;
+  static String get editProfileSaveButton => 'core.editProfileSaveButton'.tr;
+  static String get editProfileSaving => 'core.editProfileSaving'.tr;
+  static String get editProfileCancel => 'core.editProfileCancel'.tr;
+  static String get editProfileSuccess => 'core.editProfileSuccess'.tr;
+  static String get editProfileError => 'core.editProfileError'.tr;
+  static String get changePasswordTitle => 'core.changePasswordTitle'.tr;
+  static String get changePasswordSubtitle => 'core.changePasswordSubtitle'.tr;
+  static String get currentPasswordLabel => 'core.currentPasswordLabel'.tr;
+  static String get newPasswordLabel => 'core.newPasswordLabel'.tr;
+  static String get confirmPasswordLabel => 'core.confirmPasswordLabel'.tr;
+  static String get changePasswordButton => 'core.changePasswordButton'.tr;
+  static String get changePasswordSaving => 'core.changePasswordSaving'.tr;
+  static String get changePasswordCancel => 'core.changePasswordCancel'.tr;
+  static String get changePasswordSuccess => 'core.changePasswordSuccess'.tr;
+  static String get changePasswordGenericError => 'core.changePasswordGenericError'.tr;
+  static String get changePasswordWrongCurrent => 'core.changePasswordWrongCurrent'.tr;
+  static String get changePasswordRecentLoginRequired => 'core.changePasswordRecentLoginRequired'.tr;
+  static String get changePasswordProviderUnsupported => 'core.changePasswordProviderUnsupported'.tr;
+  static String get changePasswordSameAsCurrent => 'core.changePasswordSameAsCurrent'.tr;
+  static String get resetPasswordTitle => 'core.resetPasswordTitle'.tr;
+  static String get resetPasswordSubtitle => 'core.resetPasswordSubtitle'.tr;
+  static String get resetPasswordButton => 'core.resetPasswordButton'.tr;
+  static String get resetPasswordSaving => 'core.resetPasswordSaving'.tr;
+  static String get resetPasswordInvalidLink => 'core.resetPasswordInvalidLink'.tr;
+  static String get resetPasswordInvalidCode => 'core.resetPasswordInvalidCode'.tr;
+  static String get resetPasswordExpired => 'core.resetPasswordExpired'.tr;
+  static String get resetPasswordGenericError => 'core.resetPasswordGenericError'.tr;
+  static String get resetPasswordSuccessTitle => 'core.resetPasswordSuccessTitle'.tr;
+  static String get resetPasswordSuccessButton => 'core.resetPasswordSuccessButton'.tr;
+  static String get forgotPasswordTitle => 'core.forgotPasswordTitle'.tr;
+  static String get forgotPasswordText => 'core.forgotPasswordText'.tr;
+  static String get sendResetLink => 'core.sendResetLink'.tr;
+  static String get sendingResetLink => 'core.sendingResetLink'.tr;
+  static String get forgotDialogTitle => 'core.forgotDialogTitle'.tr;
+  static String get forgotDialogBody => 'core.forgotDialogBody'.tr;
+  static String get forgotDialogButton => 'core.forgotDialogButton'.tr;
+  static String get errorTitle => 'core.errorTitle'.tr;
+  static String get homeTitle => 'core.homeTitle'.tr;
+  static String get newsTitle => 'core.newsTitle'.tr;
+  static String get profileTitle => 'core.profileTitle'.tr;
+  static String get statsTitle => 'core.statsTitle'.tr;
+  static String get addTitle => 'core.addTitle'.tr;
+  static String get logout => 'core.logout'.tr;
+  static String get addReportPlaceholder => 'core.addReportPlaceholder'.tr;
+  static String get profileManagementTitle => 'core.profileManagementTitle'.tr;
+  static String get profileNamePlaceholder => 'core.profileNamePlaceholder'.tr;
+  static String get profileEditTitle => 'core.profileEditTitle'.tr;
+  static String get profileEditSubtitle => 'core.profileEditSubtitle'.tr;
+  static String get profileChangePasswordTitle => 'core.profileChangePasswordTitle'.tr;
+  static String get profileChangePasswordSubtitle => 'core.profileChangePasswordSubtitle'.tr;
+  static String get profilePolicyTitle => 'core.profilePolicyTitle'.tr;
+  static String get profilePolicySubtitle => 'core.profilePolicySubtitle'.tr;
+  static String get profileFaqTitle => 'core.profileFaqTitle'.tr;
+  static String get profileFaqSubtitle => 'core.profileFaqSubtitle'.tr;
+  static String get profileSupportSection => 'core.profileSupportSection'.tr;
+  static String get profileContactTitle => 'core.profileContactTitle'.tr;
+  static String get profileContactSubtitle => 'core.profileContactSubtitle'.tr;
+  static String get profileSignOut => 'core.profileSignOut'.tr;
+  static String get cancel => 'core.cancel'.tr;
+  static String get ok => 'core.ok'.tr;
+  static String get retry => 'core.retry'.tr;
+  static String get failedToLoadNews => 'core.failedToLoadNews'.tr;
+  static String get noNewsFound => 'core.noNewsFound'.tr;
+  static String get emailVerificationTitle => 'core.emailVerificationTitle'.tr;
+  static String get emailVerificationBodyTemplate => 'core.emailVerificationBodyTemplate'.tr;
+  static String get emailVerificationBody => 'core.emailVerificationBody'.tr;
+  static String get emailVerificationCheckAgain => 'core.emailVerificationCheckAgain'.tr;
+  static String get emailVerificationResend => 'core.emailVerificationResend'.tr;
+  static String get emailVerificationResendLink => 'core.emailVerificationResendLink'.tr;
+  static String get emailVerificationResending => 'core.emailVerificationResending'.tr;
+  static String get emailVerificationUseAnother => 'core.emailVerificationUseAnother'.tr;
+  static String get emailVerificationSpamNote => 'core.emailVerificationSpamNote'.tr;
+  static String get emailVerifiedSuccessTitle => 'core.emailVerifiedSuccessTitle'.tr;
+  static String get emailVerifiedSuccessBody => 'core.emailVerifiedSuccessBody'.tr;
+  static String get emailVerificationSentTitle => 'core.emailVerificationSentTitle'.tr;
+  static String get emailVerificationSentBody => 'core.emailVerificationSentBody'.tr;
+  static String get emailVerificationSpamNoteOld => 'core.emailVerificationSpamNoteOld'.tr;
+  static String get forgotUserNotFound => 'core.forgotUserNotFound'.tr;
+  static String get forgotInvalidEmail => 'core.forgotInvalidEmail'.tr;
+  static String get forgotTooManyRequests => 'core.forgotTooManyRequests'.tr;
+  static String get forgotGenericError => 'core.forgotGenericError'.tr;
+  static String get validationEmailRequired => 'core.validationEmailRequired'.tr;
+  static String get validationEmailInvalid => 'core.validationEmailInvalid'.tr;
+  static String get validationPasswordRequired => 'core.validationPasswordRequired'.tr;
+  static String get validationPasswordTooShort => 'core.validationPasswordTooShort'.tr;
+  static String get validationPasswordStrength => 'core.validationPasswordStrength'.tr;
+  static String get validationConfirmPasswordRequired => 'core.validationConfirmPasswordRequired'.tr;
+  static String get validationPasswordsMismatch => 'core.validationPasswordsMismatch'.tr;
+  static String get validationRequiredField => 'core.validationRequiredField'.tr;
+  static String get validationPhoneInvalid => 'core.validationPhoneInvalid'.tr;
+  static String get termsMustAccept => 'core.termsMustAccept'.tr;
+  static String get passwordRuleMinLength => 'core.passwordRuleMinLength'.tr;
+  static String get passwordRuleUppercase => 'core.passwordRuleUppercase'.tr;
+  static String get passwordRuleLowercase => 'core.passwordRuleLowercase'.tr;
+  static String get passwordRuleNumber => 'core.passwordRuleNumber'.tr;
+  static String get passwordRuleSpecial => 'core.passwordRuleSpecial'.tr;
+  static String get authHeaderTitle => 'core.authHeaderTitle'.tr;
+  static String get authHeaderBy => 'core.authHeaderBy'.tr;
+  static String get startNewCleanup => 'core.startNewCleanup'.tr;
+  static String get statMessageFirstWeek => 'core.statMessageFirstWeek'.tr;
+  static String get statSubMessageFirstWeek => 'core.statSubMessageFirstWeek'.tr;
+  static String get statMessagePostFirstWeek => 'core.statMessagePostFirstWeek'.tr;
+  static String get statSubMessagePostFirstWeek => 'core.statSubMessagePostFirstWeek'.tr;
+  static String get statMessageClean => 'core.statMessageClean'.tr;
+  static String get statSubMessageClean => 'core.statSubMessageClean'.tr;
+  static String get highlights => 'core.highlights'.tr;
+  static String get news => 'core.news'.tr;
+  static String get moreNews => 'core.moreNews'.tr;
+  static String get blog => 'core.blog'.tr;
+  static String get couldNotOpenNewsLink => 'core.couldNotOpenNewsLink'.tr;
+  static String get comingSoon => 'core.comingSoon'.tr;
+  static String get comingSoonMessage => 'core.comingSoonMessage'.tr;
+  static String get newCleanUp => 'core.newCleanUp'.tr;
+  static String get fillInformation => 'core.fillInformation'.tr;
+  static String get basicInformation => 'core.basicInformation'.tr;
+  static String get trashCollected => 'core.trashCollected'.tr;
+  static String get photosVideosOptional => 'core.photosVideosOptional'.tr;
+  static String get saveCleanUp => 'core.saveCleanUp'.tr;
+  static String get cancelCleanUp => 'core.cancelCleanUp'.tr;
+  static String get cleanUpSavedSuccess => 'core.cleanUpSavedSuccess'.tr;
+  static String get cleanUpSavedDialogTitle => 'core.cleanUpSavedDialogTitle'.tr;
+  static String get cleanUpSavedDialogSubtitle => 'core.cleanUpSavedDialogSubtitle'.tr;
+  static String get cleanUpSavedDialogButton => 'core.cleanUpSavedDialogButton'.tr;
+  static String get continueButton => 'core.continueButton'.tr;
+  static String get changePasswordSuccessDialogTitle => 'core.changePasswordSuccessDialogTitle'.tr;
+  static String get changePasswordSuccessDialogButton => 'core.changePasswordSuccessDialogButton'.tr;
+  static String get editProfileSuccessDialogTitle => 'core.editProfileSuccessDialogTitle'.tr;
+  static String get editProfileSuccessDialogButton => 'core.editProfileSuccessDialogButton'.tr;
+  static String get numberOfPeopleLabel => 'core.numberOfPeopleLabel'.tr;
+  static String get totalParticipants => 'core.totalParticipants'.tr;
+  static String get groupNameLabel => 'core.groupNameLabel'.tr;
+  static String get dateLabel => 'core.dateLabel'.tr;
+  static String get locationLabel => 'core.locationLabel'.tr;
+  static String get environmentLabel => 'core.environmentLabel'.tr;
+  static String get categoriesLabel => 'core.categoriesLabel'.tr;
+  static String get categoriesSubtitle => 'core.categoriesSubtitle'.tr;
+  static String get pleaseFixFormErrors => 'core.pleaseFixFormErrors'.tr;
+  static String get mustBeLoggedIn => 'core.mustBeLoggedIn'.tr;
+  static String get submittingCleanup => 'core.submittingCleanup'.tr;
+  static String get waitingForPhotoUploads => 'core.waitingForPhotoUploads'.tr;
+  static String get cleanupSubmittedSuccess => 'core.cleanupSubmittedSuccess'.tr;
+  static String get cleanupSubmitFailed => 'core.cleanupSubmitFailed'.tr;
+  static String get fixErrorsBeforeClosing => 'core.fixErrorsBeforeClosing'.tr;
+  static String get fixErrorsBeforeProceeding => 'core.fixErrorsBeforeProceeding'.tr;
+  static String get photosVideosPlaceholder => 'core.photosVideosPlaceholder'.tr;
+  static String get uploadImagesButton => 'core.uploadImagesButton'.tr;
+  static String get previewLabel => 'core.previewLabel'.tr;
+  static String get enableLocationServices => 'core.enableLocationServices'.tr;
+  static String get locationPermissionDenied => 'core.locationPermissionDenied'.tr;
+  static String get locationPermissionPermanentlyDenied => 'core.locationPermissionPermanentlyDenied'.tr;
+  static String get gettingYourLocation => 'core.gettingYourLocation'.tr;
+  static String get locationOutsideCameroon => 'core.locationOutsideCameroon'.tr;
+  static String get selectLocationInCameroon => 'core.selectLocationInCameroon'.tr;
+  static String get locationSetSuccessfully => 'core.locationSetSuccessfully'.tr;
+  static String get locationFetchFailed => 'core.locationFetchFailed'.tr;
+  static String get appOnlyWorksInCameroon => 'core.appOnlyWorksInCameroon'.tr;
+  static String get cameroonOnlyLocation => 'core.cameroonOnlyLocation'.tr;
+  static String get useMyLocation => 'core.useMyLocation'.tr;
+  static String get selectedLocation => 'core.selectedLocation'.tr;
+  static String get tapToChooseOnMap => 'core.tapToChooseOnMap'.tr;
+  static String get adjustOnMap => 'core.adjustOnMap'.tr;
+  static String get chooseLocationTitle => 'core.chooseLocationTitle'.tr;
+  static String get confirmLocation => 'core.confirmLocation'.tr;
+  static String get movePinHint => 'core.movePinHint'.tr;
+  static String get checkingLocation => 'core.checkingLocation'.tr;
+  static String get locationRequired => 'core.locationRequired'.tr;
+  static String get locationNotVerifiedOffline => 'core.locationNotVerifiedOffline'.tr;
+  static String get enterGroupName => 'core.enterGroupName'.tr;
+  static String get datePlaceholder => 'core.datePlaceholder'.tr;
+  static String get searchForLocation => 'core.searchForLocation'.tr;
+  static String get loadingCategories => 'core.loadingCategories'.tr;
+  static String get noCategoriesAvailable => 'core.noCategoriesAvailable'.tr;
+  static String get cleanAloneHint => 'core.cleanAloneHint'.tr;
+  static String get searchOrDragMapHint => 'core.searchOrDragMapHint'.tr;
+  static String get nextButton => 'core.nextButton'.tr;
+  static String get pleaseSelectEnvironment => 'core.pleaseSelectEnvironment'.tr;
+  static String get pleaseAddTrashItem => 'core.pleaseAddTrashItem'.tr;
+  static String get pleaseCompleteAllSections => 'core.pleaseCompleteAllSections'.tr;
+  static String get statsPageTitle => 'core.statsPageTitle'.tr;
+  static String get statsSubtitle => 'core.statsSubtitle'.tr;
+  static String get statsYourActivity => 'core.statsYourActivity'.tr;
+  static String get statsCleanups => 'core.statsCleanups'.tr;
+  static String get statsTrashCollected => 'core.statsTrashCollected'.tr;
+  static String get statsKgs => 'core.statsKgs'.tr;
+  static String get statsChartTitle => 'core.statsChartTitle'.tr;
+  static String get statsMapTitle => 'core.statsMapTitle'.tr;
+  static String get statsMapSubtitle => 'core.statsMapSubtitle'.tr;
+  static String get statsFilterDate => 'core.statsFilterDate'.tr;
+  static String get statsFilterEnvironment => 'core.statsFilterEnvironment'.tr;
+  static String get statsDateLabel => 'core.statsDateLabel'.tr;
+  static String get statsEnvironmentLabel => 'core.statsEnvironmentLabel'.tr;
+  static String get statsAll => 'core.statsAll'.tr;
+  static String get statsInland => 'core.statsInland'.tr;
+  static String get statsFreshwater => 'core.statsFreshwater'.tr;
+  static String get statsSaltwater => 'core.statsSaltwater'.tr;
+  static String get environmentFreshwater => 'core.environmentFreshwater'.tr;
+  static String get environmentLand => 'core.environmentLand'.tr;
+  static String get environmentSaltwater => 'core.environmentSaltwater'.tr;
+  static String get statsLegendFreshwater => 'core.statsLegendFreshwater'.tr;
+  static String get statsLegendLand => 'core.statsLegendLand'.tr;
+  static String get statsLegendSaltwater => 'core.statsLegendSaltwater'.tr;
+  static String get statsErrorFromDate => 'core.statsErrorFromDate'.tr;
+  static String get statsErrorToDate => 'core.statsErrorToDate'.tr;
+  static String get statsMapInfoCollected => 'core.statsMapInfoCollected'.tr;
+  static String get statsRefreshTooltip => 'core.statsRefreshTooltip'.tr;
+  static String get statsErrorNoCachedData => 'core.statsErrorNoCachedData'.tr;
+  static String get statsErrorFailedInit => 'core.statsErrorFailedInit'.tr;
+  static String get statsErrorNoInternet => 'core.statsErrorNoInternet'.tr;
+  static String get statsErrorNotAuthenticated => 'core.statsErrorNotAuthenticated'.tr;
+  static String get statsErrorFailedLoad => 'core.statsErrorFailedLoad'.tr;
+  static String get pendingCleanupsTitle => 'core.pendingCleanupsTitle'.tr;
+  static String get pendingCleanupsNone => 'core.pendingCleanupsNone'.tr;
+  static String get pendingCleanupsAllUploaded => 'core.pendingCleanupsAllUploaded'.tr;
+  static String get pendingCleanupsPeople => 'core.pendingCleanupsPeople'.tr;
+  static String get pendingCleanupsItems => 'core.pendingCleanupsItems'.tr;
+  static String get pendingCleanupsPhotos => 'core.pendingCleanupsPhotos'.tr;
+  static String get pendingCleanupsSaved => 'core.pendingCleanupsSaved'.tr;
+  static String get pendingCleanupsDelete => 'core.pendingCleanupsDelete'.tr;
+  static String get pendingCleanupsUpload => 'core.pendingCleanupsUpload'.tr;
+  static String get pendingCleanupsUploadAll => 'core.pendingCleanupsUploadAll'.tr;
+  static String get pendingCleanupsDeleteTitle => 'core.pendingCleanupsDeleteTitle'.tr;
+  static String get pendingCleanupsDeleteMessage => 'core.pendingCleanupsDeleteMessage'.tr;
+  static String get pendingCleanupsUploadAllTitle => 'core.pendingCleanupsUploadAllTitle'.tr;
+  static String get pendingCleanupsUploadAllMessage => 'core.pendingCleanupsUploadAllMessage'.tr;
+  static String get pendingCleanupsCancel => 'core.pendingCleanupsCancel'.tr;
+  static String get profileEditNoInternet => 'core.profileEditNoInternet'.tr;
+  static String get profileChangePasswordNoInternet => 'core.profileChangePasswordNoInternet'.tr;
+  static String get profilePendingCleanupsTitle => 'core.profilePendingCleanupsTitle'.tr;
+  static String get profilePendingCleanupsSubtitle => 'core.profilePendingCleanupsSubtitle'.tr;
+  static String get profileNoInternetTitle => 'core.profileNoInternetTitle'.tr;
+  static String get draftRestoreCleanupTitle => 'core.draftRestoreCleanupTitle'.tr;
+  static String get draftRestoreHotspotTitle => 'core.draftRestoreHotspotTitle'.tr;
+  static String get draftLastEdited => 'core.draftLastEdited'.tr;
+  static String get draftContinue => 'core.draftContinue'.tr;
+  static String get draftDiscard => 'core.draftDiscard'.tr;
+  static String get draftKeep => 'core.draftKeep'.tr;
+  static String get draftStay => 'core.draftStay'.tr;
+  static String get draftExitTitle => 'core.draftExitTitle'.tr;
+  static String get draftExitBody => 'core.draftExitBody'.tr;
+  static String get deepLinkNotFound => 'core.deepLinkNotFound'.tr;
+  static String get deepLinkLoadFailed => 'core.deepLinkLoadFailed'.tr;
+  static String get anonymousVolunteer => 'core.anonymousVolunteer'.tr;
+  static String get deleteCleanupTitle => 'core.deleteCleanupTitle'.tr;
+  static String get deleteCleanupBody => 'core.deleteCleanupBody'.tr;
+  static String get deleteCleanupAction => 'core.deleteCleanupAction'.tr;
+  static String get deleteCleanupCancel => 'core.deleteCleanupCancel'.tr;
+  static String get deleteCleanupSuccess => 'core.deleteCleanupSuccess'.tr;
+  static String get deleteCleanupFailed => 'core.deleteCleanupFailed'.tr;
+  static String get scoreAllTime => 'core.scoreAllTime'.tr;
+  static String get scoreThisMonth => 'core.scoreThisMonth'.tr;
+  static String get deleteRequestNoEmail => 'core.deleteRequestNoEmail'.tr;
+  static String get shareAction => 'core.shareAction'.tr;
+  static String get shareSubject => 'core.shareSubject'.tr;
+  static String get shareFailedTitle => 'core.shareFailedTitle'.tr;
+  static String get shareFailedBody => 'core.shareFailedBody'.tr;
+  static String get sharePreparing => 'core.sharePreparing'.tr;
+  static String get shareUnknownLocation => 'core.shareUnknownLocation'.tr;
+  static String get shareCleanupMessage => 'core.shareCleanupMessage'.tr;
+  static String get shareHotspotMessage => 'core.shareHotspotMessage'.tr;
+  static String get shareAchievementMessage => 'core.shareAchievementMessage'.tr;
+  static String get shareCardBrand => 'core.shareCardBrand'.tr;
+  static String get shareCardCleanupHeadline => 'core.shareCardCleanupHeadline'.tr;
+  static String get shareCardCleanupSubtitle => 'core.shareCardCleanupSubtitle'.tr;
+  static String get shareCardItems => 'core.shareCardItems'.tr;
+  static String get shareCardVolunteers => 'core.shareCardVolunteers'.tr;
+  static String get shareCardEnvironment => 'core.shareCardEnvironment'.tr;
+  static String get shareCardGroup => 'core.shareCardGroup'.tr;
+  static String get shareCardFooter => 'core.shareCardFooter'.tr;
+  static String get shareCardHotspotHeadline => 'core.shareCardHotspotHeadline'.tr;
+  static String get shareCardHotspotCta => 'core.shareCardHotspotCta'.tr;
+  static String get shareCardAchievementKicker => 'core.shareCardAchievementKicker'.tr;
+  static String get shareCardLevel => 'core.shareCardLevel'.tr;
+  static String get shareCardAchievementDescription => 'core.shareCardAchievementDescription'.tr;
+  static String get shareCardAchievementFooter => 'core.shareCardAchievementFooter'.tr;
+  static String get updateAvailableTitle => 'core.updateAvailableTitle'.tr;
+  static String get updateAvailableBody => 'core.updateAvailableBody'.tr;
+  static String get updateRequiredBody => 'core.updateRequiredBody'.tr;
+  static String get updateNow => 'core.updateNow'.tr;
+  static String get updateLater => 'core.updateLater'.tr;
 
-  // Prevent instantiation
-
-  // Signup Screen
-  static const String signupTitle = "Create Account";
-  static const String signupButton = "CREATE ACCOUNT";
-
-  // Complete Profile Screen
-  static const String completeProfileTitle = "Create Profile";
-  static const String completeProfileTitleFrench = "Créer le profil";
-  static const String completeProfileSubtitle =
-      "Please fill the information to get started";
-  static const String completeProfileSubtitleFrench =
-      "Veuillez remplir ces informations pour commencer";
-  static const String firstNameLabel = "First Name *";
-  static const String firstNameLabelFrench = "Prénom *";
-  static const String firstNameError = "First Name";
-  static const String firstNameErrorFrench = "Prénom";
-  static const String firstNameHint = "e.g. Awa";
-  static const String lastNameLabel = "Last Name *";
-  static const String lastNameLabelFrench = "Nom *";
-  static const String lastNameError = "Last Name";
-  static const String lastNameErrorFrench = "Nom";
-  static const String lastNameHint = "e.g. Nguema";
-  static const String phoneNumberLabel = "Phone Number *";
-  static const String phoneNumberError = "Phone Number";
-  static const String phoneNumberLabelFrench = "Numéro de téléphone*";
-  static const String phoneNumberErrorFrench = "Numéro de téléphone";
-  static const String phoneNumberHint = "6 70 00 00 00";
-  static const String cityLabel = "Select your City *";
-  static const String cityLabelFrench = "Sélectionnez votre ville *";
-  static const String cityError = "City";
-  static const String cityErrorFrench = "Ville";
-  static const String cityHint = "e.g. Yaoundé";
-  static const String countryCodeLabel = "Country *";
-  static const String countryCodeLabelFrench = "Pays *";
-  static const String countrySearchLabel = "Search";
-  static const String countrySearchLabelFrench = "Rechercher";
-
-  // City Selector
-  static const String citySelectorNoCitiesFound = "No cities found";
-  static const String citySelectorNoCitiesFoundFrench = "Aucune ville trouvée";
-  static const String citySelectorPleaseSelect =
-      "Please select a city from the list";
-  static const String citySelectorPleaseSelectFrench =
-      "Veuillez sélectionner une ville dans la liste";
-
-  static const String editPhotoLabel = "Edit Photo";
-  static const String editPhotoLabelFrench = "Modifier la photo";
-  static const String completeProfileButton = "CREATE PROFILE";
-  static const String completeProfileButtonFrench = "Créer le profil";
-  static const String completeProfileSaving = "CREATING...";
-  static const String completeProfileSavingFrench = "Création...";
-  static const String completeProfileSuccess =
-      "Profile completed! Welcome to ASCOA.";
-  static const String completeProfileSuccessFrench =
-      "Profil complété ! Bienvenue sur ASCOA.";
-  static const String completeProfileError =
-      "We couldn’t save your profile. Please try again.";
-  static const String completeProfileErrorFrench =
-      "Impossible d’enregistrer votre profil. Veuillez réessayer.";
-  static const String editPhotoComingSoon =
-      "Profile photo upload is coming soon.";
-  static const String editPhotoComingSoonFrench =
-      "Le téléversement de la photo de profil arrive bientôt.";
-
-  // Avatar Upload
-  static const String avatarPickerTitle = "Choose Photo Source";
-  static const String avatarPickerTitleFrench = "Choisir la source";
-  static const String avatarPickerCamera = "Take Photo";
-  static const String avatarPickerCameraFrench = "Prendre une photo";
-  static const String avatarPickerGallery = "Choose from Gallery";
-  static const String avatarPickerGalleryFrench = "Choisir dans la galerie";
-  static const String avatarPickerCancel = "Cancel";
-  static const String avatarPickerCancelFrench = "Annuler";
-  static const String avatarCropTitle = "Edit Photo";
-  static const String avatarCropTitleFrench = "Modifier la photo";
-  static const String avatarCropSave = "Save";
-  static const String avatarCropSaveFrench = "Enregistrer";
-  static const String avatarCropHelp =
-      "Move & zoom to select the part of the photo that will be shown inside the circle.";
-  static const String avatarCropHelpFrench =
-      "Déplacez et zoomez pour sélectionner la partie de la photo qui sera affichée dans le cercle.";
-  static const String avatarCropFailed = "Crop failed. Try again.";
-  static const String avatarCropFailedFrench = "Échec du recadrage. Réessayez.";
-  static const String avatarUploadProgress = "Uploading photo...";
-  static const String avatarUploadProgressFrench =
-      "Téléversement de la photo...";
-  static const String avatarUploadSuccess = "Photo updated successfully!";
-  static const String avatarUploadSuccessFrench =
-      "Photo mise à jour avec succès !";
-  static const String avatarUploadError =
-      "Failed to upload photo. Please try again.";
-  static const String avatarUploadErrorFrench =
-      "Échec du téléversement. Veuillez réessayer.";
-  static const String avatarCompressionError =
-      "Failed to process photo. Try another image.";
-  static const String avatarCompressionErrorFrench =
-      "Échec du traitement. Essayez une autre image.";
-  static const String avatarPermissionDenied =
-      "Camera/gallery permission required";
-  static const String avatarPermissionDeniedFrench =
-      "Permission caméra/galerie requise";
-
-  // Edit Profile Screen
-  static const String editProfileTitle = "Edit Profile";
-  static const String editProfileTitleFrench = "Modifier le profil";
-  static const String editProfileSubtitle =
-      "Edit the fields below and save your changes";
-  static const String editProfileSubtitleFrench =
-      "Modifiez les champs ci-dessous et enregistrez.";
-  static const String editProfileSaveButton = "SAVE CHANGES";
-  static const String editProfileSaveButtonFrench = "ENREGISTRER";
-  static const String editProfileSaving = "SAVING...";
-  static const String editProfileSavingFrench = "Enregistrement...";
-  static const String editProfileCancel = "Cancel";
-  static const String editProfileCancelFrench = "Annuler";
-  static const String editProfileSuccess = "Profile updated successfully!";
-  static const String editProfileSuccessFrench =
-      "Profil mis à jour avec succès !";
-  static const String editProfileError =
-      "Failed to update profile. Please try again.";
-  static const String editProfileErrorFrench =
-      "Échec de la mise à jour du profil. Veuillez réessayer.";
-
-  // Change Password Screen
-  static const String changePasswordTitle = "Change Password";
-  static const String changePasswordTitleFrench = "Changer le mot de passe";
-  static const String changePasswordSubtitle =
-      "Please enter your current password and new one.";
-  static const String changePasswordSubtitleFrench =
-      "Saisissez votre mot de passe actuel et définissez-en un nouveau.";
-  static const String currentPasswordLabel = "Current Password *";
-  static const String currentPasswordLabelFrench = "Mot de passe actuel *";
-  static const String newPasswordLabel = "New Password *";
-  static const String newPasswordLabelFrench = "Nouveau mot de passe *";
-  static const String confirmPasswordLabel = "Confirm New Password *";
-  static const String confirmPasswordLabelFrench =
-      "Confirmez le nouveau mot de passe *";
-  static const String changePasswordButton = "CHANGE PASSWORD";
-  static const String changePasswordButtonFrench = "Changer le mot de passe";
-  static const String changePasswordSaving = "CHANGING...";
-  static const String changePasswordSavingFrench = "Changement...";
-  static const String changePasswordCancel = "Cancel";
-  static const String changePasswordCancelFrench = "Annuler";
-  static const String changePasswordSuccess = "Password updated successfully.";
-  static const String changePasswordSuccessFrench =
-      "Mot de passe mis à jour avec succès.";
-  static const String changePasswordGenericError =
-      "We couldn’t update the password. Please try again.";
-  static const String changePasswordGenericErrorFrench =
-      "Impossible de mettre à jour le mot de passe. Veuillez réessayer.";
-  static const String changePasswordWrongCurrent =
-      "The current password you entered is incorrect.";
-  static const String changePasswordWrongCurrentFrench =
-      "Le mot de passe actuel saisi est incorrect.";
-  static const String changePasswordRecentLoginRequired =
-      "Please log in again before changing your password.";
-  static const String changePasswordRecentLoginRequiredFrench =
-      "Veuillez vous reconnecter avant de changer votre mot de passe.";
-  static const String changePasswordProviderUnsupported =
-      "This account was created with a social provider. Change your password on that provider instead.";
-  static const String changePasswordProviderUnsupportedFrench =
-      "Ce compte a été créé avec un fournisseur externe. Modifiez votre mot de passe sur ce fournisseur.";
-  static const String changePasswordSameAsCurrent =
-      "Your new password must be different from your current password.";
-  static const String changePasswordSameAsCurrentFrench =
-      "Votre nouveau mot de passe doit être différent de votre mot de passe actuel.";
-
-  // Reset Password Screen
-  static const String resetPasswordTitle = "Reset Password";
-  static const String resetPasswordTitleFrench =
-      "Réinitialiser le mot de passe";
-  static const String resetPasswordSubtitle =
-      "Create your new password and confirm it below.";
-  static const String resetPasswordSubtitleFrench =
-      "Créez votre nouveau mot de passe et confirmez-le ci-dessous.";
-  static const String resetPasswordButton = "UPDATE PASSWORD";
-  static const String resetPasswordButtonFrench =
-      "Mettre à jour le mot de passe";
-  static const String resetPasswordSaving = "UPDATING...";
-  static const String resetPasswordSavingFrench = "Mise à jour...";
-  static const String resetPasswordInvalidLink =
-      "The reset link is missing or invalid. Please request a new one.";
-  static const String resetPasswordInvalidLinkFrench =
-      "Le lien de réinitialisation est manquant ou invalide. Veuillez en demander un nouveau.";
-  static const String resetPasswordInvalidCode =
-      "The reset link is invalid or has already been used.";
-  static const String resetPasswordInvalidCodeFrench =
-      "Le lien de réinitialisation est invalide ou a déjà été utilisé.";
-  static const String resetPasswordExpired =
-      "The reset link has expired. Please request a new one.";
-  static const String resetPasswordExpiredFrench =
-      "Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.";
-  static const String resetPasswordGenericError =
-      "We couldn't reset your password. Please try again.";
-  static const String resetPasswordGenericErrorFrench =
-      "Nous n'avons pas pu réinitialiser votre mot de passe. Veuillez réessayer.";
-  static const String resetPasswordSuccessTitle = "Password update successful";
-  static const String resetPasswordSuccessTitleFrench =
-      "Mot de passe mis à jour";
-  static const String resetPasswordSuccessButton = "Go to Login";
-  static const String resetPasswordSuccessButtonFrench = "Aller à la connexion";
-
-  // Forgot Password Screen
-  static const String forgotPasswordTitle = "Forgot Password";
-  static const String forgotPasswordTitleFrench = "Mot de passe oublié";
-  static const String forgotPasswordText =
-      "Please enter your email address\nto reset your password.";
-  static const String forgotPasswordTextFrench =
-      "Veuillez entrer votre adresse e-mail\npour réinitialiser votre mot de passe.";
-  static const String sendResetLink = "Send Reset Link";
-  static const String sendResetLinkFrench = "Envoyer le lien";
-  static const String sendingResetLink = "Sending Link...";
-  static const String sendingResetLinkFrench = "Envoi en cours...";
-
-  // Forgot Password Dialog
-  static const String forgotDialogTitle = "Check your email";
-  static const String forgotDialogTitleFrench = "Vérifiez votre e-mail";
-  static const String forgotDialogBody =
-      "If an account with that email exists,\nwe’ve sent a password reset link.";
-  static const String forgotDialogBodyFrench =
-      "Si un compte est associé à cet e‑mail,\nun lien de réinitialisation du mot de passe vous a été envoyé.";
-  static const String forgotDialogButton = "Back to Login";
-  static const String forgotDialogButtonFrench = "Retour à la connexion";
-
-  // Generic/Error messages
-  static const String errorTitle = "Error";
-  static const String errorTitleFrench = "Erreur";
-
-  // Home / Generic UI
-  static const String homeTitle = "Home";
-  static const String newsTitle = "News";
-  static const String profileTitle = "Profile";
-  static const String statsTitle = "Stats";
-  static const String addTitle = "Add";
-  static const String logout = "Logout";
-  static const String addReportPlaceholder =
-      "This is a placeholder for the Add Report flow. Replace with the actual form when ready.";
-  static const String profileManagementTitle = "Profile Management";
-  static const String profileNamePlaceholder = "[Name] [Last Name]";
-  static const String profileEditTitle = "Edit Profile";
-  static const String profileEditSubtitle =
-      "Change your personal information here";
-  static const String profileChangePasswordTitle = "Change Password";
-  static const String profileChangePasswordSubtitle =
-      "Change your password here";
-  static const String profilePolicyTitle = "Terms and Conditions";
-  static const String profilePolicySubtitle = "Review terms and conditions";
-  static const String profileFaqTitle = "Privacy Policy";
-  static const String profileFaqSubtitle = "Review Privacy Policy";
-  static const String profileSupportSection = "SUPPORT";
-  static const String profileContactTitle = "Contact Us";
-  static const String profileContactSubtitle = "Contact Us for support";
-  static const String profileSignOut = "Sign Out";
-
-  // Support Links Configuration
+  // Language-independent constants (URLs / e-mail / stored values).
   static const String profileTermsUrl = "https://app.ascoa-cm.org/terms";
   static const String profilePrivacyUrl =
       "https://app.ascoa-cm.org/privacy-policy";
   static const String profileContactEmail = "devteam@ascoa-cm.org";
-
-  // Common short actions
-  static const String cancel = "Cancel";
-  static const String ok = "OK";
-  static const String retry = "Retry";
-  static const String failedToLoadNews = "Failed to load news";
-  static const String noNewsFound = "No news found";
-
-  // Email verification
-  static const String emailVerificationTitle = "Verify email";
-  static const String emailVerificationTitleFrench = "Vérifier l'email";
-  // Template expects one placeholder '%s' for the user email
-  static const String emailVerificationBodyTemplate =
-      "We have sent a verification link to %s. Please check your email and click on the verification link to continue.";
-  static const String emailVerificationBody =
-      "We have sent a verification link to: \n%s";
-  static const String emailVerificationBodyFrench =
-      "Nous avons envoyé un lien de vérification à :\n%s";
-  static const String emailVerificationCheckAgain =
-      "I have verified, check again";
-  static const String emailVerificationResend = "Resend";
-  static const String emailVerificationResendLink = "RESEND LINK";
-  static const String emailVerificationResendLinkFrench = "RÉENVOYER LE LIEN";
-  static const String emailVerificationResending = "Resending...";
-  static const String emailVerificationResendingFrench = "RÉENVOI...";
-  static const String emailVerificationUseAnother = "USE ANOTHER EMAIL";
-  static const String emailVerificationUseAnotherFrench =
-      "UTILISER UN AUTRE EMAIL";
-  static const String emailVerificationSpamNote =
-      "Didn't get the email? \nCheck your spam folder";
-  static const String emailVerificationSpamNoteFrench =
-      "Vous n'avez pas reçu l'email? \nVérifiez votre dossier spam.";
-  static const String emailVerifiedSuccessTitle = "Success";
-  static const String emailVerifiedSuccessBody = "Email verified successfully!";
-  static const String emailVerificationSentTitle = "Verification Sent";
-  static const String emailVerificationSentBody =
-      "A verification email was sent to %s.";
-  static const String emailVerificationSpamNoteOld =
-      "Please make sure to check your spam/junk folder if you do not see the email in your inbox.";
-
-  // Forgot Password - error messages
-  static const String forgotUserNotFound =
-      "No user found with this email address.";
-  static const String forgotUserNotFoundFrench =
-      "Aucun utilisateur trouvé avec cette adresse email.";
-  static const String forgotInvalidEmail = "Invalid email address.";
-  static const String forgotInvalidEmailFrench = "Adresse email invalide.";
-  static const String forgotTooManyRequests =
-      "Too many attempts. Try again later.";
-  static const String forgotTooManyRequestsFrench =
-      "Trop de tentatives. Réessayez plus tard.";
-  static const String forgotGenericError =
-      "An error occurred. Try again later.";
-  static const String forgotGenericErrorFrench =
-      "Une erreur est survenue. Réessayez plus tard.";
-
-  // Validation messages (used by Validators)
-  static const String validationEmailRequired = 'Email is required';
-  static const String validationEmailInvalid =
-      'Please enter a valid email address';
-  static const String validationPasswordRequired = 'Password is required';
-  static const String validationPasswordTooShort =
-      'Password must be at least %d characters long';
-  static const String validationPasswordStrength =
-      'Password must contain at least:\n• One uppercase letter\n• One lowercase letter\n• One number\n• One special character';
-  static const String validationConfirmPasswordRequired =
-      'Please confirm your password';
-  static const String validationPasswordsMismatch = 'Passwords do not match';
-  static const String validationRequiredField = '%s is required';
-  static const String validationPhoneInvalid =
-      'Please enter a valid phone number';
-
-  // Terms acceptance
-  static const String termsMustAccept =
-      'You must accept the terms and conditions to proceed.';
-
-  // Password strength checklist labels
-  static const String passwordRuleMinLength = 'At least 8 characters';
-  static const String passwordRuleUppercase = 'Uppercase letter';
-  static const String passwordRuleLowercase = 'Lowercase letter';
-  static const String passwordRuleNumber = 'Number';
-  static const String passwordRuleSpecial = 'Special character (@, !, %, etc.)';
-
-  // Auth header texts
-  static const String authHeaderTitle = 'We Monitor';
-  static const String authHeaderBy = 'by';
-
-  // Dashboard Texts
-  static const String startNewCleanup = "START NEW CLEANUP";
-  static const String statMessageFirstWeek = "The month has just started 🌱";
-  static const String statSubMessageFirstWeek =
-      "Every pickup matters. Start a cleanup today!";
-  static const String statMessagePostFirstWeek = "No cleanups yet this month.";
-  static const String statSubMessagePostFirstWeek =
-      "Let's make a difference together. Start a cleanup!";
-  static const String statMessageClean = " cleanups this month!";
-  static const String statSubMessageClean = " KGs of trash collected.";
-  static const String highlights = "Highlights";
-  static const String news = "News";
-  static const String moreNews = "More News";
-  static const String blog = "Learn More in the ASCOA Blog";
   static const String newslink = "https://ascoa-cm.org/news/";
-  static const String couldNotOpenNewsLink =
-      "Could not open the link. Please try again later.";
-  static const String comingSoon = "Coming Soon";
-  static const String comingSoonMessage =
-      "The ASCOA blog will be available in a future update.";
 
-  //CleanUp Screen Texts
-  static const String newCleanUp = "New Clean Up";
-  static const String fillInformation =
-      "Please fill all the information for your clean up.\nExpand each section to complete the fields.";
-  static const String basicInformation = "Basic Information";
-  static const String trashCollected = "Trash Collected";
-  static const String photosVideosOptional = "Photos & Videos (Optional)";
-  static const String saveCleanUp = "SAVE CLEAN UP";
-  static const String cancelCleanUp = "CANCEL";
-  static const String cleanUpSavedSuccess =
-      "Your clean up has been saved successfully!";
-  // Dialog shown after successful cleanup submission
-  static const String cleanUpSavedDialogTitle = "Clean Up Saved";
-  static const String cleanUpSavedDialogSubtitle =
-      "You can view your clean up in reports.";
-  static const String cleanUpSavedDialogButton = "Go Home";
-
-  // Dialog/button labels for confirmations
-  static const String continueButton = "Continue";
-
-  // Change password success dialog
-  static const String changePasswordSuccessDialogTitle =
-      "Password Updated Successfully";
-  static const String changePasswordSuccessDialogButton = "Continue";
-  static const String changePasswordSuccessDialogTitleFrench =
-      "Mot de passe mis à jour avec succès";
-  static const String changePasswordSuccessDialogButtonFrench = "Continuer";
-
-  // Edit profile success dialog
-  static const String editProfileSuccessDialogTitle =
-      "Profile Updated successfully";
-  static const String editProfileSuccessDialogButton = "Continue";
-  static const String editProfileSuccessDialogTitleFrench =
-      "Profil mis à jour avec succès";
-  static const String editProfileSuccessDialogButtonFrench = "Continuer";
-
-  //Basic Information Section Texts
-  static const String numberOfPeopleLabel = "Number of people *";
-  static const String totalParticipants = "Total participants.";
-  static const String groupNameLabel = "Group Name *";
-  static const String dateLabel = "Date *";
-  static const String locationLabel = "Location *";
-
-  // Trash Collected Section Texts
-  static const String environmentLabel = "Environment *";
-  static const String categoriesLabel = "Categories *";
-
-  static const List<String> environments = [
-    'Inland',
-    'Freshwater',
-    'Saltwater',
-  ];
-
-  static const String categoriesSubtitle =
-      "Select at least one item from one category";
-
-  // Cleanup Form Validation Messages
-  static const String pleaseFixFormErrors = "Please fix the errors in the form";
-  static const String mustBeLoggedIn =
-      "You must be logged in to submit a cleanup";
-  static const String submittingCleanup = "Submitting cleanup...";
-  static const String waitingForPhotoUploads =
-      "Waiting for photo uploads to complete...";
-  static const String cleanupSubmittedSuccess =
-      "Cleanup submitted successfully!";
-  static const String cleanupSubmitFailed =
-      "Failed to submit cleanup. Please try again.";
-  static const String fixErrorsBeforeClosing =
-      "Please fix all errors before closing this section";
-  static const String fixErrorsBeforeProceeding =
-      "Please fix the errors in the current section before proceeding";
-  static const String photosVideosPlaceholder =
-      "Photos and videos upload fields go here...";
-  static const String uploadImagesButton = "UPLOAD IMAGES";
-  static const String previewLabel = "Preview";
-
-  // Location Messages
-  static const String enableLocationServices =
-      "Please enable location services in your device settings";
-  static const String locationPermissionDenied = "Location permission denied";
-  static const String locationPermissionPermanentlyDenied =
-      "Location permission permanently denied. Please enable in settings.";
-  static const String gettingYourLocation = "Getting your location...";
-  static const String locationOutsideCameroon =
-      "Your location is outside Cameroon. This app only works in Cameroon.";
-  static const String selectLocationInCameroon =
-      "Please select a location within Cameroon";
-  static const String locationSetSuccessfully = "Location set successfully";
-  static const String locationFetchFailed =
-      "Failed to get location. Please try again or enter manually.";
-  static const String appOnlyWorksInCameroon =
-      "This app only works in Cameroon";
-  static const String cameroonOnlyLocation =
-      "This app only works in Cameroon. Please select a location within Cameroon.";
-  static const String useMyLocation = "USE MY LOCATION";
-  static const String selectedLocation = "Selected Location";
-  static const String tapToChooseOnMap =
-      "Tap to choose the location on the map";
-  static const String adjustOnMap = "Adjust on map";
-  static const String chooseLocationTitle = "Choose location";
-  static const String confirmLocation = "Confirm location";
-  static const String movePinHint =
-      "Move the map so the pin sits on the exact spot";
-  static const String checkingLocation = "Checking location...";
-  static const String locationRequired = "Location is required";
-  static const String locationNotVerifiedOffline =
-      "Offline: location will be verified when you're back online";
-
-  // Form Field Hints
-  static const String enterGroupName = "Enter group name";
-  static const String datePlaceholder = "dd/mm/yyyy";
-  static const String searchForLocation = "Search for location";
-
-  // Trash Collection Messages
-  static const String loadingCategories = "Loading categories...";
-  static const String noCategoriesAvailable = "No categories available";
-
-  // Additional cleanup UI strings
-  static const String cleanAloneHint =
-      "If you cleaned alone, enter your own name.";
-  static const String searchOrDragMapHint =
-      "Search, use your location, or tap the map to set the exact spot";
-
-  // Cleanup flow navigation buttons
-  static const String nextButton = "NEXT";
-  static const String pleaseSelectEnvironment =
-      "Please select an environment type";
-  static const String pleaseAddTrashItem = "Please add at least one trash item";
-  static const String pleaseCompleteAllSections =
-      "Please complete all sections before submitting";
-
-  // Stats Screen Strings
-  static const String statsPageTitle = "Reports";
-  static const String statsSubtitle = "Here's a summary of your cleanups.";
-  static const String statsYourActivity = "Your Activity";
-  static const String statsCleanups = "Cleanups";
-  static const String statsTrashCollected = "Trash collected";
-  static const String statsKgs = "KGs";
-  static const String statsChartTitle =
-      "Items Collected by Waste Category and Environment";
-  static const String statsMapTitle = "Waste Collected by Location";
-  static const String statsMapSubtitle =
-      "Tap each point to see more information about the cleanups.";
-  static const String statsFilterDate = "Date";
-  static const String statsFilterEnvironment = "Environment";
-  static const String statsDateLabel = "Date";
-  static const String statsEnvironmentLabel = "Environment";
-  static const String statsAll = "All";
-  static const String statsInland = "Inland";
-  static const String statsFreshwater = "Freshwater";
-  static const String statsSaltwater = "Saltwater";
-  static const String environmentFreshwater = "Freshwater";
-  static const String environmentLand = "Land";
-  static const String environmentSaltwater = "Saltwater";
-  static const String statsLegendFreshwater = "Freshwater";
-  static const String statsLegendLand = "Land";
-  static const String statsLegendSaltwater = "Saltwater";
-  static const String statsErrorFromDate =
-      "From date cannot be later than To date";
-  static const String statsErrorToDate =
-      "To date cannot be earlier than From date";
-  static const String statsMapInfoCollected = "KGs collected";
-  static const String statsRefreshTooltip = "Refresh data";
-  static const String statsErrorNoCachedData =
-      "No cached data available. Please connect to the internet.";
-  static const String statsErrorFailedInit = "Failed to initialize";
-  static const String statsErrorNoInternet =
-      "No internet connection. Showing cached data.";
-  static const String statsErrorNotAuthenticated = "User not authenticated";
-  static const String statsErrorFailedLoad = "Failed to load cleanups";
-
-  // Pending Cleanups Screen Strings
-  static const String pendingCleanupsTitle = "Pending Cleanups";
-  static const String pendingCleanupsTitleFrench = "Nettoyages en attente";
-  static const String pendingCleanupsNone = "No pending cleanups";
-  static const String pendingCleanupsNoneFrench = "Aucun nettoyage en attente";
-  static const String pendingCleanupsAllUploaded =
-      "All your cleanups have been uploaded";
-  static const String pendingCleanupsAllUploadedFrench =
-      "Tous vos nettoyages ont été téléchargés";
-  static const String pendingCleanupsPeople = "people";
-  static const String pendingCleanupsPeopleFrench = "personnes";
-  static const String pendingCleanupsItems = "items";
-  static const String pendingCleanupsItemsFrench = "articles";
-  static const String pendingCleanupsPhotos = "photos";
-  static const String pendingCleanupsSaved = "Saved";
-  static const String pendingCleanupsSavedFrench = "Enregistré";
-  static const String pendingCleanupsDelete = "Delete";
-  static const String pendingCleanupsDeleteFrench = "Supprimer";
-  static const String pendingCleanupsUpload = "Upload";
-  static const String pendingCleanupsUploadFrench = "Téléverser";
-  static const String pendingCleanupsUploadAll = "Upload All";
-  static const String pendingCleanupsUploadAllFrench = "Tout téléverser";
-  static const String pendingCleanupsDeleteTitle = "Delete Cleanup?";
-  static const String pendingCleanupsDeleteTitleFrench =
-      "Supprimer le nettoyage?";
-  static const String pendingCleanupsDeleteMessage =
-      "This action cannot be undone. The cleanup will be permanently deleted.";
-  static const String pendingCleanupsDeleteMessageFrench =
-      "Cette action est irréversible. Le nettoyage sera définitivement supprimé.";
-  static const String pendingCleanupsUploadAllTitle = "Upload All?";
-  static const String pendingCleanupsUploadAllMessage =
-      "All pending cleanups will be uploaded. Make sure you have a stable internet connection.";
-  static const String pendingCleanupsUploadAllMessageFrench =
-      "Tous les nettoyages en attente seront téléchargés. Assurez-vous d'avoir une connexion Internet stable.";
-  static const String pendingCleanupsCancel = "Cancel";
-
-  // Profile Screen Strings (offline dialog messages)
-  static const String profileEditNoInternet =
-      "You need an internet connection to edit your profile. Please check your connection and try again.";
-  static const String profileChangePasswordNoInternet =
-      "You need an internet connection to change your password. Please check your connection and try again.";
-  static const String profilePendingCleanupsTitle = "Pending Cleanups";
-  static const String profilePendingCleanupsSubtitle =
-      "View and upload offline cleanups";
-  static const String profileNoInternetTitle = "No Internet Connection";
-
-  // Drafts
-  static const String draftRestoreCleanupTitle =
-      "Continue your unsaved cleanup?";
-  static const String draftRestoreHotspotTitle =
-      "Continue your unsaved hotspot report?";
-  static const String draftLastEdited = "Last edited";
-  static const String draftContinue = "Continue";
-  static const String draftDiscard = "Discard";
-  static const String draftKeep = "Keep draft";
-  static const String draftStay = "Stay";
-  static const String draftExitTitle = "Leave this form?";
-  static const String draftExitBody =
-      "Keep your entries as a draft to continue later, or discard them.";
-
-  // Deep links
-  static const String deepLinkNotFound =
-      "This link is no longer available.";
-  static const String deepLinkLoadFailed =
-      "Could not open this link. Please check your connection and try again.";
-
-  // Privacy, delete, score
-  static const String anonymousVolunteer = "Anonymous volunteer";
-  static const String deleteCleanupTitle = "Delete this cleanup?";
-  static const String deleteCleanupBody =
-      "Delete this cleanup? This can't be undone. Achievements earned from it will be recalculated.";
-  static const String deleteCleanupAction = "Delete";
-  static const String deleteCleanupCancel = "Cancel";
-  static const String deleteCleanupSuccess = "Cleanup deleted";
-  static const String deleteCleanupFailed = "Could not delete the cleanup";
-  static const String scoreAllTime = "All-time score";
-  static const String scoreThisMonth = "This month";
-  static const String deleteRequestNoEmail =
-      "Your account has no email address, so a deletion request can't be submitted from the app. Please contact support.";
-
-  // Sharing
-  static const String shareAction = "Share";
-  static const String shareSubject = "We Monitor";
-  static const String shareFailedTitle = "Could not share";
-  static const String shareFailedBody =
-      "Something went wrong while preparing the image. Please try again.";
-  static const String sharePreparing = "Preparing image…";
-  static const String shareUnknownLocation = "our community";
-  static const String shareCleanupMessage =
-      "We just removed {kg} kg of trash ({items} items) at {location} with We Monitor! 🌍♻️ See it here: {link}\nJoin us and log your own cleanups: {download}";
-  static const String shareHotspotMessage =
-      "I reported a plastic hotspot at {location} on We Monitor. Help clean it up! {link}\nGet the app: {download}";
-  static const String shareAchievementMessage =
-      "I just unlocked {title} — Level {level} on We Monitor! 🏆 Every cleanup counts. Download the app and earn your own achievements: {download}";
-  static const String shareCardBrand = "We Monitor";
-  static const String shareCardCleanupHeadline = "{kg} kg";
-  static const String shareCardCleanupSubtitle = "of trash removed";
-  static const String shareCardItems = "items";
-  static const String shareCardVolunteers = "volunteers";
-  static const String shareCardEnvironment = "environment";
-  static const String shareCardGroup = "Group: {group}";
-  static const String shareCardFooter =
-      "Track your impact — download We Monitor";
-  static const String shareCardHotspotHeadline = "Plastic hotspot reported";
-  static const String shareCardHotspotCta = "Help clean it up";
-  static const String shareCardAchievementKicker = "ACHIEVEMENT UNLOCKED";
-  static const String shareCardLevel = "Level {level}";
-  static const String shareCardAchievementDescription =
-      "Reached {threshold}{unit} {metric}.";
-  static const String shareCardAchievementFooter =
-      "Download We Monitor and earn your own achievements";
-
-  AppStrings._();
-
-  // App updates
-  static const String updateAvailableTitle = "Update available";
-  static const String updateAvailableBody =
-      "A new version of We Monitor ({version}) is available with improvements and fixes.";
-  static const String updateRequiredBody =
-      "This version of We Monitor is no longer supported. Please update to continue.";
-  static const String updateNow = "Update";
-  static const String updateLater = "Later";
+  /// Environment names as stored in Firestore (English). Display them with
+  /// `EnvironmentNames.display(name)` (see strings_trash.dart).
+  static const List<String> environments = ['Inland', 'Freshwater', 'Saltwater'];
 }

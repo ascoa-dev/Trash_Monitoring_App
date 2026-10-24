@@ -18,7 +18,7 @@ class AdminManagementScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         foregroundColor: AppColors.textDark,
-        title: const Text('Admin Management'),
+        title: Text('admin.title'.tr),
       ),
       body: Obx(() {
         if (!controller.isCurrentUserAdmin.value) {
@@ -26,7 +26,7 @@ class AdminManagementScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                'Only admins can manage admin access.',
+                'admin.adminsOnly'.tr,
                 style: AppTextStyles.heading2(context),
                 textAlign: TextAlign.center,
               ),
@@ -38,13 +38,13 @@ class AdminManagementScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             _SectionCard(
-              title: 'Current admins',
+              title: 'admin.currentAdmins'.tr,
               child: Column(
                 children: [
                   TextField(
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       prefixIcon: Icon(Icons.search),
-                      hintText: 'Search admins by name or email',
+                      hintText: 'admin.searchAdmins'.tr,
                       border: OutlineInputBorder(),
                     ),
                     onChanged:
@@ -61,7 +61,7 @@ class AdminManagementScreen extends StatelessWidget {
                       ),
                       subtitle: Text(admin.email),
                       trailing: IconButton(
-                        tooltip: 'Remove admin',
+                        tooltip: 'admin.removeAdmin'.tr,
                         icon: const Icon(Icons.remove_circle_outline),
                         color: AppColors.snackBarErrorAccent,
                         onPressed: () => controller.removeAdmin(admin.uid),
@@ -69,34 +69,34 @@ class AdminManagementScreen extends StatelessWidget {
                     ),
                   ),
                   if (controller.filteredAdmins.isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('No admins match this search.'),
+                      child: Text('admin.noAdminMatch'.tr),
                     ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
             _SectionCard(
-              title: 'Add admin',
+              title: 'admin.addAdmin'.tr,
               child: Column(
                 children: [
                   TextField(
                     controller: userSearchController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       prefixIcon: Icon(Icons.person_search_outlined),
-                      hintText: 'Search users by name or email',
+                      hintText: 'admin.searchUsers'.tr,
                       border: OutlineInputBorder(),
                     ),
                     onChanged: controller.onUserSearchChanged,
                   ),
                   const SizedBox(height: 12),
                   if (controller.isSearching.value)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(bottom: 12),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Searching...'),
+                        child: Text('admin.searching'.tr),
                       ),
                     ),
                   ...controller.userResults.map(
@@ -111,7 +111,7 @@ class AdminManagementScreen extends StatelessWidget {
                       trailing: TextButton.icon(
                         onPressed: () => controller.addAdmin(user),
                         icon: const Icon(Icons.admin_panel_settings_outlined),
-                        label: const Text('Add'),
+                        label: Text('admin.add'.tr),
                       ),
                     ),
                   ),

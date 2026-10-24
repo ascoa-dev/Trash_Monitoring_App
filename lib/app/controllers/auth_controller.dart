@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -186,8 +187,8 @@ class AuthController extends GetxController {
       try {
         await user.sendEmailVerification(emailVerificationSettings);
         _emitInfo(
-          'Email Sent',
-          'A verification link has been sent to ${user.email}',
+          'auth.emailSentTitle'.tr,
+          'auth.verificationLinkSent'.trp({'email': user.email}),
         );
       } catch (e) {
         debugPrint('Failed to send verification email: $e');
@@ -207,8 +208,8 @@ class AuthController extends GetxController {
           'Sign-up method mismatch: cache=${cached.signUpMethod}, current=$resolvedSignUpMethod',
         );
         _emitError(
-          'Login Failed',
-          'This account was registered using ${cached.signUpMethod}. Please login with that method.',
+          'auth.loginFailedTitle'.tr,
+          'auth.registeredWithMethod'.trp({'method': cached.signUpMethod}),
         );
         await _signOutAll();
         Get.offAllNamed(AppRoutes.login);
@@ -255,7 +256,7 @@ class AuthController extends GetxController {
         );
         await userBox.put(user.uid, currentUserModel.value!);
 
-        _emitInfo('Welcome!', 'Please complete your profile information.');
+        _emitInfo('auth.welcomeTitle'.tr, 'auth.completeProfilePrompt'.tr);
         Get.offAllNamed(AppRoutes.completeProfile);
         return;
       }
@@ -271,8 +272,8 @@ class AuthController extends GetxController {
           '1Sign-up method mismatch: firestore=${model.signUpMethod}, current=$resolvedSignUpMethod',
         );
         _emitError(
-          'Login Failed',
-          'This account was registered using ${model.signUpMethod}. Please login with that method.',
+          'auth.loginFailedTitle'.tr,
+          'auth.registeredWithMethod'.trp({'method': model.signUpMethod}),
         );
         await Future.delayed(const Duration(milliseconds: 300));
         debugPrint(
@@ -297,13 +298,13 @@ class AuthController extends GetxController {
       }
 
       _emitWarning(
-        'Offline Mode',
-        'Could not load your profile right now. Continuing with limited offline access.',
+        'auth.offlineModeTitle'.tr,
+        'auth.offlineProfileBody'.tr,
       );
       Get.offAllNamed(AppRoutes.home);
     } catch (e) {
       debugPrint('Unexpected error during auth resolution: $e');
-      _emitError('Error', 'An unexpected error occurred: $e');
+      _emitError(AppStrings.errorTitle, 'auth.unexpectedError'.trp({'error': e}));
       Get.offAllNamed(AppRoutes.login);
     } finally {
       _pendingSignUpMethod = null; // Clean up
@@ -314,14 +315,14 @@ class AuthController extends GetxController {
   void _routeFromProfile(UserModel model) {
     if (!model.isProfileComplete) {
       _emitInfo(
-        'Incomplete Profile',
-        'Please complete your profile information.',
+        'auth.incompleteProfileTitle'.tr,
+        'auth.completeProfilePrompt'.tr,
       );
       Get.offAllNamed(AppRoutes.completeProfile);
     } else {
       _emitSuccess(
-        'Login Successful',
-        'Welcome back ${model.firstName} ${model.lastName}!',
+        'auth.loginSuccessTitle'.tr,
+        'auth.welcomeBack'.trp({'name': '${model.firstName} ${model.lastName}'}),
       );
       Get.offAllNamed(AppRoutes.home);
     }
@@ -376,8 +377,8 @@ class AuthController extends GetxController {
             '2Sign-up method mismatch: firestore=${model.signUpMethod}, current=$signUpMethod',
           );
           _emitError(
-            'Login Failed',
-            'This account was registered using ${model.signUpMethod}. Please login with that method.',
+            'auth.loginFailedTitle'.tr,
+            'auth.registeredWithMethod'.trp({'method': model.signUpMethod}),
           );
           await _signOutAll(); // Sign out from all providers
           return;
@@ -385,14 +386,14 @@ class AuthController extends GetxController {
 
         if (model.isProfileComplete) {
           _emitSuccess(
-            'Login Successful',
-            'Welcome back ${model.firstName} ${model.lastName}!',
+            'auth.loginSuccessTitle'.tr,
+            'auth.welcomeBack'.trp({'name': '${model.firstName} ${model.lastName}'}),
           );
           Get.offAllNamed(AppRoutes.home);
         } else {
           _emitInfo(
-            'Incomplete Profile',
-            'Please complete your profile information.',
+            'auth.incompleteProfileTitle'.tr,
+            'auth.completeProfilePrompt'.tr,
           );
           Get.offAllNamed(AppRoutes.completeProfile);
         }
@@ -419,7 +420,7 @@ class AuthController extends GetxController {
         );
         await userBox.put(user.uid, currentUserModel.value!);
 
-        _emitInfo('Welcome!', 'Please complete your profile information.');
+        _emitInfo('auth.welcomeTitle'.tr, 'auth.completeProfilePrompt'.tr);
         Get.offAllNamed(AppRoutes.completeProfile);
       }
     } on FirebaseException catch (e) {
@@ -431,7 +432,7 @@ class AuthController extends GetxController {
         Get.offAllNamed(AppRoutes.home);
       }
     } catch (e) {
-      _emitError('Error', 'An unexpected error occurred: $e');
+      _emitError(AppStrings.errorTitle, 'auth.unexpectedError'.trp({'error': e}));
     }
   }
 
@@ -440,7 +441,7 @@ class AuthController extends GetxController {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       final user = _auth.currentUser;
-      if (user == null) throw Exception('No user found after sign-in.');
+      if (user == null) throw Exception('auth.noUserSignIn'.tr);
 
       // Track successful login
       Analytics.track(AnalyticsEvents.loginSuccess, {
@@ -457,24 +458,24 @@ class AuthController extends GetxController {
       });
 
       // More specific error messages
-      String message = 'Login failed';
+      String message = 'auth.loginFailedGeneric'.tr;
       if (e.code == 'user-not-found') {
-        message = 'No user found with this email.';
+        message = 'auth.noUserEmail'.tr;
       } else if (e.code == 'wrong-password') {
-        message = 'Incorrect password.';
+        message = 'auth.wrongPassword'.tr;
       } else if (e.code == 'invalid-email') {
-        message = 'Invalid email address.';
+        message = 'auth.invalidEmail'.tr;
       } else if (e.code == 'invalid-credential') {
-        message = 'Invalid email or password.';
+        message = 'auth.invalidCredential'.tr;
       }
       debugPrint('Login error: ${e.message}');
-      _emitError('Login Failed', message);
+      _emitError('auth.loginFailedTitle'.tr, message);
     } catch (e) {
       Analytics.track(AnalyticsEvents.loginFailed, {
         AnalyticsProps.method: AuthMethods.email,
         AnalyticsProps.reason: 'unknown_error',
       });
-      _emitError('Login Failed', e.toString());
+      _emitError('auth.loginFailedTitle'.tr, e.toString());
     } finally {
       isLoadingLogin.value = false;
     }
@@ -490,7 +491,7 @@ class AuthController extends GetxController {
         final googleUser = await GoogleSignIn.instance.authenticate();
         final googleAuth = googleUser.authentication;
         if (googleAuth.idToken == null) {
-          throw Exception('Failed to get ID token from Google sign-in.');
+          throw Exception('auth.googleTokenFailed'.tr);
         }
         final credential = GoogleAuthProvider.credential(
           idToken: googleAuth.idToken,
@@ -498,7 +499,7 @@ class AuthController extends GetxController {
         userCredential = await _auth.signInWithCredential(credential);
       }
       final user = userCredential.user;
-      if (user == null) throw Exception('No user found after Google sign-in.');
+      if (user == null) throw Exception('auth.noUserGoogle'.tr);
 
       // Reload user to ensure provider data is synced
       await user.reload();
@@ -517,11 +518,11 @@ class AuthController extends GetxController {
       });
       if (e.code == 'account-exists-with-different-credential') {
         _emitError(
-          'Account Exists',
-          'This email is already registered with another sign-in method. Please use that method first.',
+          'auth.accountExistsTitle'.tr,
+          'auth.accountExistsBody'.tr,
         );
       } else {
-        _emitError('Google Login Failed', e.message ?? 'Unknown error');
+        _emitError('auth.googleLoginFailed'.tr, e.message ?? 'auth.unknownErrorShort'.tr);
       }
       await _signOutAll();
     } catch (e) {
@@ -530,7 +531,7 @@ class AuthController extends GetxController {
         AnalyticsProps.reason: 'unknown_error',
       });
       debugPrint('Google login error: $e');
-      _emitError('Google Login Failed', e.toString());
+      _emitError('auth.googleLoginFailed'.tr, e.toString());
       await _signOutAll();
     }
   }
@@ -552,7 +553,7 @@ class AuthController extends GetxController {
 
       final userCredential = await _auth.signInWithCredential(authCredential);
       final user = userCredential.user;
-      if (user == null) throw Exception('No user found after Apple sign-in.');
+      if (user == null) throw Exception('auth.noUserApple'.tr);
 
       await user.reload();
 
@@ -568,7 +569,7 @@ class AuthController extends GetxController {
         AnalyticsProps.method: AuthMethods.apple,
         AnalyticsProps.reason: e.code,
       });
-      _emitError('Apple Login Failed', e.message ?? 'Unknown error');
+      _emitError('auth.appleLoginFailed'.tr, e.message ?? 'auth.unknownErrorShort'.tr);
       await _signOutAll();
     } catch (e) {
       Analytics.track(AnalyticsEvents.loginFailed, {
@@ -581,7 +582,7 @@ class AuthController extends GetxController {
         // User cancelled, do not emit error
         return;
       }
-      _emitError('Apple Login Failed', e.toString());
+      _emitError('auth.appleLoginFailed'.tr, e.toString());
       await _signOutAll();
     }
   }
@@ -591,7 +592,7 @@ class AuthController extends GetxController {
     await _signOutAll();
     Analytics.track(AnalyticsEvents.logoutSuccess);
     await Analytics.clearIdentity();
-    _emitInfo('Logout', 'You have been logged out.');
+    _emitInfo(AppStrings.logout, 'auth.loggedOutBody'.tr);
   }
 
   Future<void> _signOutAll() async {
@@ -615,7 +616,7 @@ class AuthController extends GetxController {
         password: password,
       );
       final user = _auth.currentUser;
-      if (user == null) throw Exception('No user found after sign-up.');
+      if (user == null) throw Exception('auth.noUserSignUp'.tr);
 
       // Track successful signup
       Analytics.track(AnalyticsEvents.signupSuccess, {
@@ -633,21 +634,21 @@ class AuthController extends GetxController {
       });
       if (e.code == 'email-already-in-use') {
         _emitError(
-          'Signup Failed',
-          'This email is already in use. Please use a different email.',
+          'auth.signupFailedTitle'.tr,
+          'auth.emailInUse'.tr,
         );
       } else if (e.code == 'weak-password') {
         _emitError(
-          'Signup Failed',
-          'Password is too weak. Please use a stronger password.',
+          'auth.signupFailedTitle'.tr,
+          'auth.weakPassword'.tr,
         );
       } else if (e.code == 'invalid-email') {
-        _emitError('Signup Failed', 'Invalid email address.');
+        _emitError('auth.signupFailedTitle'.tr, 'auth.invalidEmail'.tr);
       } else {
-        _emitError('Signup Failed', e.message ?? 'An unknown error occurred.');
+        _emitError('auth.signupFailedTitle'.tr, e.message ?? 'auth.unknownErrorOccurred'.tr);
       }
     } catch (e) {
-      _emitError('Signup Failed', e.toString());
+      _emitError('auth.signupFailedTitle'.tr, e.toString());
     }
   }
 
@@ -669,13 +670,10 @@ class AuthController extends GetxController {
     required String city,
   }) async {
     final user = _auth.currentUser;
-    final isFrench = Get.locale?.languageCode == 'fr';
     if (user == null) {
       _emitError(
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
-        isFrench
-            ? 'Vous devez être connecté pour continuer.'
-            : 'You must be signed in to continue.',
+        AppStrings.errorTitle,
+        'auth.signInRequired'.tr,
       );
       Get.offAllNamed(AppRoutes.login);
       return null;
@@ -717,12 +715,8 @@ class AuthController extends GetxController {
       await Analytics.setUserProperties(hasCompletedProfile: true, city: city);
 
       _emitSuccess(
-        isFrench
-            ? AppStrings.completeProfileTitleFrench
-            : AppStrings.completeProfileTitle,
-        isFrench
-            ? AppStrings.completeProfileSuccessFrench
-            : AppStrings.completeProfileSuccess,
+        AppStrings.completeProfileTitle,
+        AppStrings.completeProfileSuccess,
       );
       Get.offAllNamed(AppRoutes.home);
       return currentUserModel.value;
@@ -735,10 +729,8 @@ class AuthController extends GetxController {
         debugPrint('completeProfile FirebaseException: ${e.message}');
       }
       _emitError(
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
-        isFrench
-            ? AppStrings.completeProfileErrorFrench
-            : AppStrings.completeProfileError,
+        AppStrings.errorTitle,
+        AppStrings.completeProfileError,
       );
       return null;
     } catch (e, stack) {
@@ -748,10 +740,8 @@ class AuthController extends GetxController {
       Analytics.error(e, stack, reason: 'complete_profile_failed');
       if (kDebugMode) debugPrint('completeProfile error: $e');
       _emitError(
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
-        isFrench
-            ? AppStrings.completeProfileErrorFrench
-            : AppStrings.completeProfileError,
+        AppStrings.errorTitle,
+        AppStrings.completeProfileError,
       );
       return null;
     } finally {
@@ -796,13 +786,10 @@ class AuthController extends GetxController {
     required String city,
   }) async {
     final user = _auth.currentUser;
-    final isFrench = Get.locale?.languageCode == 'fr';
     if (user == null) {
       _emitError(
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
-        isFrench
-            ? 'Vous devez être connecté pour continuer.'
-            : 'You must be signed in to continue.',
+        AppStrings.errorTitle,
+        'auth.signInRequired'.tr,
       );
       Get.offAllNamed(AppRoutes.login);
       return null;
@@ -839,30 +826,22 @@ class AuthController extends GetxController {
       }
 
       _emitSuccess(
-        isFrench
-            ? AppStrings.editProfileTitleFrench
-            : AppStrings.editProfileTitle,
-        isFrench
-            ? AppStrings.editProfileSuccessFrench
-            : AppStrings.editProfileSuccess,
+        AppStrings.editProfileTitle,
+        AppStrings.editProfileSuccess,
       );
       return currentUserModel.value;
     } on FirebaseException catch (e) {
       debugPrint('updateProfile FirebaseException: ${e.message}');
       _emitError(
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
-        isFrench
-            ? AppStrings.editProfileErrorFrench
-            : AppStrings.editProfileError,
+        AppStrings.errorTitle,
+        AppStrings.editProfileError,
       );
       return null;
     } catch (e) {
       debugPrint('updateProfile error: $e');
       _emitError(
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle,
-        isFrench
-            ? AppStrings.editProfileErrorFrench
-            : AppStrings.editProfileError,
+        AppStrings.errorTitle,
+        AppStrings.editProfileError,
       );
       return null;
     } finally {
@@ -875,24 +854,17 @@ class AuthController extends GetxController {
     required String newPassword,
   }) async {
     final user = _auth.currentUser;
-    final isFrench = Get.locale?.languageCode == 'fr';
     final errorTitle =
-        isFrench ? AppStrings.errorTitleFrench : AppStrings.errorTitle;
+        AppStrings.errorTitle;
     final successTitle =
-        isFrench
-            ? AppStrings.changePasswordTitleFrench
-            : AppStrings.changePasswordTitle;
+        AppStrings.changePasswordTitle;
     final successMessage =
-        isFrench
-            ? AppStrings.changePasswordSuccessFrench
-            : AppStrings.changePasswordSuccess;
+        AppStrings.changePasswordSuccess;
 
     if (user == null || user.email == null) {
       _emitError(
         errorTitle,
-        isFrench
-            ? AppStrings.changePasswordGenericErrorFrench
-            : AppStrings.changePasswordGenericError,
+        AppStrings.changePasswordGenericError,
       );
       return ChangePasswordStatus.error;
     }
@@ -903,9 +875,7 @@ class AuthController extends GetxController {
     if (!hasPasswordProvider) {
       _emitError(
         errorTitle,
-        isFrench
-            ? AppStrings.changePasswordProviderUnsupportedFrench
-            : AppStrings.changePasswordProviderUnsupported,
+        AppStrings.changePasswordProviderUnsupported,
       );
       return ChangePasswordStatus.providerMismatch;
     }
@@ -923,26 +893,20 @@ class AuthController extends GetxController {
       if (e.code == 'requires-recent-login') {
         _emitError(
           errorTitle,
-          isFrench
-              ? AppStrings.changePasswordRecentLoginRequiredFrench
-              : AppStrings.changePasswordRecentLoginRequired,
+          AppStrings.changePasswordRecentLoginRequired,
         );
         return ChangePasswordStatus.requiresRecentLogin;
       }
       _emitError(
         errorTitle,
-        isFrench
-            ? AppStrings.changePasswordGenericErrorFrench
-            : AppStrings.changePasswordGenericError,
+        AppStrings.changePasswordGenericError,
       );
       return ChangePasswordStatus.error;
     } catch (e) {
       debugPrint('changePassword reauth error: $e');
       _emitError(
         errorTitle,
-        isFrench
-            ? AppStrings.changePasswordGenericErrorFrench
-            : AppStrings.changePasswordGenericError,
+        AppStrings.changePasswordGenericError,
       );
       return ChangePasswordStatus.error;
     }
@@ -960,9 +924,7 @@ class AuthController extends GetxController {
       if (e.code == 'requires-recent-login') {
         _emitError(
           errorTitle,
-          isFrench
-              ? AppStrings.changePasswordRecentLoginRequiredFrench
-              : AppStrings.changePasswordRecentLoginRequired,
+          AppStrings.changePasswordRecentLoginRequired,
         );
         return ChangePasswordStatus.requiresRecentLogin;
       }
@@ -973,18 +935,14 @@ class AuthController extends GetxController {
       if (e.code == 'provider-already-linked') {
         _emitError(
           errorTitle,
-          isFrench
-              ? AppStrings.changePasswordProviderUnsupportedFrench
-              : AppStrings.changePasswordProviderUnsupported,
+          AppStrings.changePasswordProviderUnsupported,
         );
         return ChangePasswordStatus.providerMismatch;
       }
       debugPrint('changePassword update error: ${e.code} ${e.message}');
       _emitError(
         errorTitle,
-        isFrench
-            ? AppStrings.changePasswordGenericErrorFrench
-            : AppStrings.changePasswordGenericError,
+        AppStrings.changePasswordGenericError,
       );
       return ChangePasswordStatus.error;
     } catch (e) {
@@ -994,9 +952,7 @@ class AuthController extends GetxController {
       debugPrint('changePassword unexpected error: $e');
       _emitError(
         errorTitle,
-        isFrench
-            ? AppStrings.changePasswordGenericErrorFrench
-            : AppStrings.changePasswordGenericError,
+        AppStrings.changePasswordGenericError,
       );
       return ChangePasswordStatus.error;
     }

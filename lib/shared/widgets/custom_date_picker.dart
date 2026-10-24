@@ -6,6 +6,8 @@ import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:we_monitor/shared/i18n/locale_service.dart';
 
 /// Custom Date Picker Widget with Material 3 Design
 ///
@@ -258,20 +260,7 @@ class _DatePickerContentState extends State<_DatePickerContent> {
     haptics.selectionClick();
     _removeDropdown();
 
-    final months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
+    final months = _monthNames(short: false);
 
     // Get the position of the month button
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
@@ -507,7 +496,9 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                     ),
                     child: Row(
                       children:
-                          ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+                          (LocaleService.isFrench
+                                  ? ['D', 'L', 'M', 'M', 'J', 'V', 'S']
+                                  : ['S', 'M', 'T', 'W', 'T', 'F', 'S'])
                               .map(
                                 (day) => Expanded(
                                   child: Center(
@@ -601,20 +592,7 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   }
 
   String _getMonthName(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
+    final months = _monthNames(short: true);
     return months[month - 1];
   }
 }
@@ -800,3 +778,10 @@ class _TextButton extends StatelessWidget {
     );
   }
 }
+
+List<String> _monthNames({required bool short}) => List.generate(12, (i) {
+  final d = DateTime(2024, i + 1, 1);
+  final f = short ? DateFormat.MMM(LocaleService.code) : DateFormat.MMMM(LocaleService.code);
+  final t = f.format(d);
+  return t[0].toUpperCase() + t.substring(1);
+});

@@ -1,3 +1,4 @@
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_section_ids.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/modules/start_cleanup/views/basic_infomation_section.dart';
 import 'package:we_monitor/modules/start_cleanup/views/trash_collected.dart';
@@ -50,7 +51,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
     WidgetsBinding.instance.addObserver(this);
     // Open Basic Information section by default when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.setExpandedSection(AppStrings.basicInformation);
+      controller.setExpandedSection(CleanupSectionIds.basicInformation);
       _initDraft();
     });
     Get.find<HapticController>().light();
@@ -125,7 +126,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
     if (!controller.canSubmit) {
       Get.find<HapticController>().heavy();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(AppStrings.pleaseCompleteAllSections),
           backgroundColor: AppColors.errorRed,
           behavior: SnackBarBehavior.floating,
@@ -137,25 +138,25 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
 
     // Re-validate all sections one final time
     final isBasicInfoValid = controller.validateSection(
-      AppStrings.basicInformation,
+      CleanupSectionIds.basicInformation,
     );
-    final isTrashValid = controller.validateSection(AppStrings.trashCollected);
+    final isTrashValid = controller.validateSection(CleanupSectionIds.trashCollected);
 
     // Manage section states based on validation
     if (!isBasicInfoValid || !isTrashValid) {
       Get.find<HapticController>().heavy();
       // Close valid sections, expand invalid ones
       if (!isBasicInfoValid) {
-        controller.setExpandedSection(AppStrings.basicInformation);
-        controller.resetSectionCompletion(AppStrings.basicInformation);
+        controller.setExpandedSection(CleanupSectionIds.basicInformation);
+        controller.resetSectionCompletion(CleanupSectionIds.basicInformation);
       } else if (!isTrashValid) {
-        controller.setExpandedSection(AppStrings.trashCollected);
-        controller.resetSectionCompletion(AppStrings.trashCollected);
+        controller.setExpandedSection(CleanupSectionIds.trashCollected);
+        controller.resetSectionCompletion(CleanupSectionIds.trashCollected);
       }
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(AppStrings.pleaseFixFormErrors),
             backgroundColor: AppColors.errorRed,
             behavior: SnackBarBehavior.floating,
@@ -174,7 +175,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
     if (currentUser == null) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(AppStrings.mustBeLoggedIn),
             backgroundColor: AppColors.errorRed,
             behavior: SnackBarBehavior.floating,
@@ -248,7 +249,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
               title:
                   wasOnline
                       ? AppStrings.cleanUpSavedDialogTitle
-                      : 'Cleanup Saved Offline',
+                      : 'cleanup.savedOfflineTitle'.tr,
               decoratedHero: false,
               imageAsset: AppImages.cleanConfirm,
               imageWidth: SizeUtils.w(ctx, AppDimensions.dialogImageWidth),
@@ -256,7 +257,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
               body:
                   wasOnline
                       ? AppStrings.cleanUpSavedDialogSubtitle
-                      : 'Your cleanup has been saved offline. It will be uploaded when you have internet connection. You can manage pending uploads from your profile.',
+                      : 'cleanup.savedOfflineBody'.tr,
               // Offline-saved cleanups have no shareable link yet.
               secondaryActions: [
                 if (wasOnline)
@@ -285,7 +286,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
       // Error
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(AppStrings.cleanupSubmitFailed),
             backgroundColor: AppColors.errorRed,
             behavior: SnackBarBehavior.floating,
@@ -458,21 +459,21 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
           return Column(
             children: [
               CleanUpSection(
-                title: AppStrings.basicInformation,
+                title: CleanupSectionIds.basicInformation,
                 controller: controller,
               ),
               SizedBox(
                 height: SizeUtils.h(context, AppDimensions.cleanupSpacing20),
               ),
               CleanUpSection(
-                title: AppStrings.trashCollected,
+                title: CleanupSectionIds.trashCollected,
                 controller: controller,
               ),
               SizedBox(
                 height: SizeUtils.h(context, AppDimensions.cleanupSpacing16),
               ),
               CleanUpSection(
-                title: AppStrings.photosVideosOptional,
+                title: CleanupSectionIds.photosVideosOptional,
                 controller: controller,
               ),
               SizedBox(
@@ -709,13 +710,13 @@ class _CleanUpSectionState extends State<CleanUpSection>
   bool get _canTapHeader {
     // Check if this section is accessible based on the flow
     switch (widget.title) {
-      case AppStrings.basicInformation:
+      case CleanupSectionIds.basicInformation:
         // Basic info is always accessible (it's the first section)
         return true;
-      case AppStrings.trashCollected:
+      case CleanupSectionIds.trashCollected:
         // Trash collected is only accessible if basic info is completed
         return widget.controller.basicInfoCompleted;
-      case AppStrings.photosVideosOptional:
+      case CleanupSectionIds.photosVideosOptional:
         // Photos is only accessible if trash collected is completed
         return widget.controller.trashCollectedCompleted;
       default:
@@ -815,7 +816,7 @@ class _CleanUpSectionState extends State<CleanUpSection>
                       children: [
                         Expanded(
                           child: Text(
-                            widget.title,
+                            CleanupSectionIds.displayTitle(widget.title),
                             style:
                                 _isExpanded
                                     ? AppTextStyles.cleanUpOptionsExpanded(
@@ -858,11 +859,11 @@ class _CleanUpSectionState extends State<CleanUpSection>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      if (widget.title == AppStrings.basicInformation)
+                      if (widget.title == CleanupSectionIds.basicInformation)
                         BasicInformationSection(controller: widget.controller)
-                      else if (widget.title == AppStrings.trashCollected)
+                      else if (widget.title == CleanupSectionIds.trashCollected)
                         TrashCollectedSection(controller: widget.controller)
-                      else if (widget.title == AppStrings.photosVideosOptional)
+                      else if (widget.title == CleanupSectionIds.photosVideosOptional)
                         PhotosSection(formController: widget.controller),
                     ],
                   ),
@@ -877,11 +878,11 @@ class _CleanUpSectionState extends State<CleanUpSection>
 
   bool _isSectionCompleted() {
     switch (widget.title) {
-      case AppStrings.basicInformation:
+      case CleanupSectionIds.basicInformation:
         return widget.controller.basicInfoCompleted;
-      case AppStrings.trashCollected:
+      case CleanupSectionIds.trashCollected:
         return widget.controller.trashCollectedCompleted;
-      case AppStrings.photosVideosOptional:
+      case CleanupSectionIds.photosVideosOptional:
         return widget.controller.photosCompleted;
       default:
         return false;

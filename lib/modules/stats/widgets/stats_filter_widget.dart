@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/strings_trash.dart';
+import 'package:we_monitor/shared/i18n/locale_service.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -102,7 +104,7 @@ class _StatsFilterWidgetState extends State<StatsFilterWidget> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd/MM/yyyy').format(date);
+    return DateFormat('dd/MM/yyyy', LocaleService.code).format(date);
   }
 
   @override
@@ -270,7 +272,7 @@ class _StatsFilterWidgetState extends State<StatsFilterWidget> {
               AppDimensions.statsFilterCheckboxIconSpacing,
             ),
           ),
-          Text(label, style: AppTextStyles.statsFilterDate(context)),
+          Text(EnvironmentNames.display(label), style: AppTextStyles.statsFilterDate(context)),
         ],
       ),
     );

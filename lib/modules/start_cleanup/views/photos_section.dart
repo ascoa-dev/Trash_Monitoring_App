@@ -1,3 +1,5 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_section_ids.dart';
 import 'dart:io';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
@@ -40,7 +42,7 @@ class _PhotosSectionState extends State<PhotosSection> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Maximum ${MediaUploadConfig.maxPhotos} photos allowed',
+                'shared.maxPhotos'.trp({'max': MediaUploadConfig.maxPhotos}),
               ),
               backgroundColor: AppColors.errorRed,
               behavior: SnackBarBehavior.floating,
@@ -123,16 +125,16 @@ class _PhotosSectionState extends State<PhotosSection> {
 
         if (filesToAdd.length < pickedFiles.length) {
           message =
-              'Only ${filesToAdd.length} photo${filesToAdd.length > 1 ? 's' : ''} added (limit: ${MediaUploadConfig.maxPhotos})';
+              'shared.photosAddedLimit'.trp({'n': filesToAdd.length, 'max': MediaUploadConfig.maxPhotos});
           backgroundColor = AppColors.warning;
         } else if (!isOnline) {
           Get.find<HapticController>().light();
           message =
-              '${files.length} photo${files.length > 1 ? 's' : ''} added. Will upload when online.';
+              'shared.photosAddedOffline'.trp({'n': files.length});
           backgroundColor = AppColors.info;
         } else {
           message =
-              '${files.length} photo${files.length > 1 ? 's' : ''} uploading...';
+              'shared.photosUploading'.trp({'n': files.length});
           backgroundColor = AppColors.info;
         }
 
@@ -150,8 +152,8 @@ class _PhotosSectionState extends State<PhotosSection> {
       debugPrint('[PhotosSection] Error picking images: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to pick images. Please try again.'),
+          SnackBar(
+            content: Text('cleanup.photosFailedPick'.tr),
             backgroundColor: AppColors.errorRed,
             behavior: SnackBarBehavior.floating,
           ),
@@ -239,7 +241,7 @@ class _PhotosSectionState extends State<PhotosSection> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Photos are optional. You can continue without uploading photos.',
+                'cleanup.photosOptionalNote'.tr,
                 textAlign: TextAlign.start,
                 style: AppTextStyles.trashCollectionSubtitle(context),
               ),
@@ -283,15 +285,15 @@ class _PhotosSectionState extends State<PhotosSection> {
   void _handleComplete() {
     // Photos are optional - no validation needed
     // Mark section as completed
-    widget.formController.markSectionCompleted(AppStrings.photosVideosOptional);
+    widget.formController.markSectionCompleted(CleanupSectionIds.photosVideosOptional);
 
     // Collapse this section (no more sections to navigate to)
     widget.formController.setExpandedSection(null);
 
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('All sections completed! You can now save your cleanup.'),
+      SnackBar(
+        content: Text('cleanup.allSectionsDone'.tr),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 3),

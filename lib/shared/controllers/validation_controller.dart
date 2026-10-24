@@ -1,3 +1,4 @@
+import 'package:we_monitor/shared/i18n/tr_params.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/shared/utils/validators.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
@@ -44,7 +45,7 @@ class ValidationController extends GetxController {
   }
 
   void validatePasswordRequired(String password) {
-    passwordError.value = Validators.validateRequired(password, 'Password');
+    passwordError.value = Validators.validateRequired(password, 'shared.passwordName'.tr);
   }
 
   void validateStrongPassword(String password) {
@@ -54,9 +55,9 @@ class ValidationController extends GetxController {
   void validateFirstName(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) {
-      firstNameError.value = '${AppStrings.firstNameError} is required';
+      firstNameError.value = AppStrings.validationRequiredField.replaceAll('%s', AppStrings.firstNameError);
     } else if (!nameRegex.hasMatch(trimmed)) {
-      firstNameError.value = 'Invalid ${AppStrings.firstNameError}';
+      firstNameError.value = 'shared.invalidField'.trp({'field': AppStrings.firstNameError});
     } else {
       firstNameError.value = null; // valid
     }
@@ -65,9 +66,9 @@ class ValidationController extends GetxController {
   void validateLastName(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) {
-      lastNameError.value = '${AppStrings.lastNameError} is required';
+      lastNameError.value = AppStrings.validationRequiredField.replaceAll('%s', AppStrings.lastNameError);
     } else if (!nameRegex.hasMatch(trimmed)) {
-      lastNameError.value = 'Invalid ${AppStrings.lastNameError}';
+      lastNameError.value = 'shared.invalidField'.trp({'field': AppStrings.lastNameError});
     } else {
       lastNameError.value = null; // valid
     }
@@ -76,10 +77,10 @@ class ValidationController extends GetxController {
   void validateCity(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) {
-      cityError.value = '${AppStrings.cityError} is required';
+      cityError.value = AppStrings.validationRequiredField.replaceAll('%s', AppStrings.cityError);
     } else if (!nameRegex.hasMatch(trimmed)) {
       // reuse nameRegex for city
-      cityError.value = 'Invalid ${AppStrings.cityError}';
+      cityError.value = 'shared.invalidField'.trp({'field': AppStrings.cityError});
     } else {
       // Check if custom cities are allowed
       try {
@@ -87,11 +88,8 @@ class ValidationController extends GetxController {
         if (!citiesController.allowCustomCities) {
           // If custom cities not allowed, validate against the list
           if (!citiesController.isCityValid(trimmed)) {
-            final isFrench = Get.locale?.languageCode == 'fr';
             cityError.value =
-                isFrench
-                    ? AppStrings.citySelectorPleaseSelectFrench
-                    : AppStrings.citySelectorPleaseSelect;
+                AppStrings.citySelectorPleaseSelect;
             return;
           }
         }
@@ -118,7 +116,7 @@ class ValidationController extends GetxController {
     // Combine dial code and number
     final combined = '$dialCode$trimmedNumber'.replaceAll(' ', '');
     if (!phoneRegex.hasMatch(combined)) {
-      phoneNumberError.value = 'Invalid ${AppStrings.phoneNumberError}';
+      phoneNumberError.value = 'shared.invalidField'.trp({'field': AppStrings.phoneNumberError});
     } else {
       phoneNumberError.value = null; // valid
     }
