@@ -681,4 +681,13 @@ class AppStrings {
       "Download We Monitor and earn your own achievements";
 
   AppStrings._();
+
+  // App updates
+  static const String updateAvailableTitle = "Update available";
+  static const String updateAvailableBody =
+      "A new version of We Monitor ({version}) is available with improvements and fixes.";
+  static const String updateRequiredBody =
+      "This version of We Monitor is no longer supported. Please update to continue.";
+  static const String updateNow = "Update";
+  static const String updateLater = "Later";
 }
