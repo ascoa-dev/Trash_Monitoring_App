@@ -1,5 +1,7 @@
 # Flutter → iOS App Store: Complete Publishing Guide
 
+> **Update (2026-10, v1.1.0):** iOS builds now run on **Xcode Cloud** — no Mac needed. Push to `main`; the *Default* workflow archives, uploads to TestFlight, and you submit in App Store Connect. Xcode Cloud assigns the build number. See `APPSTORE_PUBLISHING.md` §"Xcode Cloud" and the release checklist in `AGENTS.md` (including updating Firestore `config/app_version` after each release). The manual Mac steps below are kept for reference.
+
 *Current as of July 2026. Confidence tags: [Certain] = verified against Apple's own docs, [Likely] = confirmed by multiple current sources but not Apple's primary docs, [Guessing] = my best inference, verify yourself.*
 
 ---

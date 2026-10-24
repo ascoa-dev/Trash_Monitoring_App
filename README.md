@@ -2,6 +2,12 @@
 
 Flutter app using GetX, Firebase Auth, and a shared design system.
 
+**Current version: 1.1.0** — French/English UI, weekly streaks, automatic resumable offline uploads (cleanups and hotspots).
+
+## 📦 Releasing
+
+See [AGENTS.md](AGENTS.md#releasing-a-new-version--required-steps) and [APPSTORE_PUBLISHING.md](APPSTORE_PUBLISHING.md). After each store release, update Firestore `config/app_version` (`android.latest` / `ios.latest`) so users get the in-app update prompt.
+
 ## 🚀 Highlights
 
 - Modular architecture with shared widgets and centralized tokens
