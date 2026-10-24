@@ -1,4 +1,6 @@
 const Map<String, String> cleanupEn = {
+  'cleanup.enterCount': 'Quantity',
+  'cleanup.countSave': 'Save',
   'cleanup.allSectionsDone': 'All sections completed! You can now save your cleanup.',
   'cleanup.clear': 'Clear',
   'cleanup.compressFailed': 'Failed to compress image',
@@ -40,6 +42,8 @@ const Map<String, String> cleanupEn = {
 };
 
 const Map<String, String> cleanupFr = {
+  'cleanup.enterCount': 'Quantité',
+  'cleanup.countSave': 'Enregistrer',
   'cleanup.allSectionsDone': 'Toutes les sections sont complétées ! Vous pouvez maintenant enregistrer votre nettoyage.',
   'cleanup.clear': 'Effacer',
   'cleanup.compressFailed': 'Échec de la compression de l\'image',

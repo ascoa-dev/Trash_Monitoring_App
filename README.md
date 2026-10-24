@@ -2,7 +2,7 @@
 
 Flutter app using GetX, Firebase Auth, and a shared design system.
 
-**Current version: 1.1.0** — French/English UI, weekly streaks, automatic resumable offline uploads (cleanups and hotspots).
+**Current version: 1.1.1** — type trash counts directly (tap the number). 1.1.0 added French/English UI, weekly streaks and automatic resumable offline uploads.
 
 ## 📦 Releasing
 

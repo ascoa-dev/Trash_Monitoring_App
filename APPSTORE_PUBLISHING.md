@@ -2,8 +2,8 @@
 
 > **Application Name**: We Monitor  
 > **Bundle Identifier**: `com.ascoa.wemonitor`  
-> **Current Version**: `1.1.0` (`pubspec.yaml` 1.1.0+10; iOS build numbers are assigned by Xcode Cloud, e.g. `1.1.0 (15)`)  
-> **Previous Version**: `1.0.0 (9)`  
+> **Current Version**: `1.1.1` (`pubspec.yaml` 1.1.1+11; iOS build numbers are assigned by Xcode Cloud)  
+> **Previous Versions**: `1.1.0`, `1.0.0 (9)`  
 > **Repository Context**: `Trash_Monitoring_App`  
 > **Primary Release Target**: Apple App Store & TestFlight (iOS / iPadOS)
 
@@ -75,7 +75,25 @@ Below is the technical audit of recent repository changes in `Trash_Monitoring_A
 
 ## 📱 iOS App Store What's New & Release Notes
 
-Copy and paste into **"What's New in This Version"** in App Store Connect (Version `1.1.0`). Add each language separately.
+Copy and paste into **"What's New in This Version"** in App Store Connect / Play Console. Add each language separately.
+
+### 1.1.1
+
+**English (U.S.)**
+
+```text
+• Tap the number next to any trash item to type the amount directly – no more tapping + and − over and over
+• Trash categories no longer close when you tap inside them
+```
+
+**French**
+
+```text
+• Touchez le nombre à côté d'un déchet pour saisir directement la quantité – plus besoin d'appuyer encore et encore sur + et −
+• Les catégories de déchets ne se ferment plus quand vous touchez à l'intérieur
+```
+
+### 1.1.0
 
 **English (U.S.)**
 

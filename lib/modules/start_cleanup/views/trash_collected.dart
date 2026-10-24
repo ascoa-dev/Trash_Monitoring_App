@@ -7,6 +7,7 @@ import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 
@@ -55,6 +56,50 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
       widget.controller.trashItems.remove(itemName);
     }
     widget.controller.clearFieldError('trashItems');
+  }
+
+  /// Lets the user type a count instead of tapping +/- repeatedly.
+  Future<void> _editCount(String itemName, int currentCount) async {
+    final input = TextEditingController(text: '$currentCount')
+      ..selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: '$currentCount'.length,
+      );
+    void submit(BuildContext ctx) =>
+        Navigator.of(ctx).pop(int.tryParse(input.text.trim()) ?? 0);
+    final result = await showDialog<int>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: Text(TrashNames.display(itemName)),
+            content: TextField(
+              controller: input,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.done,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(5),
+              ],
+              decoration: InputDecoration(labelText: 'cleanup.enterCount'.tr),
+              onSubmitted: (_) => submit(ctx),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(AppStrings.cancel),
+              ),
+              TextButton(
+                onPressed: () => submit(ctx),
+                child: Text('cleanup.countSave'.tr),
+              ),
+            ],
+          ),
+    );
+    input.dispose();
+    if (result != null && result != currentCount) {
+      _onItemCountChanged(itemName, result);
+    }
   }
 
   @override
@@ -222,54 +267,54 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                               AppDimensions.cleanupCategoryItemBottomSpacing,
                             ),
                           ),
-                          child: InkWell(
-                            onTap: () {
-                              Get.find<HapticController>().light();
-                              setState(() {
-                                _expandedCategory =
-                                    isExpanded ? null : categoryKey;
-                              });
-                            },
-                            borderRadius: BorderRadius.circular(
-                              SizeUtils.r(
-                                context,
-                                AppDimensions.cleanupCategoryTileRadius,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.dialogBackground,
+                              borderRadius: BorderRadius.circular(
+                                SizeUtils.r(
+                                  context,
+                                  AppDimensions.cleanupCategoryTileRadius,
+                                ),
                               ),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.dialogBackground,
-                                borderRadius: BorderRadius.circular(
-                                  SizeUtils.r(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.blackWithOpacity15,
+                                  offset: Offset(
+                                    SizeUtils.w(
+                                      context,
+                                      AppDimensions.cleanupSectionShadowOffsetX,
+                                    ),
+                                    SizeUtils.h(
+                                      context,
+                                      AppDimensions.cleanupSectionShadowOffsetY,
+                                    ),
+                                  ),
+                                  blurRadius: SizeUtils.h(
                                     context,
-                                    AppDimensions.cleanupCategoryTileRadius,
+                                    AppDimensions.cleanupSectionShadowBlur,
                                   ),
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.blackWithOpacity15,
-                                    offset: Offset(
-                                      SizeUtils.w(
-                                        context,
-                                        AppDimensions
-                                            .cleanupSectionShadowOffsetX,
-                                      ),
-                                      SizeUtils.h(
-                                        context,
-                                        AppDimensions
-                                            .cleanupSectionShadowOffsetY,
-                                      ),
-                                    ),
-                                    blurRadius: SizeUtils.h(
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                // Only the header toggles, so taps inside the
+                                // item list (counts, names) don't collapse it.
+                                InkWell(
+                                  onTap: () {
+                                    Get.find<HapticController>().light();
+                                    setState(() {
+                                      _expandedCategory =
+                                          isExpanded ? null : categoryKey;
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(
+                                    SizeUtils.r(
                                       context,
-                                      AppDimensions.cleanupSectionShadowBlur,
+                                      AppDimensions.cleanupCategoryTileRadius,
                                     ),
                                   ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Padding(
+                                  child: Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: SizeUtils.w(
                                         context,
@@ -304,191 +349,197 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                                       ],
                                     ),
                                   ),
+                                ),
 
-                                  // 👇 When expanded, show items inline
-                                  if (isExpanded)
-                                    Padding(
-                                      padding: EdgeInsets.all(
-                                        SizeUtils.h(
-                                          context,
-                                          AppDimensions
-                                              .cleanupCategoryItemInnerVerticalPadding,
-                                        ),
+                                // 👇 When expanded, show items inline
+                                if (isExpanded)
+                                  Padding(
+                                    padding: EdgeInsets.all(
+                                      SizeUtils.h(
+                                        context,
+                                        AppDimensions
+                                            .cleanupCategoryItemInnerVerticalPadding,
                                       ),
-                                      child: Column(
-                                        children: [
-                                          ...category.items.keys.map((
-                                            itemName,
-                                          ) {
-                                            final currentCount =
-                                                widget
-                                                    .controller
-                                                    .trashItems[itemName] ??
-                                                0;
-                                            return Padding(
-                                              padding: EdgeInsets.only(
-                                                bottom: SizeUtils.h(
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        ...category.items.keys.map((itemName) {
+                                          final currentCount =
+                                              widget
+                                                  .controller
+                                                  .trashItems[itemName] ??
+                                              0;
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: SizeUtils.h(
+                                                context,
+                                                AppDimensions
+                                                    .cleanupCategoryItemBottomSpacing,
+                                              ),
+                                            ),
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: SizeUtils.h(
                                                   context,
                                                   AppDimensions
-                                                      .cleanupCategoryItemBottomSpacing,
+                                                      .cleanupCategoryItemInnerVerticalPadding,
+                                                ),
+                                                horizontal: SizeUtils.w(
+                                                  context,
+                                                  AppDimensions
+                                                      .cleanupCategoryItemHorizontalPadding,
                                                 ),
                                               ),
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: SizeUtils.h(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.pureWhite,
+                                                border: Border.all(
+                                                  color:
+                                                      AppColors
+                                                          .dialogBackground,
+                                                  width: SizeUtils.h(
                                                     context,
                                                     AppDimensions
-                                                        .cleanupCategoryItemInnerVerticalPadding,
-                                                  ),
-                                                  horizontal: SizeUtils.w(
-                                                    context,
-                                                    AppDimensions
-                                                        .cleanupCategoryItemHorizontalPadding,
+                                                        .cleanupCategoryBorderWidth,
                                                   ),
                                                 ),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.pureWhite,
-                                                  border: Border.all(
-                                                    color:
-                                                        AppColors
-                                                            .dialogBackground,
-                                                    width: SizeUtils.h(
+                                                borderRadius: BorderRadius.circular(
+                                                  SizeUtils.r(
+                                                    context,
+                                                    AppDimensions
+                                                        .cleanupCategoryItemRadius,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      TrashNames.display(
+                                                        itemName,
+                                                      ),
+                                                      style:
+                                                          AppTextStyles.trashCollectionDropdownCategory(
+                                                            context,
+                                                          ).copyWith(
+                                                            color:
+                                                                AppColors
+                                                                    .textAccent,
+                                                            letterSpacing: 0.1,
+                                                          ),
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: SizeUtils.w(
                                                       context,
                                                       AppDimensions
-                                                          .cleanupCategoryBorderWidth,
+                                                          .smallSpacing,
                                                     ),
                                                   ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        SizeUtils.r(
+                                                  Container(
+                                                    height: SizeUtils.h(
+                                                      context,
+                                                      AppDimensions
+                                                          .cleanupCategoryControlHeight,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color:
+                                                            AppColors
+                                                                .dialogBackground,
+                                                        width: SizeUtils.h(
                                                           context,
                                                           AppDimensions
-                                                              .cleanupCategoryItemRadius,
+                                                              .cleanupCategoryControlBorderWidth,
                                                         ),
                                                       ),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        TrashNames.display(itemName),
-                                                        style:
-                                                            AppTextStyles.trashCollectionDropdownCategory(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            SizeUtils.r(
                                                               context,
-                                                            ).copyWith(
-                                                              color:
-                                                                  AppColors
-                                                                      .textAccent,
-                                                              letterSpacing:
-                                                                  0.1,
+                                                              AppDimensions
+                                                                  .cleanupCategoryControlBorderRadius,
                                                             ),
-                                                        maxLines: 2,
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                      ),
+                                                          ),
                                                     ),
-                                                    SizedBox(
-                                                      width: SizeUtils.w(
-                                                        context,
-                                                        AppDimensions
-                                                            .smallSpacing,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      height: SizeUtils.h(
-                                                        context,
-                                                        AppDimensions
-                                                            .cleanupCategoryControlHeight,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color:
-                                                              AppColors
-                                                                  .dialogBackground,
-                                                          width: SizeUtils.h(
+                                                    child: Row(
+                                                      children: [
+                                                        // Minus button
+                                                        SizedBox(
+                                                          width: SizeUtils.w(
                                                             context,
                                                             AppDimensions
-                                                                .cleanupCategoryControlBorderWidth,
+                                                                .cleanupCategorySmallGap,
                                                           ),
                                                         ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              SizeUtils.r(
-                                                                context,
-                                                                AppDimensions
-                                                                    .cleanupCategoryControlBorderRadius,
-                                                              ),
-                                                            ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          // Minus button
-                                                          SizedBox(
-                                                            width: SizeUtils.w(
-                                                              context,
-                                                              AppDimensions
-                                                                  .cleanupCategorySmallGap,
-                                                            ),
+                                                        Container(
+                                                          width: SizeUtils.w(
+                                                            context,
+                                                            AppDimensions
+                                                                .cleanupCategoryControlButtonSize,
                                                           ),
-                                                          Container(
-                                                            width: SizeUtils.w(
-                                                              context,
-                                                              AppDimensions
-                                                                  .cleanupCategoryControlButtonSize,
-                                                            ),
-                                                            height: SizeUtils.h(
-                                                              context,
-                                                              AppDimensions
-                                                                  .cleanupCategoryControlButtonSize,
-                                                            ),
-                                                            decoration: BoxDecoration(
-                                                              color:
-                                                                  AppColors
-                                                                      .dialogBackground,
-                                                              borderRadius: BorderRadius.all(
-                                                                Radius.circular(
-                                                                  SizeUtils.r(
-                                                                    context,
-                                                                    AppDimensions
-                                                                        .cleanupCategoryItemRadius,
+                                                          height: SizeUtils.h(
+                                                            context,
+                                                            AppDimensions
+                                                                .cleanupCategoryControlButtonSize,
+                                                          ),
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                AppColors
+                                                                    .dialogBackground,
+                                                            borderRadius:
+                                                                BorderRadius.all(
+                                                                  Radius.circular(
+                                                                    SizeUtils.r(
+                                                                      context,
+                                                                      AppDimensions
+                                                                          .cleanupCategoryItemRadius,
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                            child: IconButton(
-                                                              icon: Icon(
-                                                                Icons.remove,
-                                                                size: SizeUtils.r(
-                                                                  context,
-                                                                  AppDimensions
-                                                                      .cleanupCategoryIconLargeSize,
-                                                                ),
-                                                              ),
-                                                              color:
-                                                                  AppColors
-                                                                      .textAccent,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .zero,
-                                                              constraints:
-                                                                  const BoxConstraints(),
-                                                              onPressed:
-                                                                  currentCount >
-                                                                          0
-                                                                      ? () => _onItemCountChanged(
-                                                                        itemName,
-                                                                        currentCount -
-                                                                            1,
-                                                                      )
-                                                                      : null,
-                                                            ),
                                                           ),
-                                                          // Count display
-                                                          Container(
+                                                          child: IconButton(
+                                                            icon: Icon(
+                                                              Icons.remove,
+                                                              size: SizeUtils.r(
+                                                                context,
+                                                                AppDimensions
+                                                                    .cleanupCategoryIconLargeSize,
+                                                              ),
+                                                            ),
+                                                            color:
+                                                                AppColors
+                                                                    .textAccent,
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            constraints:
+                                                                const BoxConstraints(),
+                                                            onPressed:
+                                                                currentCount > 0
+                                                                    ? () => _onItemCountChanged(
+                                                                      itemName,
+                                                                      currentCount -
+                                                                          1,
+                                                                    )
+                                                                    : null,
+                                                          ),
+                                                        ),
+                                                        // Count display: tap to type a number
+                                                        GestureDetector(
+                                                          behavior:
+                                                              HitTestBehavior
+                                                                  .opaque,
+                                                          onTap:
+                                                              () => _editCount(
+                                                                itemName,
+                                                                currentCount,
+                                                              ),
+                                                          child: Container(
                                                             width: SizeUtils.w(
                                                               context,
                                                               AppDimensions
@@ -524,90 +575,96 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                                                                 color:
                                                                     AppColors
                                                                         .textAccent,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .underline,
+                                                                decorationStyle:
+                                                                    TextDecorationStyle
+                                                                        .dotted,
                                                               ),
                                                             ),
                                                           ),
-                                                          // Plus button
-                                                          Container(
-                                                            width: SizeUtils.w(
-                                                              context,
-                                                              AppDimensions
-                                                                  .cleanupCategoryControlButtonSize,
-                                                            ),
-                                                            height: SizeUtils.h(
-                                                              context,
-                                                              AppDimensions
-                                                                  .cleanupCategoryControlButtonSize,
-                                                            ),
-                                                            decoration: BoxDecoration(
+                                                        ),
+                                                        // Plus button
+                                                        Container(
+                                                          width: SizeUtils.w(
+                                                            context,
+                                                            AppDimensions
+                                                                .cleanupCategoryControlButtonSize,
+                                                          ),
+                                                          height: SizeUtils.h(
+                                                            context,
+                                                            AppDimensions
+                                                                .cleanupCategoryControlButtonSize,
+                                                          ),
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                AppColors
+                                                                    .dialogBackground,
+                                                            borderRadius:
+                                                                BorderRadius.all(
+                                                                  Radius.circular(
+                                                                    SizeUtils.r(
+                                                                      context,
+                                                                      AppDimensions
+                                                                          .cleanupCategoryItemRadius,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                            border: Border.all(
                                                               color:
                                                                   AppColors
                                                                       .dialogBackground,
-                                                              borderRadius: BorderRadius.all(
-                                                                Radius.circular(
-                                                                  SizeUtils.r(
-                                                                    context,
-                                                                    AppDimensions
-                                                                        .cleanupCategoryItemRadius,
-                                                                  ),
-                                                                ),
+                                                              width: SizeUtils.h(
+                                                                context,
+                                                                AppDimensions
+                                                                    .cleanupCategoryControlBorderWidth,
                                                               ),
-                                                              border: Border.all(
-                                                                color:
-                                                                    AppColors
-                                                                        .dialogBackground,
-                                                                width: SizeUtils.h(
-                                                                  context,
-                                                                  AppDimensions
-                                                                      .cleanupCategoryControlBorderWidth,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            child: IconButton(
-                                                              icon: Icon(
-                                                                Icons.add,
-                                                                size: SizeUtils.r(
-                                                                  context,
-                                                                  AppDimensions
-                                                                      .cleanupCategoryIconLargeSize,
-                                                                ),
-                                                              ),
-                                                              color:
-                                                                  AppColors
-                                                                      .textAccent,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .zero,
-                                                              constraints:
-                                                                  const BoxConstraints(),
-                                                              onPressed:
-                                                                  () => _onItemCountChanged(
-                                                                    itemName,
-                                                                    currentCount +
-                                                                        1,
-                                                                  ),
                                                             ),
                                                           ),
-                                                          SizedBox(
-                                                            width: SizeUtils.w(
-                                                              context,
-                                                              AppDimensions
-                                                                  .cleanupCategorySmallGap,
+                                                          child: IconButton(
+                                                            icon: Icon(
+                                                              Icons.add,
+                                                              size: SizeUtils.r(
+                                                                context,
+                                                                AppDimensions
+                                                                    .cleanupCategoryIconLargeSize,
+                                                              ),
                                                             ),
+                                                            color:
+                                                                AppColors
+                                                                    .textAccent,
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            constraints:
+                                                                const BoxConstraints(),
+                                                            onPressed:
+                                                                () => _onItemCountChanged(
+                                                                  itemName,
+                                                                  currentCount +
+                                                                      1,
+                                                                ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: SizeUtils.w(
+                                                            context,
+                                                            AppDimensions
+                                                                .cleanupCategorySmallGap,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                            );
-                                          }),
-                                        ],
-                                      ),
+                                            ),
+                                          );
+                                        }),
+                                      ],
                                     ),
-                                ],
-                              ),
+                                  ),
+                              ],
                             ),
                           ),
                         );
@@ -635,7 +692,10 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
                 // Next Button
                 if (!widget.isEditMode) ...[
                   SizedBox(
-                    height: SizeUtils.h(context, AppDimensions.cleanupSpacing24),
+                    height: SizeUtils.h(
+                      context,
+                      AppDimensions.cleanupSpacing24,
+                    ),
                   ),
                   SizedBox(
                     width: double.infinity,
@@ -704,6 +764,8 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
     widget.controller.markSectionCompleted(CleanupSectionIds.trashCollected);
 
     // Move to next section (Photos)
-    widget.controller.setExpandedSection(CleanupSectionIds.photosVideosOptional);
+    widget.controller.setExpandedSection(
+      CleanupSectionIds.photosVideosOptional,
+    );
   }
 }
