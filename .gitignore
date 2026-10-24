@@ -112,6 +112,8 @@ coverage/
 **/.symlinks/
 **/DerivedData/
 *.xcworkspace
+# Flutter's iOS workspace is needed by Xcode Cloud.
+!ios/Runner.xcworkspace
 
 .fake
 List.md
