@@ -45,6 +45,11 @@ class MyCleanupsController extends GetxController {
     }
   }
 
+  void removeLocal(String id) {
+    allCleanups.removeWhere((c) => c.id == id);
+    applyFilters();
+  }
+
   void setSearchQuery(String value) {
     searchQuery.value = value;
     applyFilters();

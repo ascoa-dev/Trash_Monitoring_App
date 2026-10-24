@@ -6,11 +6,13 @@ import 'package:we_monitor/shared/constants/app_images.dart';
 
 class FullscreenImageViewer extends StatelessWidget {
   final String imageUrl;
+  final String? thumbUrl; // shown while the full image loads
   final String? placeholderAsset;
 
   const FullscreenImageViewer({
     super.key,
     required this.imageUrl,
+    this.thumbUrl,
     this.placeholderAsset,
   });
 
@@ -18,6 +20,7 @@ class FullscreenImageViewer extends StatelessWidget {
   static Future<void> show(
     BuildContext context, {
     required String imageUrl,
+    String? thumbUrl,
     String? placeholderAsset,
   }) {
     return Navigator.of(context).push(
@@ -26,6 +29,7 @@ class FullscreenImageViewer extends StatelessWidget {
         barrierColor: Colors.black,
         pageBuilder: (context, _, secondaryAnimation) => FullscreenImageViewer(
           imageUrl: imageUrl,
+          thumbUrl: thumbUrl,
           placeholderAsset: placeholderAsset,
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -45,10 +49,23 @@ class FullscreenImageViewer extends StatelessWidget {
           Positioned.fill(
             child: PhotoView(
               imageProvider: CachedNetworkImageProvider(imageUrl),
-              loadingBuilder: (context, event) => const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.buttonGreen),
-                ),
+              loadingBuilder: (context, event) => Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (thumbUrl != null && thumbUrl != imageUrl)
+                    CachedNetworkImage(
+                      imageUrl: thumbUrl!,
+                      fit: BoxFit.contain,
+                      fadeInDuration: Duration.zero,
+                    ),
+                  const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.buttonGreen,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               errorBuilder: (context, error, stackTrace) {
                 return Center(

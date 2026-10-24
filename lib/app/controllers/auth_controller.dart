@@ -9,6 +9,7 @@ import 'package:we_monitor/modules/profile/models/change_password_status.dart';
 import 'package:we_monitor/modules/auth/models/reset_password_status.dart';
 import 'package:we_monitor/app/models/user.dart';
 import 'package:we_monitor/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/services/admin_status.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:hive/hive.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -595,6 +596,7 @@ class AuthController extends GetxController {
 
   Future<void> _signOutAll() async {
     try {
+      AdminStatus.reset();
       await _auth.signOut();
       await GoogleSignIn.instance.signOut();
       await userBox.clear();

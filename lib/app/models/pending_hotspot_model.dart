@@ -47,7 +47,10 @@ class PendingHotspotModel extends HiveObject {
     this.uploadError,
   });
 
-  Map<String, dynamic> toFirestore({required List<String> photoUrls}) {
+  Map<String, dynamic> toFirestore({
+    required List<String> photoUrls,
+    List<String>? thumbUrls,
+  }) {
     return {
       'userId': userId,
       'createdAt': createdAt,
@@ -57,6 +60,7 @@ class PendingHotspotModel extends HiveObject {
         'longitude': locationLongitude,
       },
       'photoUrls': photoUrls,
+      'thumbUrls': thumbUrls ?? photoUrls,
       'status': 'reported',
     };
   }

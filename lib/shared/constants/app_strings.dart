@@ -493,6 +493,17 @@ class AppStrings {
       "This app only works in Cameroon. Please select a location within Cameroon.";
   static const String useMyLocation = "USE MY LOCATION";
   static const String selectedLocation = "Selected Location";
+  static const String tapToChooseOnMap =
+      "Tap to choose the location on the map";
+  static const String adjustOnMap = "Adjust on map";
+  static const String chooseLocationTitle = "Choose location";
+  static const String confirmLocation = "Confirm location";
+  static const String movePinHint =
+      "Move the map so the pin sits on the exact spot";
+  static const String checkingLocation = "Checking location...";
+  static const String locationRequired = "Location is required";
+  static const String locationNotVerifiedOffline =
+      "Offline: location will be verified when you're back online";
 
   // Form Field Hints
   static const String enterGroupName = "Enter group name";
@@ -507,7 +518,7 @@ class AppStrings {
   static const String cleanAloneHint =
       "If you cleaned alone, enter your own name.";
   static const String searchOrDragMapHint =
-      "Search or drag map to set location";
+      "Search, use your location, or tap the map to set the exact spot";
 
   // Cleanup flow navigation buttons
   static const String nextButton = "NEXT";
@@ -602,6 +613,72 @@ class AppStrings {
   static const String profilePendingCleanupsSubtitle =
       "View and upload offline cleanups";
   static const String profileNoInternetTitle = "No Internet Connection";
+
+  // Drafts
+  static const String draftRestoreCleanupTitle =
+      "Continue your unsaved cleanup?";
+  static const String draftRestoreHotspotTitle =
+      "Continue your unsaved hotspot report?";
+  static const String draftLastEdited = "Last edited";
+  static const String draftContinue = "Continue";
+  static const String draftDiscard = "Discard";
+  static const String draftKeep = "Keep draft";
+  static const String draftStay = "Stay";
+  static const String draftExitTitle = "Leave this form?";
+  static const String draftExitBody =
+      "Keep your entries as a draft to continue later, or discard them.";
+
+  // Deep links
+  static const String deepLinkNotFound =
+      "This link is no longer available.";
+  static const String deepLinkLoadFailed =
+      "Could not open this link. Please check your connection and try again.";
+
+  // Privacy, delete, score
+  static const String anonymousVolunteer = "Anonymous volunteer";
+  static const String deleteCleanupTitle = "Delete this cleanup?";
+  static const String deleteCleanupBody =
+      "Delete this cleanup? This can't be undone. Achievements earned from it will be recalculated.";
+  static const String deleteCleanupAction = "Delete";
+  static const String deleteCleanupCancel = "Cancel";
+  static const String deleteCleanupSuccess = "Cleanup deleted";
+  static const String deleteCleanupFailed = "Could not delete the cleanup";
+  static const String scoreAllTime = "All-time score";
+  static const String scoreThisMonth = "This month";
+  static const String deleteRequestNoEmail =
+      "Your account has no email address, so a deletion request can't be submitted from the app. Please contact support.";
+
+  // Sharing
+  static const String shareAction = "Share";
+  static const String shareSubject = "We Monitor";
+  static const String shareFailedTitle = "Could not share";
+  static const String shareFailedBody =
+      "Something went wrong while preparing the image. Please try again.";
+  static const String sharePreparing = "Preparing image…";
+  static const String shareUnknownLocation = "our community";
+  static const String shareCleanupMessage =
+      "We just removed {kg} kg of trash ({items} items) at {location} with We Monitor! 🌍♻️ See it here: {link}\nJoin us and log your own cleanups: {download}";
+  static const String shareHotspotMessage =
+      "I reported a plastic hotspot at {location} on We Monitor. Help clean it up! {link}\nGet the app: {download}";
+  static const String shareAchievementMessage =
+      "I just unlocked {title} — Level {level} on We Monitor! 🏆 Every cleanup counts. Download the app and earn your own achievements: {download}";
+  static const String shareCardBrand = "We Monitor";
+  static const String shareCardCleanupHeadline = "{kg} kg";
+  static const String shareCardCleanupSubtitle = "of trash removed";
+  static const String shareCardItems = "items";
+  static const String shareCardVolunteers = "volunteers";
+  static const String shareCardEnvironment = "environment";
+  static const String shareCardGroup = "Group: {group}";
+  static const String shareCardFooter =
+      "Track your impact — download We Monitor";
+  static const String shareCardHotspotHeadline = "Plastic hotspot reported";
+  static const String shareCardHotspotCta = "Help clean it up";
+  static const String shareCardAchievementKicker = "ACHIEVEMENT UNLOCKED";
+  static const String shareCardLevel = "Level {level}";
+  static const String shareCardAchievementDescription =
+      "Reached {threshold}{unit} {metric}.";
+  static const String shareCardAchievementFooter =
+      "Download We Monitor and earn your own achievements";
 
   AppStrings._();
 }

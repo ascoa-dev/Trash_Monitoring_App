@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 import 'package:we_monitor/modules/achievements/achievements_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/services/share_service.dart';
 
 /// Shows a full-screen confetti celebration for a newly unlocked achievement.
 /// [onDismiss] fires after the user closes it, so the queue can advance.
@@ -209,10 +211,50 @@ class _CelebrationDialogState extends State<_CelebrationDialog> {
                       ),
                     ),
                     const SizedBox(height: 22),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: Builder(
+                              builder:
+                                  (ctx) => OutlinedButton.icon(
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide(color: def.color),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                    ),
+                                    // Sharing never dismisses the card, so the
+                                    // seen-marker still fires on "Awesome!".
+                                    onPressed:
+                                        () => ShareService.shareAchievement(
+                                          ctx,
+                                          def,
+                                          level,
+                                        ),
+                                    icon: Icon(
+                                      Icons.share_outlined,
+                                      color: def.color,
+                                      size: 18,
+                                    ),
+                                    label: Text(
+                                      AppStrings.shareAction,
+                                      style: TextStyle(
+                                        color: def.color,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.buttonGreen,
                           shape: RoundedRectangleBorder(
@@ -234,6 +276,9 @@ class _CelebrationDialogState extends State<_CelebrationDialog> {
                           ),
                         ),
                       ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

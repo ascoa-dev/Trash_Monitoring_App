@@ -9,7 +9,11 @@ import 'package:uuid/uuid.dart';
 import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
 import 'package:we_monitor/app/models/pending_hotspot_model.dart';
 import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/drafts/form_draft.dart';
+import 'package:we_monitor/shared/services/draft_service.dart';
+import 'package:we_monitor/shared/services/location_validator.dart';
 
 class HotspotReportController extends ChangeNotifier {
   final MediaUploadController mediaUploadController = MediaUploadController(
@@ -26,7 +30,19 @@ class HotspotReportController extends ChangeNotifier {
   String location = '';
   double? locationLatitude;
   double? locationLongitude;
+  bool locationVerified = false;
   String? locationError;
+
+  /// The chosen location, or null until the user explicitly picks one.
+  PickedLocation? get pickedLocation =>
+      (locationLatitude == null || locationLongitude == null)
+          ? null
+          : PickedLocation(
+            latitude: locationLatitude!,
+            longitude: locationLongitude!,
+            address: location,
+            verified: locationVerified,
+          );
   String? photosError;
   bool isSubmitting = false;
 
@@ -35,11 +51,9 @@ class HotspotReportController extends ChangeNotifier {
     locationError = null;
     photosError = null;
 
-    final hasLocationText = location.trim().isNotEmpty;
-    final hasCoordinates =
-        locationLatitude != null && locationLongitude != null;
-    if (!hasLocationText && !hasCoordinates) {
-      locationError = 'Location is required';
+    // Coordinates are required: free text alone can't be put on the map.
+    if (pickedLocation == null) {
+      locationError = AppStrings.locationRequired;
       isValid = false;
     }
 
@@ -76,6 +90,7 @@ class HotspotReportController extends ChangeNotifier {
 
       await mediaUploadController.cleanupUnusedPhotos();
       final photoUrls = mediaUploadController.uploadedPhotoUrls;
+      final thumbUrls = mediaUploadController.uploadedThumbUrls;
       if (photoUrls.isEmpty) return null;
 
       await FirebaseFirestore.instance
@@ -90,6 +105,7 @@ class HotspotReportController extends ChangeNotifier {
               'longitude': locationLongitude,
             },
             'photoUrls': photoUrls,
+            'thumbUrls': thumbUrls,
             'status': 'reported',
           });
 
@@ -121,16 +137,38 @@ class HotspotReportController extends ChangeNotifier {
     return localId;
   }
 
-  void setLocation(String value) {
-    location = value;
+  void setPickedLocation(PickedLocation loc) {
+    location = loc.address;
+    locationLatitude = loc.latitude;
+    locationLongitude = loc.longitude;
+    locationVerified = loc.verified;
     locationError = null;
     notifyListeners();
   }
 
-  void setCoordinates(double latitude, double longitude) {
-    locationLatitude = latitude;
-    locationLongitude = longitude;
-    locationError = null;
+  /// Snapshot of the form for draft auto-save.
+  FormDraft toDraft() => FormDraft(
+    kind: FormDraft.kindHotspot,
+    docId: hotspotDocId,
+    savedAt: DateTime.now(),
+    location: location,
+    locationLatitude: locationLatitude,
+    locationLongitude: locationLongitude,
+    locationVerified: locationVerified,
+    photos: DraftService.photosOf(mediaUploadController),
+  );
+
+  void applyDraft(FormDraft draft) {
+    _hotspotDocId = draft.docId;
+    location = draft.location;
+    locationLatitude = draft.locationLatitude;
+    locationLongitude = draft.locationLongitude;
+    locationVerified = draft.locationVerified;
+    DraftService.restorePhotos(
+      mediaUploadController,
+      draft.photos,
+      draft.docId,
+    );
     notifyListeners();
   }
 

@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,8 +12,88 @@ import 'package:we_monitor/shared/analytics/analytics_service.dart';
 class MediaUploadConfig {
   static const int maxPhotos = 5;
   static const int imageQuality = 75; // 0-100
-  static const int maxWidth = 1920;
-  static const int maxHeight = 1920;
+  static const int maxEdge = 1600; // longest edge of the full image
+  static const int thumbQuality = 70;
+  static const int thumbMaxEdge = 480; // longest edge of the thumbnail
+  static const String cacheControl = 'public, max-age=31536000, immutable';
+}
+
+/// Compress an image so its longest edge is at most [maxEdge] (never
+/// upscales). flutter_image_compress scales by min(w/minWidth, h/minHeight),
+/// so a square minimum equal to the target short edge caps the long edge,
+/// whatever the EXIF rotation.
+Future<String> compressJpeg(File file, int maxEdge, int quality) async {
+  final tempDir = await getTemporaryDirectory();
+  final targetPath = '${tempDir.path}/${const Uuid().v4()}.jpg';
+
+  final buffer = await ui.ImmutableBuffer.fromUint8List(
+    await file.readAsBytes(),
+  );
+  final descriptor = await ui.ImageDescriptor.encoded(buffer);
+  final w = descriptor.width, h = descriptor.height;
+  descriptor.dispose();
+  buffer.dispose();
+  final long = w > h ? w : h;
+  final short = w > h ? h : w;
+  final minEdge = long <= maxEdge ? short : (short * maxEdge / long).round();
+
+  final result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path,
+    targetPath,
+    quality: quality,
+    minWidth: minEdge,
+    minHeight: minEdge,
+    format: CompressFormat.jpeg,
+  );
+
+  if (result == null) {
+    throw Exception('Failed to compress image');
+  }
+
+  return result.path;
+}
+
+/// Compresses [source] to full + thumbnail JPEGs (contract sizes).
+Future<({String full, String thumb})> compressJpegPair(File source) async {
+  final full = await compressJpeg(
+    source,
+    MediaUploadConfig.maxEdge,
+    MediaUploadConfig.imageQuality,
+  );
+  final thumb = await compressJpeg(
+    File(full),
+    MediaUploadConfig.thumbMaxEdge,
+    MediaUploadConfig.thumbQuality,
+  );
+  return (full: full, thumb: thumb);
+}
+
+/// Uploads `<folderPath>/<uuid>.jpg` and `<uuid>_thumb.jpg` with the
+/// cache/ownership metadata the Storage rules expect. Returns download URLs.
+Future<({String full, String thumb})> uploadJpegPair({
+  required String folderPath,
+  required String fullPath,
+  required String thumbPath,
+  void Function(UploadTask task)? onFullTask,
+}) async {
+  final base = const Uuid().v4();
+  final folder = FirebaseStorage.instance.ref().child(folderPath);
+  final metadata = SettableMetadata(
+    contentType: 'image/jpeg',
+    cacheControl: MediaUploadConfig.cacheControl,
+    customMetadata: {'ownerUid': FirebaseAuth.instance.currentUser?.uid ?? ''},
+  );
+
+  // Thumb first (tiny); the full-size upload drives any progress UI.
+  final thumbSnap = await folder
+      .child('${base}_thumb.jpg')
+      .putFile(File(thumbPath), metadata);
+  final thumbUrl = await thumbSnap.ref.getDownloadURL();
+
+  final fullTask = folder.child('$base.jpg').putFile(File(fullPath), metadata);
+  onFullTask?.call(fullTask);
+  final fullSnap = await fullTask;
+  return (full: await fullSnap.ref.getDownloadURL(), thumb: thumbUrl);
 }
 
 /// Represents a photo being uploaded or already uploaded
@@ -22,6 +104,7 @@ class PhotoUpload {
   double progress; // 0.0 to 1.0
   PhotoUploadStatus status;
   String? downloadUrl; // Firebase Storage URL
+  String? thumbUrl; // Thumbnail URL (null for old drafts)
   String? error;
 
   PhotoUpload({
@@ -31,6 +114,7 @@ class PhotoUpload {
     this.progress = 0.0,
     this.status = PhotoUploadStatus.pending,
     this.downloadUrl,
+    this.thumbUrl,
     this.error,
   });
 
@@ -41,6 +125,7 @@ class PhotoUpload {
     double? progress,
     PhotoUploadStatus? status,
     String? downloadUrl,
+    String? thumbUrl,
     String? error,
   }) {
     return PhotoUpload(
@@ -50,6 +135,7 @@ class PhotoUpload {
       progress: progress ?? this.progress,
       status: status ?? this.status,
       downloadUrl: downloadUrl ?? this.downloadUrl,
+      thumbUrl: thumbUrl ?? this.thumbUrl,
       error: error ?? this.error,
     );
   }
@@ -74,6 +160,8 @@ class MediaUploadController extends ChangeNotifier {
 
   // Track all uploaded URLs (even if photo is later removed)
   final Set<String> _allUploadedUrls = {};
+  // full URL -> thumb URL, so removed photos delete both files
+  final Map<String, String> _thumbByUrl = {};
 
   List<PhotoUpload> get photos => _photos.values.toList();
   int get photoCount => _photos.length;
@@ -88,6 +176,18 @@ class MediaUploadController extends ChangeNotifier {
               p.status == PhotoUploadStatus.completed && p.downloadUrl != null,
         )
         .map((p) => p.downloadUrl!)
+        .toList();
+  }
+
+  /// Thumbnail URLs aligned with [uploadedPhotoUrls] (full URL when a
+  /// restored old draft has no thumbnail).
+  List<String> get uploadedThumbUrls {
+    return _photos.values
+        .where(
+          (p) =>
+              p.status == PhotoUploadStatus.completed && p.downloadUrl != null,
+        )
+        .map((p) => p.thumbUrl ?? p.downloadUrl!)
         .toList();
   }
 
@@ -131,6 +231,30 @@ class MediaUploadController extends ChangeNotifier {
     notifyListeners();
 
     debugPrint('[MediaUpload] Added photo: $id');
+  }
+
+  /// Re-add a photo from a restored draft. With [uploadedUrl] it is restored
+  /// as already uploaded (no re-upload); otherwise it is pending.
+  /// Returns the new photo id.
+  String restorePhoto(File file, {String? uploadedUrl, String? thumbUrl}) {
+    final id = _uuid.v4();
+    _photos[id] = PhotoUpload(
+      id: id,
+      file: file,
+      status:
+          uploadedUrl != null
+              ? PhotoUploadStatus.completed
+              : PhotoUploadStatus.pending,
+      progress: uploadedUrl != null ? 1.0 : 0.0,
+      downloadUrl: uploadedUrl,
+      thumbUrl: thumbUrl,
+    );
+    if (uploadedUrl != null) {
+      _allUploadedUrls.add(uploadedUrl);
+      if (thumbUrl != null) _thumbByUrl[uploadedUrl] = thumbUrl;
+    }
+    notifyListeners();
+    return id;
   }
 
   /// Add multiple photos
@@ -186,7 +310,9 @@ class MediaUploadController extends ChangeNotifier {
       debugPrint('[MediaUpload] Compressing photo: $photoId');
 
       // Compress the image
-      final compressedPath = await _compressImage(photo.file);
+      final compressed = await compressJpegPair(photo.file);
+      final compressedPath = compressed.full;
+      final thumbPath = compressed.thumb;
 
       if (_photos[photoId]?.status == PhotoUploadStatus.cancelled) {
         debugPrint(
@@ -205,11 +331,13 @@ class MediaUploadController extends ChangeNotifier {
       debugPrint('[MediaUpload] Uploading photo: $photoId');
 
       // Upload to Firebase Storage
-      final downloadUrl = await _uploadToFirebase(
+      final urls = await _uploadToFirebase(
         photoId,
         compressedPath,
+        thumbPath,
         cleanupDocId,
       );
+      final downloadUrl = urls.full;
 
       if (_photos[photoId]?.status == PhotoUploadStatus.cancelled) {
         debugPrint('[MediaUpload] Upload cancelled during upload: $photoId');
@@ -218,12 +346,14 @@ class MediaUploadController extends ChangeNotifier {
 
       _photos[photoId] = photo.copyWith(
         downloadUrl: downloadUrl,
+        thumbUrl: urls.thumb,
         status: PhotoUploadStatus.completed,
         progress: 1.0,
       );
 
       // Track this URL
       _allUploadedUrls.add(downloadUrl);
+      _thumbByUrl[downloadUrl] = urls.thumb;
 
       notifyListeners();
 
@@ -300,8 +430,11 @@ class MediaUploadController extends ChangeNotifier {
 
     for (final url in urlsToDelete) {
       try {
-        final ref = FirebaseStorage.instance.refFromURL(url);
-        await ref.delete();
+        await FirebaseStorage.instance.refFromURL(url).delete();
+        final thumb = _thumbByUrl.remove(url);
+        if (thumb != null) {
+          await FirebaseStorage.instance.refFromURL(thumb).delete();
+        }
         debugPrint('[MediaUpload] Deleted unused photo: $url');
       } catch (e) {
         debugPrint('[MediaUpload] Error deleting photo $url: $e');
@@ -314,63 +447,36 @@ class MediaUploadController extends ChangeNotifier {
     _allUploadedUrls.addAll(finalUrls);
   }
 
-  /// Compress an image file
-  Future<String> _compressImage(File file) async {
-    final tempDir = await getTemporaryDirectory();
-    final targetPath = '${tempDir.path}/${_uuid.v4()}.jpg';
-
-    final result = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      targetPath,
-      quality: MediaUploadConfig.imageQuality,
-      minWidth: MediaUploadConfig.maxWidth,
-      minHeight: MediaUploadConfig.maxHeight,
-      format: CompressFormat.jpeg,
-    );
-
-    if (result == null) {
-      throw Exception('Failed to compress image');
-    }
-
-    return result.path;
-  }
-
-  /// Upload a file to Firebase Storage
-  Future<String> _uploadToFirebase(
+  /// Upload full + thumbnail to Firebase Storage (same uuid, `_thumb` suffix)
+  Future<({String full, String thumb})> _uploadToFirebase(
     String photoId,
     String filePath,
+    String thumbPath,
     String cleanupDocId,
-  ) async {
-    final file = File(filePath);
-    final fileName = '${_uuid.v4()}.jpg';
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child(storageFolder)
-        .child(cleanupDocId)
-        .child(fileName);
+  ) {
+    return uploadJpegPair(
+      folderPath: '$storageFolder/$cleanupDocId',
+      fullPath: filePath,
+      thumbPath: thumbPath,
+      onFullTask: (uploadTask) {
+        // Listen to upload progress
+        uploadTask.snapshotEvents.listen((snapshot) {
+          if (_photos[photoId]?.status == PhotoUploadStatus.cancelled) {
+            uploadTask.cancel();
+            return;
+          }
 
-    final uploadTask = ref.putFile(file);
+          final progress = snapshot.bytesTransferred / snapshot.totalBytes;
+          // Map progress from 0.3 to 1.0 (0.3 was already used for compression)
+          final mappedProgress = 0.3 + (progress * 0.7);
 
-    // Listen to upload progress
-    uploadTask.snapshotEvents.listen((snapshot) {
-      if (_photos[photoId]?.status == PhotoUploadStatus.cancelled) {
-        uploadTask.cancel();
-        return;
-      }
-
-      final progress = snapshot.bytesTransferred / snapshot.totalBytes;
-      // Map progress from 0.3 to 1.0 (0.3 was already used for compression)
-      final mappedProgress = 0.3 + (progress * 0.7);
-
-      _photos[photoId] = _photos[photoId]!.copyWith(progress: mappedProgress);
-      notifyListeners();
-    });
-
-    // Wait for upload to complete
-    final snapshot = await uploadTask;
-    final downloadUrl = await snapshot.ref.getDownloadURL();
-
-    return downloadUrl;
+          _photos[photoId] = _photos[photoId]!.copyWith(
+            progress: mappedProgress,
+          );
+          notifyListeners();
+        });
+      },
+    );
   }
 
   /// Clear all photos

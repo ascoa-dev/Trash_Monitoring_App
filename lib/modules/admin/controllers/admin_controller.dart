@@ -4,6 +4,7 @@ import 'package:we_monitor/app/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:we_monitor/shared/services/admin_status.dart';
 
 class AdminRecord {
   final String uid;
@@ -64,9 +65,8 @@ class AdminController extends GetxController {
     final user = _auth.currentUser;
     if (user == null) return;
 
-    final adminDoc = await _firestore.collection('admins').doc(user.uid).get();
-    isCurrentUserAdmin.value = adminDoc.exists;
-    if (adminDoc.exists) {
+    isCurrentUserAdmin.value = await AdminStatus.isAdmin();
+    if (isCurrentUserAdmin.value) {
       _bindAdmins();
     }
   }

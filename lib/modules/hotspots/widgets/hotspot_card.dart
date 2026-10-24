@@ -5,6 +5,7 @@ import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_images.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/utils/image_utils.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/user_byline.dart';
 
@@ -80,7 +81,12 @@ class HotspotCard extends StatelessWidget {
                     child:
                         hasPhoto
                             ? CachedNetworkImage(
-                              imageUrl: hotspot.photoUrls.first,
+                              imageUrl: ImageUtils.thumbOrFull(
+                                hotspot.photoUrls,
+                                hotspot.thumbUrls,
+                                0,
+                              ),
+                              fadeInDuration: const Duration(milliseconds: 150),
                               fit: BoxFit.cover,
                               memCacheWidth: 600,
                               memCacheHeight: 400,

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_monitor/app/models/cleanup_model.dart';
 import 'package:we_monitor/app/models/pending_cleanup_model.dart';
 import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
+import 'package:we_monitor/shared/drafts/form_draft.dart';
+import 'package:we_monitor/shared/services/draft_service.dart';
+import 'package:we_monitor/shared/services/location_validator.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -86,6 +90,27 @@ class CleanupFormController extends ChangeNotifier {
   String location = '';
   double? locationLatitude;
   double? locationLongitude;
+  bool locationVerified = false;
+
+  /// The chosen location, or null until the user explicitly picks one.
+  PickedLocation? get pickedLocation =>
+      (locationLatitude == null || locationLongitude == null)
+          ? null
+          : PickedLocation(
+            latitude: locationLatitude!,
+            longitude: locationLongitude!,
+            address: location,
+            verified: locationVerified,
+          );
+
+  void setPickedLocation(PickedLocation loc) {
+    location = loc.address;
+    locationLatitude = loc.latitude;
+    locationLongitude = loc.longitude;
+    locationVerified = loc.verified;
+    _locationError = null;
+    notifyListeners();
+  }
 
   String? peopleCountError;
   String? groupNameError;
@@ -115,6 +140,55 @@ class CleanupFormController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Snapshot of the whole form for draft auto-save.
+  FormDraft toDraft() => FormDraft(
+    kind: FormDraft.kindCleanup,
+    docId: cleanupDocId,
+    savedAt: DateTime.now(),
+    peopleCount: peopleCount,
+    groupName: groupName,
+    date: date,
+    location: location,
+    locationLatitude: locationLatitude,
+    locationLongitude: locationLongitude,
+    locationVerified: locationVerified,
+    selectedEnvironments: {...selectedEnvironments},
+    trashItems: {...trashItems},
+    basicInfoCompleted: _basicInfoCompleted,
+    trashCollectedCompleted: _trashCollectedCompleted,
+    photosCompleted: _photosCompleted,
+    expandedSection: _expandedSection,
+    photos: DraftService.photosOf(mediaUploadController),
+  );
+
+  /// Restores a saved draft. Must run before the section widgets are (re)built.
+  void applyDraft(FormDraft draft) {
+    _cleanupDocId = draft.docId;
+    peopleCount = draft.peopleCount;
+    groupName = draft.groupName;
+    date = draft.date;
+    location = draft.location;
+    locationLatitude = draft.locationLatitude;
+    locationLongitude = draft.locationLongitude;
+    locationVerified = draft.locationVerified;
+    selectedEnvironments
+      ..clear()
+      ..addAll(draft.selectedEnvironments);
+    trashItems
+      ..clear()
+      ..addAll(draft.trashItems);
+    _basicInfoCompleted = draft.basicInfoCompleted;
+    _trashCollectedCompleted = draft.trashCollectedCompleted;
+    _photosCompleted = draft.photosCompleted;
+    _expandedSection = draft.expandedSection;
+    DraftService.restorePhotos(
+      mediaUploadController,
+      draft.photos,
+      draft.docId,
+    );
+    notifyListeners();
+  }
+
   bool validateSection(String sectionTitle) {
     final isValid = _validateSection(sectionTitle);
     notifyListeners();
@@ -138,7 +212,7 @@ class CleanupFormController extends ChangeNotifier {
     if (peopleCount < 1) return false;
     if (groupName.trim().isEmpty) return false;
     if (date.trim().isEmpty) return false;
-    if (location.trim().isEmpty) return false;
+    if (pickedLocation == null) return false;
     return true;
   }
 
@@ -248,12 +322,9 @@ class CleanupFormController extends ChangeNotifier {
       isValid = false;
     }
 
-    final hasTextLocation = location.trim().isNotEmpty;
-    final hasCoordinates =
-        locationLatitude != null && locationLongitude != null;
-
-    if (!hasTextLocation && !hasCoordinates) {
-      locationError = 'Location is required';
+    // Coordinates are required: free text alone can't be put on the map.
+    if (pickedLocation == null) {
+      _locationError = AppStrings.locationRequired;
       isValid = false;
     }
 
@@ -389,6 +460,7 @@ class CleanupFormController extends ChangeNotifier {
       // Photos should already be uploaded by now (uploaded immediately after selection)
       // Just get the URLs
       final photoUrls = mediaUploadController.uploadedPhotoUrls;
+      final thumbUrls = mediaUploadController.uploadedThumbUrls;
       debugPrint(
         '[SubmitCleanup] Photos already uploaded: ${photoUrls.length}',
       );
@@ -406,7 +478,10 @@ class CleanupFormController extends ChangeNotifier {
         trashItems: trashItems,
         itemWeights: itemWeights,
         itemCategories: itemCategories,
-      ).copyWith(photoUrls: photoUrls.isNotEmpty ? photoUrls : null);
+      ).copyWith(
+        photoUrls: photoUrls.isNotEmpty ? photoUrls : null,
+        thumbUrls: photoUrls.isNotEmpty ? thumbUrls : null,
+      );
 
       // Use a batch for atomic operation
       final batch = firestore.batch();

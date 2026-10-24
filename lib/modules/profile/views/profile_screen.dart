@@ -4,8 +4,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:we_monitor/app/controllers/auth_controller.dart';
 import 'package:we_monitor/app/routes/app_routes.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:we_monitor/modules/achievements/achievements_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/constants/app_images.dart';
@@ -17,6 +16,7 @@ import 'package:we_monitor/modules/profile/widgets/full_image_overlay.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/widgets/app_dialog.dart';
+import 'package:we_monitor/shared/services/admin_status.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 
@@ -304,12 +304,25 @@ class ProfileScreen extends StatelessWidget {
                                 AppDimensions.profileCardSpacing,
                               ),
                             ),
-                            ProfileActionTile(
-                              icon: Icons.emoji_events_outlined,
-                              title: 'Achievements',
-                              subtitle: 'Track milestones and unlock rewards',
-                              onTap: () => Get.toNamed(AppRoutes.achievements),
-                            ),
+                            Get.isRegistered<AchievementsController>()
+                                ? Obx(() {
+                                  final c = Get.find<AchievementsController>();
+                                  return ProfileActionTile(
+                                    icon: Icons.emoji_events_outlined,
+                                    title: 'Achievements',
+                                    subtitle:
+                                        'Score ${c.allTimeScore.value} - ${c.monthScore.value} this month',
+                                    onTap:
+                                        () => Get.toNamed(AppRoutes.achievements),
+                                  );
+                                })
+                                : ProfileActionTile(
+                                  icon: Icons.emoji_events_outlined,
+                                  title: 'Achievements',
+                                  subtitle: 'Track milestones and unlock rewards',
+                                  onTap:
+                                      () => Get.toNamed(AppRoutes.achievements),
+                                ),
                             SizedBox(
                               height: math.min(
                                 SizeUtils.h(
@@ -360,7 +373,7 @@ class ProfileScreen extends StatelessWidget {
                                   () => Get.toNamed(AppRoutes.pendingHotspots),
                             ),
                             FutureBuilder<bool>(
-                              future: _isCurrentUserAdmin(),
+                              future: AdminStatus.isAdmin(),
                               builder: (context, snapshot) {
                                 if (snapshot.data != true) {
                                   return const SizedBox.shrink();
@@ -531,9 +544,9 @@ class ProfileScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     'DANGER ZONE',
-                                    style: AppTextStyles.profileCaption(context).copyWith(
-                                      color: const Color(0xFFBE123C),
-                                    ),
+                                    style: AppTextStyles.profileCaption(
+                                      context,
+                                    ).copyWith(color: const Color(0xFFBE123C)),
                                   ),
                                   const SizedBox(height: 12),
                                   OutlinedButton.icon(
@@ -541,7 +554,9 @@ class ProfileScreen extends StatelessWidget {
                                       backgroundColor: const Color(0xFFFFF1F2),
                                       foregroundColor: const Color(0xFFBE123C),
                                       side: BorderSide(
-                                        color: const Color(0xFFBE123C).withValues(alpha: 0.2),
+                                        color: const Color(
+                                          0xFFBE123C,
+                                        ).withValues(alpha: 0.2),
                                       ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(20),
@@ -552,51 +567,74 @@ class ProfileScreen extends StatelessWidget {
                                       ),
                                     ),
                                     onPressed: () {
-                                      Get.find<HapticController>().selectionClick();
+                                      Get.find<HapticController>()
+                                          .selectionClick();
                                       showDialog(
                                         context: context,
-                                        builder: (BuildContext ctx) => AlertDialog(
-                                          backgroundColor: AppColors.background,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                          title: Text(
-                                            'Confirm Request',
-                                            style: AppTextStyles.heading2(ctx).copyWith(fontSize: 18),
-                                          ),
-                                          content: Text(
-                                            'Do you really wish to proceed to the Account & Data Deletion screen?',
-                                            style: AppTextStyles.body(ctx),
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.of(ctx).pop(),
-                                              child: Text(
-                                                'Cancel',
-                                                style: AppTextStyles.body(ctx).copyWith(color: Colors.grey),
+                                        builder:
+                                            (BuildContext ctx) => AlertDialog(
+                                              backgroundColor:
+                                                  AppColors.background,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
                                               ),
-                                            ),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: const Color(0xFFBE123C),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(8),
+                                              title: Text(
+                                                'Confirm Request',
+                                                style: AppTextStyles.heading2(
+                                                  ctx,
+                                                ).copyWith(fontSize: 18),
+                                              ),
+                                              content: Text(
+                                                'Do you really wish to proceed to the Account & Data Deletion screen?',
+                                                style: AppTextStyles.body(ctx),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed:
+                                                      () =>
+                                                          Navigator.of(
+                                                            ctx,
+                                                          ).pop(),
+                                                  child: Text(
+                                                    'Cancel',
+                                                    style: AppTextStyles.body(
+                                                      ctx,
+                                                    ).copyWith(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(ctx).pop();
-                                                Get.toNamed(AppRoutes.deleteRequest);
-                                              },
-                                              child: Text(
-                                                'Confirm',
-                                                style: AppTextStyles.body(ctx).copyWith(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
+                                                ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        const Color(0xFFBE123C),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(ctx).pop();
+                                                    Get.toNamed(
+                                                      AppRoutes.deleteRequest,
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    'Confirm',
+                                                    style: AppTextStyles.body(
+                                                      ctx,
+                                                    ).copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
                                       );
                                     },
                                     icon: const Icon(
@@ -649,17 +687,6 @@ class ProfileScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<bool> _isCurrentUserAdmin() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return false;
-    final doc =
-        await FirebaseFirestore.instance
-            .collection('admins')
-            .doc(user.uid)
-            .get();
-    return doc.exists;
   }
 
   static String _normalizeCacheBustedUrl(String url) {

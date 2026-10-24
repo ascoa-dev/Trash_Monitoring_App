@@ -13,11 +13,12 @@ class GooglePlacesService {
       return dotenv.env['GOOGLE_MAPS_API_KEY'] ??
           const String.fromEnvironment('GOOGLE_MAPS_API_KEY', defaultValue: '');
     } catch (_) {
-      return const String.fromEnvironment('GOOGLE_MAPS_API_KEY', defaultValue: '');
+      return const String.fromEnvironment(
+        'GOOGLE_MAPS_API_KEY',
+        defaultValue: '',
+      );
     }
   }();
-
-  static const String _baseUrl = 'https://maps.googleapis.com/maps/api/place';
 
   /// Search for place suggestions based on user input
   /// Returns up to [maxResults] suggestions (default 3)
@@ -30,8 +31,10 @@ class GooglePlacesService {
 
     try {
       // Add components=country:cm to restrict results to Cameroon
-      final url = Uri.parse(
-        '$_baseUrl/autocomplete/json?input=$query&components=country:cm&key=$_apiKey',
+      final url = Uri.https(
+        'maps.googleapis.com',
+        '/maps/api/place/autocomplete/json',
+        {'input': query, 'components': 'country:cm', 'key': _apiKey},
       );
 
       final response = await http.get(url);
@@ -72,9 +75,16 @@ class GooglePlacesService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
+        // No address at this point (sea, lakes...): resolved, but not Cameroon.
+        if (data['status'] == 'ZERO_RESULTS') {
+          return GeocodeResult(countryCode: null, formattedAddress: '');
+        }
+
         if (data['status'] == 'OK') {
           final results = data['results'] as List;
-          if (results.isEmpty) return null;
+          if (results.isEmpty) {
+            return GeocodeResult(countryCode: null, formattedAddress: '');
+          }
 
           String? countryCode;
           for (final result in results) {
@@ -90,7 +100,8 @@ class GooglePlacesService {
 
           return GeocodeResult(
             countryCode: countryCode,
-            formattedAddress: results.first['formatted_address'] as String? ?? '',
+            formattedAddress:
+                results.first['formatted_address'] as String? ?? '',
           );
         }
       }
@@ -105,8 +116,14 @@ class GooglePlacesService {
   /// Returns coordinates (LatLng) and formatted address
   static Future<PlaceDetails?> getPlaceDetails(String placeId) async {
     try {
-      final url = Uri.parse(
-        '$_baseUrl/details/json?place_id=$placeId&key=$_apiKey',
+      final url = Uri.https(
+        'maps.googleapis.com',
+        '/maps/api/place/details/json',
+        {
+          'place_id': placeId,
+          'fields': 'geometry,formatted_address',
+          'key': _apiKey,
+        },
       );
 
       final response = await http.get(url);
@@ -121,7 +138,10 @@ class GooglePlacesService {
           return PlaceDetails(
             placeId: placeId,
             formattedAddress: result['formatted_address'] ?? '',
-            latLng: LatLng(location['lat'], location['lng']),
+            latLng: LatLng(
+              (location['lat'] as num).toDouble(),
+              (location['lng'] as num).toDouble(),
+            ),
           );
         }
       }

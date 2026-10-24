@@ -5,6 +5,9 @@ import 'package:we_monitor/app/routes/app_routes.dart';
 import 'package:we_monitor/modules/my_cleanups/controllers/my_cleanups_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/services/cleanup_delete_service.dart';
+import 'package:we_monitor/shared/services/share_service.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/custom_date_picker.dart';
@@ -88,22 +91,26 @@ class _MyCleanupsScreenState extends State<MyCleanupsScreen> {
                   runSpacing: SizeUtils.h(context, AppDimensions.smallSpacing),
                   children: [
                     _FilterChipButton(
-                      label: !hasFromDate
-                          ? 'From Date'
-                          : _formatDate(controller.fromDate.value!),
+                      label:
+                          !hasFromDate
+                              ? 'From Date'
+                              : _formatDate(controller.fromDate.value!),
                       icon: Icons.calendar_month_outlined,
                       isActive: hasFromDate,
                       onTap: () => _pickDate(isFrom: true),
                     ),
                     _FilterChipButton(
-                      label: !hasToDate
-                          ? 'To Date'
-                          : _formatDate(controller.toDate.value!),
+                      label:
+                          !hasToDate
+                              ? 'To Date'
+                              : _formatDate(controller.toDate.value!),
                       icon: Icons.calendar_month_outlined,
                       isActive: hasToDate,
                       onTap: () => _pickDate(isFrom: false),
                     ),
-                    if (hasFromDate || hasToDate || controller.searchQuery.value.isNotEmpty)
+                    if (hasFromDate ||
+                        hasToDate ||
+                        controller.searchQuery.value.isNotEmpty)
                       _FilterChipButton(
                         label: 'Clear',
                         icon: Icons.filter_alt_off_outlined,
@@ -188,10 +195,9 @@ class _FilterChipButton extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      backgroundColor: isActive ? AppColors.buttonPrimary : AppColors.dialogBackground,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      backgroundColor:
+          isActive ? AppColors.buttonPrimary : AppColors.dialogBackground,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       side: BorderSide(
         color: isActive ? AppColors.buttonPrimary : AppColors.grey300,
         width: 1,
@@ -223,10 +229,7 @@ class _CleanupCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          Get.toNamed(
-            AppRoutes.cleanupDetail,
-            arguments: cleanup,
-          );
+          Get.toNamed(AppRoutes.cleanupDetail, arguments: cleanup);
         },
         borderRadius: BorderRadius.circular(SizeUtils.r(context, 8)),
         child: Padding(
@@ -259,9 +262,7 @@ class _CleanupCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.red.shade50,
                               borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: Colors.red.shade200,
-                              ),
+                              border: Border.all(color: Colors.red.shade200),
                             ),
                             child: const Text(
                               'Flagged',
@@ -276,11 +277,31 @@ class _CleanupCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (cleanup.id != null)
+                    Builder(
+                      builder:
+                          (ctx) => IconButton(
+                            tooltip: AppStrings.shareAction,
+                            visualDensity: VisualDensity.compact,
+                            icon: const Icon(
+                              Icons.share_outlined,
+                              size: 20,
+                              color: AppColors.textAccent,
+                            ),
+                            onPressed:
+                                () => ShareService.shareCleanup(ctx, cleanup),
+                          ),
+                    ),
                 ],
               ),
-              SizedBox(height: SizeUtils.h(context, AppDimensions.smallSpacing)),
+              SizedBox(
+                height: SizeUtils.h(context, AppDimensions.smallSpacing),
+              ),
               _InfoRow(icon: Icons.calendar_today_outlined, text: cleanup.date),
-              _InfoRow(icon: Icons.location_on_outlined, text: cleanup.location),
+              _InfoRow(
+                icon: Icons.location_on_outlined,
+                text: cleanup.location,
+              ),
               _InfoRow(
                 icon: Icons.delete_outline,
                 text:
@@ -292,17 +313,27 @@ class _CleanupCard extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () {
-                      Get.toNamed(
-                        AppRoutes.cleanupDetail,
-                        arguments: cleanup,
-                      );
+                      Get.toNamed(AppRoutes.cleanupDetail, arguments: cleanup);
                     },
-                    icon: const Icon(Icons.visibility_outlined, size: 16, color: AppColors.pureWhite),
-                    label: const Text('View', style: TextStyle(color: AppColors.pureWhite)),
+                    icon: const Icon(
+                      Icons.visibility_outlined,
+                      size: 16,
+                      color: AppColors.pureWhite,
+                    ),
+                    label: const Text(
+                      'View',
+                      style: TextStyle(color: AppColors.pureWhite),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.buttonPrimary,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                       elevation: 0,
                     ),
                   ),
@@ -317,10 +348,38 @@ class _CleanupCard extends StatelessWidget {
                         Get.find<MyCleanupsController>().loadCleanups();
                       }
                     },
-                    icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.pureWhite),
-                    label: const Text('Edit Trash', style: TextStyle(color: AppColors.pureWhite)),
+                    icon: const Icon(
+                      Icons.edit_outlined,
+                      size: 16,
+                      color: AppColors.pureWhite,
+                    ),
+                    label: const Text(
+                      'Edit Trash',
+                      style: TextStyle(color: AppColors.pureWhite),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.buttonPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    onPressed: () => CleanupDeleteService.confirmAndDelete(
+                      context,
+                      cleanup,
+                    ),
+                    icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.pureWhite),
+                    label: Text(AppStrings.deleteCleanupAction, style: const TextStyle(color: AppColors.pureWhite)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade700,
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       elevation: 0,

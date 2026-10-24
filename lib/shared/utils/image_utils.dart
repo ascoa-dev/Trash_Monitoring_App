@@ -6,6 +6,15 @@ import 'package:path/path.dart' as p;
 
 /// Image compression and resizing utilities for avatar uploads
 class ImageUtils {
+  /// Thumbnail URL at [index], falling back to the full URL (old docs have
+  /// no thumbUrls, or a shorter list).
+  static String thumbOrFull(List<String> full, List<String>? thumbs, int index) {
+    if (thumbs != null && index < thumbs.length && thumbs[index].isNotEmpty) {
+      return thumbs[index];
+    }
+    return full[index];
+  }
+
   /// Compress image to WebP format with specified target size and quality
   ///
   /// [file]: Input image file

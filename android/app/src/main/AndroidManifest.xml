@@ -30,6 +30,9 @@
 
                 <!-- Firebase email action handler (password reset deep link) -->
                 <data android:scheme="https" android:host="app.ascoa-cm.org" android:pathPrefix="/action" />
+                <!-- Shared cleanup / hotspot links -->
+                <data android:scheme="https" android:host="app.ascoa-cm.org" android:pathPrefix="/cleanup/" />
+                <data android:scheme="https" android:host="app.ascoa-cm.org" android:pathPrefix="/hotspot/" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

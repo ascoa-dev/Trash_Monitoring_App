@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,11 @@ import 'package:we_monitor/app/models/cleanup_model.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/services/cleanup_delete_service.dart';
+import 'package:we_monitor/shared/services/share_service.dart';
+import 'package:we_monitor/shared/utils/image_utils.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/widgets/user_byline.dart';
 import 'package:we_monitor/shared/widgets/fullscreen_image_viewer.dart';
@@ -85,6 +90,32 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
           color: AppColors.black87,
           onPressed: () => Get.back(),
         ),
+        actions: [
+          if (cleanup.id != null)
+          Builder(
+            builder:
+                (ctx) => IconButton(
+                  tooltip: AppStrings.shareAction,
+                  icon: const Icon(
+                    Icons.share_outlined,
+                    color: AppColors.black87,
+                  ),
+                  onPressed: () => ShareService.shareCleanup(ctx, cleanup),
+                ),
+          ),
+          if (FirebaseAuth.instance.currentUser?.uid == cleanup.userId)
+            IconButton(
+              tooltip: AppStrings.deleteCleanupAction,
+              icon: const Icon(Icons.delete_outline, color: AppColors.black87),
+              onPressed: () async {
+                final deleted = await CleanupDeleteService.confirmAndDelete(
+                  context,
+                  cleanup,
+                );
+                if (deleted) Get.back();
+              },
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -319,18 +350,37 @@ class _CleanupDetailScreenState extends State<CleanupDetailScreen> {
                           ),
                         ),
                         child: GestureDetector(
-                          onTap: () => FullscreenImageViewer.show(
-                            context,
-                            imageUrl: photos[index],
-                            placeholderAsset: AppImages.hotspotPlaceholder,
-                          ),
+                          onTap:
+                              () => FullscreenImageViewer.show(
+                                context,
+                                imageUrl: photos[index],
+                                thumbUrl: ImageUtils.thumbOrFull(
+                                  photos,
+                                  cleanup.thumbUrls,
+                                  index,
+                                ),
+                                placeholderAsset: AppImages.hotspotPlaceholder,
+                              ),
                           child: CachedNetworkImage(
                             imageUrl: photos[index],
                             fit: BoxFit.cover,
                             memCacheWidth: 1080,
+                            fadeInDuration: const Duration(milliseconds: 150),
+                            // thumb (cached from the list) while full loads
                             placeholder:
-                                (c, s) =>
-                                    Container(color: AppColors.cardBackground),
+                                (c, s) => CachedNetworkImage(
+                                  imageUrl: ImageUtils.thumbOrFull(
+                                    photos,
+                                    cleanup.thumbUrls,
+                                    index,
+                                  ),
+                                  fit: BoxFit.cover,
+                                  fadeInDuration: Duration.zero,
+                                  placeholder:
+                                      (c, s) => Container(
+                                        color: AppColors.cardBackground,
+                                      ),
+                                ),
                             errorWidget:
                                 (c, s, e) => Container(
                                   color: const Color(0xFFEFF6E5),

@@ -21,6 +21,9 @@ class LocationSearchField extends StatefulWidget {
   final bool isError;
   final ValueChanged<String>? onChanged;
 
+  /// Called when the field loses focus (after the suggestion overlay closes).
+  final VoidCallback? onFocusLost;
+
   const LocationSearchField({
     super.key,
     required this.controller,
@@ -31,6 +34,7 @@ class LocationSearchField extends StatefulWidget {
     this.supportText,
     this.isError = false,
     this.onChanged,
+    this.onFocusLost,
   });
 
   @override
@@ -64,6 +68,7 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
           if (mounted) {
             _removeOverlay();
             setState(() => _suggestions = []);
+            widget.onFocusLost?.call();
           }
         });
       }

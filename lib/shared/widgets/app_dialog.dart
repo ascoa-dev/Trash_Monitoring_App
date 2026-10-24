@@ -8,6 +8,14 @@ import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/app/controllers/haptic_controller.dart';
 
+/// Extra text-button action shown under the primary button of an [AppDialog].
+class AppDialogAction {
+  final String label;
+  final VoidCallback onPressed;
+
+  const AppDialogAction({required this.label, required this.onPressed});
+}
+
 class AppDialog extends StatelessWidget {
   final String title;
   final String? body;
@@ -23,6 +31,7 @@ class AppDialog extends StatelessWidget {
   // Decorative background is internal to the widget; callers do not control it.
   final String primaryActionLabel;
   final VoidCallback onPrimaryAction;
+  final List<AppDialogAction> secondaryActions;
 
   const AppDialog({
     super.key,
@@ -39,6 +48,7 @@ class AppDialog extends StatelessWidget {
     this.decoratedHero = true,
     required this.primaryActionLabel,
     required this.onPrimaryAction,
+    this.secondaryActions = const [],
   });
 
   @override
@@ -296,6 +306,20 @@ class AppDialog extends StatelessWidget {
                               ),
                             ),
                           ),
+                          for (final action in secondaryActions)
+                            TextButton(
+                              onPressed: () {
+                                haptics.selectionClick();
+                                action.onPressed();
+                              },
+                              child: Text(
+                                action.label,
+                                style: AppTextStyles.body(context).copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textDark,
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),

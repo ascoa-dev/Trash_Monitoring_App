@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:we_monitor/app/models/pending_hotspot_model.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
 
@@ -51,18 +51,24 @@ class PendingHotspotsController extends GetxController {
       await hotspot.save();
       pendingHotspots.refresh();
 
-      final photoUrls = await _uploadPhotos(
+      final uploaded = await _uploadPhotos(
         hotspot.localId,
         hotspot.localPhotoPaths,
       );
-      if (photoUrls == null || photoUrls.isEmpty) {
+      final photoUrls = uploaded?.full;
+      if (uploaded == null || photoUrls == null || photoUrls.isEmpty) {
         throw Exception('Failed to upload hotspot photos');
       }
 
       await FirebaseFirestore.instance
           .collection('plastic_hotspots')
           .doc()
-          .set(hotspot.toFirestore(photoUrls: photoUrls));
+          .set(
+            hotspot.toFirestore(
+              photoUrls: photoUrls,
+              thumbUrls: uploaded.thumb,
+            ),
+          );
 
       final box = await Hive.openBox<PendingHotspotModel>('pending_hotspots');
       await box.delete(hotspot.localId);
@@ -81,22 +87,26 @@ class PendingHotspotsController extends GetxController {
     }
   }
 
-  Future<List<String>?> _uploadPhotos(
+  Future<({List<String> full, List<String> thumb})?> _uploadPhotos(
     String hotspotId,
     List<String> localPaths,
   ) async {
     try {
-      final urls = <String>[];
-      for (var i = 0; i < localPaths.length; i++) {
-        final file = File(localPaths[i]);
+      final full = <String>[];
+      final thumb = <String>[];
+      for (final path in localPaths) {
+        final file = File(path);
         if (!file.existsSync()) continue;
-        final ref = FirebaseStorage.instance.ref().child(
-          'hotspots/$hotspotId/photo_$i.jpg',
+        final compressed = await compressJpegPair(file);
+        final urls = await uploadJpegPair(
+          folderPath: 'hotspots/$hotspotId',
+          fullPath: compressed.full,
+          thumbPath: compressed.thumb,
         );
-        final snapshot = await ref.putFile(file);
-        urls.add(await snapshot.ref.getDownloadURL());
+        full.add(urls.full);
+        thumb.add(urls.thumb);
       }
-      return urls;
+      return (full: full, thumb: thumb);
     } catch (e) {
       debugPrint('[PendingHotspots] Error uploading photos: $e');
       return null;

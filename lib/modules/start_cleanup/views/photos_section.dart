@@ -8,6 +8,8 @@ import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_contro
 import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_form_controller.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/drafts/form_draft.dart';
+import 'package:we_monitor/shared/services/draft_service.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
@@ -62,14 +64,18 @@ class _PhotosSectionState extends State<PhotosSection> {
       if (source == ImageSource.camera) {
         final XFile? file = await _picker.pickImage(
           source: ImageSource.camera,
-          imageQuality: 100,
+          maxWidth: 2048,
+          maxHeight: 2048,
+          imageQuality: 90,
         );
         if (file != null) {
           pickedFiles = [file];
         }
       } else {
         pickedFiles = await _picker.pickMultiImage(
-          imageQuality: 100,
+          maxWidth: 2048,
+          maxHeight: 2048,
+          imageQuality: 90,
           limit: remainingSlots,
         );
       }
@@ -80,8 +86,16 @@ class _PhotosSectionState extends State<PhotosSection> {
       // Take only the number of photos we can add (fallback for platforms that don't respect limit)
       final filesToAdd = pickedFiles.take(remainingSlots).toList();
 
-      // Convert to File objects and add to controller
-      final files = filesToAdd.map((xFile) => File(xFile.path)).toList();
+      // Copy to durable storage (picker cache can be purged) and add to controller
+      final docId = widget.formController.cleanupDocId;
+      final files = <File>[
+        for (final xFile in filesToAdd)
+          await DraftService.copyPhoto(
+            FormDraft.kindCleanup,
+            docId,
+            xFile.path,
+          ),
+      ];
       await controller.addPhotos(files);
 
       // Check connectivity before attempting upload

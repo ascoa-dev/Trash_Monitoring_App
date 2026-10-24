@@ -66,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _loadHotspots();
     _loadCleanups();
+    CleanupPublicService.changes.addListener(_loadCleanups);
   }
 
   Future<void> _loadHotspots() async {
@@ -82,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    CleanupPublicService.changes.removeListener(_loadCleanups);
     _hotspotController.dispose();
     _cleanupController.dispose();
     super.dispose();
@@ -581,10 +583,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: HotspotCard(
                   hotspot: h,
-                  onTap: () => Get.toNamed(
-                    AppRoutes.hotspotDetail,
-                    arguments: h,
-                  ),
+                  onTap:
+                      () => Get.toNamed(AppRoutes.hotspotDetail, arguments: h),
                 ),
               );
             },
@@ -648,10 +648,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: CleanupCard(
                   cleanup: c,
-                  onTap: () => Get.toNamed(
-                    AppRoutes.cleanupDetail,
-                    arguments: c,
-                  ),
+                  onTap:
+                      () => Get.toNamed(AppRoutes.cleanupDetail, arguments: c),
                 ),
               );
             },
@@ -923,4 +921,3 @@ class _HomeScreenState extends State<HomeScreen> {
     return 'there';
   }
 }
-

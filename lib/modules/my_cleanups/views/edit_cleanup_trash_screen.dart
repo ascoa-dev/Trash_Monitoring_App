@@ -7,6 +7,7 @@ import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
+import 'package:we_monitor/shared/services/cleanup_delete_service.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:we_monitor/shared/widgets/floating_label_input_field.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
@@ -54,11 +55,19 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
     setState(() => _isSaving = false);
 
     if (success) {
-      SnackbarService.success('Saved', 'Trash collected was updated');
+      SnackbarService.success('Saved', 'Cleanup was updated');
       Get.back();
     } else {
-      SnackbarService.error('Error', 'Failed to update trash collected');
+      SnackbarService.error('Error', 'Failed to update cleanup');
     }
+  }
+
+  Future<void> _delete() async {
+    final deleted = await CleanupDeleteService.confirmAndDelete(
+      context,
+      cleanup,
+    );
+    if (deleted && mounted) Get.back();
   }
 
   @override
@@ -68,7 +77,7 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: Text(
-          'Edit Trash Collected',
+          'Edit Cleanup',
           style: AppTextStyles.heading2(context),
         ),
         leading: BackButton(
@@ -102,10 +111,7 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
               SizedBox(
                 height: SizeUtils.h(context, AppDimensions.cleanupSpacing16),
               ),
-              TrashCollectedSection(
-                controller: controller,
-                isEditMode: true,
-              ),
+              TrashCollectedSection(controller: controller, isEditMode: true),
               SizedBox(
                 height: SizeUtils.h(context, AppDimensions.cleanupSpacing16),
               ),
@@ -120,6 +126,23 @@ class _EditCleanupTrashScreenState extends State<EditCleanupTrashScreen> {
                   style: AppTextStyles.saveCleanUpText(
                     context,
                   ).copyWith(color: AppColors.pureWhite),
+                ),
+              ),
+              SizedBox(
+                height: SizeUtils.h(context, AppDimensions.cleanupSpacing16),
+              ),
+              OutlinedButton.icon(
+                onPressed: _isSaving ? null : _delete,
+                icon: Icon(Icons.delete_outline, color: Colors.red.shade700),
+                label: Text(
+                  AppStrings.deleteCleanupAction.toUpperCase(),
+                  style: TextStyle(
+                    color: Colors.red.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.red.shade700),
                 ),
               ),
             ],

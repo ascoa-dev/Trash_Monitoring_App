@@ -23,6 +23,7 @@ class CleanupModel {
   // Optional metadata
   final String? notes;
   final List<String>? photoUrls;
+  final List<String>? thumbUrls; // index-aligned with photoUrls
 
   // Admin flagging
   final bool flagged;
@@ -42,6 +43,7 @@ class CleanupModel {
     required this.totalWeight,
     this.notes,
     this.photoUrls,
+    this.thumbUrls,
     this.flagged = false,
   });
 
@@ -134,7 +136,11 @@ class CleanupModel {
         'categories': categoriesMap,
         'totalWeight': totalWeight,
       },
-      'metadata': {'notes': notes, 'photoUrls': photoUrls ?? []},
+      'metadata': {
+        'notes': notes,
+        'photoUrls': photoUrls ?? [],
+        'thumbUrls': thumbUrls ?? photoUrls ?? [],
+      },
       'flagged': flagged,
     };
   }
@@ -175,13 +181,14 @@ class CleanupModel {
       groupName: basicInfo['groupName'] as String,
       date: basicInfo['date'] as String,
       location: basicInfo['location'] as String,
-      locationLatitude: basicInfo['locationLatitude'] as double?,
-      locationLongitude: basicInfo['locationLongitude'] as double?,
+      locationLatitude: (basicInfo['locationLatitude'] as num?)?.toDouble(),
+      locationLongitude: (basicInfo['locationLongitude'] as num?)?.toDouble(),
       environment: trashCollected['environment'] as String,
       categories: categories,
       totalWeight: (trashCollected['totalWeight'] as num).toDouble(),
       notes: metadata['notes'] as String?,
       photoUrls: (metadata['photoUrls'] as List<dynamic>?)?.cast<String>(),
+      thumbUrls: (metadata['thumbUrls'] as List<dynamic>?)?.cast<String>(),
       flagged: data['flagged'] == true,
     );
   }
@@ -202,6 +209,7 @@ class CleanupModel {
     double? totalWeight,
     String? notes,
     List<String>? photoUrls,
+    List<String>? thumbUrls,
     bool? flagged,
   }) {
     return CleanupModel(
@@ -219,6 +227,7 @@ class CleanupModel {
       totalWeight: totalWeight ?? this.totalWeight,
       notes: notes ?? this.notes,
       photoUrls: photoUrls ?? this.photoUrls,
+      thumbUrls: thumbUrls ?? this.thumbUrls,
       flagged: flagged ?? this.flagged,
     );
   }

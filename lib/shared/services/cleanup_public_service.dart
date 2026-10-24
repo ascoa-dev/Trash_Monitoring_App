@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:we_monitor/app/models/cleanup_model.dart';
 
 class CleanupPublicService {
+  /// Bumped when a cleanup is deleted so mounted lists can reload.
+  static final ValueNotifier<int> changes = ValueNotifier(0);
+
   static Future<List<CleanupModel>> fetchPublic({int limit = 50}) async {
     try {
       final snap = await FirebaseFirestore.instance

@@ -101,6 +101,12 @@ class AnalyticsEvents {
   static const String logoutClicked = 'logout_clicked';
   static const String logoutSuccess = 'logout_success';
 
+  // ========== Deep Links ==========
+  static const String deepLinkOpened = 'deep_link_opened';
+
+  // ========== Sharing ==========
+  static const String shareTapped = 'share_tapped'; // {type}
+
   // ========== Errors (Non-Fatal) ==========
   static const String apiError = 'api_error';
   static const String networkError = 'network_error';

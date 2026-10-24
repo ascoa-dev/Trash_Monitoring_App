@@ -3,15 +3,18 @@ import 'package:get/get.dart';
 import 'package:we_monitor/app/models/achievement.dart';
 import 'package:we_monitor/modules/achievements/achievements_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
+import 'package:we_monitor/shared/services/share_service.dart';
 
 class AchievementsScreen extends StatelessWidget {
   const AchievementsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.isRegistered<AchievementsController>()
-        ? Get.find<AchievementsController>()
-        : Get.put(AchievementsController(), permanent: true);
+    final controller =
+        Get.isRegistered<AchievementsController>()
+            ? Get.find<AchievementsController>()
+            : Get.put(AchievementsController(), permanent: true);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -34,12 +37,14 @@ class AchievementsScreen extends StatelessWidget {
         child: Obx(() {
           final rows = controller.progress;
           final showLoader =
-              controller.isLoading.value && controller.stats.value.cleanups == 0;
+              controller.isLoading.value &&
+              controller.stats.value.cleanups == 0;
           if (showLoader) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(AppColors.buttonGreen),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.buttonGreen,
+                ),
               ),
             );
           }
@@ -50,16 +55,20 @@ class AchievementsScreen extends StatelessWidget {
               _SummaryCard(
                 unlocked: controller.totalUnlocked,
                 total: controller.totalPossible,
+                allTimeScore: controller.allTimeScore.value,
+                monthScore: controller.monthScore.value,
               ),
               const SizedBox(height: 18),
-              ...rows.map((p) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _AchievementCard(
-                      progress: p,
-                      // Unlocked but the celebration hasn't been seen yet.
-                      pending: p.unlockedLevel > (controller.seen[p.def.id] ?? 0),
-                    ),
-                  )),
+              ...rows.map(
+                (p) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _AchievementCard(
+                    progress: p,
+                    // Unlocked but the celebration hasn't been seen yet.
+                    pending: p.unlockedLevel > (controller.seen[p.def.id] ?? 0),
+                  ),
+                ),
+              ),
             ],
           );
         }),
@@ -71,7 +80,14 @@ class AchievementsScreen extends StatelessWidget {
 class _SummaryCard extends StatelessWidget {
   final int unlocked;
   final int total;
-  const _SummaryCard({required this.unlocked, required this.total});
+  final int allTimeScore;
+  final int monthScore;
+  const _SummaryCard({
+    required this.unlocked,
+    required this.total,
+    required this.allTimeScore,
+    required this.monthScore,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,8 +114,11 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.emoji_events_rounded,
-                  color: Colors.white, size: 30),
+              const Icon(
+                Icons.emoji_events_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
               const SizedBox(width: 10),
               const Expanded(
                 child: Text(
@@ -122,14 +141,23 @@ class _SummaryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
+          Row(
+            children: [
+              _ScoreStat(label: AppStrings.scoreAllTime, value: allTimeScore),
+              const SizedBox(width: 24),
+              _ScoreStat(label: AppStrings.scoreThisMonth, value: monthScore),
+            ],
+          ),
+          const SizedBox(height: 14),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
               value: pct,
               minHeight: 10,
               backgroundColor: Colors.white.withValues(alpha: 0.25),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(Color(0xFFFBB825)),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFFFBB825),
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -142,6 +170,36 @@ class _SummaryCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ScoreStat extends StatelessWidget {
+  final String label;
+  final int value;
+  const _ScoreStat({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$value',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+            fontSize: 22,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.9),
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -177,9 +235,7 @@ class _AchievementCard extends StatelessWidget {
         color: AppColors.pureWhite,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: maxed
-              ? def.color.withValues(alpha: 0.5)
-              : AppColors.divider,
+          color: maxed ? def.color.withValues(alpha: 0.5) : AppColors.divider,
           width: maxed ? 1.5 : 1,
         ),
         boxShadow: const [
@@ -199,9 +255,10 @@ class _AchievementCard extends StatelessWidget {
             height: 54,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: locked
-                  ? AppColors.divider
-                  : def.color.withValues(alpha: 0.15),
+              color:
+                  locked
+                      ? AppColors.divider
+                      : def.color.withValues(alpha: 0.15),
             ),
             child: Icon(
               def.icon,
@@ -234,7 +291,9 @@ class _AchievementCard extends StatelessWidget {
                             const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFBB825),
                                 borderRadius: BorderRadius.circular(20),
@@ -258,6 +317,28 @@ class _AchievementCard extends StatelessWidget {
                       maxLevel: def.maxLevel,
                       color: def.color,
                     ),
+                    if (!locked)
+                      Builder(
+                        builder:
+                            (ctx) => InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap:
+                                  () => ShareService.shareAchievement(
+                                    ctx,
+                                    def,
+                                    progress.unlockedLevel,
+                                  ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Icon(
+                                  Icons.share_outlined,
+                                  size: 20,
+                                  color: def.color,
+                                  semanticLabel: AppStrings.shareAction,
+                                ),
+                              ),
+                            ),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 2),

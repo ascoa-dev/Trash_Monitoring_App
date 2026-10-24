@@ -10,7 +10,11 @@ import 'package:we_monitor/shared/constants/app_images.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
+import 'package:we_monitor/shared/services/share_service.dart';
 import 'package:we_monitor/shared/widgets/app_dialog.dart';
+import 'package:we_monitor/shared/widgets/draft_dialogs.dart';
+import 'package:we_monitor/shared/drafts/form_draft.dart';
+import 'package:we_monitor/shared/services/draft_service.dart';
 import 'package:we_monitor/app/routes/app_routes.dart';
 import 'package:we_monitor/modules/achievements/achievements_controller.dart';
 import 'package:flutter/material.dart';
@@ -25,17 +29,93 @@ class NewCleanUpScreen extends StatefulWidget {
   State<NewCleanUpScreen> createState() => _NewCleanUpScreenState();
 }
 
-class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
+class _NewCleanUpScreenState extends State<NewCleanUpScreen>
+    with WidgetsBindingObserver {
+  late final DraftAutoSaver _saver;
+
+  // Bumped after a draft is restored so the sections rebuild (their text
+  // controllers are initialised once from the form controller).
+  int _restoreKey = 0;
+
   @override
   void initState() {
     super.initState();
     Analytics.screenView(AnalyticsEvents.cleanupStarted);
+    final controller = Get.find<CleanupFormController>();
+    _saver = DraftAutoSaver(
+      kind: FormDraft.kindCleanup,
+      sources: [controller, controller.mediaUploadController],
+      snapshot: controller.toDraft,
+    );
+    WidgetsBinding.instance.addObserver(this);
     // Open Basic Information section by default when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final controller = Get.find<CleanupFormController>();
       controller.setExpandedSection(AppStrings.basicInformation);
+      _initDraft();
     });
     Get.find<HapticController>().light();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _saver.stop();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden) {
+      _saver.flush();
+    }
+  }
+
+  /// Offers to restore a saved draft, then starts auto-saving.
+  Future<void> _initDraft() async {
+    final controller = Get.find<CleanupFormController>();
+    final draft = await DraftService.load(FormDraft.kindCleanup);
+    if (!mounted) return;
+    if (draft != null) {
+      final restore = await showDraftRestoreDialog(context, draft);
+      if (!mounted) return;
+      if (restore) {
+        controller.applyDraft(draft);
+        setState(() => _restoreKey++);
+      } else {
+        await DraftService.clear(
+          FormDraft.kindCleanup,
+          docId: draft.docId,
+          deleteFiles: true,
+        );
+      }
+    }
+    _saver.start();
+    await DraftService.recoverLostPhotos(
+      FormDraft.kindCleanup,
+      controller.cleanupDocId,
+      controller.mediaUploadController,
+    );
+  }
+
+  /// Back / cancel: leave silently when untouched, otherwise ask.
+  Future<void> _handleExit() async {
+    final controller = Get.find<CleanupFormController>();
+    if (controller.toDraft().hasContent) {
+      final choice = await showDraftExitDialog(context);
+      if (!mounted) return;
+      switch (choice) {
+        case DraftExitChoice.stay:
+          return;
+        case DraftExitChoice.keep:
+          await _saver.flush();
+        case DraftExitChoice.discard:
+          await _saver.finish();
+      }
+    }
+    _saver.stop();
+    if (mounted) Navigator.pop(context);
   }
 
   Future<void> _handleSaveCleanup(BuildContext context) async {
@@ -155,6 +235,8 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
       // Check if it was saved offline or online
       final connectivityController = Get.find<ConnectivityController>();
       final wasOnline = connectivityController.isOnline.value;
+      // Offline-saved cleanups still reference the draft's photo copies.
+      await _saver.finish(deleteFiles: wasOnline);
 
       // Success - show AppDialog and navigate home when user confirms
       if (context.mounted) {
@@ -175,6 +257,15 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
                   wasOnline
                       ? AppStrings.cleanUpSavedDialogSubtitle
                       : 'Your cleanup has been saved offline. It will be uploaded when you have internet connection. You can manage pending uploads from your profile.',
+              // Offline-saved cleanups have no shareable link yet.
+              secondaryActions: [
+                if (wasOnline)
+                  AppDialogAction(
+                    label: AppStrings.shareAction,
+                    onPressed:
+                        () => ShareService.shareCleanupById(ctx, cleanupId),
+                  ),
+              ],
               primaryActionLabel: AppStrings.cleanUpSavedDialogButton,
               onPrimaryAction: () {
                 Navigator.of(ctx).pop();
@@ -207,40 +298,46 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            physics: const ScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: IntrinsicHeight(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Header Section (scrolls with page)
-                    _buildHeaderSection(context),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _handleExit();
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const ScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Header Section (scrolls with page)
+                      _buildHeaderSection(context),
 
-                    // Expandable Sections (grows/shrinks dynamically)
-                    _buildExpandableSections(context),
+                      // Expandable Sections (grows/shrinks dynamically)
+                      _buildExpandableSections(context),
 
-                    const Spacer(),
+                      const Spacer(),
 
-                    SizedBox(
-                      height: SizeUtils.h(
-                        context,
-                        AppDimensions.cleanupSectionGapLarge,
+                      SizedBox(
+                        height: SizeUtils.h(
+                          context,
+                          AppDimensions.cleanupSectionGapLarge,
+                        ),
                       ),
-                    ),
-                    // Footer Section (scrolls with page, always at bottom)
-                    _buildFooterSection(context),
-                  ],
+                      // Footer Section (scrolls with page, always at bottom)
+                      _buildFooterSection(context),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -278,7 +375,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
                 child: IconButton(
                   onPressed: () {
                     Get.find<HapticController>().selectionClick();
-                    Navigator.pop(context);
+                    _handleExit();
                   },
                   icon: Icon(
                     Icons.arrow_back,
@@ -348,6 +445,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
     final controller = Get.find<CleanupFormController>();
 
     return Padding(
+      key: ValueKey(_restoreKey),
       padding: EdgeInsets.symmetric(
         horizontal: SizeUtils.w(
           context,
@@ -486,7 +584,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen> {
                     child: OutlinedButton(
                       onPressed: () {
                         Get.find<HapticController>().selectionClick();
-                        Navigator.pop(context);
+                        _handleExit();
                       },
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(

@@ -12,6 +12,7 @@ import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/widgets/nav_bar.dart';
 import 'package:we_monitor/app/routes/app_routes.dart';
 import 'package:we_monitor/shared/analytics/analytics_service.dart';
+import 'package:we_monitor/shared/services/deep_link_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -60,6 +61,16 @@ class _MainScreenState extends State<MainScreen> {
     _onTabShown(initial);
     // React to tab changes from anywhere (nav bar taps, "More News" link).
     ever<int>(_nav.currentIndex, _onTabShown);
+    // Open any shared link that arrived before we were signed in / mounted.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => DeepLinkService.homeMounted(),
+    );
+  }
+
+  @override
+  void dispose() {
+    DeepLinkService.homeDisposed();
+    super.dispose();
   }
 
   void _onTabShown(int index) {

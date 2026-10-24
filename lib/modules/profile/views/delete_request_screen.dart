@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/constants/app_images.dart';
+import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
@@ -54,7 +55,8 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
       }
 
       await FirebaseFirestore.instance.collection('delete_requests').add({
-        'email': _emailController.text.trim().toLowerCase(),
+        'email': (user.email ?? '').trim().toLowerCase(),
+        'userId': user.uid,
         'requestType': _requestType,
         'resolved': false,
         'createdAt': FieldValue.serverTimestamp(),
@@ -65,7 +67,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
         'Request Submitted',
         'Your request for $_requestType has been successfully registered.',
       );
-      
+
       // Go back to the profile screen
       Get.back();
     } catch (e) {
@@ -87,6 +89,7 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
   @override
   Widget build(BuildContext context) {
     final pad = SizeUtils.w(context, AppDimensions.screenPadding);
+    final hasEmail = _emailController.text.trim().isNotEmpty;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -103,7 +106,18 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: !hasEmail
+            ? Center(
+                child: Padding(
+                  padding: EdgeInsets.all(pad),
+                  child: Text(
+                    AppStrings.deleteRequestNoEmail,
+                    style: AppTextStyles.bodySecondary(context),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+            : SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: pad, vertical: 16.0),
             child: Form(
@@ -118,17 +132,17 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Heading
                   Text(
                     'Account & Data Deletion',
-                    style: AppTextStyles.heading2(context).copyWith(
-                      fontSize: SizeUtils.h(context, 20),
-                    ),
+                    style: AppTextStyles.heading2(
+                      context,
+                    ).copyWith(fontSize: SizeUtils.h(context, 20)),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Description
                   Text(
                     'Submit a request to permanently delete your ASCOA account or associated trash monitoring records.',
@@ -152,9 +166,9 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                   TextFormField(
                     controller: _emailController,
                     readOnly: true,
-                    style: AppTextStyles.bodySecondary(context).copyWith(
-                      color: Colors.grey[600],
-                    ),
+                    style: AppTextStyles.bodySecondary(
+                      context,
+                    ).copyWith(color: Colors.grey[600]),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.grey[100],
@@ -197,7 +211,9 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                     items: const [
                       DropdownMenuItem(
                         value: 'Account Deletion',
-                        child: Text('Account Deletion (Delete credentials & profile)'),
+                        child: Text(
+                          'Account Deletion (Delete credentials & profile)',
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'Data Deletion',
@@ -209,7 +225,9 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                         _requestType = val;
                       });
                     },
-                    validator: (val) => val == null ? 'Please select a request type' : null,
+                    validator:
+                        (val) =>
+                            val == null ? 'Please select a request type' : null,
                   ),
                   const SizedBox(height: 24),
 
@@ -248,7 +266,9 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 'Processing this request will result in permanent loss of your data. Once completed, you will not be able to recover your account history, cleanups, or stats.',
-                                style: AppTextStyles.bodySecondary(context).copyWith(
+                                style: AppTextStyles.bodySecondary(
+                                  context,
+                                ).copyWith(
                                   color: const Color(0xFFBE123C),
                                   fontSize: 11,
                                   height: 1.4,
@@ -266,9 +286,9 @@ class _DeleteRequestScreenState extends State<DeleteRequestScreen> {
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : PrimaryButton(
-                          label: 'Submit Deletion Request',
-                          onPressed: _submitRequest,
-                        ),
+                        label: 'Submit Deletion Request',
+                        onPressed: _submitRequest,
+                      ),
                 ],
               ),
             ),

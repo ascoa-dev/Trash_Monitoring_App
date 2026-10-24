@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 /// How an achievement's live value behaves.
 enum AchievementKind {
-  /// Value only grows (weight, items, cleanups, days...). Unlock is permanent
-  /// and never regresses.
+  /// Value follows the user's current data (weight, items, cleanups, days...).
+  /// The level is recomputed each time, so deleting a cleanup can lower it.
   cumulative,
 
   /// Value can drop (current day streak). Unlocked levels stay, but the live
@@ -53,6 +53,16 @@ class AchievementDef {
       }
     }
     return level;
+  }
+
+  /// Level to persist given the live [value] and the [stored] level.
+  /// Cumulative levels track current data exactly (deleting a cleanup can lower
+  /// them); streak levels never regress once unlocked.
+  int resolveLevel(num value, int stored) {
+    final computed = levelFor(value);
+    return kind == AchievementKind.streak && stored > computed
+        ? stored
+        : computed;
   }
 }
 
@@ -123,7 +133,7 @@ class AchievementStats {
 class AchievementProgress {
   final AchievementDef def;
 
-  /// Highest level ever unlocked (persisted, monotonic).
+  /// Currently unlocked level (persisted; streak levels never regress).
   final int unlockedLevel;
 
   /// Current live value of the metric.
@@ -138,8 +148,7 @@ class AchievementProgress {
   bool get isMaxed => unlockedLevel >= def.maxLevel;
 
   /// Threshold of the next level, or null when maxed.
-  num? get nextThreshold =>
-      isMaxed ? null : def.thresholds[unlockedLevel];
+  num? get nextThreshold => isMaxed ? null : def.thresholds[unlockedLevel];
 
   /// Threshold of the level currently in progress' floor (previous unlocked).
   num get currentFloor =>

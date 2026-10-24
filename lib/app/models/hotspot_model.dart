@@ -7,6 +7,7 @@ class HotspotModel {
   final double? latitude;
   final double? longitude;
   final List<String> photoUrls;
+  final List<String>? thumbUrls; // index-aligned with photoUrls
   final String? notes;
   final String status;
   final DateTime? createdAt;
@@ -18,6 +19,7 @@ class HotspotModel {
     this.latitude,
     this.longitude,
     required this.photoUrls,
+    this.thumbUrls,
     this.notes,
     required this.status,
     this.createdAt,
@@ -33,6 +35,10 @@ class HotspotModel {
       latitude: (location['latitude'] as num?)?.toDouble(),
       longitude: (location['longitude'] as num?)?.toDouble(),
       photoUrls: List<String>.from(data['photoUrls'] as List? ?? []),
+      thumbUrls:
+          data['thumbUrls'] == null
+              ? null
+              : List<String>.from(data['thumbUrls'] as List),
       notes: data['notes'] as String?,
       status: (data['status'] as String?) ?? 'reported',
       createdAt: ts?.toDate(),

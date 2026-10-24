@@ -59,7 +59,8 @@ import 'shared/controllers/connectivity_controller.dart';
 import 'app/models/pending_cleanup_model.dart';
 import 'app/models/pending_hotspot_model.dart';
 import 'app/models/cached_cleanup_model.dart';
-import 'package:app_links/app_links.dart';
+import 'package:we_monitor/shared/services/deep_link_service.dart';
+import 'package:we_monitor/modules/home/views/shared_link_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
@@ -109,43 +110,11 @@ void main() async {
   Get.put(CitiesController());
   // Register ConnectivityController
   Get.put(ConnectivityController(), permanent: true);
-  await _initDeepLinks();
+  DeepLinkService.init();
   runApp(const MyApp());
-}
-
-final AppLinks _appLinks = AppLinks();
-
-Future<void> _initDeepLinks() async {
-  try {
-    final initialUri = await _appLinks.getInitialLink();
-    if (initialUri != null) {
-      debugPrint('Initial URI: $initialUri');
-      _handleIncomingUri(initialUri);
-    }
-    _appLinks.uriLinkStream.listen((Uri? uri) {
-      if (uri != null) _handleIncomingUri(uri);
-    });
-  } catch (e) {
-    debugPrint('Error initializing deep links: $e');
-  }
-}
-
-void _handleIncomingUri(Uri uri) {
-  debugPrint('Received deep link: $uri');
-
-  final host = uri.host;
-  final mode = uri.queryParameters['mode'];
-  final oobCode = uri.queryParameters['oobCode'];
-
-  if (host == 'app.ascoa-cm.org' &&
-      mode == 'resetPassword' &&
-      oobCode != null &&
-      oobCode.trim().isNotEmpty) {
-    Get.offAllNamed(AppRoutes.resetPassword, arguments: {'oobCode': oobCode});
-  } else {
-    debugPrint('Invalid deep link parameters. Redirecting to home.');
-    Get.offAllNamed(AppRoutes.authGate);
-  }
+  WidgetsBinding.instance.addPostFrameCallback(
+    (_) => DeepLinkService.markAppReady(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -282,6 +251,10 @@ class MyApp extends StatelessWidget {
             GetPage(
               name: AppRoutes.cleanupDetail,
               page: () => const CleanupDetailScreen(),
+            ),
+            GetPage(
+              name: AppRoutes.sharedLink,
+              page: () => const SharedLinkScreen(),
             ),
             GetPage(
               name: AppRoutes.cleanupList,

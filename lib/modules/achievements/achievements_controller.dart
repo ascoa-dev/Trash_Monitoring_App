@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:we_monitor/app/models/achievement.dart';
+import 'package:we_monitor/app/models/score.dart';
 import 'package:we_monitor/modules/achievements/achievement_celebration_dialog.dart';
 
 /// A level that was just unlocked, awaiting its celebration.
@@ -17,7 +18,8 @@ class UnlockedEvent {
 ///
 /// Persisted under `users/{uid}.achievements` as
 /// `{ id: { level, seen, updatedAt } }` where:
-///   - `level` = highest unlocked level (monotonic).
+///   - `level` = current level (cumulative: recomputed from live data, so it can
+///     drop when data is deleted; streak: never regresses).
 ///   - `seen`  = highest level whose celebration was actually rendered to the
 ///     user. A celebration is pending whenever `level > seen`, so an unlock
 ///     that was earned while the app was closed (e.g. via the admin backfill)
@@ -34,17 +36,24 @@ class AchievementsController extends GetxController {
   /// Persisted highest *seen* (celebrated) level per achievement id.
   final RxMap<String, int> seen = <String, int>{}.obs;
 
+  /// Leaderboard-style score (see score.dart).
+  final RxInt allTimeScore = 0.obs;
+  final RxInt monthScore = 0.obs;
+
   bool _celebrating = false;
   final List<UnlockedEvent> _queue = [];
 
   /// Progress rows in catalogue order, for the screen.
-  List<AchievementProgress> get progress => Achievements.all
-      .map((def) => AchievementProgress(
-            def: def,
-            unlockedLevel: unlocked[def.id] ?? 0,
-            value: stats.value.valueFor(def.id),
-          ))
-      .toList();
+  List<AchievementProgress> get progress =>
+      Achievements.all
+          .map(
+            (def) => AchievementProgress(
+              def: def,
+              unlockedLevel: unlocked[def.id] ?? 0,
+              value: stats.value.valueFor(def.id),
+            ),
+          )
+          .toList();
 
   int get totalUnlocked =>
       Achievements.all.fold(0, (acc, d) => acc + (unlocked[d.id] ?? 0));
@@ -62,9 +71,10 @@ class AchievementsController extends GetxController {
   /// pending celebrations. Call after a successful cleanup/hotspot submission
   /// and on app start.
   static Future<void> checkAfterActivity() async {
-    final ctrl = Get.isRegistered<AchievementsController>()
-        ? Get.find<AchievementsController>()
-        : Get.put(AchievementsController(), permanent: true);
+    final ctrl =
+        Get.isRegistered<AchievementsController>()
+            ? Get.find<AchievementsController>()
+            : Get.put(AchievementsController(), permanent: true);
     await ctrl.evaluate();
   }
 
@@ -94,6 +104,31 @@ class AchievementsController extends GetxController {
       final computed = _computeStats(cleanupDocs, hotspotDocs.length);
       stats.value = computed;
 
+      final now = DateTime.now();
+      final monthStats = _computeStats(
+        cleanupDocs.where((d) {
+          final basic =
+              ((d.data() as Map<String, dynamic>)['basicInfo']
+                  as Map<String, dynamic>?) ??
+              const {};
+          return _inMonth(
+            _parseDdMmYyyy(basic['date'] as String?) ??
+                _timestampDate((d.data() as Map<String, dynamic>)['createdAt']),
+            now,
+          );
+        }).toList(),
+        hotspotDocs
+            .where(
+              (d) => _inMonth(
+                _timestampDate((d.data() as Map<String, dynamic>)['createdAt']),
+                now,
+              ),
+            )
+            .length,
+      );
+      allTimeScore.value = Score.allTime(computed);
+      monthScore.value = Score.monthly(monthStats);
+
       // Load persisted { level, seen } per achievement.
       final userData = userSnap.data() as Map<String, dynamic>?;
       final storedRaw =
@@ -113,10 +148,13 @@ class AchievementsController extends GetxController {
       final events = <UnlockedEvent>[];
       for (final def in Achievements.all) {
         final prevSeen = storedSeen[def.id] ?? 0;
-        final computedLevel = def.levelFor(computed.valueFor(def.id));
-        final level = computedLevel;
+        final level = def.resolveLevel(
+          computed.valueFor(def.id),
+          storedLevel[def.id] ?? 0,
+        );
         newLevel[def.id] = level;
-        // If the level was downgraded below what they have seen, reduce seen level to match
+        // If the level dropped below what they have seen, clamp seen down so
+        // re-earning celebrates again (and a decrease never celebrates).
         final adjustedSeen = prevSeen > level ? level : prevSeen;
         newSeen[def.id] = adjustedSeen;
         // Pending if the unlocked level is ahead of what the user has seen.
@@ -128,8 +166,9 @@ class AchievementsController extends GetxController {
       seen.value = newSeen;
 
       // Persist level and seen changes
-      final changed = newLevel.entries.any((e) => (storedLevel[e.key] ?? 0) != e.value) ||
-                      newSeen.entries.any((e) => (storedSeen[e.key] ?? 0) != e.value);
+      final changed =
+          newLevel.entries.any((e) => (storedLevel[e.key] ?? 0) != e.value) ||
+          newSeen.entries.any((e) => (storedSeen[e.key] ?? 0) != e.value);
       if (changed) await _persistLevels(db, uid, newLevel, newSeen);
 
       if (events.isNotEmpty) {
@@ -159,10 +198,9 @@ class AchievementsController extends GetxController {
         'updatedAt': FieldValue.serverTimestamp(),
       };
     });
-    await db.collection('users').doc(uid).set(
-      {'achievements': payload},
-      SetOptions(merge: true),
-    );
+    await db.collection('users').doc(uid).set({
+      'achievements': payload,
+    }, SetOptions(merge: true));
   }
 
   /// Mark an achievement's celebration as seen once the card is dismissed, so
@@ -177,14 +215,11 @@ class AchievementsController extends GetxController {
     seen[id] = level;
     seen.refresh();
     try {
-      await db.collection('users').doc(uid).set(
-        {
-          'achievements': {
-            id: {'seen': level, 'updatedAt': FieldValue.serverTimestamp()},
-          },
+      await db.collection('users').doc(uid).set({
+        'achievements': {
+          id: {'seen': level, 'updatedAt': FieldValue.serverTimestamp()},
         },
-        SetOptions(merge: true),
-      );
+      }, SetOptions(merge: true));
     } catch (e) {
       debugPrint('[Achievements] markSeen error: $e');
     }
@@ -194,22 +229,26 @@ class AchievementsController extends GetxController {
     if (_celebrating || _queue.isEmpty) return;
     _celebrating = true;
     final event = _queue.removeAt(0);
-    showAchievementCelebration(event, onDismiss: () async {
-      // The card was actually rendered and dismissed → record it as seen.
-      await _markSeen(db, uid, event.def.id, event.level);
-      _celebrating = false;
-      _drainQueue(db, uid);
-    });
+    showAchievementCelebration(
+      event,
+      onDismiss: () async {
+        // The card was actually rendered and dismissed → record it as seen.
+        await _markSeen(db, uid, event.def.id, event.level);
+        _celebrating = false;
+        _drainQueue(db, uid);
+      },
+    );
   }
 
   AchievementStats _computeStats(
     List<QueryDocumentSnapshot> cleanups,
     int hotspotCount,
   ) {
-    final unflaggedCleanups = cleanups.where((doc) {
-      final data = doc.data() as Map<String, dynamic>?;
-      return data != null && data['flagged'] != true;
-    }).toList();
+    final unflaggedCleanups =
+        cleanups.where((doc) {
+          final data = doc.data() as Map<String, dynamic>?;
+          return data != null && data['flagged'] != true;
+        }).toList();
 
     double totalWeight = 0;
     int totalItems = 0;
@@ -221,7 +260,8 @@ class AchievementsController extends GetxController {
     for (final doc in unflaggedCleanups) {
       final data = doc.data() as Map<String, dynamic>;
       final basic = (data['basicInfo'] as Map<String, dynamic>?) ?? const {};
-      final trash = (data['trashCollected'] as Map<String, dynamic>?) ?? const {};
+      final trash =
+          (data['trashCollected'] as Map<String, dynamic>?) ?? const {};
 
       totalWeight += ((trash['totalWeight'] as num?) ?? 0).toDouble();
       volunteers += ((basic['peopleCount'] as num?) ?? 0).toInt();
@@ -290,6 +330,12 @@ class AchievementsController extends GetxController {
     }
     return streak;
   }
+
+  static DateTime? _timestampDate(dynamic v) =>
+      v is Timestamp ? v.toDate() : null;
+
+  static bool _inMonth(DateTime? d, DateTime now) =>
+      d != null && d.month == now.month && d.year == now.year;
 
   static DateTime? _parseDdMmYyyy(String? date) {
     if (date == null) return null;

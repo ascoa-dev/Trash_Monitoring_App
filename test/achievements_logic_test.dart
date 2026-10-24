@@ -91,4 +91,13 @@ void main() {
     expect(s.valueFor('streak_master'), 2);
     expect(s.valueFor('mobilizer'), 22);
   });
+
+  test('cumulative level can drop, streak level never regresses', () {
+    final champ = Achievements.byId('cleanup_champion'); // [1,5,...]
+    final streak = Achievements.byId('streak_master'); // [3,5,...]
+    expect(champ.resolveLevel(4, 2), 1);
+    expect(champ.resolveLevel(0, 1), 0);
+    expect(streak.resolveLevel(0, 2), 2);
+    expect(streak.resolveLevel(5, 1), 2);
+  });
 }

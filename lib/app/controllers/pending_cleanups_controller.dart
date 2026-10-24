@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:we_monitor/app/models/pending_cleanup_model.dart';
 import 'package:we_monitor/app/models/cleanup_model.dart';
+import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
 
@@ -54,12 +54,15 @@ class PendingCleanupsController extends GetxController {
       pendingCleanups.refresh();
 
       List<String>? photoUrls;
+      List<String>? thumbUrls;
       if (cleanup.localPhotoPaths != null &&
           cleanup.localPhotoPaths!.isNotEmpty) {
-        photoUrls = await _uploadPhotos(
+        final uploaded = await _uploadPhotos(
           cleanup.localId,
           cleanup.localPhotoPaths!,
         );
+        photoUrls = uploaded?.full;
+        thumbUrls = uploaded?.thumb;
         if (photoUrls == null) {
           cleanup.isUploading = false;
           cleanup.uploadError = 'Failed to upload photos';
@@ -85,7 +88,11 @@ class PendingCleanupsController extends GetxController {
         trashItems: cleanup.trashItems,
         itemWeights: cleanup.itemWeights,
         itemCategories: cleanup.itemCategories,
-      ).copyWith(photoUrls: photoUrls, createdAt: cleanup.createdAt);
+      ).copyWith(
+        photoUrls: photoUrls,
+        thumbUrls: thumbUrls,
+        createdAt: cleanup.createdAt,
+      );
 
       final batch = firestore.batch();
 
@@ -125,15 +132,15 @@ class PendingCleanupsController extends GetxController {
     }
   }
 
-  Future<List<String>?> _uploadPhotos(
+  Future<({List<String> full, List<String> thumb})?> _uploadPhotos(
     String cleanupId,
     List<String> localPaths,
   ) async {
     try {
-      final photoUrls = <String>[];
+      final full = <String>[];
+      final thumb = <String>[];
 
-      for (int i = 0; i < localPaths.length; i++) {
-        final localPath = localPaths[i];
+      for (final localPath in localPaths) {
         final file = File(localPath);
 
         if (!file.existsSync()) {
@@ -141,18 +148,17 @@ class PendingCleanupsController extends GetxController {
           continue;
         }
 
-        final storageRef = FirebaseStorage.instance.ref().child(
-          'cleanups/$cleanupId/photo_$i.jpg',
+        final compressed = await compressJpegPair(file);
+        final urls = await uploadJpegPair(
+          folderPath: 'cleanups/$cleanupId',
+          fullPath: compressed.full,
+          thumbPath: compressed.thumb,
         );
-
-        final uploadTask = storageRef.putFile(file);
-        final snapshot = await uploadTask;
-        final downloadUrl = await snapshot.ref.getDownloadURL();
-
-        photoUrls.add(downloadUrl);
+        full.add(urls.full);
+        thumb.add(urls.thumb);
       }
 
-      return photoUrls;
+      return (full: full, thumb: thumb);
     } catch (e) {
       debugPrint('[PendingCleanups] Error uploading photos: $e');
       return null;

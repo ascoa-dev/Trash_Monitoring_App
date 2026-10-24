@@ -110,7 +110,10 @@ class PendingCleanupModel extends HiveObject {
     );
   }
 
-  CleanupModel toCleanupModel({List<String>? uploadedPhotoUrls}) {
+  CleanupModel toCleanupModel({
+    List<String>? uploadedPhotoUrls,
+    List<String>? uploadedThumbUrls,
+  }) {
     return CleanupModel.fromFormData(
       userId: userId,
       peopleCount: peopleCount,
@@ -123,6 +126,6 @@ class PendingCleanupModel extends HiveObject {
       trashItems: trashItems,
       itemWeights: itemWeights,
       itemCategories: itemCategories,
-    ).copyWith(photoUrls: uploadedPhotoUrls);
+    ).copyWith(photoUrls: uploadedPhotoUrls, thumbUrls: uploadedThumbUrls);
   }
 }

@@ -133,6 +133,13 @@ class StatsController extends GetxController {
     }
   }
 
+  /// Drop a deleted cleanup from memory (the Hive entry is removed by the caller).
+  void removeCleanup(String id) {
+    allCleanups.removeWhere((c) => c.id == id);
+    _updateAvailableDates();
+    applyFilters();
+  }
+
   Future<void> fetchCleanups() async {
     try {
       isLoading.value = true;
@@ -174,7 +181,7 @@ class StatsController extends GetxController {
                   int.parse(partsA[2]),
                   int.parse(partsA[1]),
                   int.parse(partsA[0]),
-                  );
+                );
                 final dateB = DateTime(
                   int.parse(partsB[2]),
                   int.parse(partsB[1]),
