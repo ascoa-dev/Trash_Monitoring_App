@@ -1,27 +1,29 @@
 #!/bin/sh
-# Xcode Cloud: runs after the repo is cloned, before the archive build.
-# Installs Flutter, generates the iOS config Flutter's build phases need,
-# and installs CocoaPods (which completes Runner.xcworkspace).
-set -e
+# Xcode Cloud: install Flutter + CocoaPods and generate everything Flutter keeps out of git.
+set -ex
 
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 
-# Same Flutter version as the GitHub release workflow.
 git clone https://github.com/flutter/flutter.git --depth 1 -b 3.44.2 "$HOME/flutter"
 export PATH="$PATH:$HOME/flutter/bin"
+
+# flutter build checks for CocoaPods, so install it first.
+HOMEBREW_NO_AUTO_UPDATE=1 brew install cocoapods
+
 flutter precache --ios
 
-# .env is a declared asset but is gitignored; release builds read the Maps
-# key from --dart-define instead, so an empty file is enough.
+# .env is a pubspec asset but gitignored.
 touch .env
-
 flutter pub get
-# Writes ios/Flutter/Generated.xcconfig (version from pubspec, dart-defines).
-# Set GOOGLE_MAPS_API_KEY as a secret environment variable in the workflow.
+
+# Generated.xcconfig + the plugin Swift package (Flutter/ephemeral).
 flutter build ios --config-only --release \
   --dart-define=GOOGLE_MAPS_API_KEY="${GOOGLE_MAPS_API_KEY:-}"
 
-HOMEBREW_NO_AUTO_UPDATE=1 brew install cocoapods
-cd ios && pod install
+cd ios
+pod install
+
+# Xcode Cloud disables automatic SwiftPM resolution and requires Package.resolved.
+xcodebuild -resolvePackageDependencies -workspace Runner.xcworkspace -scheme Runner
 
 exit 0
