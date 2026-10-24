@@ -152,3 +152,6 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/ASCOA/Icon.png"
+  # App Store rejects icons with transparency (ITMS-90717)
+  remove_alpha_ios: true
+  background_color_ios: "#4C7425"
