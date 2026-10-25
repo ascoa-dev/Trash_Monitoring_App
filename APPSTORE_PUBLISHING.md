@@ -75,7 +75,7 @@ Below is the technical audit of recent repository changes in `Trash_Monitoring_A
 
 ## 📱 iOS App Store What's New & Release Notes
 
-The notes for the version being released are in `store_listings/appstore/<en|fr>/changelog.md` (and `store_listings/playstore/<en|fr>/changelog.md` for Play). Each file holds only the current version, so paste it as is. See `AGENTS.md` → "Store listings".
+The notes for the version being released are in `store_listings/appstore/<en|fr>/changelog.md` (and `store_listings/playstore/changelog.txt` for Play, all languages in one file). Each file holds only the current version, so paste it as is. See `AGENTS.md` → "Store listings".
 
 ---
 
