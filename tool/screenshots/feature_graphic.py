@@ -43,7 +43,7 @@ def make(lang):
 
     # Phones on the right, tilted and running off the bottom edge.
     for name, x, y, angle, width in [("04_map", 0.885, 0.22, -8, 0.185), ("01_home", 0.715, 0.13, 6, 0.20)]:
-        shot = Image.open(HERE / "raw" / "phone" / lang / f"{name}.png").convert("RGB")
+        shot = Image.open(APP / "store_listings" / "raw" / "phone" / lang / f"{name}.png").convert("RGB")
         dev, _ = framed(shot, round(w * width))
         dev = dev.rotate(angle, resample=Image.BICUBIC, expand=True)
         img.alpha_composite(dev, (round(w * x - dev.width / 2), round(h * y)))

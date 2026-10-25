@@ -29,6 +29,7 @@ Everything uploaded to the stores lives in `store_listings/`, ready to copy and 
 ```
 store_listings/
   icon_512.png, icon_1024.png            shared icons (Play icon / App Store reference)
+  raw/<phone|tablet_7|tablet_10>/<en|fr>/  unedited emulator captures the screenshots are built from
   playstore/<en|fr>/
     short_description.txt                max 80 chars
     full_description.txt                 max 4000 chars
@@ -39,7 +40,7 @@ store_listings/
   appstore/<en|fr>/
     subtitle.txt (max 30), promotional_text.txt (max 170), keywords.txt (max 100),
     description.txt (max 4000), changelog.md ("What's New")
-    screenshots/iphone_6.9|ipad_13/
+    screenshots/iphone_6.3|ipad_13/
 ```
 
 - EN and FR always match 1:1. Change one language, change the other.
