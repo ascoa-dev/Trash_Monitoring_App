@@ -1,0 +1,10 @@
+{
+  "name": "we-monitor-store-screenshots",
+  "private": true,
+  "type": "module",
+  "description": "Seeds local Firebase emulators with demo data for store screenshots (never touches production)",
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "sharp": "^0.34.0"
+  }
+}

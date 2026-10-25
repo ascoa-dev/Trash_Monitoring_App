@@ -47,9 +47,17 @@ class PrimaryButton extends StatelessWidget {
           haptics.light();
           onPressed();
         },
-        child: Text(
-          label,
-          style: labelStyle ?? AppTextStyles.buttonPrimaryText(context),
+        // Long labels (e.g. French) shrink to one line instead of overflowing
+        // the fixed-size button.
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              style: labelStyle ?? AppTextStyles.buttonPrimaryText(context),
+            ),
+          ),
         ),
       ),
     );

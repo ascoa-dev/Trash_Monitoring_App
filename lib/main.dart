@@ -21,6 +21,8 @@ import 'package:we_monitor/modules/pending_cleanups/bindings/pending_cleanups_bi
 import 'package:we_monitor/shared/analytics/analytics_service.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:croppy/croppy.dart' as croppy;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +81,14 @@ void main() async {
     persistenceEnabled: true,
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
   );
+
+  // Store screenshots: `--dart-define=USE_EMULATOR=true` points the app at the
+  // local Firebase emulators seeded by tool/screenshots (needs `adb reverse`).
+  if (kDebugMode && const bool.fromEnvironment('USE_EMULATOR')) {
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8085);
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+  }
 
   if (kDebugMode) {
     await dotenv.load(fileName: ".env").catchError((_) {

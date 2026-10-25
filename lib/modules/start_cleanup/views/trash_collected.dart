@@ -60,43 +60,10 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
 
   /// Lets the user type a count instead of tapping +/- repeatedly.
   Future<void> _editCount(String itemName, int currentCount) async {
-    final input = TextEditingController(text: '$currentCount')
-      ..selection = TextSelection(
-        baseOffset: 0,
-        extentOffset: '$currentCount'.length,
-      );
-    void submit(BuildContext ctx) =>
-        Navigator.of(ctx).pop(int.tryParse(input.text.trim()) ?? 0);
     final result = await showDialog<int>(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: Text(TrashNames.display(itemName)),
-            content: TextField(
-              controller: input,
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.done,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(5),
-              ],
-              decoration: InputDecoration(labelText: 'cleanup.enterCount'.tr),
-              onSubmitted: (_) => submit(ctx),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: Text(AppStrings.cancel),
-              ),
-              TextButton(
-                onPressed: () => submit(ctx),
-                child: Text('cleanup.countSave'.tr),
-              ),
-            ],
-          ),
+      builder: (_) => _CountDialog(itemName: itemName, count: currentCount),
     );
-    input.dispose();
     if (result != null && result != currentCount) {
       _onItemCountChanged(itemName, result);
     }
@@ -766,6 +733,64 @@ class _TrashCollectedSectionState extends State<TrashCollectedSection> {
     // Move to next section (Photos)
     widget.controller.setExpandedSection(
       CleanupSectionIds.photosVideosOptional,
+    );
+  }
+}
+
+/// Count entry dialog. Owns its controller so it is disposed only after the
+/// route (and its exit animation) is gone.
+class _CountDialog extends StatefulWidget {
+  final String itemName;
+  final int count;
+  const _CountDialog({required this.itemName, required this.count});
+
+  @override
+  State<_CountDialog> createState() => _CountDialogState();
+}
+
+class _CountDialogState extends State<_CountDialog> {
+  late final TextEditingController _input = TextEditingController(
+    text: '${widget.count}',
+  )..selection = TextSelection(
+    baseOffset: 0,
+    extentOffset: '${widget.count}'.length,
+  );
+
+  void _submit() =>
+      Navigator.of(context).pop(int.tryParse(_input.text.trim()) ?? 0);
+
+  @override
+  void dispose() {
+    _input.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(TrashNames.display(widget.itemName)),
+      content: TextField(
+        controller: _input,
+        autofocus: true,
+        keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.done,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(5),
+        ],
+        decoration: InputDecoration(labelText: 'cleanup.enterCount'.tr),
+        onSubmitted: (_) => _submit(),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(AppStrings.cancel),
+        ),
+        TextButton(
+          onPressed: _submit,
+          child: Text('cleanup.countSave'.tr),
+        ),
+      ],
     );
   }
 }
