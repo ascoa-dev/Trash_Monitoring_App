@@ -75,68 +75,7 @@ Below is the technical audit of recent repository changes in `Trash_Monitoring_A
 
 ## 📱 iOS App Store What's New & Release Notes
 
-Copy and paste into **"What's New in This Version"** in App Store Connect / Play Console. Add each language separately.
-
-### 1.1.1
-
-**English (U.S.)**
-
-```text
-• Tap the number next to any trash item to type the amount directly – no more tapping + and − over and over
-• Trash categories no longer close when you tap inside them
-```
-
-**French**
-
-```text
-• Touchez le nombre à côté d'un déchet pour saisir directement la quantité – plus besoin d'appuyer encore et encore sur + et −
-• Les catégories de déchets ne se ferment plus quand vous touchez à l'intérieur
-```
-
-### 1.1.0
-
-**English (U.S.)**
-
-```text
-• Full French translation – switch language anytime
-• Weekly streaks: log a cleanup or report a hotspot each week to keep yours going
-• Offline uploads now sync automatically and resume where they stopped, with no duplicates
-• Hotspot reports can be saved offline too
-• You're told if a saved photo has gone missing; the rest still upload
-• Clearer achievement progress bars
-• Bug fixes and performance improvements
-```
-
-**French**
-
-```text
-• Application entièrement traduite en français
-• Séries hebdomadaires : un nettoyage ou un point noir par semaine pour garder votre série
-• Envois hors ligne automatiques, reprise là où ils s'étaient arrêtés, sans doublons
-• Points noirs enregistrables hors ligne
-• Alerte si une photo a disparu, les autres sont envoyées
-• Barres de progression des succès plus claires
-• Corrections de bugs
-```
-
-(Google Play limits each language to 500 characters; the French text above is 417.)
-
-<details>
-<summary>Previous: 1.0.0 notes</summary>
-
-
-```text
-What's New in We Monitor 1.0.0:
-
-• Interactive Waste Mapping: Locate cleanup drives and report waste hotspots with smart map clustering.
-• Detailed Environmental Analytics: Track collected weight, waste breakdown, and community impact metrics.
-• Offline Reporting Mode: Record cleanups and geotag photos anywhere; data auto-syncs when online.
-• Account Management & Deletion: In-app account management including streamlined account deletion options.
-• Full-Screen Photo Inspector: Zoom and examine cleanup site photos in high definition.
-• Social Authentication: Quick and secure sign-in with Apple and Google accounts.
-```
-
-</details>
+The notes for the version being released are in `store_listings/appstore/<en|fr>/changelog.md` (and `store_listings/playstore/<en|fr>/changelog.md` for Play). Each file holds only the current version, so paste it as is. See `AGENTS.md` → "Store listings".
 
 ---
 
@@ -168,7 +107,7 @@ Navigate to **App Store Connect** > **My Apps** > **We Monitor** > **App Store V
   `We Monitor`
 
 - **Subtitle** *(Max 30 characters)*:  
-  `Track & Clean Environmental Waste`
+  See `store_listings/appstore/<en|fr>/subtitle.txt`
 
 - **Bundle ID**:  
   `com.ascoa.wemonitor`
@@ -196,9 +135,8 @@ Navigate to **App Store Connect** > **My Apps** > **We Monitor** > **App Store V
 
 ### 🔍 Search & Optimization
 
-- **Keywords** *(Max 100 characters total, comma-separated, NO spaces after commas to save space)*:  
-  `waste tracker,ocean cleanup,plastic pollution,environmental action,ascoa,trash monitoring,clean community`  
-  *(Exact character count: 99 characters)*
+- **Keywords** *(Max 100 characters, comma-separated, no spaces after commas)*:  
+  See `store_listings/appstore/<en|fr>/keywords.txt`
 
 ---
 
@@ -215,43 +153,11 @@ Navigate to **App Store Connect** > **My Apps** > **We Monitor** > **App Store V
 
 ---
 
-### 📄 Full Description *(Max 4,000 characters)*
+### 📄 Full Description & Promotional Text
 
-```text
-Welcome to We Monitor – the official environmental action and trash tracking platform powered by ASCOA (Autonomous Security Organization for Plastic and Environmental Protection).
-
-We Monitor empowers volunteers, environmental advocates, and community leaders to map, track, and eliminate plastic pollution and mismanaged waste in local communities worldwide.
-
-Key Features:
-
-🌍 INTERACTIVE MAP & WASTE CLUSTERING
-Discover cleanup drives, report waste hotspots, and navigate high-density plastic pollution areas in real time. Smart map clustering ensures smooth visual navigation even in densely populated areas.
-
-📊 IMPACT & WASTE STATISTICAL DASHBOARD
-Visualize your environmental footprint! Monitor total weight collected, analyze material breakdowns (plastics, glass, metals, organic), and track collective community milestones with clear interactive charts.
-
-📶 OFFLINE WORKFLOW SUPPORT
-Working in remote coastal or rural areas with limited network connectivity? We Monitor allows you to log cleanup locations and geotag photos offline. Your data uploads automatically as soon as internet connectivity is restored.
-
-📰 COMMUNITY NEWS & UPDATES
-Stay informed with real-time environmental news, regional conservation policies, and ASCOA community stories right from inside the app.
-
-🔐 SECURE & SEAMLESS AUTHENTICATION
-Log in securely using Sign in with Apple, Google, or direct email registration. Manage your profile details, customize notification settings, or request account deletion easily within settings.
-
-Join the Movement:
-Whether organizing a beach cleanup, reporting illegal dumping, or auditing municipal waste data, We Monitor provides the tools you need to create a measurable, lasting environmental impact.
-
-Download We Monitor today and help us create a cleaner, greener world!
-```
-
----
-
-### 📱 Promotional Text *(Max 170 characters, editable without a new release)*
-
-```text
-Join ASCOA in mapping and eliminating plastic pollution worldwide. Track cleanups, report waste hotspots, and view real-time environmental impact data today!
-```
+- Description (max 4,000): `store_listings/appstore/<en|fr>/description.txt`
+- Promotional text (max 170, editable without a new release): `store_listings/appstore/<en|fr>/promotional_text.txt`
+- Screenshots: `store_listings/appstore/<en|fr>/screenshots/`
 
 ---
 

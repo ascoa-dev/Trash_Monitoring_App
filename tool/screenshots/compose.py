@@ -1,6 +1,6 @@
 """Frames raw emulator captures into store-ready marketing screenshots.
 
-raw/<device>/<lang>/<name>.png  ->  ../../store_screenshots/<store>/<lang>/<slot>/<nn>_<name>.png
+raw/<device>/<lang>/<name>.png  ->  ../../store_listings/<store>/<lang>/screenshots/<slot>/<nn>_<name>.png
 
 Run:  python compose.py
 """
@@ -9,7 +9,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 HERE = Path(__file__).parent
-OUT = HERE.parent.parent / "store_screenshots"
+OUT = HERE.parent.parent / "store_listings"
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
 FONT_REG = "C:/Windows/Fonts/segoeui.ttf"
 
@@ -32,11 +32,11 @@ SHOTS = [
 
 # (store, slot folder, raw device, canvas size)
 TARGETS = [
-    ("play", "phone", "phone", (1080, 1920)),
-    ("play", "tablet_7", "tablet_7", (1200, 2133)),
-    ("play", "tablet_10", "tablet_10", (1440, 2560)),
-    ("apple", "iphone_6.9", "phone", (1290, 2796)),
-    ("apple", "ipad_13", "tablet_10", (2064, 2752)),
+    ("playstore", "phone", "phone", (1080, 1920)),
+    ("playstore", "tablet_7", "tablet_7", (1200, 2133)),
+    ("playstore", "tablet_10", "tablet_10", (1440, 2560)),
+    ("appstore", "iphone_6.9", "phone", (1290, 2796)),
+    ("appstore", "ipad_13", "tablet_10", (2064, 2752)),
 ]
 
 
@@ -123,7 +123,7 @@ def main():
                 raw = HERE / "raw" / raw_dev / lang / f"{name}.png"
                 if not raw.exists():
                     continue
-                dest = OUT / store / lang / slot / f"{i:02d}_{name.split('_', 1)[1]}.png"
+                dest = OUT / store / lang / "screenshots" / slot / f"{i:02d}_{name.split('_', 1)[1]}.png"
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 compose(raw, en if lang == "en" else fr, size).save(dest, optimize=True)
                 made += 1

@@ -9,6 +9,6 @@ Demo data on the **local Firebase emulators** (never production) → captured on
 4. Device size: phone = AVD `9_Pro_XL`; 7" = `adb shell wm size 1200x1920 && adb shell wm density 320`; 10" = `wm size 1600x2560`.
 5. Capture: `./run.sh <phone|tablet_7> <en|fr>` covers most screens (10" positions not scripted yet; see the `case` block).
    The cleanup form is filled by hand, then `./cap.sh <device> <lang> 02_cleanup_items`. `./demo_bar.sh` gives a clean 9:41 status bar.
-6. Frame: `python compose.py` → `../../store_screenshots/<play|apple>/<en|fr>/<slot>/`.
+6. Frame: `python compose.py` → `../../store_listings/<playstore|appstore>/<en|fr>/screenshots/<slot>/`; `python feature_graphic.py` → `store_listings/playstore/<en|fr>/feature_graphic.png`.
 
 Captions and order are in `SHOTS` in `compose.py`. Output sizes: Play phone 1080×1920, 7" 1200×2133, 10" 1440×2560 (all 9:16); Apple iPhone 6.9" 1290×2796, iPad 13" 2064×2752.
