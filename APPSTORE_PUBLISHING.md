@@ -2,8 +2,8 @@
 
 > **Application Name**: We Monitor  
 > **Bundle Identifier**: `com.ascoa.wemonitor`  
-> **Current Version**: `1.1.1` (`pubspec.yaml` 1.1.1+11; iOS build numbers are assigned by Xcode Cloud)  
-> **Previous Versions**: `1.1.0`, `1.0.0 (9)`  
+> **Current Version**: `1.1.2` (`pubspec.yaml` 1.1.2+12; iOS build numbers are assigned by Xcode Cloud)  
+> **Previous Versions**: `1.1.1`, `1.1.0`, `1.0.0 (9)`  
 > **Repository Context**: `Trash_Monitoring_App`  
 > **Primary Release Target**: Apple App Store & TestFlight (iOS / iPadOS)
 
@@ -99,7 +99,7 @@ The notes for the version being released are in `store_listings/appstore/<en|fr>
 
 ## 🏪 App Store Connect Metadata & Product Page Settings
 
-Navigate to **App Store Connect** > **My Apps** > **We Monitor** > **App Store Version (1.1.0)** and configure every field exactly as specified below:
+Navigate to **App Store Connect** > **My Apps** > **We Monitor** > **App Store Version (1.1.2)** and configure every field exactly as specified below:
 
 ### 📌 General Information
 
@@ -368,7 +368,7 @@ Build the unsigned/signed release bundle directly from terminal:
 
 ```bash
 flutter build ipa --release \
-  --build-name=1.1.0 \
+  --build-name=1.1.2 \
   --build-number=<next build number> \
   --dart-define-from-file=.env \
   --export-options-plist=ios/ExportOptions.plist
