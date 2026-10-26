@@ -1,12 +1,12 @@
 <en-US>
-• Tap the number next to any trash item to type the amount directly
-• Trash categories no longer close when you tap inside them
-• Fixed a crash when entering an item count
-• Buttons now fit their text in French
+• Reports no longer fail on a weak connection: they are saved and sent automatically
+• Each photo now shows its upload progress
+• Failed photos can be retried with one tap
+• All photos are shown at once in a 2-column grid
 </en-US>
 <fr-FR>
-• Touchez le nombre à côté d'un déchet pour saisir directement la quantité
-• Les catégories de déchets ne se ferment plus quand vous touchez à l'intérieur
-• Correction d'un plantage lors de la saisie d'une quantité
-• Les boutons affichent correctement les textes en français
+• Les signalements n'échouent plus avec une connexion faible : ils sont enregistrés et envoyés automatiquement
+• Chaque photo affiche sa progression d'envoi
+• Une photo en échec se renvoie d'un simple toucher
+• Toutes les photos s'affichent sur 2 colonnes
 </fr-FR>

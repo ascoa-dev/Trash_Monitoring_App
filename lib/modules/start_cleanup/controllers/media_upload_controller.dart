@@ -372,11 +372,15 @@ class MediaUploadController extends ChangeNotifier {
     }
   }
 
-  /// Compress and upload all pending photos
+  /// Compress and upload every photo not uploaded yet (pending or failed)
   Future<void> compressAndUploadAll(String cleanupDocId) async {
     final pendingPhotos =
         _photos.values
-            .where((p) => p.status == PhotoUploadStatus.pending)
+            .where(
+              (p) =>
+                  p.status == PhotoUploadStatus.pending ||
+                  p.status == PhotoUploadStatus.error,
+            )
             .toList();
 
     debugPrint('[MediaUpload] Uploading ${pendingPhotos.length} photos');

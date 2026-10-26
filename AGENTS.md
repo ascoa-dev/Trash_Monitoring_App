@@ -3,7 +3,7 @@
 Flutter app for ASCOA (`com.ascoa.wemonitor`), GetX + Firebase (project `trash-monitoring-app-88131`).
 Full reference: `PROJECT_MASTER-ASCOA.md` (one level up, outside this repo). Store/release guide: `APPSTORE_PUBLISHING.md`.
 
-Current version: **1.1.2** (`pubspec.yaml` 1.1.2+12), live on Google Play and the App Store.
+Current version: **1.1.3** (`pubspec.yaml` 1.1.3+13). 1.1.2 is live on Google Play and the App Store; 1.1.3 is pending store release.
 
 ## Releasing a new version — required steps
 

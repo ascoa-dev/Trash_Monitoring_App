@@ -15,7 +15,7 @@ import 'package:we_monitor/shared/services/draft_service.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_text_styles.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
-import 'package:we_monitor/shared/widgets/circular_upload_progress.dart';
+import 'package:we_monitor/shared/widgets/upload_photo_grid.dart';
 import 'package:we_monitor/shared/widgets/image_picker_dialog.dart';
 
 class PhotosSection extends StatefulWidget {
@@ -227,7 +227,10 @@ class _PhotosSectionState extends State<PhotosSection> {
                       AppDimensions.cleanupSpacing12,
                     ),
                   ),
-                  _buildPhotoGrid(),
+                  UploadPhotoGrid(
+                    media: controller,
+                    docId: widget.formController.cleanupDocId,
+                  ),
                 ],
               );
             },
@@ -297,199 +300,6 @@ class _PhotosSectionState extends State<PhotosSection> {
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 3),
-      ),
-    );
-  }
-
-  Widget _buildPhotoGrid() {
-    return ListenableBuilder(
-      listenable: controller,
-      builder: (context, _) {
-        final photos = controller.photos;
-
-        if (photos.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        // Determine grid layout based on photo count
-        final crossAxisCount = _getGridCrossAxisCount(photos.length);
-
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: SizeUtils.w(
-              context,
-              AppDimensions.cleanupSpacing12,
-            ),
-            mainAxisSpacing: SizeUtils.h(
-              context,
-              AppDimensions.cleanupSpacing12,
-            ),
-            childAspectRatio: AppDimensions.photosGridChildAspectRatio,
-          ),
-          itemCount: photos.length,
-          itemBuilder: (context, index) {
-            final photo = photos[index];
-            return _buildPhotoCard(photo);
-          },
-        );
-      },
-    );
-  }
-
-  int _getGridCrossAxisCount(int photoCount) {
-    // 1 photo: 1 column
-    // 2 photos: 2 columns
-    // 3 photos: 3 columns
-    // 4 photos: 2 columns (2x2)
-    // 5 photos: 2 columns for first 4, then 1 for last
-    if (photoCount <= 3) return photoCount;
-    return 2;
-  }
-
-  Widget _buildPhotoCard(PhotoUpload photo) {
-    return Stack(
-      children: [
-        // Photo preview
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(
-              SizeUtils.r(
-                context,
-                AppDimensions.borderRadius *
-                    AppDimensions.photosBorderRadiusMultiplier,
-              ),
-            ),
-            color: AppColors.grey300,
-            image: DecorationImage(
-              image: ResizeImage(FileImage(photo.file), width: 300),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-
-        // Progress overlay (shown during compression/upload)
-        if (photo.status == PhotoUploadStatus.compressing ||
-            photo.status == PhotoUploadStatus.uploading)
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                SizeUtils.r(
-                  context,
-                  AppDimensions.borderRadius *
-                      AppDimensions.photosBorderRadiusMultiplier,
-                ),
-              ),
-              color: AppColors.black54.withAlpha(
-                (AppDimensions.photosOverlayOpacity * 255).round(),
-              ),
-            ),
-            child: Center(
-              child: CircularUploadProgress(
-                size: SizeUtils.r(context, AppDimensions.circularLoaderSize),
-                progress: photo.progress,
-                activeColor: AppColors.loaderActive,
-                trackColor: AppColors.loaderTrack,
-                strokeWidth: SizeUtils.r(
-                  context,
-                  AppDimensions.circularLoaderStrokeWidth,
-                ),
-                gap: SizeUtils.r(context, AppDimensions.circularLoaderGap),
-              ),
-            ),
-          ),
-
-        // Error overlay
-        if (photo.status == PhotoUploadStatus.error)
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                SizeUtils.r(
-                  context,
-                  AppDimensions.borderRadius *
-                      AppDimensions.photosBorderRadiusMultiplier,
-                ),
-              ),
-              color: AppColors.errorRed.withAlpha(
-                (AppDimensions.photosOverlayOpacity * 255).round(),
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.error_outline,
-                color: AppColors.pureWhite,
-                size: SizeUtils.r(
-                  context,
-                  AppDimensions.socialIconSize *
-                      AppDimensions.photosErrorIconSizeMultiplier,
-                ),
-              ),
-            ),
-          ),
-
-        // Action button (cancel during upload, discard after upload)
-        Positioned(
-          top: SizeUtils.h(context, AppDimensions.photosActionButtonOffset),
-          right: SizeUtils.w(context, AppDimensions.photosActionButtonOffset),
-          child: _buildActionButton(photo),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButton(PhotoUpload photo) {
-    IconData icon;
-    Color backgroundColor;
-    VoidCallback? onPressed;
-
-    if (photo.status == PhotoUploadStatus.compressing ||
-        photo.status == PhotoUploadStatus.uploading) {
-      // Cancel button during upload
-      icon = Icons.close;
-      backgroundColor = AppColors.errorRed;
-      onPressed = () {
-        Get.find<HapticController>().light();
-        controller.removePhoto(photo.id);
-      };
-    } else if (photo.status == PhotoUploadStatus.completed ||
-        photo.status == PhotoUploadStatus.pending ||
-        photo.status == PhotoUploadStatus.error) {
-      // Discard button after upload or if pending/error
-      icon = Icons.delete_outline;
-      backgroundColor = AppColors.errorRed;
-      onPressed = () {
-        Get.find<HapticController>().light();
-        controller.removePhoto(photo.id);
-      };
-    } else {
-      // Cancelled - no button
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: SizeUtils.r(context, AppDimensions.photosActionButtonSize),
-      height: SizeUtils.r(context, AppDimensions.photosActionButtonSize),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowMedium,
-            blurRadius: AppDimensions.photosActionButtonShadowBlur,
-            offset: Offset(0, AppDimensions.photosActionButtonShadowYOffset),
-          ),
-        ],
-      ),
-      child: IconButton(
-        padding: EdgeInsets.zero,
-        iconSize: SizeUtils.r(
-          context,
-          AppDimensions.photosActionButtonIconSize,
-        ),
-        icon: Icon(icon, color: AppColors.pureWhite),
-        onPressed: onPressed,
       ),
     );
   }

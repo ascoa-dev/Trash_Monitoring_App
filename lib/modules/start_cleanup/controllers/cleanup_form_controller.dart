@@ -10,7 +10,6 @@ import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/drafts/form_draft.dart';
 import 'package:we_monitor/shared/services/draft_service.dart';
 import 'package:we_monitor/shared/services/location_validator.dart';
-import 'package:we_monitor/shared/services/snackbar_service.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -395,10 +394,15 @@ class CleanupFormController extends ChangeNotifier {
     return itemCategories;
   }
 
+  /// True when the last successful [submitCleanup] queued the cleanup in
+  /// Hive instead of writing it to Firestore.
+  bool savedOffline = false;
+
   /// Submit cleanup data to Firebase or save offline
   /// Returns cleanup document ID on success, null on error
   /// If offline, saves to Hive for later upload
   Future<String?> submitCleanup(String userId) async {
+    savedOffline = false;
     try {
       // Final validation check
       if (!checkSectionValidity(CleanupSectionIds.basicInformation) ||
@@ -416,23 +420,35 @@ class CleanupFormController extends ChangeNotifier {
         return await _saveCleanupOffline(userId);
       }
 
-      // If there are uploads in progress, wait for them to complete
+      // Start anything added offline or failed, then wait for all uploads
+      mediaUploadController.compressAndUploadAll(cleanupDocId);
       if (mediaUploadController.hasUploadsInProgress) {
         debugPrint('[SubmitCleanup] Waiting for photo uploads to complete...');
-        final uploadSuccess = await mediaUploadController
-            .waitForUploadsToComplete(timeout: const Duration(minutes: 5));
+        await mediaUploadController.waitForUploadsToComplete(
+          timeout: const Duration(minutes: 2),
+        );
+      }
 
-        if (!uploadSuccess) {
-          debugPrint(
-            '[SubmitCleanup] Photo uploads did not complete successfully',
-          );
-          SnackbarService.error(
-            'cleanup.uploadErrorTitle'.tr,
-            'cleanup.uploadErrorBody'.tr,
-          );
-          // You might want to show an error to the user here
-          // For now, we'll continue anyway with whatever uploaded
-        }
+      // Photos still not uploaded (bad signal): queue the whole cleanup so
+      // they aren't dropped. The pending queue retries and reuses uploads.
+      final notUploaded =
+          mediaUploadController.photos
+              .where(
+                (p) =>
+                    p.status != PhotoUploadStatus.completed &&
+                    p.status != PhotoUploadStatus.cancelled,
+              )
+              .toList();
+      if (notUploaded.isNotEmpty) {
+        Analytics.error(
+          StateError(
+            '${notUploaded.length} photo(s) not uploaded: '
+            '${notUploaded.map((p) => p.error ?? p.status.name).join('; ')}',
+          ),
+          StackTrace.current,
+          reason: 'cleanup photos not uploaded, queued offline',
+        );
+        return await _saveCleanupOffline(userId);
       }
 
       // Clean up any photos that were uploaded but then removed
@@ -497,8 +513,9 @@ class CleanupFormController extends ChangeNotifier {
         'cleanups': FieldValue.arrayUnion([cleanupRef.id]),
       });
 
-      // Commit the batch
-      await batch.commit();
+      // Fixed doc id: if this times out but commits later, the queued copy
+      // finds the doc and skips it.
+      await batch.commit().timeout(const Duration(seconds: 30));
 
       // Track successful submission
       Analytics.track(AnalyticsEvents.cleanupSubmitted, {
@@ -511,14 +528,15 @@ class CleanupFormController extends ChangeNotifier {
 
       debugPrint('[SubmitCleanup] Success: ${cleanupRef.id}');
       return cleanupRef.id;
-    } catch (e) {
+    } catch (e, st) {
       Analytics.track(AnalyticsEvents.cleanupSubmitFailed, {
         AnalyticsProps.reason: e.toString(),
         AnalyticsProps.isOffline: false,
       });
-      Analytics.error(e, null);
-      debugPrint('[SubmitCleanup] Error: $e');
-      return null;
+      Analytics.error(e, st, reason: 'cleanup online submit failed, queued');
+      debugPrint('[SubmitCleanup] Error: $e, saving offline instead');
+      // Bad signal or server error: queue it instead of losing the cleanup.
+      return _saveCleanupOffline(userId);
     }
   }
 
@@ -609,7 +627,10 @@ class CleanupFormController extends ChangeNotifier {
 
       // Get local photo paths from media controller
       final localPhotoPaths =
-          mediaUploadController.photos.map((photo) => photo.file.path).toList();
+          mediaUploadController.photos
+              .where((photo) => photo.status != PhotoUploadStatus.cancelled)
+              .map((photo) => photo.file.path)
+              .toList();
 
       // Generate a unique local ID
       const uuid = Uuid();
@@ -657,6 +678,7 @@ class CleanupFormController extends ChangeNotifier {
       });
 
       debugPrint('[SubmitCleanup] Saved offline with ID: $localId');
+      savedOffline = true;
       return localId;
     } catch (e) {
       Analytics.track(AnalyticsEvents.cleanupSubmitFailed, {

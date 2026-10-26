@@ -1,4 +1,4 @@
-• Touchez le nombre à côté d'un déchet pour saisir directement la quantité
-• Les catégories de déchets ne se ferment plus quand vous touchez à l'intérieur
-• Correction d'un plantage lors de la saisie d'une quantité
-• Les boutons affichent correctement les textes en français
+• Les signalements n'échouent plus avec une connexion faible : ils sont enregistrés et envoyés automatiquement
+• Chaque photo affiche sa progression d'envoi
+• Une photo en échec se renvoie d'un simple toucher
+• Toutes les photos s'affichent sur 2 colonnes

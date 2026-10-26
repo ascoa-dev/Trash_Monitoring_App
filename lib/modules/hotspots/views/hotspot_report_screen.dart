@@ -19,9 +19,9 @@ import 'package:we_monitor/shared/widgets/draft_dialogs.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/services/location_validator.dart';
 import 'package:we_monitor/shared/utils/size_utils.dart';
-import 'package:we_monitor/shared/widgets/circular_upload_progress.dart';
 import 'package:we_monitor/shared/widgets/image_picker_dialog.dart';
 import 'package:we_monitor/shared/widgets/location_picker_field.dart';
+import 'package:we_monitor/shared/widgets/upload_photo_grid.dart';
 
 class HotspotReportScreen extends StatefulWidget {
   const HotspotReportScreen({super.key});
@@ -198,7 +198,7 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
       return;
     }
 
-    final wasOnline = Get.find<ConnectivityController>().isOnline.value;
+    final wasOnline = !controller.savedOffline;
     _showSnack(
       wasOnline
           ? 'hotspot.saved'.tr
@@ -308,7 +308,10 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
                         AppDimensions.cleanupSpacing16,
                       ),
                     ),
-                    _PhotoGrid(media: media),
+                    UploadPhotoGrid(
+                      media: media,
+                      docId: controller.hotspotDocId,
+                    ),
                     SizedBox(
                       height: SizeUtils.h(
                         context,
@@ -335,92 +338,6 @@ class _HotspotReportScreenState extends State<HotspotReportScreen>
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PhotoGrid extends StatelessWidget {
-  const _PhotoGrid({required this.media});
-
-  final MediaUploadController media;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: media,
-      builder: (context, _) {
-        if (!media.hasPhotos) return const SizedBox.shrink();
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: media.photoCount <= 3 ? media.photoCount : 2,
-            crossAxisSpacing: SizeUtils.w(
-              context,
-              AppDimensions.cleanupSpacing12,
-            ),
-            mainAxisSpacing: SizeUtils.h(
-              context,
-              AppDimensions.cleanupSpacing12,
-            ),
-          ),
-          itemCount: media.photos.length,
-          itemBuilder: (context, index) {
-            final photo = media.photos[index];
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(SizeUtils.r(context, 8)),
-                  child: Image.file(
-                    photo.file,
-                    fit: BoxFit.cover,
-                    cacheWidth: 300,
-                  ),
-                ),
-                if (photo.status == PhotoUploadStatus.compressing ||
-                    photo.status == PhotoUploadStatus.uploading)
-                  Container(
-                    color: AppColors.black54,
-                    child: Center(
-                      child: CircularUploadProgress(
-                        size: SizeUtils.r(
-                          context,
-                          AppDimensions.circularLoaderSize,
-                        ),
-                        progress: photo.progress,
-                        activeColor: AppColors.loaderActive,
-                        trackColor: AppColors.loaderTrack,
-                        strokeWidth: SizeUtils.r(
-                          context,
-                          AppDimensions.circularLoaderStrokeWidth,
-                        ),
-                        gap: SizeUtils.r(
-                          context,
-                          AppDimensions.circularLoaderGap,
-                        ),
-                      ),
-                    ),
-                  ),
-                Positioned(
-                  top: 6,
-                  right: 6,
-                  child: IconButton.filled(
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppColors.errorRed,
-                    ),
-                    onPressed: () => media.removePhoto(photo.id),
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: AppColors.pureWhite,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
 }

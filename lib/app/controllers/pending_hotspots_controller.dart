@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:we_monitor/app/models/pending_hotspot_model.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/services/pending_upload_service.dart';
 import 'package:we_monitor/shared/services/snackbar_service.dart';
@@ -133,8 +134,9 @@ class PendingHotspotsController extends GetxController {
         );
       }
       return PendingResult.uploaded;
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('[PendingHotspots] Error uploading: $e');
+      Analytics.error(e, st, reason: 'pending hotspot upload failed');
       hotspot
         ..isUploading = false
         ..uploadError = 'sync.failedWillRetry'.tr;

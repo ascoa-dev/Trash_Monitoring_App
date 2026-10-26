@@ -10,6 +10,7 @@ import 'package:we_monitor/shared/services/pending_upload_service.dart';
 import 'package:we_monitor/app/controllers/pending_hotspots_controller.dart';
 import 'package:we_monitor/app/models/pending_hotspot_model.dart';
 import 'package:we_monitor/modules/start_cleanup/controllers/media_upload_controller.dart';
+import 'package:we_monitor/shared/analytics/analytics_service.dart';
 import 'package:we_monitor/shared/constants/app_strings.dart';
 import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/drafts/form_draft.dart';
@@ -67,11 +68,19 @@ class HotspotReportController extends ChangeNotifier {
     return isValid;
   }
 
+  /// True when the last successful [submit] queued the report in Hive
+  /// instead of writing it to Firestore.
+  bool savedOffline = false;
+
   Future<String?> submit() async {
     if (!validate()) return null;
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return null;
+    if (user == null) {
+      Analytics.log('[Hotspot] submit without signed-in user');
+      return null;
+    }
 
+    savedOffline = false;
     try {
       isSubmitting = true;
       notifyListeners();
@@ -79,47 +88,80 @@ class HotspotReportController extends ChangeNotifier {
       final isOnline =
           await Get.find<ConnectivityController>().checkConnectivity();
       if (!isOnline) {
-        return _saveOffline(user.uid);
+        return await _saveOffline(user.uid);
       }
 
-      if (mediaUploadController.hasUploadsInProgress) {
-        final completed = await mediaUploadController.waitForUploadsToComplete(
-          timeout: const Duration(minutes: 5),
-        );
-        if (!completed) return null;
+      try {
+        return await _saveOnline(user.uid);
+      } catch (e, st) {
+        // Bad signal or server error: queue it instead of losing the report.
+        // The pending queue retries and reuses photos uploaded so far.
+        Analytics.error(e, st, reason: 'hotspot online submit failed');
+        return await _saveOffline(user.uid);
       }
-
-      await mediaUploadController.cleanupUnusedPhotos();
-      final photoUrls = mediaUploadController.uploadedPhotoUrls;
-      final thumbUrls = mediaUploadController.uploadedThumbUrls;
-      if (photoUrls.isEmpty) return null;
-
-      await FirebaseFirestore.instance
-          .collection('plastic_hotspots')
-          .doc(hotspotDocId)
-          .set({
-            'userId': user.uid,
-            'createdAt': FieldValue.serverTimestamp(),
-            'location': {
-              'name': location,
-              'latitude': locationLatitude,
-              'longitude': locationLongitude,
-            },
-            'photoUrls': photoUrls,
-            'thumbUrls': thumbUrls,
-            'status': 'reported',
-          });
-
-      return hotspotDocId;
+    } catch (e, st) {
+      Analytics.error(e, st, reason: 'hotspot submit failed');
+      return null;
     } finally {
       isSubmitting = false;
       notifyListeners();
     }
   }
 
+  Future<String> _saveOnline(String userId) async {
+    final media = mediaUploadController;
+    // Start anything added offline or failed; the wait below bounds it.
+    media.compressAndUploadAll(hotspotDocId);
+    if (media.hasUploadsInProgress &&
+        !await media.waitForUploadsToComplete(
+          timeout: const Duration(minutes: 2),
+        )) {
+      throw StateError('photo uploads timed out');
+    }
+
+    final notUploaded =
+        media.photos
+            .where(
+              (p) =>
+                  p.status != PhotoUploadStatus.completed &&
+                  p.status != PhotoUploadStatus.cancelled,
+            )
+            .toList();
+    if (notUploaded.isNotEmpty) {
+      throw StateError(
+        '${notUploaded.length} photo(s) not uploaded: '
+        '${notUploaded.map((p) => p.error ?? p.status.name).join('; ')}',
+      );
+    }
+
+    await media.cleanupUnusedPhotos();
+    await FirebaseFirestore.instance
+        .collection('plastic_hotspots')
+        .doc(hotspotDocId)
+        .set({
+          'userId': userId,
+          'createdAt': FieldValue.serverTimestamp(),
+          'location': {
+            'name': location,
+            'latitude': locationLatitude,
+            'longitude': locationLongitude,
+          },
+          'photoUrls': media.uploadedPhotoUrls,
+          'thumbUrls': media.uploadedThumbUrls,
+          'status': 'reported',
+        })
+        // Same doc id as the queued fallback, so a late commit is harmless.
+        .timeout(const Duration(seconds: 30));
+    return hotspotDocId;
+  }
+
   Future<String?> _saveOffline(String userId) async {
+    savedOffline = true;
     final localPaths =
-        mediaUploadController.photos.map((photo) => photo.file.path).toList();
+        mediaUploadController.photos
+            .where((photo) => photo.status != PhotoUploadStatus.cancelled)
+            .map((photo) => photo.file.path)
+            .toList();
     final localId = const Uuid().v4();
     final pending = PendingHotspotModel(
       localId: localId,

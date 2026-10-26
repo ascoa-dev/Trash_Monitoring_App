@@ -4,7 +4,6 @@ import 'package:we_monitor/modules/start_cleanup/views/basic_infomation_section.
 import 'package:we_monitor/modules/start_cleanup/views/trash_collected.dart';
 import 'package:we_monitor/modules/start_cleanup/views/photos_section.dart';
 import 'package:we_monitor/modules/start_cleanup/controllers/cleanup_form_controller.dart';
-import 'package:we_monitor/shared/controllers/connectivity_controller.dart';
 import 'package:we_monitor/shared/constants/app_colors.dart';
 import 'package:we_monitor/shared/constants/app_dimensions.dart';
 import 'package:we_monitor/shared/constants/app_images.dart';
@@ -234,8 +233,7 @@ class _NewCleanUpScreenState extends State<NewCleanUpScreen>
     if (cleanupId != null) {
       Get.find<HapticController>().medium();
       // Check if it was saved offline or online
-      final connectivityController = Get.find<ConnectivityController>();
-      final wasOnline = connectivityController.isOnline.value;
+      final wasOnline = !controller.savedOffline;
       // Offline-saved cleanups still reference the draft's photo copies.
       await _saver.finish(deleteFiles: wasOnline);
 
